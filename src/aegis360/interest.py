@@ -54,8 +54,16 @@ def candidate_interest(
 ) -> tuple[SignalEvidence, ...]:
     """Return named evidence; detector confidence is deliberately not accepted."""
 
-    presence = 1.0 if candidate.observed else 0.0
-    persistence = min(1.0, candidate.observed_frames / config.persistence_frames)
+    # The forward context is a safe camera fallback, not a detected entity.
+    # Giving it presence/persistence would let an always-available synthetic
+    # candidate dominate real observations by construction.
+    is_context = candidate.candidate_type == "context"
+    presence = 0.0 if is_context else (1.0 if candidate.observed else 0.0)
+    persistence = (
+        0.0
+        if is_context
+        else min(1.0, candidate.observed_frames / config.persistence_frames)
+    )
     composition = max(
         0.0, 1.0 - abs(candidate.pitch) / config.composition_pitch_limit
     )

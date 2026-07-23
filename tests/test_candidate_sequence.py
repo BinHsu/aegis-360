@@ -102,6 +102,21 @@ class CandidateSequenceTests(unittest.TestCase):
             "composition": 1.0, "forward_prior": 1.0,
         })
 
+    def test_forward_context_is_a_fallback_not_a_detected_persistent_subject(self):
+        sequence = associate_candidate_sequence((frame(100, ()), frame(101, ())))
+        scored = evaluate_interest(sequence, InterestConfig(persistence_frames=2))
+        for scored_frame in scored:
+            context = next(
+                item
+                for item in scored_frame.candidates
+                if item.candidate.candidate_id == "context:forward"
+            )
+            values = {signal.name: signal.normalized for signal in context.signals}
+            self.assertEqual(values["presence"], 0.0)
+            self.assertEqual(values["persistence"], 0.0)
+            self.assertEqual(values["composition"], 1.0)
+            self.assertEqual(values["forward_prior"], 1.0)
+
 
 if __name__ == "__main__":
     unittest.main()
