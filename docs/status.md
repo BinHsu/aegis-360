@@ -210,6 +210,23 @@ rejected and is not a review candidate. Stabilization must first pass a
 known-motion end-to-end fixture, including sampled-to-output-frame
 interpolation, before another real-media attempt.
 
+The planner-to-native-renderer synthetic motion-reduction gate now generates
+known alternating translation and rotation, plans corrections, and requires
+the rendered adjacent-luma motion mean to fall below 65% of the input. Its
+fixture generation and planner stages pass, but the end-to-end result remains
+unverified because the host currently cannot create a VideoToolbox H.264
+compression session (`-12908`). The gate reports this as
+`ENVIRONMENT_UNAVAILABLE` with exit status 77; it must be rerun after the
+encoder becomes available and must not be recorded as a stabilization pass.
+
+The proposed spherical stabilization and segment-treatment boundary is
+documented in
+`docs/design/spherical-stabilization-and-segment-policy.md`. It separates
+source orientation `R(t)`, stabilized orientation `S(t)`, and director path
+`D(t)` for one ERP-to-rectilinear projection. It also keeps editorial value
+separate from technical risk. The proposed `action-natural` default and all
+thresholds remain unvalidated hypotheses.
+
 ## Next evidence gate
 
 Diagnose and address the failed 30-second qualitative gate before producing a

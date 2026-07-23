@@ -33,6 +33,7 @@ not invent a resolution.
 | Choose storage, compute, or Apple-specific acceleration | ADR 0004, ADR 0005 |
 | Change proxy, caching, or memory behavior | ADR 0005 |
 | Change interest scoring, candidate shots, or planning | ADR 0006 |
+| Change stabilization, motion-character, or segment treatment | `docs/design/spherical-stabilization-and-segment-policy.md`, ADR 0002, ADR 0005, ADR 0006 |
 | Add media or change evaluation | ADR 0007 and `benchmarks/README.md` when present |
 | Choose or replace a model backend | ADR 0008 |
 | Make a claim about GoPro, Insta360, prior art, or licensing | Relevant material in `docs/research/` when present; do not rely on README prose |

@@ -170,6 +170,10 @@ data.
   as AWS services, inspect its status and report meaningful progress at least
   once every minute. If it is stalled or no longer useful, stop the chargeable
   work promptly or escalate the decision to the user.
+- Every scheduled liveness inspection must be paired with a user-facing
+  progress report in the same cycle. State what advanced since the previous
+  inspection, whether the work is advancing, waiting, blocked, or being
+  recovered, and the next concrete action; do not inspect silently.
 - A progress report must say whether the work is advancing, waiting, blocked,
   or being recovered; a timer-only “still running” message is insufficient.
 - Accepted decisions belong in `docs/adr/`; unsettled exploration belongs in
