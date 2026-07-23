@@ -119,7 +119,39 @@ func correction(at relativeSeconds: Double, frames: [PlanFrame]) -> [Double] {
         let middle = (low + high) / 2
         if frames[middle].timestampSeconds <= relativeSeconds { low = middle + 1 } else { high = middle }
     }
-    return frames[max(0, low - 1)].correctionHomographyRowMajor
+    if low >= frames.count {
+        return frames[frames.count - 1].correctionHomographyRowMajor
+    }
+
+    let prior = frames[low - 1]
+    let next = frames[low]
+    let span = next.timestampSeconds - prior.timestampSeconds
+    let fraction = min(1, max(0, (relativeSeconds - prior.timestampSeconds) / span))
+    let a = prior.correctionHomographyRowMajor
+    let b = next.correctionHomographyRowMajor
+
+    func similarity(_ h: [Double]) -> (tx: Double, ty: Double, angle: Double, logScale: Double) {
+        let scale = max(Double.leastNonzeroMagnitude, hypot(h[0], h[3]))
+        return (h[2], h[5], atan2(h[3], h[0]), log(scale))
+    }
+
+    let first = similarity(a)
+    let second = similarity(b)
+    var angleDelta = second.angle - first.angle
+    while angleDelta > .pi { angleDelta -= 2 * .pi }
+    while angleDelta < -.pi { angleDelta += 2 * .pi }
+
+    let tx = first.tx + fraction * (second.tx - first.tx)
+    let ty = first.ty + fraction * (second.ty - first.ty)
+    let angle = first.angle + fraction * angleDelta
+    let scale = exp(first.logScale + fraction * (second.logScale - first.logScale))
+    let cosine = scale * cos(angle)
+    let sine = scale * sin(angle)
+    return [
+        cosine, -sine, tx,
+        sine, cosine, ty,
+        0, 0, 1,
+    ]
 }
 
 func coreImageTransform(_ h: [Double], height: Double) -> CGAffineTransform {

@@ -229,14 +229,29 @@ source orientation `R(t)`, stabilized orientation `S(t)`, and director path
 separate from technical risk. The proposed `action-natural` default and all
 thresholds remain unvalidated hypotheses.
 
+The native renderer now interpolates sampled similarity corrections through
+translation, shortest-path rotation and logarithmic scale. A 10 fps plan
+driving a 30 fps known-motion fixture reduced adjacent-luma motion from
+32.8154 to 7.1722, a passing ratio of 0.219. This establishes sampled-plan
+interpolation on the synthetic fixture.
+
+The corresponding real fixed-forward last-five-second v2 remained a failure:
+median translation-proxy step increased from 2.828 to 3.162 pixels and p95
+translation-vector change increased from 5.250 to 11.423 pixels. It decoded
+at 1920x1080 for five seconds and retained audio, but it is rejected and must
+not be shown as a stabilization candidate. Flat homographic post-warp is no
+longer the primary stabilization path; evaluate it only later as a bounded
+residual correction after spherical source-motion stabilization.
+
 ## Next evidence gate
 
 Diagnose and address the failed 30-second qualitative gate before producing a
 new review candidate:
 
-1. Fix and validate the Apple-native post-warp path on known synthetic motion;
-   require reduced motion metrics before another fixed-forward real A/B. Do
-   not render the unacceptable auto plan.
+1. Establish a gyro-free spherical source-motion path on known ERP
+   yaw/pitch/roll fixtures, including high-frequency shake plus a slow
+   intentional turn. Fit and smooth one `SO(3)` path, preserve the intentional
+   turn, and validate quaternion order before another benchmark render.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

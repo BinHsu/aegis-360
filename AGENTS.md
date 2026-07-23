@@ -212,6 +212,10 @@ These commands have been verified on the reference machine:
 - FFmpeg/internal convention gate: `tests/check_ffmpeg_v360_conventions.py`
 - Timestamped FFmpeg `v360` control test: `tests/test_ffmpeg_v360_dynamic.sh`
 - Fixed-forward baseline test: `tests/test_fixed_forward_baseline.sh`
+- Native post-warp sampled-plan motion gate:
+  `tests/test_flat_postwarp_motion_reduction.sh`
+- Spherical known-motion oracle gate:
+  `tests/test_spherical_stabilization_known_motion.sh`
 - Apple Vision synthetic gate: `tests/test_vision_frame_gate.sh`
 - Apple Vision batch orchestration test: `tests/test_vision_batch_gate.sh`
 - Apple Vision short-sequence tracking test:

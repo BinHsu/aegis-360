@@ -116,3 +116,38 @@ trajectory smoothing, crop magnification, registration/parallax, or the
 translation-only evaluator's limitations. A known-motion end-to-end
 stabilization fixture must show reduced translation, rotation and vector
 change before another real render.
+
+## Sampled-to-output interpolation gate
+
+The end-to-end synthetic gate was extended to exercise sampled motion
+corrections at 10 fps rendered to 30 fps. The adjacent-luma motion mean fell
+from 32.8154 in the input to 7.1722 in the stabilized output, a ratio of
+0.219. This passes the gate's required ratio below 0.65 and establishes that
+the renderer can interpolate sparse corrections across output frames for this
+known synthetic motion.
+
+This result validates the bounded synthetic fixture only. It does not show
+that a flat-image homography is an adequate camera-motion model for real 360
+footage after rectilinear projection.
+
+## Second native real-media post-warp result
+
+The fixed-forward last-five-second interval was rendered again with the
+interpolation correction as v2. The output decoded successfully and retained
+audio. Real-media motion nevertheless became worse: the median
+translation-proxy step rose from 2.828 pixels in the input to 3.162 pixels in
+the post-warp output, while p95 translation-vector change rose from 5.250 to
+11.423 pixels.
+
+The v2 real-media candidate is therefore rejected and must not be presented
+for viewer review. Passing the known-motion interpolation gate rules out the
+absence of sampled-to-output interpolation as a sufficient explanation for
+the earlier failure, but it does not validate the real-footage registration
+model. Parallax, moving content, projection-dependent motion and homography
+estimation remain plausible contributors.
+
+Flat post-warp stabilization is not the primary path forward. Source
+orientation should instead be estimated and smoothed in spherical space,
+combined with the director path, and applied in a single ERP-to-rectilinear
+projection. A flat-image residual correction may be reconsidered only as a
+bounded secondary stage if later evidence justifies it.

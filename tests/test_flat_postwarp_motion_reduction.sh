@@ -7,7 +7,7 @@ trap 'rm -rf "$work_dir"' EXIT HUP INT TERM
 
 width=320
 height=180
-fps=10
+fps=30
 
 # An asymmetric, static texture makes all temporal change attributable to the
 # known synthetic camera path rather than scene or subject motion.
@@ -23,7 +23,7 @@ import sys
 # Deliberately alternate both translation and rotation.  The transform maps
 # the centered, unjittered crop into each raw frame in top-left image
 # coordinates, matching the planner's documented convention.
-positions = [
+key_positions = [
     (0, 0, 0), (12, -7, 0.050), (-11, 8, -0.045), (10, 6, 0.040),
     (-12, -6, -0.050), (11, -8, 0.045), (-10, 7, -0.040),
     (12, 5, 0.050), (-11, -7, -0.045), (0, 0, 0),
@@ -47,7 +47,7 @@ def inverse(m):
             -c / det, a / det, (c * tx - a * ty) / det,
             0.0, 0.0, 1.0)
 
-raw = [matrix(*position) for position in positions]
+raw = [matrix(*position) for position in key_positions]
 observations = [{
     "frameIndex": 0, "timestampSeconds": 0, "state": "reference",
     "homographyRowMajor": None,
@@ -69,7 +69,19 @@ json.dump({
 
 with open(sys.argv[1], "w") as handle:
     handle.write("#!/bin/sh\nset -eu\n")
-    for index, (tx, ty, angle) in enumerate(positions):
+    output_count = (len(key_positions) - 1) * 3 + 1
+    for index in range(output_count):
+        key_index = min(index // 3, len(key_positions) - 2)
+        fraction = (index % 3) / 3
+        if index == output_count - 1:
+            key_index = len(key_positions) - 2
+            fraction = 1
+        first = key_positions[key_index]
+        second = key_positions[key_index + 1]
+        tx, ty, angle = (
+            first[item] + fraction * (second[item] - first[item])
+            for item in range(3)
+        )
         # FFmpeg rotate uses the same visual sign as the top-left-coordinate
         # matrix above. Cropping at (margin-t) translates content by +t.
         handle.write(

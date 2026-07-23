@@ -359,3 +359,11 @@ No benchmark review candidate should be rendered from this design until:
    alongside blinded human comfort and motion-character preference. No single
    metric is accepted as comfort ground truth.
 
+The first executable fixture for gate 2 is
+`tests/test_spherical_stabilization_known_motion.sh`. It uses an oracle,
+yaw-only path consisting of a slow 5°/s turn plus deterministic alternating
+6° shake. Its `action-natural` reference retains the complete slow turn and
+ten percent of the shake, and both paths are exercised through FFmpeg `v360`.
+This locks the expected separation of motion frequencies and real render
+control, but does **not** validate visual orientation estimation, quaternion
+composition, roll/pitch behavior, or a human comfort threshold.
