@@ -25,6 +25,8 @@ cat > "$work_dir/request.json" <<EOF
 {"schema_version":"aegis360.render-request.v1","render_mode":"shot_static_v360",
 "source_media":"$source","camera_path":"$work_dir/camera.json","trace":"$work_dir/trace.json",
 "start_seconds":0,"duration_seconds":2,
+"framing_safety":{"minimum_horizontal_fov_degrees":110,
+"candidate_extent_padding_degrees":10,"maximum_zoom_in_change_degrees":15},
 "artifacts":{"fixed":"$work_dir/fixed.mp4","auto":"$work_dir/auto.mp4","debug":"$work_dir/debug.mp4"}}
 EOF
 
@@ -47,7 +49,7 @@ done
 # The first shot's frames must equal a direct static-v360 reference at the
 # seam center; a hard cut at one second must then change the frame content.
 ffmpeg -hide_banner -loglevel error -i "$source" -t 1 \
-  -vf "v360=input=equirect:output=flat:w=640:h=360:yaw=-180:pitch=0:h_fov=90:interp=linear" \
+  -vf "v360=input=equirect:output=flat:w=640:h=360:yaw=-180:pitch=0:h_fov=110:interp=linear" \
   -an -c:v libx264 -preset fast -crf 0 -pix_fmt yuv420p "$work_dir/reference.mp4"
 reference_hash=$(ffmpeg -v error -i "$work_dir/reference.mp4" -frames:v 1 \
   -map 0:v:0 -f hash -hash md5 -)

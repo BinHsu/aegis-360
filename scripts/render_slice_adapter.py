@@ -19,6 +19,7 @@ from aegis360.camera_path import (  # noqa: E402
     interpolate_path,
 )
 from aegis360.shot_render import greedy_trace_to_static_shots  # noqa: E402
+from aegis360.framing import FramingSafetyConfig  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,6 +56,34 @@ def finite_number(value: object) -> bool:
         isinstance(value, (int, float))
         and not isinstance(value, bool)
         and math.isfinite(value)
+    )
+
+
+def framing_safety_from_request(
+    request: dict[str, object],
+) -> FramingSafetyConfig | None:
+    value = request.get("framing_safety")
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise ValueError("framing_safety must be an object or null")
+    required = {
+        "minimum_horizontal_fov_degrees",
+        "candidate_extent_padding_degrees",
+        "maximum_zoom_in_change_degrees",
+    }
+    if not required <= value.keys():
+        raise ValueError("framing_safety is missing required degree fields")
+    if not all(finite_number(value[field]) for field in required):
+        raise ValueError("framing_safety degree fields must be finite")
+    return FramingSafetyConfig(
+        minimum_h_fov=math.radians(value["minimum_horizontal_fov_degrees"]),
+        candidate_extent_padding=math.radians(
+            value["candidate_extent_padding_degrees"]
+        ),
+        max_zoom_in_change=math.radians(
+            value["maximum_zoom_in_change_degrees"]
+        ),
     )
 
 
@@ -137,10 +166,11 @@ def render_static_shots(
     trace: dict[str, object],
     start: float,
     duration: float,
+    framing_safety: FramingSafetyConfig | None = None,
 ) -> None:
     """Render hard-cut shots with one static v360 pose per selected-ID run."""
 
-    shots = greedy_trace_to_static_shots(trace, duration)
+    shots = greedy_trace_to_static_shots(trace, duration, framing_safety)
     command = ["ffmpeg", "-hide_banner", "-loglevel", "error"]
     for shot in shots:
         command.extend(
@@ -230,6 +260,7 @@ def main() -> None:
         commands = format_ffmpeg_sendcmd(interpolate_path(camera, fps))
         trace = load_object(trace_file, "trace")
         overlay = trace_tsv(trace, float(duration))
+        framing_safety = framing_safety_from_request(request)
     except (TypeError, ValueError) as error:
         fail(str(error), 2)
 
@@ -244,13 +275,19 @@ def main() -> None:
                 [
                     str(ROOT / "scripts/render_fixed_forward_baseline.sh"),
                     str(source), str(outputs["fixed"]), str(start), str(duration),
-                    "0", "0", "90", "640", "360",
+                    "0", "0",
+                    str(
+                        math.degrees(framing_safety.minimum_h_fov)
+                        if framing_safety is not None else 90
+                    ),
+                    "640", "360",
                 ],
                 check=True,
             )
             if render_mode == "shot_static_v360":
                 render_static_shots(
-                    source, outputs["auto"], trace, float(start), float(duration)
+                    source, outputs["auto"], trace, float(start), float(duration),
+                    framing_safety,
                 )
             else:
                 subprocess.run(

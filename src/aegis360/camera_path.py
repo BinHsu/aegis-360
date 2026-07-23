@@ -18,6 +18,7 @@ import math
 from typing import Iterable, Mapping
 
 from .geometry import HALF_PI, spherical_distance, unwrap_yaw, wrap_yaw
+from .framing import FramingSafetyConfig, safe_horizontal_fovs
 
 
 @dataclass(frozen=True)
@@ -45,6 +46,7 @@ def greedy_trace_to_keyframes(
     trace: Mapping[str, object],
     duration: float,
     direction_threshold: float = math.radians(5.0),
+    framing_safety: FramingSafetyConfig | None = None,
 ) -> tuple[CameraKeyframe, ...]:
     """Adapt greedy decisions to sparse, clip-relative camera keyframes.
 
@@ -122,6 +124,20 @@ def greedy_trace_to_keyframes(
     if relative_end > duration + 1e-12:
         raise ValueError("greedy decisions extend beyond the clip duration")
 
+    if framing_safety is not None:
+        guarded_fovs = safe_horizontal_fovs(
+            (decision[2].h_fov for decision in decisions), framing_safety
+        )
+        decisions = [
+            (
+                timestamp,
+                selected_id,
+                CameraKeyframe(pose.time, pose.yaw, pose.pitch, guarded_fov),
+            )
+            for (timestamp, selected_id, pose), guarded_fov
+            in zip(decisions, guarded_fovs)
+        ]
+
     first = decisions[0]
     keyframes = [CameraKeyframe(0.0, first[2].yaw, first[2].pitch, first[2].h_fov)]
     emitted_id = first[1]
@@ -150,10 +166,13 @@ def greedy_trace_to_camera_path(
     trace: Mapping[str, object],
     duration: float,
     direction_threshold: float = math.radians(5.0),
+    framing_safety: FramingSafetyConfig | None = None,
 ) -> dict[str, object]:
     """Return the sparse adapter result in the orchestrator JSON contract."""
 
-    keyframes = greedy_trace_to_keyframes(trace, duration, direction_threshold)
+    keyframes = greedy_trace_to_keyframes(
+        trace, duration, direction_threshold, framing_safety
+    )
     decisions = trace["decisions"]
     assert isinstance(decisions, (list, tuple))  # validated by the call above
     first = decisions[0]

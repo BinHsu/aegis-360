@@ -61,7 +61,7 @@ def candidate_interest(
     presence = 0.0 if is_context else (1.0 if candidate.observed else 0.0)
     persistence = (
         0.0
-        if is_context
+        if is_context or not candidate.editorial_persistence_valid
         else min(1.0, candidate.observed_frames / config.persistence_frames)
     )
     composition = max(
@@ -77,9 +77,16 @@ def candidate_interest(
         SignalEvidence("presence", presence, presence, provenance),
         SignalEvidence(
             "persistence",
-            float(candidate.observed_frames),
+            (
+                float(candidate.observed_frames)
+                if candidate.editorial_persistence_valid
+                else 0.0
+            ),
             persistence,
-            f"{provenance};normalizer:{config.persistence_frames}-frames",
+            (
+                f"{provenance};normalizer:{config.persistence_frames}-frames;"
+                f"association:{candidate.association_provenance.value}"
+            ),
         ),
         SignalEvidence(
             "composition",

@@ -12,6 +12,7 @@ import statistics
 from typing import Mapping, Sequence
 
 from .geometry import wrap_yaw
+from .framing import FramingSafetyConfig, safe_horizontal_fovs
 
 
 @dataclass(frozen=True)
@@ -46,7 +47,9 @@ def _circular_median(values: Sequence[float]) -> float:
 
 
 def greedy_trace_to_static_shots(
-    trace: Mapping[str, object], duration: float
+    trace: Mapping[str, object],
+    duration: float,
+    framing_safety: FramingSafetyConfig | None = None,
 ) -> tuple[StaticShot, ...]:
     """Group consecutive selected IDs and choose one robust pose per group."""
 
@@ -124,4 +127,19 @@ def greedy_trace_to_static_shots(
                 h_fov=statistics.median(row[4] for row in group),
             )
         )
-    return tuple(shots)
+    if framing_safety is None:
+        return tuple(shots)
+    guarded_fovs = safe_horizontal_fovs(
+        (shot.h_fov for shot in shots), framing_safety
+    )
+    return tuple(
+        StaticShot(
+            shot.start,
+            shot.end,
+            shot.selected_candidate_id,
+            shot.yaw,
+            shot.pitch,
+            guarded_fov,
+        )
+        for shot, guarded_fov in zip(shots, guarded_fovs)
+    )

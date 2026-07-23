@@ -8,6 +8,7 @@ from pathlib import Path
 import tomllib
 
 from .greedy_planner import GreedyConfig
+from .framing import FramingSafetyConfig
 from .interest import INTEREST_SIGNAL_NAMES
 from .perception import ScoringConfig
 
@@ -17,7 +18,12 @@ _ROOT_KEYS = frozenset(("schema_version", "weights", "hysteresis", "camera"))
 _HYSTERESIS_KEYS = frozenset(
     ("minimum_dwell_seconds", "switch_margin", "challenger_hold_seconds")
 )
-_CAMERA_KEYS = frozenset(("min_angular_change_degrees",))
+_CAMERA_KEYS = frozenset((
+    "min_angular_change_degrees",
+    "minimum_horizontal_fov_degrees",
+    "candidate_extent_padding_degrees",
+    "maximum_zoom_in_change_degrees",
+))
 
 
 @dataclass(frozen=True)
@@ -28,6 +34,7 @@ class GreedySliceConfig:
     scoring: ScoringConfig
     planner: GreedyConfig
     camera_min_angular_change: float
+    framing_safety: FramingSafetyConfig
 
     def camera_change_is_material(self, angular_distance: float) -> bool:
         """Return whether a camera change should produce a sparse keyframe."""
@@ -50,6 +57,18 @@ class GreedySliceConfig:
                     self.camera_min_angular_change
                 ),
                 "purpose": "sparse_keyframe_threshold",
+                "framing_safety": {
+                    "minimum_horizontal_fov_degrees": math.degrees(
+                        self.framing_safety.minimum_h_fov
+                    ),
+                    "candidate_extent_padding_degrees": math.degrees(
+                        self.framing_safety.candidate_extent_padding
+                    ),
+                    "maximum_zoom_in_change_degrees": math.degrees(
+                        self.framing_safety.max_zoom_in_change
+                    ),
+                    "purpose": "conservative_tunable_poc_guardrails",
+                },
             },
         }
 
@@ -132,12 +151,34 @@ def loads_greedy_config(content: bytes | str) -> GreedySliceConfig:
     )
     if threshold_degrees > 180:
         raise ValueError("min_angular_change_degrees must be at most 180")
+    required_framing = _CAMERA_KEYS - {"min_angular_change_degrees"}
+    missing_framing = required_framing - set(camera)
+    if missing_framing:
+        raise ValueError(
+            f"missing camera field(s): {', '.join(sorted(missing_framing))}"
+        )
+    minimum_fov = _number(
+        camera, "minimum_horizontal_fov_degrees", positive=True
+    )
+    padding = _number(camera, "candidate_extent_padding_degrees")
+    maximum_zoom_in = _number(
+        camera, "maximum_zoom_in_change_degrees", positive=True
+    )
+    if minimum_fov >= 180:
+        raise ValueError("minimum_horizontal_fov_degrees must be less than 180")
+    if maximum_zoom_in >= 180:
+        raise ValueError("maximum_zoom_in_change_degrees must be less than 180")
 
     return GreedySliceConfig(
         SCHEMA_VERSION,
         scoring,
         planner,
         math.radians(threshold_degrees),
+        FramingSafetyConfig(
+            minimum_h_fov=math.radians(minimum_fov),
+            candidate_extent_padding=math.radians(padding),
+            max_zoom_in_change=math.radians(maximum_zoom_in),
+        ),
     )
 
 

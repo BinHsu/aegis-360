@@ -155,6 +155,14 @@ data.
 - Read relevant ADRs and design notes before changing architecture.
 - Supervise delegated work with bounded waits; do not assume a still-running
   subagent or external job will report that it is stuck.
+- Do not end the main turn with a final response while authorized delegated
+  work is still active. Keep the turn alive with bounded waits, process
+  completion notifications immediately, and continue integration without
+  waiting for another user message.
+- A delegated-work status update is commentary, not a stopping point. Send a
+  final response only when the requested outcome is complete or progress
+  genuinely requires a user decision, new authority, or an external-state
+  change.
 - For delegated work that does not incur usage-based charges, inspect its
   status and report meaningful progress to the user at least once every three
   minutes while it remains active.

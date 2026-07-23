@@ -11,7 +11,7 @@ forward direction, or an environmental/context view.
 
 ## Initial explainable evidence
 
-- person/object presence and confidence;
+- person/object presence; detector confidence remains perception evidence;
 - track persistence and visibility;
 - motion or action change, not raw motion magnitude alone;
 - forward-motion prior for first-person travel footage;
@@ -23,6 +23,13 @@ Each signal has a name, raw value, normalization method, weight and provenance
 in the decision trace. Missing evidence is explicit. Motion must not dominate
 quiet but meaningful subjects, and high background flow must not automatically
 become the subject.
+
+Persistence is provenance-gated. Nearest-neighbor continuity of generic
+attention/objectness saliency has zero raw and normalized editorial
+persistence even when its diagnostic age grows. Human rectangles and
+candidates carrying an explicit tracker identity may earn persistence. This
+prevents a cheap geometric association from receiving the same editorial
+advantage as identity-aware tracking, without coupling the rule to a backend.
 
 ## Candidate generation
 

@@ -11,6 +11,7 @@ from aegis360.camera_path import (  # noqa: E402
     greedy_trace_to_keyframes,
     interpolate_path,
 )
+from aegis360.framing import FramingSafetyConfig  # noqa: E402
 
 
 def decision(timestamp, candidate_id, yaw, pitch=0.0, h_fov=90.0):
@@ -82,6 +83,25 @@ class GreedyCameraAdapterTests(unittest.TestCase):
         self.assertEqual(len(samples), 5)
         self.assertTrue(all(179 <= yaw <= 181 for yaw in yaws))
         self.assertTrue(all(a <= b for a, b in zip(yaws, yaws[1:])))
+
+    def test_framing_safety_is_applied_before_sparse_keyframe_selection(self):
+        trace = {"decisions": [
+            decision(0.0, "a", 0, h_fov=130),
+            decision(0.5, "a", 1, h_fov=50),
+            decision(1.0, "b", 20, h_fov=50),
+        ]}
+        safety = FramingSafetyConfig(
+            minimum_h_fov=math.radians(100),
+            candidate_extent_padding=math.radians(5),
+            max_zoom_in_change=math.radians(15),
+        )
+        path = greedy_trace_to_keyframes(
+            trace, duration=1.0, framing_safety=safety
+        )
+        self.assertEqual(
+            [round(math.degrees(frame.h_fov)) for frame in path],
+            [140, 110],
+        )
 
     def test_json_contract_round_trips_to_existing_camera_path(self):
         trace = {"decisions": [decision(8.0, "subject-1", 15)]}

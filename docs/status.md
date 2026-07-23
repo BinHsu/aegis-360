@@ -1,6 +1,6 @@
 # Project status
 
-Status: First auto-directed vertical slice in progress
+Status: First auto-directed 30-second v3 rejected in qualitative review
 
 The product and architecture decisions needed to begin the POC are recorded.
 The agent entry point, documentation index, initial ADR set, design notes,
@@ -137,18 +137,32 @@ three outputs decode; auto/debug duration is about 30.04 seconds with about
 repeated-command pose divergence. This opens qualitative review for framing
 and cut behavior only; v3 does not validate smooth tracking motion.
 
+The project owner's qualitative review rejected v3. Fixed-forward lost the
+bicycle and shook abnormally near the end. Auto-directed also lost the bicycle
+and remained uncomfortable despite somewhat less end shaking; the debug
+output's ending was worse. The selected track is `attention_saliency`, not a
+verified bicycle identity, so the result does not demonstrate identity
+continuity. The selected FOV ranged approximately from 44 to 93 degrees, with
+a median of approximately 76 degrees. The reviewer identified this relatively
+narrow framing as a likely amplifier of viewpoint errors and discomfort. The
+30-second qualitative gate therefore failed, and the unchanged configuration
+must not advance to 60 seconds.
+
 ## Next evidence gate
 
-Complete qualitative review of the cut-based 30-second v3:
+Diagnose and address the failed 30-second qualitative gate before producing a
+new review candidate:
 
-1. Give the project owner the complete fixed, auto and debug paths.
-2. Review whether the two selected views are sensible and whether the single
-   cut is preferable to fixed-forward.
-3. Treat smooth tracking motion as untested; do not infer it from this
-   cut-based result.
-5. Advance the unchanged configuration through the 60/180/300-second duration
-   ladder only for eligible assets. Use the 300-second Skiing rung for
-   sustained performance evidence.
+1. Separate attention-saliency continuity from bicycle identity continuity;
+   do not label the current selected track as subject tracking.
+2. Evaluate a wider framing policy and record its FOV range rather than
+   assuming the current approximately 44--93-degree range is comfortable.
+3. Isolate the cause of the end shaking in fixed, auto and debug outputs.
+4. Restart at a new 30-second configuration series for any framing, tracking,
+   planning or rendering change.
+5. Advance to 60 seconds only after a new 30-second qualitative pass. Treat
+   smooth tracking motion as untested until a renderer and review explicitly
+   establish it.
 
 Old Ghost Road is eligible through 180 seconds, Bellpuig through 180 seconds
 with its explicit projection override, and Skiing through 300 seconds. Bellpuig

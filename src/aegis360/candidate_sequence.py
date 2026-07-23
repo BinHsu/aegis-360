@@ -8,6 +8,7 @@ match input nor an ordering key.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 import math
 from typing import Iterable
 
@@ -39,6 +40,22 @@ class AssociationConfig:
             raise ValueError("forward_h_fov must be between zero and pi")
 
 
+class AssociationProvenance(str, Enum):
+    """Strength of the evidence used to continue a temporal candidate."""
+
+    TRACKER_IDENTITY = "tracker_identity"
+    HUMAN_GEOMETRIC = "human_geometric"
+    GEOMETRIC_ONLY = "geometric_only"
+    SYNTHETIC_CONTEXT = "synthetic_context"
+
+    @property
+    def grants_editorial_persistence(self) -> bool:
+        return self in {
+            AssociationProvenance.TRACKER_IDENTITY,
+            AssociationProvenance.HUMAN_GEOMETRIC,
+        }
+
+
 @dataclass(frozen=True)
 class TemporalCandidate:
     candidate_id: str
@@ -52,6 +69,11 @@ class TemporalCandidate:
     age_frames: int
     missing_frames: int
     source_candidate_id: str | None
+    association_provenance: AssociationProvenance
+
+    @property
+    def editorial_persistence_valid(self) -> bool:
+        return self.association_provenance.grants_editorial_persistence
 
 
 @dataclass(frozen=True)
@@ -71,6 +93,8 @@ class _Track:
     first_frame: int
     last_frame: int
     observed_frames: int
+    association_provenance: AssociationProvenance
+    upstream_track_id: str | None
     missing_frames: int = 0
 
 
@@ -92,7 +116,9 @@ def associate_candidate_sequence(
     """Associate spherical observations and add a forward/context fallback.
 
     Matching is a deterministic global greedy assignment over all valid
-    track/observation pairs.  Tracks survive ``grace_frames`` absent samples.
+    track/observation pairs. Explicit upstream track IDs require exact matches;
+    otherwise association is geometric and does not imply identity. Tracks
+    survive ``grace_frames`` absent samples.
     A context candidate is present on every frame so downstream planning never
     receives an empty choice set.
     """
@@ -113,6 +139,15 @@ def associate_candidate_sequence(
         pairs: list[tuple[float, str, tuple, int]] = []
         for index, observation in enumerate(observations):
             for track_id, track in active.items():
+                if observation.track_id is not None:
+                    if (
+                        track.upstream_track_id == observation.track_id
+                        and track.candidate_type == observation.candidate_type
+                    ):
+                        pairs.append((0.0, track_id, _observation_key(observation), index))
+                    continue
+                if track.upstream_track_id is not None:
+                    continue
                 if track.candidate_type != observation.candidate_type:
                     continue
                 distance = spherical_distance(
@@ -153,6 +188,14 @@ def associate_candidate_sequence(
                     frame_index,
                     frame_index,
                     1,
+                    (
+                        AssociationProvenance.TRACKER_IDENTITY
+                        if observation.track_id is not None
+                        else AssociationProvenance.HUMAN_GEOMETRIC
+                        if observation.candidate_type == "human"
+                        else AssociationProvenance.GEOMETRIC_ONLY
+                    ),
+                    observation.track_id,
                 )
             else:
                 track = active[track_id]
@@ -176,6 +219,7 @@ def associate_candidate_sequence(
                     age_frames=frame_index - track.first_frame + 1,
                     missing_frames=0,
                     source_candidate_id=observation.candidate_id,
+                    association_provenance=track.association_provenance,
                 )
             )
 
@@ -195,6 +239,7 @@ def associate_candidate_sequence(
                         age_frames=frame_index - track.first_frame + 1,
                         missing_frames=track.missing_frames,
                         source_candidate_id=None,
+                        association_provenance=track.association_provenance,
                     )
                 )
 
@@ -211,6 +256,7 @@ def associate_candidate_sequence(
                 age_frames=sequence_index + 1,
                 missing_frames=0,
                 source_candidate_id=None,
+                association_provenance=AssociationProvenance.SYNTHETIC_CONTEXT,
             )
         )
         frame_candidates.sort(key=lambda item: item.candidate_id)

@@ -26,6 +26,16 @@ optional comparison only if the first two fail acceptance criteria.
 
 ## Identity rules
 
+- A temporal ID is not automatically an identity. Every association records
+  whether it came from explicit tracker identity, a human rectangle associated
+  geometrically, generic geometry only, or synthetic context.
+- Nearest-neighbor association of attention/objectness saliency is useful for
+  continuity and deduplication, but cannot earn editorial persistence. Human
+  rectangles may earn it as the bounded POC exception; any other candidate
+  requires an explicit upstream tracker ID.
+- Explicit tracker IDs are continued by exact ID, never silently reassigned by
+  nearest geometry. This policy is expressed in the core schema and is
+  independent of detector/tracker vendor or backend.
 - Track positions are stored as unit directions plus optional spherical
   extents, never solely as planar ERP boxes.
 - Duplicate observations in overlapping viewports are merged by spherical
@@ -88,6 +98,12 @@ The viewport-exit state is only a request boundary for a future handoff
 adapter. It does not search another viewport, associate identities, or prove
 ERP-seam continuity. Whether a box is outside the viewport is likewise an
 upstream geometry decision, not inferred by this core policy.
+
+`candidate_sequence.AssociationProvenance` is the executable validity policy.
+`observed_frames` remains a diagnostic continuity count for every association,
+but `interest.candidate_interest` converts it to nonzero persistence only when
+`editorial_persistence_valid` is true. Detector confidence is not consulted by
+association validity, identity continuation, or editorial interest.
 
 ## Acceptance criteria
 

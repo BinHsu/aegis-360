@@ -110,11 +110,13 @@ def run_slice(
     ):
         raise ValueError("start_seconds must be nonnegative and duration_seconds positive")
     camera_threshold = math.radians(5.0)
+    framing_safety = None
     persisted_slice_config = None
     if slice_config is not None:
         greedy = slice_config.planner
         weights = dict(slice_config.scoring.weights)
         camera_threshold = slice_config.camera_min_angular_change
+        framing_safety = slice_config.framing_safety
         persisted_slice_config = slice_config.trace_config()
     weights = weights or {
         "presence": 0.40,
@@ -175,7 +177,10 @@ def run_slice(
         }
     )
     camera_path = greedy_trace_to_camera_path(
-        trace, duration_seconds, direction_threshold=camera_threshold
+        trace,
+        duration_seconds,
+        direction_threshold=camera_threshold,
+        framing_safety=framing_safety,
     )
     config = {
         "schema_version": "aegis360.slice-config.v1",
@@ -216,6 +221,10 @@ def run_slice(
                 "start_seconds": start_seconds,
                 "duration_seconds": duration_seconds,
                 "render_mode": render_mode,
+                "framing_safety": (
+                    persisted_slice_config["camera"]["framing_safety"]
+                    if persisted_slice_config is not None else None
+                ),
                 "artifacts": artifacts,
             }
             with tempfile.NamedTemporaryFile(

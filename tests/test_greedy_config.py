@@ -32,6 +32,15 @@ class GreedyConfigTests(unittest.TestCase):
         )
         self.assertEqual(config.planner.minimum_dwell_seconds, 2.0)
         self.assertAlmostEqual(math.degrees(config.camera_min_angular_change), 2.0)
+        self.assertAlmostEqual(
+            math.degrees(config.framing_safety.minimum_h_fov), 110.0
+        )
+        self.assertAlmostEqual(
+            math.degrees(config.framing_safety.candidate_extent_padding), 10.0
+        )
+        self.assertAlmostEqual(
+            math.degrees(config.framing_safety.max_zoom_in_change), 15.0
+        )
 
     def test_camera_threshold_has_inclusive_sparse_keyframe_semantics(self):
         config = load_greedy_config(CONFIG_PATH)
@@ -78,6 +87,13 @@ class GreedyConfigTests(unittest.TestCase):
             loads_greedy_config(
                 CONFIG_PATH.read_text().replace(
                     "switch_margin = 0.10", "switch_margin = -0.1"
+                )
+            )
+        with self.assertRaisesRegex(ValueError, "less than 180"):
+            loads_greedy_config(
+                CONFIG_PATH.read_text().replace(
+                    "minimum_horizontal_fov_degrees = 110.0",
+                    "minimum_horizontal_fov_degrees = 180",
                 )
             )
 

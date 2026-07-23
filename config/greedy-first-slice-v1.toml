@@ -17,3 +17,11 @@ challenger_hold_seconds = 0.5
 # POC threshold for omitting near-identical sparse camera keyframes. This is
 # not a perceptual-comfort threshold or a maximum camera speed.
 min_angular_change_degrees = 2.0
+
+# Conservative first-POC framing guardrails. They are tunable engineering
+# defaults, not measured or claimed perceptual-comfort optima. Candidate
+# extent padding is per horizontal side. 110 degrees keeps more surrounding
+# context than the earlier 90-degree proxy while subject tracking matures.
+minimum_horizontal_fov_degrees = 110.0
+candidate_extent_padding_degrees = 10.0
+maximum_zoom_in_change_degrees = 15.0

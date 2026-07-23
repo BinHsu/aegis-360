@@ -1,7 +1,8 @@
 # First auto-directed slice protocol
 
 Status: Real-media 30-second v1/v2 negative evidence and mechanically valid
-cut-based v3 recorded; v3 is ready for qualitative framing/cut review.
+cut-based v3 recorded; the project owner's qualitative review rejected v3, so
+the unchanged series must not advance to 60 seconds.
 
 ## Question
 
@@ -185,5 +186,21 @@ and audio. Sampled frames no longer exhibit the v2 repeated-command pose
 divergence, so v3 is suitable for qualitative framing and cut review.
 
 This is not smooth tracking evidence: the renderer deliberately holds one
-representative pose per shot. Do not advance to 60 seconds until the project
-owner reviews v3 against fixed-forward.
+representative pose per shot.
+
+The project owner's qualitative review rejected v3. Fixed-forward lost the
+bicycle and showed abnormal shaking near the end. Auto-directed also lost the
+bicycle; its end shaking was somewhat better than fixed-forward but remained
+uncomfortable, while the debug output's ending was worse. The reviewer also
+identified the narrow framing as a likely major contributor: the selected FOV
+ranged approximately from 44 to 93 degrees, with a median of approximately 76
+degrees, so viewpoint errors and static holds may feel more severe than they
+would in a wider view.
+
+The selected track represents `attention_saliency`, not a verified bicycle
+identity. Therefore this result must not be described as identity tracking or
+as evidence that the director can retain the bicycle. The 30-second
+qualitative gate failed, and this configuration series must not advance to the
+60-second rung. Wider framing, subject/identity continuity, and the source of
+the end shaking require separate diagnosis before another 30-second review
+candidate is accepted.

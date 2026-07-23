@@ -5,7 +5,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from aegis360.candidate_sequence import AssociationConfig, associate_candidate_sequence
+from aegis360.candidate_sequence import (
+    AssociationConfig, AssociationProvenance, associate_candidate_sequence,
+)
 from aegis360.interest import INTEREST_SIGNAL_NAMES, InterestConfig, evaluate_interest
 from aegis360.perception import (
     AdapterProvenance, FrameSample, PerceptionResult, SignalEvidence,
@@ -16,9 +18,9 @@ from aegis360.perception import (
 ADAPTER = AdapterProvenance("fixture", "1", "none", "spherical")
 
 
-def item(identifier, yaw, confidence=0.5):
+def item(identifier, yaw, confidence=0.5, kind="subject", track_id=None):
     return SphericalCandidateEvidence(
-        identifier, None, math.radians(yaw), 0.0, math.radians(60), "subject",
+        identifier, track_id, math.radians(yaw), 0.0, math.radians(60), kind,
         (SignalEvidence("detector_confidence", confidence, confidence, "fixture"),),
         ("fixture",),
     )
@@ -92,7 +94,8 @@ class CandidateSequenceTests(unittest.TestCase):
 
     def test_presence_persistence_composition_and_forward_prior(self):
         sequence = associate_candidate_sequence((
-            frame(0, (item("a", 0),)), frame(1, (item("a2", 0),)),
+            frame(0, (item("a", 0, kind="human"),)),
+            frame(1, (item("a2", 0, kind="human"),)),
         ))
         scored = evaluate_interest(sequence, InterestConfig(persistence_frames=2))
         subject = next(c for c in scored[1].candidates if c.candidate.track_id)
@@ -116,6 +119,69 @@ class CandidateSequenceTests(unittest.TestCase):
             self.assertEqual(values["persistence"], 0.0)
             self.assertEqual(values["composition"], 1.0)
             self.assertEqual(values["forward_prior"], 1.0)
+
+    def test_saliency_nearest_neighbor_does_not_gain_editorial_persistence(self):
+        for kind in ("attention_saliency", "objectness_saliency"):
+            with self.subTest(kind=kind):
+                sequence = associate_candidate_sequence((
+                    frame(0, (item("a", 0, kind=kind),)),
+                    frame(1, (item("b", 1, kind=kind),)),
+                ))
+                candidate = next(c for c in sequence[1].candidates if c.track_id)
+                self.assertEqual(candidate.observed_frames, 2)
+                self.assertEqual(
+                    candidate.association_provenance,
+                    AssociationProvenance.GEOMETRIC_ONLY,
+                )
+                signals = {
+                    signal.name: signal
+                    for signal in next(
+                        item
+                        for item in evaluate_interest(sequence)[1].candidates
+                        if item.candidate.track_id
+                    ).signals
+                }
+                self.assertEqual(signals["persistence"].raw, 0.0)
+                self.assertEqual(signals["persistence"].normalized, 0.0)
+
+    def test_explicit_tracker_identity_grants_persistence_without_confidence(self):
+        sequence = associate_candidate_sequence((
+            frame(0, (item("a", 0, 0.01, "objectness_saliency", "subject-7"),)),
+            frame(1, (item("b", 80, 0.99, "objectness_saliency", "subject-7"),)),
+        ))
+        candidate = next(c for c in sequence[1].candidates if c.track_id)
+        self.assertEqual(candidate.observed_frames, 2)
+        self.assertEqual(
+            candidate.association_provenance,
+            AssociationProvenance.TRACKER_IDENTITY,
+        )
+        signals = {
+            signal.name: signal
+            for signal in next(
+                item
+                for item in evaluate_interest(
+                    sequence, InterestConfig(persistence_frames=2)
+                )[1].candidates
+                if item.candidate.track_id
+            ).signals
+        }
+        self.assertEqual(signals["persistence"].normalized, 1.0)
+
+    def test_explicit_tracker_ids_are_not_nearest_neighbor_swapped(self):
+        sequence = associate_candidate_sequence((
+            frame(0, (
+                item("left", -10, track_id="left"),
+                item("right", 10, track_id="right"),
+            )),
+            frame(1, (
+                item("left-crossed", 10, track_id="left"),
+                item("right-crossed", -10, track_id="right"),
+            )),
+        ))
+        first = {c.source_candidate_id: c.track_id for c in sequence[0].candidates}
+        second = {c.source_candidate_id: c.track_id for c in sequence[1].candidates}
+        self.assertEqual(first["left"], second["left-crossed"])
+        self.assertEqual(first["right"], second["right-crossed"])
 
 
 if __name__ == "__main__":
