@@ -243,6 +243,15 @@ not be shown as a stabilization candidate. Flat homographic post-warp is no
 longer the primary stabilization path; evaluate it only later as a bounded
 residual correction after spherical source-motion stabilization.
 
+A dependency-free robust `SO(3)` fit, viewport-pixel-to-world-ray adapter and
+privacy-safe multiview source-motion assembler now pass synthetic
+yaw/pitch/roll, outlier, invalid-gap and CLI tests. The assembler accumulates
+pairwise rotations into `aegis360.source-motion.v1` without source paths or
+pixels. This does not yet validate a visual estimator: Vision's native
+homography direction and image-axis convention must be calibrated into the
+adapter's explicit source-to-target pixel convention before real ERP evidence
+is assembled.
+
 ## Next evidence gate
 
 Diagnose and address the failed 30-second qualitative gate before producing a
@@ -252,6 +261,9 @@ new review candidate:
    yaw/pitch/roll fixtures, including high-frequency shake plus a slow
    intentional turn. Fit and smooth one `SO(3)` path, preserve the intentional
    turn, and validate quaternion order before another benchmark render.
+   The oracle path and pure rotation fitter pass; the next gate is a rendered
+   viewport fixture that calibrates Vision homography direction/sign into
+   spherical ray matches.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and
