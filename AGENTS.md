@@ -153,6 +153,17 @@ data.
 ## Agent workflow
 
 - Read relevant ADRs and design notes before changing architecture.
+- Supervise delegated work with bounded waits; do not assume a still-running
+  subagent or external job will report that it is stuck.
+- For delegated work that does not incur usage-based charges, inspect its
+  status and report meaningful progress to the user at least once every three
+  minutes while it remains active.
+- For delegated work that can continue generating usage-based charges, such
+  as AWS services, inspect its status and report meaningful progress at least
+  once every minute. If it is stalled or no longer useful, stop the chargeable
+  work promptly or escalate the decision to the user.
+- A progress report must say whether the work is advancing, waiting, blocked,
+  or being recovered; a timer-only “still running” message is insufficient.
 - Accepted decisions belong in `docs/adr/`; unsettled exploration belongs in
   `docs/design/`. Do not promote an assumption to an ADR without evidence.
 - Add or update tests with behavioral changes.
