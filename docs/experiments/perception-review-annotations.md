@@ -4,8 +4,8 @@ Status: Schema implemented; no benchmark annotations completed
 
 ## Purpose
 
-Schema v1 records a minimal manual review of fixed-timestamp, four-viewport
-Vision evidence. It separates what an ordinary first-time viewer might find
+Schema v2 records a minimal review of fixed-timestamp, four-viewport Vision
+evidence. It separates what an ordinary first-time viewer might find
 interesting from whether the perception backend emitted a useful candidate.
 Detector confidence is backend evidence; it is neither an annotation field
 nor ground truth.
@@ -17,8 +17,14 @@ the template, then validate the copy:
 python3 scripts/validate_review_annotations.py REVIEW.json
 ```
 
-The blank template is deliberately invalid until a privacy-safe reviewer ID,
+The blank template defaults to `reviewerKind: human` and is deliberately
+invalid until a privacy-safe reviewer ID,
 review date, and source ID are supplied. No annotation or result is implied.
+
+Schema v1 is intentionally rejected. It did not record reviewer provenance,
+so accepting it would require guessing whether its judgments came from a
+human. Existing drafts must be migrated explicitly rather than silently
+treated as human annotations.
 
 ## Frame review
 
@@ -37,7 +43,16 @@ Use pseudonymous reviewer IDs and privacy-safe source/candidate IDs. The
 schema has no absolute-path, person-name, face-identity, free-text subject
 description, image, audio, or biometric field.
 
-Schema v1 requires `interRaterStatus: not_performed` and the limitation
+`reviewerKind` is a closed enum:
+
+- `human` means the judgments were made by a human reviewer.
+- `model_assisted` means the artifact is only a machine-assisted draft. It
+  must include the exact limitation `model-assisted draft; not human ground
+  truth and not valid for human recall conclusions`. Validation does not
+  promote such a draft to a human annotation, and its values must not enter
+  human recall, precision, preference, or agreement conclusions.
+
+Schema v2 requires `interRaterStatus: not_performed` and the limitation
 `inter-rater agreement has not been measured`. A second-reviewer protocol,
 agreement statistic, adjudication process, sampling acceptance threshold, and
 completed benchmark annotations do not yet exist.

@@ -54,6 +54,13 @@ provides five contact sheets, 20 annotated viewports and an index whose human
 recall fields remain explicitly unset. No tracking, reviewed recall,
 projection comparison or backend decision exists.
 
+The review annotation schema now records reviewer provenance explicitly.
+Human review and `model_assisted` drafts are distinct; the latter require an
+explicit non-ground-truth limitation and cannot support human recall
+conclusions. Schema v1 is rejected rather than silently assumed human, and
+inter-rater agreement remains `not_performed`. No completed annotation was
+added by this schema change.
+
 ## Next evidence gate
 
 Build the smallest executable vertical slice that can disprove geometry or

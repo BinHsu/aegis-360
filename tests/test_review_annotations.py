@@ -11,10 +11,11 @@ from aegis360.review_annotations import validate_review_annotation  # noqa: E402
 
 def valid_document():
     return {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "review": {
             "reviewerId": "reviewer-01", "reviewedDate": "2026-07-23",
-            "protocolVersion": "perception-review-v1",
+            "reviewerKind": "human",
+            "protocolVersion": "perception-review-v2",
             "interRaterStatus": "not_performed",
         },
         "evidence": {
@@ -48,6 +49,32 @@ def valid_document():
 class ReviewAnnotationTests(unittest.TestCase):
     def test_valid_minimal_review(self):
         validate_review_annotation(json.dumps(valid_document()))
+
+    def test_rejects_v1_instead_of_guessing_reviewer_provenance(self):
+        document = valid_document()
+        document["schemaVersion"] = 1
+        document["review"].pop("reviewerKind")
+        with self.assertRaisesRegex(ValueError, "schemaVersion"):
+            validate_review_annotation(document)
+
+    def test_reviewer_kind_is_closed_enum(self):
+        document = valid_document()
+        document["review"]["reviewerKind"] = "codex"
+        with self.assertRaisesRegex(ValueError, "reviewerKind"):
+            validate_review_annotation(document)
+        document["review"]["reviewerKind"] = ["human"]
+        with self.assertRaisesRegex(ValueError, "reviewerKind"):
+            validate_review_annotation(document)
+
+    def test_model_assisted_draft_requires_ground_truth_limitation(self):
+        document = valid_document()
+        document["review"]["reviewerKind"] = "model_assisted"
+        with self.assertRaisesRegex(ValueError, "human ground truth"):
+            validate_review_annotation(document)
+        document["limitations"].append(
+            "model-assisted draft; not human ground truth and not valid for human recall conclusions"
+        )
+        validate_review_annotation(document)
 
     def test_confidence_is_not_an_annotation_field(self):
         document = valid_document()

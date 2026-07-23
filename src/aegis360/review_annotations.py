@@ -1,4 +1,4 @@
-"""Validation for privacy-safe manual perception review annotations."""
+"""Validation for privacy-safe perception review annotations."""
 
 from __future__ import annotations
 
@@ -16,6 +16,10 @@ EVENT_LABELS = {
 }
 CANDIDATE_VERDICTS = {"hit", "false_positive", "uncertain"}
 REGION_KINDS = {"human", "object", "action", "interaction", "context", "other"}
+REVIEWER_KINDS = {"human", "model_assisted"}
+MODEL_ASSISTED_LIMITATION = (
+    "model-assisted draft; not human ground truth and not valid for human recall conclusions"
+)
 
 
 def _mapping(value: Any, path: str) -> Mapping[str, Any]:
@@ -62,24 +66,36 @@ def _unique_ids(rows: list[Any], path: str) -> list[Mapping[str, Any]]:
 
 
 def validate_review_annotation(document: str | bytes | Mapping[str, Any]) -> None:
-    """Validate schema v1; model confidence is intentionally not accepted."""
+    """Validate schema v2; model confidence is intentionally not accepted."""
 
     root = json.loads(document) if isinstance(document, (str, bytes)) else document
     root = _mapping(root, "root")
     _keys(root, {"schemaVersion", "review", "evidence", "frames", "limitations"}, "root")
-    if root["schemaVersion"] != 1:
+    if root["schemaVersion"] != 2:
         raise ValueError("unsupported annotation schemaVersion")
 
     review = _mapping(root["review"], "review")
-    _keys(review, {"reviewerId", "reviewedDate", "protocolVersion", "interRaterStatus"}, "review")
+    _keys(
+        review,
+        {
+            "reviewerId", "reviewerKind", "reviewedDate",
+            "protocolVersion", "interRaterStatus",
+        },
+        "review",
+    )
     _safe_id(review["reviewerId"], "review.reviewerId")
+    if (
+        not isinstance(review["reviewerKind"], str)
+        or review["reviewerKind"] not in REVIEWER_KINDS
+    ):
+        raise ValueError("review.reviewerKind must be human or model_assisted")
     _safe_id(review["protocolVersion"], "review.protocolVersion")
     try:
         date.fromisoformat(review["reviewedDate"])
     except (TypeError, ValueError):
         raise ValueError("review.reviewedDate must be an ISO YYYY-MM-DD date") from None
     if review["interRaterStatus"] != "not_performed":
-        raise ValueError("schema v1 requires interRaterStatus=not_performed")
+        raise ValueError("schema v2 requires interRaterStatus=not_performed")
 
     evidence = _mapping(root["evidence"], "evidence")
     _keys(evidence, {"sourceId", "evidenceSchemaVersion", "projectionStrategy", "viewportIds"}, "evidence")
@@ -161,3 +177,11 @@ def validate_review_annotation(document: str | bytes | Mapping[str, Any]) -> Non
         raise ValueError(f"limitations must include: {required}")
     if any(not isinstance(item, str) or not item for item in limitations):
         raise ValueError("limitations must contain non-empty strings")
+    if (
+        review["reviewerKind"] == "model_assisted"
+        and MODEL_ASSISTED_LIMITATION not in limitations
+    ):
+        raise ValueError(
+            "model_assisted reviews must state that the draft is not human "
+            "ground truth and cannot support human recall conclusions"
+        )

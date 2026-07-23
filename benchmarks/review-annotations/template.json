@@ -1,9 +1,10 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "review": {
     "reviewerId": "",
+    "reviewerKind": "human",
     "reviewedDate": "",
-    "protocolVersion": "perception-review-v1",
+    "protocolVersion": "perception-review-v2",
     "interRaterStatus": "not_performed"
   },
   "evidence": {
