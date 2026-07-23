@@ -59,6 +59,10 @@ def finite_number(value: object) -> bool:
     )
 
 
+def positive_integer(value: object) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value > 0
+
+
 def framing_safety_from_request(
     request: dict[str, object],
 ) -> FramingSafetyConfig | None:
@@ -167,6 +171,8 @@ def render_static_shots(
     start: float,
     duration: float,
     framing_safety: FramingSafetyConfig | None = None,
+    output_width: int = 640,
+    output_height: int = 360,
 ) -> None:
     """Render hard-cut shots with one static v360 pose per selected-ID run."""
 
@@ -186,7 +192,7 @@ def render_static_shots(
         filters.extend(
             [
                 f"[{index}:v:0]setpts=PTS-STARTPTS,"
-                "v360=input=equirect:output=flat:w=640:h=360:"
+                f"v360=input=equirect:output=flat:w={output_width}:h={output_height}:"
                 f"yaw={math.degrees(shot.yaw):.9f}:"
                 f"pitch={math.degrees(shot.pitch):.9f}:"
                 f"h_fov={math.degrees(shot.h_fov):.9f}:interp=linear[v{index}]",
@@ -227,11 +233,17 @@ def main() -> None:
     if render_mode not in RENDER_MODES:
         fail("render_mode must be dynamic or shot_static_v360", 2)
     start, duration = request["start_seconds"], request["duration_seconds"]
+    output_width = request.get("output_width", 640)
+    output_height = request.get("output_height", 360)
     if (
         not finite_number(start) or start < 0
         or not finite_number(duration) or duration <= 0
     ):
         fail("start_seconds and duration_seconds are invalid", 2)
+    if not positive_integer(output_width) or not positive_integer(output_height):
+        fail("output_width and output_height must be positive integers", 2)
+    if render_mode == "dynamic" and (output_width, output_height) != (640, 360):
+        fail("custom output dimensions currently require shot_static_v360", 2)
 
     source = Path(request["source_media"]) if isinstance(request["source_media"], str) else Path()
     camera_file = Path(request["camera_path"]) if isinstance(request["camera_path"], str) else Path()
@@ -280,14 +292,14 @@ def main() -> None:
                         math.degrees(framing_safety.minimum_h_fov)
                         if framing_safety is not None else 90
                     ),
-                    "640", "360",
+                    str(output_width), str(output_height),
                 ],
                 check=True,
             )
             if render_mode == "shot_static_v360":
                 render_static_shots(
                     source, outputs["auto"], trace, float(start), float(duration),
-                    framing_safety,
+                    framing_safety, output_width, output_height,
                 )
             else:
                 subprocess.run(

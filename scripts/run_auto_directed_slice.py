@@ -34,6 +34,8 @@ def main() -> None:
         choices=("dynamic", "shot_static_v360"),
         default="dynamic",
     )
+    parser.add_argument("--output-width", type=int, default=640)
+    parser.add_argument("--output-height", type=int, default=360)
     args = parser.parse_args()
     try:
         run_slice(
@@ -48,6 +50,8 @@ def main() -> None:
             render_adapter=args.render_adapter,
             source_media=args.source_media,
             render_mode=args.render_mode,
+            output_width=args.output_width,
+            output_height=args.output_height,
         )
     except (OSError, ValueError, RuntimeError) as error:
         parser.error(str(error))

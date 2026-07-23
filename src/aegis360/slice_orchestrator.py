@@ -88,6 +88,8 @@ def run_slice(
     render_adapter: Path | None = None,
     source_media: Path | None = None,
     render_mode: str = "dynamic",
+    output_width: int = 640,
+    output_height: int = 360,
 ) -> None:
     """Create a complete bundle atomically and never overwrite a prior run.
 
@@ -102,6 +104,8 @@ def run_slice(
         raise ValueError("source_id must be a privacy-safe job token")
     if render_mode not in {"dynamic", "shot_static_v360"}:
         raise ValueError("unsupported render_mode")
+    if output_width <= 0 or output_height <= 0:
+        raise ValueError("output dimensions must be positive")
     if (
         not math.isfinite(start_seconds)
         or start_seconds < 0
@@ -221,6 +225,8 @@ def run_slice(
                 "start_seconds": start_seconds,
                 "duration_seconds": duration_seconds,
                 "render_mode": render_mode,
+                "output_width": output_width,
+                "output_height": output_height,
                 "framing_safety": (
                     persisted_slice_config["camera"]["framing_safety"]
                     if persisted_slice_config is not None else None
