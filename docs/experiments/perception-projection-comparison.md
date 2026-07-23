@@ -39,3 +39,12 @@ fragmentation before running; do not select solely by detector benchmark score.
 Commit, model/weight checksum/license, device placement, proxy dimensions/FPS,
 hardware/OS, annotations, results, artifacts, limitations and conclusion: TBD.
 No result has been observed.
+
+## Implemented measurement support
+
+Dependency-free spherical duplicate clustering and Apple Vision gate v1
+ingestion are executable and covered by synthetic tests. They establish
+seam-aware, kind-preserving, deterministic clustering behavior and full
+duplicate provenance retention only. They do not establish useful thresholds,
+candidate recall, detector quality, or selection of a projection strategy;
+those remain measurements for the reviewed benchmark excerpts.

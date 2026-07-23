@@ -52,6 +52,21 @@ Editorial weights are deliberately absent from adapter outputs. An explicit
 perception result. The current tests use only a synthetic no-model adapter and
 do not establish real detector or tracker quality.
 
+`src/aegis360/spherical_dedup.py` provides dependency-free Apple Vision gate
+v1 ingestion and cross-viewport duplicate clustering. Rows for the same
+source, frame and timestamp are combined first. Candidates merge only when
+their kinds match and their great-circle center distance is within both a
+configured absolute limit and an extent-derived limit. Boundary comparison
+is inclusive and IDs provide deterministic ordering. Every original
+candidate remains in the returned cluster; merged evidence retains all
+duplicate-source and observation provenance.
+
+The merge rule has no confidence threshold or confidence ordering. Detector
+confidence remains named perception evidence, not editorial interest. Merged
+geometry uses an equal-weight spherical mean and maximum member horizontal
+extent. Merged signals are intentionally empty because combining backend
+scores is a separate calibration question.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,

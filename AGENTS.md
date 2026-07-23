@@ -190,6 +190,7 @@ These commands have been verified on the reference machine:
 - Timestamped FFmpeg `v360` control test: `tests/test_ffmpeg_v360_dynamic.sh`
 - Fixed-forward baseline test: `tests/test_fixed_forward_baseline.sh`
 - Apple Vision synthetic gate: `tests/test_vision_frame_gate.sh`
+- Apple Vision batch orchestration test: `tests/test_vision_batch_gate.sh`
 - Shell syntax check: `sh -n scripts/*.sh tests/*.sh`
 
 Current layout:

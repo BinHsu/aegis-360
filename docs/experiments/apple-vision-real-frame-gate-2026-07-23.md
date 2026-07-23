@@ -80,6 +80,54 @@ objectness returned three, and human rectangles returned zero. The adjacent-
 timestamp difference is further evidence that one smoke frame cannot establish
 recall, stability, or useful editorial semantics.
 
+## Fixed multi-timestamp batch
+
+A versioned timestamp list at
+`benchmarks/vision-gate-timestamps/old_ghost_road_360.txt` selects 15, 60,
+105, 150 and 210 seconds. The samples are spread across the source to avoid
+measuring only adjacent frames. They were selected before running the batch
+as bootstrap coverage points, not as event ground truth or reviewed labels.
+
+The stable batch runner is:
+
+```sh
+scripts/run_vision_batch_gate.sh \
+  "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
+  "$AEGIS_DATA_DIR/outputs/vision-batch-gate/old-ghost-road-fixed-v1" \
+  old_ghost_road_360 \
+  benchmarks/vision-gate-timestamps/old_ghost_road_360.txt
+```
+
+It invokes the single-frame runner once per timestamp, refuses an existing
+batch output directory, and writes a privacy-safe aggregate JSON alongside
+the per-sample evidence under the external data root. The aggregate contains
+source ID and numeric observations but no media path, extracted image, face,
+audio, or identity data.
+
+Observed across the five samples and twenty viewport results:
+
+| Signal | Unreviewed candidate count |
+| --- | ---: |
+| attention saliency | 20 |
+| objectness saliency | 12 |
+| human rectangles | 5 |
+
+All requests completed without a recorded error. Vision request execution
+totaled 1.73 seconds across the five separate processes; the slowest sample
+was 0.39 seconds and maximum observed RSS was 50,544,640 bytes. These figures
+exclude FFmpeg viewport extraction and Swift compilation, are not sustained
+throughput measurements, and should not be extrapolated to a full video.
+Candidate counts have not been checked against frame content and therefore do
+not establish recall, precision, duplicate rate, tracking quality or
+editorial usefulness.
+
+The batch control path has a synthetic mock test that requires no benchmark
+media or Vision execution:
+
+```sh
+tests/test_vision_batch_gate.sh
+```
+
 ## What this unlocks
 
 The native Vision path is executable on a real benchmark frame and can serve

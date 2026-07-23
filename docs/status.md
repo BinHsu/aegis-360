@@ -46,9 +46,11 @@ while keeping editorial scoring outside the adapter. A native Swift/Apple
 Vision bootstrap gate has now run attention/objectness saliency and human-
 rectangle requests on four rectilinear views from one Old Ghost Road frame.
 All requests executed; only attention saliency returned candidates at that
-timestamp. The one-run runtime/RSS evidence is recorded in the experiment
-log. No tracking, reviewed recall, projection comparison or backend decision
-exists.
+timestamp. A fixed five-timestamp, scene-distributed batch subsequently ran
+without request errors and recorded privacy-safe candidate counts and
+runtime/RSS evidence. The timestamps are not event ground truth, and the
+candidates have not been manually reviewed. No tracking, reviewed recall,
+projection comparison or backend decision exists.
 
 ## Next evidence gate
 

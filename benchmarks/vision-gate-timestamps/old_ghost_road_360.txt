@@ -1,0 +1,7 @@
+# Fixed, scene-distributed samples for bootstrap evidence only.
+# These timestamps are not event ground truth or reviewed recall labels.
+15
+60
+105
+150
+210
