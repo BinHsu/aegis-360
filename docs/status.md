@@ -1,6 +1,6 @@
 # Project status
 
-Status: First executable evidence slice in progress
+Status: First auto-directed vertical slice in progress
 
 The product and architecture decisions needed to begin the POC are recorded.
 The agent entry point, documentation index, initial ADR set, design notes,
@@ -51,8 +51,8 @@ without request errors and recorded privacy-safe candidate counts and
 runtime/RSS evidence. The timestamps are not event ground truth, and the
 candidates have not been manually reviewed. A local-only review pack now
 provides five contact sheets, 20 annotated viewports and an index whose human
-recall fields remain explicitly unset. No tracking, reviewed recall,
-projection comparison or backend decision exists.
+recall fields remain explicitly unset. Reviewed recall, projection comparison
+and a backend decision do not yet exist.
 
 The project owner has accepted the displayed candidate-box localization as
 sufficient for continued POC work. This is a qualitative box-placement gate,
@@ -93,19 +93,48 @@ conclusions. Schema v1 is rejected rather than silently assumed human, and
 inter-rater agreement remains `not_performed`. No completed annotation was
 added by this schema change.
 
+The first bounded auto-directed slice is now wired and synthetic-tested from
+Vision sequence JSON through spherical deduplication, deterministic temporal
+association, explainable interest signals, greedy planning with hysteresis,
+and a sparse camera-path document. Temporal association is geometry/type based,
+retains candidates for a bounded missing-frame grace period, and always adds a
+forward/context fallback; it is not evidence of identity accuracy or seam
+handoff. The current interest model exposes only presence, persistence,
+composition and forward prior. It deliberately excludes detector confidence
+and does not yet model motion change, novelty, event importance or audio.
+
+The greedy weights, dwell/switch settings and material camera-change threshold
+now have a versioned, fail-closed configuration contract. A bounded
+orchestrator can atomically persist a privacy-safe trace, resolved config,
+camera path and artifact manifest, and can invoke an explicit render-adapter
+boundary for fixed-forward, auto-directed and debug-overlay outputs. Tests use
+a fake adapter to prove orchestration and artifact contracts. A real FFmpeg
+adapter now produces three decodable, synchronized artifacts from a two-second
+synthetic ERP A/V fixture. That synthetic render does not prove real-media
+projection, camera behavior or quality. No real 30-second rung has run, and no
+viewpoint, motion, editing or viewing quality has been accepted.
+
 ## Next evidence gate
 
-Build the smallest executable vertical slice that can disprove geometry or
-rendering assumptions before adding perception models:
+Run the smallest real-media vertical slice that can disprove sequence,
+directing or rendering assumptions:
 
-1. Use the measured multi-segment derivative discontinuities to decide whether
-   the first planner needs a coupled spline, while avoiding an unevidenced
-   comfort threshold.
-2. Resolve or explicitly normalize Bellpuig's non-2:1 projection ambiguity.
-3. Complete human review of the fixed timestamps and compare annotated
-   duplicate groups with the now-executable spherical deduplicator before
-   comparing projection/backend options.
+1. Use the synthetic-tested FFmpeg render adapter and one immutable
+   configuration to create fixed-forward, auto-directed and debug-overlay
+   outputs from the same nested real-media 30-second prefix.
+2. Validate the artifact bundle, A/V timing, camera-path application and debug
+   overlay mechanically before requesting qualitative review.
+3. If the 30-second slice is mechanically valid, ask the project owner to
+   review framing, obvious camera motion and switch behavior; do not infer
+   comfort or quality from synthetic orchestration tests.
+4. Advance the unchanged configuration through the 60/180/300-second duration
+   ladder only for eligible assets. Use the 300-second Skiing rung for
+   sustained performance evidence.
 
-After that gate, feed those observations to the greedy baseline and compare its
-decision trace with fixed-forward. Do not report performance or quality until
-the corresponding executable path and artifacts exist.
+Old Ghost Road is eligible through 180 seconds, Bellpuig through 180 seconds
+with its explicit projection override, and Skiing through 300 seconds. Bellpuig
+remains a stress test rather than spherical geometry ground truth. Human
+candidate review, projection/backend comparison, global planning and a
+comfort-threshold decision remain separate follow-ups. Do not report
+performance or quality until the corresponding executable path, artifacts and
+experiment record exist.

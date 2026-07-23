@@ -214,6 +214,15 @@ These commands have been verified on the reference machine:
   `tests/test_vision_spherical_dedup_report.sh`
 - Real/local Vision spherical-dedup report:
   `scripts/run_vision_spherical_dedup_report.sh INPUT_BATCH_DIR OUTPUT_REPORT [GREEDY_TRACE]`
+- Bounded Vision sequence test: `tests/test_vision_sequence_gate.sh`
+- Real/local bounded Vision sequence evidence:
+  `python3 scripts/run_vision_sequence_gate.py INPUT_VIDEO OUTPUT_JSON SOURCE_ID START DURATION FPS`
+- First auto-directed slice orchestration test:
+  `python3 -m unittest tests.test_auto_directed_slice -v`
+- Three-output FFmpeg render-adapter test:
+  `tests/test_render_slice_adapter.sh`
+- First auto-directed planning/bundle runner:
+  `python3 scripts/run_auto_directed_slice.py VISION_SEQUENCE.json OUTPUT_DIR --source-id SOURCE_ID --width WIDTH --height HEIGHT --start START --duration DURATION [--config CONFIG.toml] [--render-adapter EXECUTABLE --source-media INPUT_VIDEO]`
 - Manual perception review validator:
   `python3 scripts/validate_review_annotations.py REVIEW.json`
 - Local Vision review-pack test: `tests/test_vision_review_pack.sh`

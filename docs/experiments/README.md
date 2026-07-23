@@ -37,6 +37,9 @@ privacy-safe summaries when results exist.
   evidence and the per-asset accept-or-override gate.
 - `duration-ladder-protocol.md`: nested 30/60/180/300-second comparison
   contract with per-asset eligibility and three required outputs.
+- `first-auto-directed-slice.md`: first real-media vertical-slice gate from
+  bounded Vision sequence evidence through greedy camera path and the three
+  duration-ladder review artifacts.
 
 ## Required experiment record
 
