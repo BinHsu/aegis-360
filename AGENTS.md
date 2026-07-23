@@ -206,6 +206,10 @@ These commands have been verified on the reference machine:
   `tests/test_vision_tracking_gate.sh`
 - Real/local Apple Vision tracking gate:
   `scripts/run_vision_tracking_gate.sh INPUT_VIDEO OUTPUT_DIR SOURCE_ID TRACK_ID START DURATION FPS VIEWPORT_YAW BOX_X BOX_Y BOX_W BOX_H`
+- Multi-clip Apple Vision tracking aggregation test:
+  `tests/test_vision_tracking_batch_gate.sh`
+- Real/local multi-clip tracking aggregation:
+  `python3 scripts/run_vision_tracking_batch_gate.py MANIFEST.json OUTPUT_DIR`
 - Vision spherical-dedup report test:
   `tests/test_vision_spherical_dedup_report.sh`
 - Real/local Vision spherical-dedup report:

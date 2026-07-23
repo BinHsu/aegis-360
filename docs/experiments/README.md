@@ -26,6 +26,8 @@ privacy-safe summaries when results exist.
   sheets and privacy-safe index prepared for human candidate review.
 - `apple-vision-tracking-gate-2026-07-23.md`: bounded synthetic and
   Old Ghost Road `VNTrackObjectRequest` continuity evidence.
+- `apple-vision-tracking-batch-gate-2026-07-23.md`: manifest-driven,
+  privacy-safe aggregation of several bounded tracking clips.
 - `vision-spherical-dedup-wiring-2026-07-23.md`: fixed-five Vision JSON
   ingestion, spherical dedup report, and neutral perception-to-planner wiring.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.

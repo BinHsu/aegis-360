@@ -76,6 +76,19 @@ safe errors. It does not detect a subject, infer identity or score interest.
 The single-viewport probe cannot continue a target after it leaves that
 viewport; cross-viewport handoff remains a separate tracker-adapter problem.
 
+`src/aegis360/tracking_policy.py` makes the minimum lost-track lifecycle
+executable without choosing a tracking backend. Upstream code must classify
+each expected sample as observed, not observed, or outside the current
+viewport. The policy applies separately configurable frame-count grace
+intervals, explicit confidence decay, and distinct termination reasons for a
+missing timeout and a viewport-exit timeout. A new observation within grace
+restores the active state; a terminated lifecycle cannot be revived implicitly.
+
+The viewport-exit state is only a request boundary for a future handoff
+adapter. It does not search another viewport, associate identities, or prove
+ERP-seam continuity. Whether a box is outside the viewport is likewise an
+upstream geometry decision, not inferred by this core policy.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,

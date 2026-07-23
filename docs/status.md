@@ -69,6 +69,14 @@ center step. This single large-box, single-viewport smoke does not establish
 identity accuracy, seam handoff, lost-track policy or benchmark tracking
 quality.
 
+A manifest-driven batch wrapper can now repeat that bounded probe over
+multiple manually selected clips and produce a privacy-safe aggregate report.
+The report deliberately excludes local paths and does not turn persistence
+into a quality threshold. A backend-independent tracking lifecycle also makes
+missing and viewport-exit grace periods, confidence decay, recovery, and
+termination reasons explicit. It defines the handoff request boundary only;
+cross-viewport association and ERP-seam identity continuity remain unproven.
+
 The same fixed-five Vision JSON now passes through the model-independent
 perception contract and confidence-free spherical deduplicator. A privacy-safe
 external report recorded 37 raw candidates and 37 clusters: no observations
