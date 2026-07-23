@@ -1,6 +1,7 @@
 # Project status
 
-Status: First auto-directed 30-second v3 rejected in qualitative review
+Status: First auto-directed comfort gate rejected; 110/120-degree widening
+did not materially reduce motion sickness
 
 The product and architecture decisions needed to begin the POC are recorded.
 The agent entry point, documentation index, initial ADR set, design notes,
@@ -148,6 +149,29 @@ narrow framing as a likely amplifier of viewpoint errors and discomfort. The
 30-second qualitative gate therefore failed, and the unchanged configuration
 must not advance to 60 seconds.
 
+A follow-up 1920x1080 rectilinear comparison at 110-degree and 120-degree
+horizontal FOV produced no significant perceived difference in owner review;
+the shaking continued to cause substantial motion sickness. The 120-degree
+configuration is recorded in commit `99b266a`, with generated media outside
+Git at
+`outputs/auto-directed/old-ghost-road-30s-v1/bundle-v4-120deg-1080p/`
+relative to the external artifact root. This is negative evidence for FOV
+widening as a sufficient remedy, not acceptance of either framing policy.
+Do not test a wider rectilinear FOV until the motion source is isolated.
+
+A paired rendered-flat shake probe sampled the v4 110-degree fixed-forward
+and auto-directed outputs at 6 fps with 160x90 grayscale proxies. Their
+first-window p95 translation steps were 1.75 and 2.81066 pixels. In the last
+window, median steps were 2.0 and 2.11803 pixels, p95 steps were 10.25305 and
+10.32843 pixels, and p95 translation-vector changes were 5.78208 and 6.60351
+pixels, respectively. The nearly equal approximately 10.3-pixel tail p95
+steps provide bounded evidence that shared global/source motion dominates the
+uncomfortable ending; the auto-directed output does not improve these tail
+metrics, and FOV is not the primary remedy. The probe is translation-only and
+parallax-sensitive: it cannot isolate roll, perspective rotation, moving
+subjects, or causal stabilization quality, and it is not viewer-comfort
+ground truth.
+
 ## Next evidence gate
 
 Diagnose and address the failed 30-second qualitative gate before producing a
@@ -155,9 +179,10 @@ new review candidate:
 
 1. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
-2. Evaluate a wider framing policy and record its FOV range rather than
-   assuming the current approximately 44--93-degree range is comfortable.
-3. Isolate the cause of the end shaking in fixed, auto and debug outputs.
+2. Gate the next experiment on stabilization, horizon stability, and
+   source/global camera-motion diagnosis.
+3. Isolate the cause of the end shaking in fixed, auto and debug outputs;
+   do not assume rectilinear FOV widening will mask it.
 4. Restart at a new 30-second configuration series for any framing, tracking,
    planning or rendering change.
 5. Advance to 60 seconds only after a new 30-second qualitative pass. Treat

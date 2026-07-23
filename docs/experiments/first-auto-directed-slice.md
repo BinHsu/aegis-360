@@ -1,8 +1,9 @@
 # First auto-directed slice protocol
 
 Status: Real-media 30-second v1/v2 negative evidence and mechanically valid
-cut-based v3 recorded; the project owner's qualitative review rejected v3, so
-the unchanged series must not advance to 60 seconds.
+cut-based v3 recorded; the project owner's qualitative review rejected v3,
+and a subsequent 110/120-degree framing comparison did not materially reduce
+motion sickness. The unchanged series must not advance to 60 seconds.
 
 ## Question
 
@@ -204,3 +205,45 @@ qualitative gate failed, and this configuration series must not advance to the
 60-second rung. Wider framing, subject/identity continuity, and the source of
 the end shaking require separate diagnosis before another 30-second review
 candidate is accepted.
+
+### 110/120-degree framing comparison: widening is insufficient
+
+A subsequent owner review compared 1920x1080 rectilinear review renders at
+110-degree and 120-degree horizontal FOV. The 120-degree configuration was
+recorded in commit `99b266a`; its generated bundle remains outside Git at the
+artifact-root-relative location:
+
+- `outputs/auto-directed/old-ghost-road-30s-v1/bundle-v4-120deg-1080p/`
+
+The owner observed no significant difference between 110 and 120 degrees.
+The shaking still produced substantial motion sickness. This is negative
+evidence for the hypothesis that rectilinear FOV widening alone is sufficient
+to resolve the failed comfort gate; it is not evidence that either FOV is
+comfortable.
+
+Do not test a still wider rectilinear FOV yet. The next gate is to isolate
+stabilization behavior, horizon stability, and source/global camera motion
+before generating another framing variant. Subject/identity continuity
+remains a separate unresolved problem.
+
+### v4 110-degree rendered-flat shake probe
+
+The matching v4 110-degree fixed-forward and auto-directed renders were
+sampled at 6 fps as 160x90 grayscale proxies with the translation-only
+rendered-flat shake probe. The first-window p95 translation step was 1.75
+pixels for fixed-forward and 2.81066 pixels for auto-directed. In the last
+window, the median step was 2.0 versus 2.11803 pixels, the p95 step was
+10.25305 versus 10.32843 pixels, and the p95 translation-vector change was
+5.78208 versus 6.60351 pixels, respectively.
+
+The similar approximately 10.3-pixel last-window p95 steps localize the
+strong motion to the shared rendered content rather than showing a meaningful
+auto-directed improvement. In combination with the owner finding no
+significant comfort difference between 110 and 120 degrees, the current
+bounded conclusion is that global/source motion dominates the uncomfortable
+ending and FOV is not the primary solution.
+
+This probe is translation-only and is sensitive to moving subjects and
+parallax. It does not estimate roll or perspective rotation, prove a causal
+source of motion, measure stabilization quality, or substitute for comfort
+review.

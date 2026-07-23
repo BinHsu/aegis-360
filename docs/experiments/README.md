@@ -43,6 +43,9 @@ privacy-safe summaries when results exist.
 - `first-auto-directed-slice.md`: first real-media vertical-slice gate from
   bounded Vision sequence evidence through greedy camera path and the three
   duration-ladder review artifacts.
+- `rendered-flat-shake-probe-2026-07-23.md`: dependency-light paired
+  screen-space translation/jitter protocol for fixed versus auto renders and
+  leading versus trailing windows.
 
 ## Required experiment record
 
