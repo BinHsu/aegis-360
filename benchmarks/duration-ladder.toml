@@ -1,0 +1,23 @@
+contract_version = 1
+start_seconds = 0.0
+duration_seconds = [30, 60, 180, 300]
+required_outputs = ["fixed-forward", "auto-directed", "debug-overlay"]
+
+# Every output in a run uses this same immutable configuration identifier.
+# The debug overlay must visualize the auto-directed camera path; it is not a
+# separately planned render.
+same_start_required = true
+same_configuration_required = true
+debug_uses_auto_path = true
+
+[[asset]]
+id = "bellpuig_onboard_360"
+enabled_duration_seconds = [30, 60, 180]
+
+[[asset]]
+id = "old_ghost_road_360"
+enabled_duration_seconds = [30, 60, 180]
+
+[[asset]]
+id = "skiing_may_2019_360"
+enabled_duration_seconds = [30, 60, 180, 300]

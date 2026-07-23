@@ -40,3 +40,9 @@ performances, and audio before publishing derived media.
 Compare fixed-forward, greedy motion/saliency with hysteresis, and the aegis
 global planner. Keep Full Story evaluation separate from aggressive Highlights
 evaluation.
+
+The nested duration-ladder protocol is recorded in
+`duration-ladder.toml`: all runs begin at the same timestamp and reuse one
+configuration, with fixed-forward, auto-directed, and debug-overlay outputs.
+Asset length permits 30/60/180 seconds for Bellpuig and Old Ghost Road, and
+30/60/180/300 seconds for Skiing.

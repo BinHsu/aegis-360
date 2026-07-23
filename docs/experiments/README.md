@@ -35,6 +35,8 @@ privacy-safe summaries when results exist.
   throughput on the reference machine.
 - `benchmark-projection-validation.md`: source/container/manual projection
   evidence and the per-asset accept-or-override gate.
+- `duration-ladder-protocol.md`: nested 30/60/180/300-second comparison
+  contract with per-asset eligibility and three required outputs.
 
 ## Required experiment record
 
