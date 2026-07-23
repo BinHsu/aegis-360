@@ -36,5 +36,29 @@ be fixed before timed runs.
 
 ## Run record
 
-Commit, hardware/OS, FFmpeg build, source hashes, commands, thermal state,
-results, artifacts and conclusion: TBD. No result has been observed.
+### 2026-07-23 static capability slice
+
+This run deliberately covers only static reprojection. It does not establish
+the semantics, continuity, or performance of timestamped yaw/pitch/FOV
+updates, so the overall experiment remains **Planned**.
+
+- Host: Apple Silicon MacBook Air M4, 16 GB unified memory.
+- FFmpeg/ffprobe: Homebrew `/opt/homebrew/bin`, FFmpeg 8.1.1, built with Apple
+  clang 21.0.0; the build advertises `v360`, slice threading, libx264 and
+  VideoToolbox.
+- Input: locally generated 1024x512, 10 fps, 2 second FFV1/YUV444P synthetic
+  grid with five colored markers; no external media and no audio.
+- Render: equirectangular to 640x360 flat projection, bilinear interpolation,
+  90 degree horizontal FOV, yaw 0 and yaw 90, H.264/YUV420P output.
+- Command: `tests/test_ffmpeg_v360_static.sh` (the test invokes the two scripts
+  under `scripts/`).
+- Observed result: PASS. The fixture contained 20 frames; both outputs
+  contained 20 frames at 640x360, decoded without FFmpeg errors, and the final
+  decoded-frame hashes differed between yaw 0 and yaw 90.
+- Artifacts: generated in a temporary directory and removed by the test.
+
+This verifies that the installed build can execute the repository's minimal
+static ERP-to-flat path and that changing static yaw changes pixels. It does
+not yet verify absolute orientation, seam behavior, black-border absence,
+audio/timestamp preservation, runtime/sendcmd control, performance, memory,
+thermal behavior, or suitability as the final renderer.

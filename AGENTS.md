@@ -182,12 +182,19 @@ conflict.
 
 ## Commands and layout
 
-Fill this section only as executable project structure lands. Do not invent
-commands that have not been verified in this repository.
+These commands have been verified on the reference machine:
 
-- Setup: TBD
-- Run: TBD
-- Test: TBD
-- Lint/format: TBD
-- Benchmark: TBD
-- Directory layout: TBD
+- Geometry tests: `python3 -m unittest discover -s tests -v`
+- Static FFmpeg `v360` evidence test: `tests/test_ffmpeg_v360_static.sh`
+- Shell syntax check: `sh -n scripts/*.sh tests/*.sh`
+
+Current layout:
+
+- `src/aegis360/`: dependency-free core geometry primitives
+- `scripts/`: explicit synthetic-fixture and render helpers
+- `tests/`: unit and executable evidence tests
+- `benchmarks/`: public asset manifest and attribution policy, not media
+- `docs/`: decisions, design, research, experiment records, and history
+
+Setup, end-to-end run, lint/format, and real-media benchmark commands remain
+TBD. Do not invent them or silently download their dependencies.

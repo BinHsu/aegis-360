@@ -23,8 +23,10 @@ footage come later.
 
 ## Current status
 
-Documentation and feasibility planning. There is no working processing
-pipeline yet and no benchmark result has been produced.
+The repository now has dependency-free spherical-geometry tests and a minimal
+synthetic FFmpeg `v360` static-render evidence test. There is no perception,
+tracking, planner, end-to-end processing pipeline, or real-media benchmark
+result yet.
 
 See [`docs/README.md`](docs/README.md) for the documentation index and
 [`docs/status.md`](docs/status.md) for the current acceptance gate.
