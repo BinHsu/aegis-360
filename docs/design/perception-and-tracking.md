@@ -67,6 +67,15 @@ geometry uses an equal-weight spherical mean and maximum member horizontal
 extent. Merged signals are intentionally empty because combining backend
 scores is a separate calibration question.
 
+`tools/vision_tracking_gate.swift` is a bounded evidence probe for Apple's
+OS-provided `VNTrackObjectRequest`. It accepts an externally supplied initial
+box and a short ordered rectilinear frame sequence. It records a job-safe track
+ID, box continuity, confidence as perception evidence, approximate spherical
+centers, great-circle center steps, seam crossings, lost frames and privacy-
+safe errors. It does not detect a subject, infer identity or score interest.
+The single-viewport probe cannot continue a target after it leaves that
+viewport; cross-viewport handoff remains a separate tracker-adapter problem.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,

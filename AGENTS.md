@@ -191,6 +191,10 @@ These commands have been verified on the reference machine:
 - Fixed-forward baseline test: `tests/test_fixed_forward_baseline.sh`
 - Apple Vision synthetic gate: `tests/test_vision_frame_gate.sh`
 - Apple Vision batch orchestration test: `tests/test_vision_batch_gate.sh`
+- Apple Vision short-sequence tracking test:
+  `tests/test_vision_tracking_gate.sh`
+- Real/local Apple Vision tracking gate:
+  `scripts/run_vision_tracking_gate.sh INPUT_VIDEO OUTPUT_DIR SOURCE_ID TRACK_ID START DURATION FPS VIEWPORT_YAW BOX_X BOX_Y BOX_W BOX_H`
 - Vision spherical-dedup report test:
   `tests/test_vision_spherical_dedup_report.sh`
 - Real/local Vision spherical-dedup report:

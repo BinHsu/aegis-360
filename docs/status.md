@@ -59,6 +59,16 @@ sufficient for continued POC work. This is a qualitative box-placement gate,
 not candidate-level human annotation and not acceptance of recall, viewpoint
 choice, narrative interest, or backend quality.
 
+An Apple Vision short-sequence tracking probe now records an externally
+initialized box, lost/error state and approximate spherical center continuity
+without identity data or editorial scoring. A six-frame synthetic moving-box
+fixture returned no tracking observations and is retained as an explicit
+negative result. A four-frame Old Ghost Road smoke sequence returned the same
+track on all frames with a 1.0 persistence ratio and 3.341532-degree maximum
+center step. This single large-box, single-viewport smoke does not establish
+identity accuracy, seam handoff, lost-track policy or benchmark tracking
+quality.
+
 The same fixed-five Vision JSON now passes through the model-independent
 perception contract and confidence-free spherical deduplicator. A privacy-safe
 external report recorded 37 raw candidates and 37 clusters: no observations
