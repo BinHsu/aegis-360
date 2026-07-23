@@ -252,6 +252,22 @@ homography direction and image-axis convention must be calibrated into the
 adapter's explicit source-to-target pixel convention before real ERP evidence
 is assembled.
 
+The Vision-native homography conversion is now calibrated end to end on
+rendered rectilinear fixtures. Vision evidence is explicitly converted from
+target-to-source bottom-left coordinates into source-to-target top-left
+pixel-center coordinates before ray fitting. Host results recovered yaw 1°,
+pitch 2° and roll 3° with maximum tested-ray errors of 0.0164°, 0.0192° and
+0.0183°, respectively. A 2.5° yaw trial previously converged to an incorrect
+Vision solution, so this gate establishes only a small-adjacent-rotation
+operating region; production evidence must reject or resample steps outside a
+versioned bound.
+
+The accumulated path now becomes explicitly disconnected after an invalid
+pair instead of treating later local deltas as a valid absolute orientation.
+Quaternion signs follow the prior sample's hemisphere across 180°, viewport
+pitch is bounded to the poles, and non-commuting yaw/pitch accumulation is
+covered by tests.
+
 ## Next evidence gate
 
 Diagnose and address the failed 30-second qualitative gate before producing a
@@ -261,9 +277,10 @@ new review candidate:
    yaw/pitch/roll fixtures, including high-frequency shake plus a slow
    intentional turn. Fit and smooth one `SO(3)` path, preserve the intentional
    turn, and validate quaternion order before another benchmark render.
-   The oracle path and pure rotation fitter pass; the next gate is a rendered
-   viewport fixture that calibrates Vision homography direction/sign into
-   spherical ray matches.
+   The oracle path, pure rotation fitter and rendered Vision viewport
+   direction/sign calibration pass. The next gate is a bounded multiview ERP
+   runner that enforces the calibrated per-step rotation range and produces a
+   source-motion proxy artifact on a synthetic ERP sequence.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

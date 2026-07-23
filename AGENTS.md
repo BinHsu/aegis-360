@@ -217,6 +217,8 @@ These commands have been verified on the reference machine:
 - Spherical known-motion oracle gate:
   `tests/test_spherical_stabilization_known_motion.sh`
 - Apple Vision synthetic gate: `tests/test_vision_frame_gate.sh`
+- Vision viewport homography-to-SO(3) host calibration:
+  `tests/test_vision_viewport_so3_gate.sh`
 - Apple Vision batch orchestration test: `tests/test_vision_batch_gate.sh`
 - Apple Vision short-sequence tracking test:
   `tests/test_vision_tracking_gate.sh`

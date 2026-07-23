@@ -35,6 +35,7 @@ def assemble_source_motion(document: dict[str, Any]) -> dict[str, Any]:
     samples = [_sample(first_time, orientation, 1.0, 1.0, 1.0, 0.0, "measured")]
     gaps: list[dict[str, Any]] = []
     prior_time = first_time
+    connected = True
 
     for index, pair in enumerate(pairs):
         if not isinstance(pair, dict):
@@ -61,7 +62,24 @@ def assemble_source_motion(document: dict[str, Any]) -> dict[str, Any]:
 
         try:
             fit = fit_rotation(correspondences)
-            orientation = _multiply(orientation, fit.rotation_xyzw)
+            if not connected:
+                samples.append(
+                    _sample(
+                        current, orientation, 0.0, fit.inlier_ratio,
+                        len(contributing_views) / len(viewports),
+                        fit.residual_radians, "invalid"
+                    )
+                )
+                gaps.append(
+                    {
+                        "startPtsSeconds": previous,
+                        "endPtsSeconds": current,
+                        "reason": "disconnected_absolute_path",
+                    }
+                )
+                prior_time = current
+                continue
+            orientation = _multiply_continuous(orientation, fit.rotation_xyzw)
             coverage = len(contributing_views) / len(viewports)
             confidence = fit.confidence * math.sqrt(coverage)
             state = "measured"
@@ -72,6 +90,7 @@ def assemble_source_motion(document: dict[str, Any]) -> dict[str, Any]:
                 )
             )
         except ValueError as error:
+            connected = False
             reason = _reason(error)
             samples.append(_sample(current, orientation, 0.0, 0.0, 0.0, math.pi, "invalid"))
             gaps.append(
@@ -140,6 +159,8 @@ def _viewports(value: Any) -> set[str]:
                 raise ValueError(f"{field} must be finite")
         if not 0 < viewport["horizontalFovRadians"] < math.pi:
             raise ValueError("horizontalFovRadians must be in (0, pi)")
+        if not -math.pi / 2 <= viewport["pitchRadians"] <= math.pi / 2:
+            raise ValueError("pitchRadians must remain between the poles")
         ids.add(viewport_id)
     return ids
 
@@ -164,7 +185,7 @@ def _sample(
     }
 
 
-def _multiply(
+def _multiply_continuous(
     first: tuple[float, float, float, float],
     second: tuple[float, float, float, float],
 ) -> tuple[float, float, float, float]:
@@ -178,7 +199,11 @@ def _multiply(
     )
     norm = math.sqrt(sum(value * value for value in result))
     result = tuple(value / norm for value in result)
-    return tuple(-value for value in result) if result[3] < 0 else result  # type: ignore[return-value]
+    # q and -q encode the same rotation. Preserve the hemisphere nearest the
+    # prior sample so downstream interpolation and derivatives remain
+    # continuous when the accumulated path crosses 180 degrees.
+    dot = sum(left * right for left, right in zip(first, result))
+    return tuple(-value for value in result) if dot < 0 else result  # type: ignore[return-value]
 
 
 def _ray(value: Any, label: str) -> tuple[float, float, float]:

@@ -16,6 +16,28 @@ def axis_angle(axis, angle):
     scale = math.sin(angle / 2)
     return (axis[0] * scale, axis[1] * scale, axis[2] * scale, math.cos(angle / 2))
 
+def multiply(first, second):
+    ax, ay, az, aw = first
+    bx, by, bz, bw = second
+    return (
+        aw * bx + ax * bw + ay * bz - az * by,
+        aw * by - ax * bz + ay * bw + az * bx,
+        aw * bz + ax * by - ay * bx + az * bw,
+        aw * bw - ax * bx - ay * by - az * bz,
+    )
+
+
+def matches_for_delta(delta):
+    inverse = tuple(-value for value in delta[:3]) + (delta[3],)
+    return [
+        {
+            "viewportId": VIEWPORTS[index]["id"],
+            "previousRay": list(previous),
+            "currentRay": list(rotate_ray(inverse, previous)),
+        }
+        for index, previous in enumerate(RAYS)
+    ]
+
 
 VIEWPORTS = [
     {"id": "front", "yawRadians": 0.0, "pitchRadians": 0.0, "horizontalFovRadians": 1.9},
@@ -35,14 +57,7 @@ class MultiviewSourceMotionTests(unittest.TestCase):
     def test_cli_recovers_known_rig_path_and_emits_no_paths(self):
         rig_delta = axis_angle((0.0, 1.0, 0.0), math.radians(8))
         # current -> previous is the rig delta; make current rays by inverse.
-        inverse = tuple(-value for value in rig_delta[:3]) + (rig_delta[3],)
-        matches = []
-        for index, previous in enumerate(RAYS):
-            matches.append({
-                "viewportId": VIEWPORTS[index]["id"],
-                "previousRay": list(previous),
-                "currentRay": list(rotate_ray(inverse, previous)),
-            })
+        matches = matches_for_delta(rig_delta)
         source = {
             "schemaVersion": "aegis360.multiview-ray-matches.v1",
             "sourceId": "synthetic-rig",
@@ -89,6 +104,91 @@ class MultiviewSourceMotionTests(unittest.TestCase):
         result = assemble_source_motion(source)
         self.assertEqual(result["samples"][-1]["state"], "invalid")
         self.assertEqual(result["gaps"][0]["reason"], "insufficient_correspondences")
+
+    def test_noncommuting_deltas_accumulate_in_current_to_reference_order(self):
+        from aegis360.multiview_motion import assemble_source_motion
+
+        yaw = axis_angle((0.0, 1.0, 0.0), math.radians(23))
+        pitch = axis_angle((1.0, 0.0, 0.0), math.radians(-17))
+        source = {
+            "schemaVersion": "aegis360.multiview-ray-matches.v1",
+            "sourceId": "synthetic-noncommuting", "configId": "six-view-110-v1",
+            "proxy": {"width": 640, "height": 360, "sampleFps": 10},
+            "viewports": VIEWPORTS,
+            "pairs": [
+                {"previousPtsSeconds": 0, "currentPtsSeconds": 0.1,
+                 "matches": matches_for_delta(yaw)},
+                {"previousPtsSeconds": 0.1, "currentPtsSeconds": 0.2,
+                 "matches": matches_for_delta(pitch)},
+            ],
+        }
+        result = assemble_source_motion(source)
+        actual = result["samples"][-1]["raw_orientation_xyzw"]
+        expected = multiply(yaw, pitch)
+        for ray in RAYS:
+            wanted = rotate_ray(expected, ray)
+            observed = rotate_ray(actual, ray)
+            self.assertAlmostEqual(sum(a * b for a, b in zip(wanted, observed)), 1.0, places=7)
+
+    def test_gap_disconnects_all_later_absolute_samples(self):
+        from aegis360.multiview_motion import assemble_source_motion
+
+        delta = axis_angle((0.0, 1.0, 0.0), math.radians(8))
+        source = {
+            "schemaVersion": "aegis360.multiview-ray-matches.v1",
+            "sourceId": "synthetic-disconnected", "configId": "six-view-110-v1",
+            "proxy": {"width": 640, "height": 360, "sampleFps": 10},
+            "viewports": VIEWPORTS,
+            "pairs": [
+                {"previousPtsSeconds": 0, "currentPtsSeconds": 0.1, "matches": []},
+                {"previousPtsSeconds": 0.1, "currentPtsSeconds": 0.2,
+                 "matches": matches_for_delta(delta)},
+            ],
+        }
+        result = assemble_source_motion(source)
+        self.assertEqual([sample["state"] for sample in result["samples"]],
+                         ["measured", "invalid", "invalid"])
+        self.assertEqual(result["gaps"][-1]["reason"], "disconnected_absolute_path")
+        self.assertEqual(result["samples"][-1]["raw_orientation_xyzw"], [0.0, 0.0, 0.0, 1.0])
+
+    def test_quaternion_path_remains_in_one_local_hemisphere_across_180(self):
+        from aegis360.multiview_motion import assemble_source_motion
+
+        delta = axis_angle((0.0, 1.0, 0.0), math.radians(10))
+        pairs = [
+            {"previousPtsSeconds": index / 10, "currentPtsSeconds": (index + 1) / 10,
+             "matches": matches_for_delta(delta)}
+            for index in range(20)
+        ]
+        source = {
+            "schemaVersion": "aegis360.multiview-ray-matches.v1",
+            "sourceId": "synthetic-cross-180", "configId": "six-view-110-v1",
+            "proxy": {"width": 640, "height": 360, "sampleFps": 10},
+            "viewports": VIEWPORTS, "pairs": pairs,
+        }
+        samples = assemble_source_motion(source)["samples"]
+        for first, second in zip(samples, samples[1:]):
+            self.assertGreater(
+                sum(a * b for a, b in zip(
+                    first["raw_orientation_xyzw"], second["raw_orientation_xyzw"])),
+                0.0,
+            )
+
+    def test_rejects_viewport_pitch_beyond_poles(self):
+        from aegis360.multiview_motion import assemble_source_motion
+
+        bad_viewports = [dict(viewport) for viewport in VIEWPORTS]
+        bad_viewports[0]["pitchRadians"] = math.pi
+        source = {
+            "schemaVersion": "aegis360.multiview-ray-matches.v1",
+            "sourceId": "synthetic-bad-pitch", "configId": "six-view-110-v1",
+            "proxy": {"width": 640, "height": 360, "sampleFps": 10},
+            "viewports": bad_viewports,
+            "pairs": [{"previousPtsSeconds": 0, "currentPtsSeconds": 0.1,
+                       "matches": matches_for_delta((0.0, 0.0, 0.0, 1.0))}],
+        }
+        with self.assertRaisesRegex(ValueError, "between the poles"):
+            assemble_source_motion(source)
 
 
 if __name__ == "__main__":
