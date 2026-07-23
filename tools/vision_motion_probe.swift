@@ -46,14 +46,16 @@ struct Summary: Encodable {
 
 struct Provenance: Encodable {
     let adapterId = "aegis.vision-motion-probe"
-    let adapterVersion = "1"
+    let adapterVersion = "2"
     let backendId = "VNTrackHomographicImageRegistrationRequest"
-    let transformConvention = "Vision warpTransform exported row-major; signed direction requires fixture calibration"
+    let transformConvention = "Vision-native homography; row-major [r00,r01,tx,r10,r11,ty,r20,r21,r22]; empirical host calibration is required before signed correction"
 }
 
 struct ProbeOutput: Encodable {
     let schemaVersion = 1
     let sourceId: String
+    let frameWidth: Int
+    let frameHeight: Int
     let provenance = Provenance()
     let observations: [MotionObservation]
     let summary: Summary
@@ -223,6 +225,8 @@ func run(_ input: ProbeInput) throws -> ProbeOutput {
 
     return ProbeOutput(
         sourceId: input.sourceId,
+        frameWidth: input.frameWidth,
+        frameHeight: input.frameHeight,
         observations: rows,
         summary: Summary(
             outcome: translations.isEmpty ? "no_motion_observations" : "motion_observations_returned",
@@ -238,7 +242,7 @@ func run(_ input: ProbeInput) throws -> ProbeOutput {
         limitations: [
             "Homography is image-registration evidence, not camera motion ground truth.",
             "Translation and rotation are local affine-derived proxies and may include parallax, rolling shutter, moving subjects, or registration error.",
-            "Signed transform direction has not been calibrated because this environment returned no Vision observations.",
+            "Signed proxies use Vision's native matrix convention; axis and rotation signs require the versioned host calibration fixture before correction.",
             "No stabilization or v360 runtime compensation is applied.",
             "Output contains no source path, pixels, thumbnails, faces, audio, GPS, or identity embeddings."
         ])

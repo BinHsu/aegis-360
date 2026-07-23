@@ -172,20 +172,61 @@ parallax-sensitive: it cannot isolate roll, perspective rotation, moving
 subjects, or causal stabilization quality, and it is not viewer-comfort
 ground truth.
 
+An Apple Vision homographic-motion host calibration initially failed because
+the correction consumer assumed a simple top-left, current-to-prior sign
+rule. The probe now preserves Vision's native matrix convention and the
+calibration fixture asserts the empirically observed translation-axis and
+rotation signs. Both known-translation and known-rotation fixtures then
+passed on the macOS host. This establishes the fixture-to-correction
+convention, not camera-motion ground truth.
+
+Calibrated 6 fps motion evidence and stabilization plans now exist for the
+last five seconds of the v4 110-degree fixed-forward and auto-directed
+renders. The fixed plan reports a 120-pixel conservative symmetric overscan
+margin, a 1680x840 centered crop and 119.42 pixels maximum corrected-corner
+displacement. The auto plan reports a 360-pixel margin, a 1200x360 crop and
+504.55 pixels maximum corrected-corner displacement. The auto plan is
+unacceptable: it sacrifices two thirds of the source height and its maximum
+corner motion exceeds the reported margin. Privacy-safe artifact-root-relative
+records are:
+
+- `outputs/auto-directed/old-ghost-road-30s-v1/motion-fixed-last5-v2.json`
+- `outputs/auto-directed/old-ghost-road-30s-v1/stabilization-fixed-last5-v2.json`
+- `outputs/auto-directed/old-ghost-road-30s-v1/motion-auto-last5-v2.json`
+- `outputs/auto-directed/old-ghost-road-30s-v1/stabilization-auto-last5-v2.json`
+
+Direct measurement of the original Old Ghost Road ERP from 25–30 seconds,
+without `v360`, returned motion on all 29 adjacent pairs: rotation-proxy RMS
+0.03538 radians, p95 0.07566 and maximum 0.13231. Substantial motion therefore
+exists before flat reprojection. ERP and rectilinear homographies are not
+directly comparable, so this does not claim reprojection has no perceptual
+effect; it rules out the hypothesis that only the flat renderer created the
+observed motion.
+
+The first Apple-native fixed-forward five-second post-warp output decoded and
+retained audio, but failed the motion gate: median translation-proxy step rose
+from 2.83 to 3.61 pixels and p95 vector change rose from 5.25 to 12.12. It is
+rejected and is not a review candidate. Stabilization must first pass a
+known-motion end-to-end fixture, including sampled-to-output-frame
+interpolation, before another real-media attempt.
+
 ## Next evidence gate
 
 Diagnose and address the failed 30-second qualitative gate before producing a
 new review candidate:
 
-1. Separate attention-saliency continuity from bicycle identity continuity;
+1. Fix and validate the Apple-native post-warp path on known synthetic motion;
+   require reduced motion metrics before another fixed-forward real A/B. Do
+   not render the unacceptable auto plan.
+2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
-2. Gate the next experiment on stabilization, horizon stability, and
+3. Gate later experiments on stabilization, horizon stability, and
    source/global camera-motion diagnosis.
-3. Isolate the cause of the end shaking in fixed, auto and debug outputs;
+4. Isolate the cause of the end shaking in fixed, auto and debug outputs;
    do not assume rectilinear FOV widening will mask it.
-4. Restart at a new 30-second configuration series for any framing, tracking,
+5. Restart at a new 30-second configuration series for any framing, tracking,
    planning or rendering change.
-5. Advance to 60 seconds only after a new 30-second qualitative pass. Treat
+6. Advance to 60 seconds only after a new 30-second qualitative pass. Treat
    smooth tracking motion as untested until a renderer and review explicitly
    establish it.
 

@@ -27,6 +27,8 @@ with open(sys.argv[1], encoding="utf-8") as handle:
     result = json.load(handle)
 assert result["schemaVersion"] == 1
 assert result["sourceId"] == "synthetic-pan"
+assert result["frameWidth"] == 640
+assert result["frameHeight"] == 360
 assert result["provenance"]["backendId"] == "VNTrackHomographicImageRegistrationRequest"
 assert result["summary"]["requestedFrameCount"] >= 9
 measured = [row for row in result["observations"] if row["state"] == "measured"]
