@@ -24,6 +24,8 @@ privacy-safe summaries when results exist.
   single-frame Apple Vision bootstrap evidence.
 - `apple-vision-review-pack-2026-07-23.md`: local-only fixed-sample contact
   sheets and privacy-safe index prepared for human candidate review.
+- `vision-spherical-dedup-wiring-2026-07-23.md`: fixed-five Vision JSON
+  ingestion, spherical dedup report, and neutral perception-to-planner wiring.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.
 - `m4-air-sustained-performance.md`: memory, swap, thermals and sustained
   throughput on the reference machine.

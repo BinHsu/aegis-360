@@ -1,6 +1,15 @@
 # Apple Vision fixed-sample review pack
 
-Status: Artifact generated; human review not started
+Status: Artifact generated; qualitative box-placement gate accepted
+
+## User acceptance boundary
+
+After reviewing the bootstrap presentation, the project owner judged the
+candidate box placement accurate enough to continue the POC. This is a
+qualitative localization gate: the boxes are usable for the next iteration.
+It is not a per-candidate annotation, recall or precision measurement, viewer-
+preference result, backend selection, or evidence that the chosen viewpoint is
+interesting. Those questions remain separate gates.
 
 ## Purpose
 

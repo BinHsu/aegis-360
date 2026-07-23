@@ -191,6 +191,10 @@ These commands have been verified on the reference machine:
 - Fixed-forward baseline test: `tests/test_fixed_forward_baseline.sh`
 - Apple Vision synthetic gate: `tests/test_vision_frame_gate.sh`
 - Apple Vision batch orchestration test: `tests/test_vision_batch_gate.sh`
+- Vision spherical-dedup report test:
+  `tests/test_vision_spherical_dedup_report.sh`
+- Real/local Vision spherical-dedup report:
+  `scripts/run_vision_spherical_dedup_report.sh INPUT_BATCH_DIR OUTPUT_REPORT [GREEDY_TRACE]`
 - Manual perception review validator:
   `python3 scripts/validate_review_annotations.py REVIEW.json`
 - Local Vision review-pack test: `tests/test_vision_review_pack.sh`

@@ -54,6 +54,20 @@ provides five contact sheets, 20 annotated viewports and an index whose human
 recall fields remain explicitly unset. No tracking, reviewed recall,
 projection comparison or backend decision exists.
 
+The project owner has accepted the displayed candidate-box localization as
+sufficient for continued POC work. This is a qualitative box-placement gate,
+not candidate-level human annotation and not acceptance of recall, viewpoint
+choice, narrative interest, or backend quality.
+
+The same fixed-five Vision JSON now passes through the model-independent
+perception contract and confidence-free spherical deduplicator. A privacy-safe
+external report recorded 37 raw candidates and 37 clusters: no observations
+merged under the current geometric thresholds. This unreviewed result does
+not establish that duplicates were absent or that the thresholds are correct.
+An optional greedy trace proves contract wiring only: every candidate has
+zero utility under an explicit neutral policy, and detector confidence is not
+used as editorial interest.
+
 The review annotation schema now records reviewer provenance explicitly.
 Human review and `model_assisted` drafts are distinct; the latter require an
 explicit non-ground-truth limitation and cannot support human recall
@@ -70,8 +84,8 @@ rendering assumptions before adding perception models:
    the first planner needs a coupled spline, while avoiding an unevidenced
    comfort threshold.
 2. Resolve or explicitly normalize Bellpuig's non-2:1 projection ambiguity.
-3. Manually review multiple benchmark timestamps, quantify Vision candidate
-   recall/duplicates, and add spherical cross-viewport deduplication before
+3. Complete human review of the fixed timestamps and compare annotated
+   duplicate groups with the now-executable spherical deduplicator before
    comparing projection/backend options.
 
 After that gate, feed those observations to the greedy baseline and compare its
