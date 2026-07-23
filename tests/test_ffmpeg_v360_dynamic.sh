@@ -30,12 +30,19 @@ fixture="$work_dir/synthetic-erp-av.mkv"
 output="$work_dir/dynamic.mp4"
 commands="$work_dir/path.txt"
 
-"$repo_dir/scripts/generate_synthetic_erp_av.sh" "$fixture"
+"$repo_dir/scripts/generate_synthetic_erp_av.sh" "$fixture" 4
 
 # Step changes happen exactly on frames 5, 10 and 15 at 10 fps. This proves
 # timestamped commands, not smooth interpolation between sparse keyframes.
 printf '0.5 v360 yaw 45;\n1.0 v360 pitch 35;\n1.5 v360 h_fov 55;\n' > "$commands"
-"$repo_dir/scripts/render_dynamic_v360_proxy.sh" "$fixture" "$output" "$commands"
+"$repo_dir/scripts/render_dynamic_v360_proxy.sh" "$fixture" "$output" "$commands" 1 2
+
+if "$repo_dir/scripts/render_dynamic_v360_proxy.sh" \
+  "$fixture" "$output" "$commands" 1 2 >"$work_dir/overwrite.log" 2>&1; then
+  echo "renderer unexpectedly overwrote an existing output" >&2
+  exit 1
+fi
+grep -q "refusing to overwrite" "$work_dir/overwrite.log"
 
 video_shape=$(ffprobe -v error -count_frames -select_streams v:0 \
   -show_entries stream=width,height,nb_read_frames \
@@ -85,4 +92,4 @@ awk -v v="$video_duration" -v a="$audio_duration" 'BEGIN {
 }
 
 ffmpeg -v error -i "$output" -f null -
-echo "PASS: timestamped v360 yaw/pitch/FOV commands changed exact frame segments and preserved synthetic A/V timing"
+echo "PASS: slice-relative v360 commands changed exact frame segments, preserved synthetic A/V timing, and refused overwrite"
