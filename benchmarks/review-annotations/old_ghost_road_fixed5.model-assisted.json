@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 2,
+  "review": {
+    "reviewerId": "codex-bootstrap-01",
+    "reviewerKind": "model_assisted",
+    "reviewedDate": "2026-07-23",
+    "protocolVersion": "perception-review-v2",
+    "interRaterStatus": "not_performed"
+  },
+  "evidence": {
+    "sourceId": "old_ghost_road_fixed5",
+    "evidenceSchemaVersion": 1,
+    "projectionStrategy": "four_rectilinear_viewports",
+    "viewportIds": [
+      "yaw_0",
+      "yaw_90",
+      "yaw_180",
+      "yaw_minus90"
+    ]
+  },
+  "frames": [
+    {
+      "timestampSeconds": 15.0,
+      "reviewable": true,
+      "ordinaryViewerInterest": 3,
+      "eventLabels": [
+        "person_or_group",
+        "travel_progress",
+        "environment_context"
+      ],
+      "candidateReviews": [
+        {
+          "id": "yaw_0:attention_saliency:0",
+          "viewportId": "yaw_0",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_0:objectness_saliency:0",
+          "viewportId": "yaw_0",
+          "kind": "objectness_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_90:attention_saliency:0",
+          "viewportId": "yaw_90",
+          "kind": "attention_saliency",
+          "verdict": "uncertain"
+        },
+        {
+          "id": "yaw_180:attention_saliency:0",
+          "viewportId": "yaw_180",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_180:objectness_saliency:0",
+          "viewportId": "yaw_180",
+          "kind": "objectness_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_minus90:attention_saliency:0",
+          "viewportId": "yaw_minus90",
+          "kind": "attention_saliency",
+          "verdict": "uncertain"
+        }
+      ],
+      "duplicateGroups": [],
+      "missedImportantRegions": []
+    },
+    {
+      "timestampSeconds": 60.0,
+      "reviewable": true,
+      "ordinaryViewerInterest": 2,
+      "eventLabels": [
+        "person_or_group",
+        "travel_progress",
+        "environment_context"
+      ],
+      "candidateReviews": [
+        {
+          "id": "yaw_0:attention_saliency:0",
+          "viewportId": "yaw_0",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_0:objectness_saliency:0",
+          "viewportId": "yaw_0",
+          "kind": "objectness_saliency",
+          "verdict": "false_positive"
+        },
+        {
+          "id": "yaw_0:objectness_saliency:1",
+          "viewportId": "yaw_0",
+          "kind": "objectness_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_90:attention_saliency:0",
+          "viewportId": "yaw_90",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_180:attention_saliency:0",
+          "viewportId": "yaw_180",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_180:objectness_saliency:0",
+          "viewportId": "yaw_180",
+          "kind": "objectness_saliency",
+          "verdict": "false_positive"
+        },
+        {
+          "id": "yaw_minus90:attention_saliency:0",
+          "viewportId": "yaw_minus90",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        }
+      ],
+      "duplicateGroups": [],
+      "missedImportantRegions": []
+    },
+    {
+      "timestampSeconds": 105.0,
+      "reviewable": true,
+      "ordinaryViewerInterest": 3,
+      "eventLabels": [
+        "person_or_group",
+        "interaction",
+        "environment_context"
+      ],
+      "candidateReviews": [
+        {
+          "id": "yaw_0:attention_saliency:0",
+          "viewportId": "yaw_0",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_0:objectness_saliency:0",
+          "viewportId": "yaw_0",
+          "kind": "objectness_saliency",
+          "verdict": "false_positive"
+        },
+        {
+          "id": "yaw_0:objectness_saliency:1",
+          "viewportId": "yaw_0",
+          "kind": "objectness_saliency",
+          "verdict": "uncertain"
+        },
+        {
+          "id": "yaw_0:human_rectangle:0",
+          "viewportId": "yaw_0",
+          "kind": "human_rectangle",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_0:human_rectangle:1",
+          "viewportId": "yaw_0",
+          "kind": "human_rectangle",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_90:attention_saliency:0",
+          "viewportId": "yaw_90",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_90:objectness_saliency:0",
+          "viewportId": "yaw_90",
+          "kind": "objectness_saliency",
+          "verdict": "false_positive"
+        },
+        {
+          "id": "yaw_180:attention_saliency:0",
+          "viewportId": "yaw_180",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_180:objectness_saliency:0",
+          "viewportId": "yaw_180",
+          "kind": "objectness_saliency",
+          "verdict": "uncertain"
+        },
+        {
+          "id": "yaw_minus90:attention_saliency:0",
+          "viewportId": "yaw_minus90",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_minus90:objectness_saliency:0",
+          "viewportId": "yaw_minus90",
+          "kind": "objectness_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_minus90:objectness_saliency:1",
+          "viewportId": "yaw_minus90",
+          "kind": "objectness_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_minus90:human_rectangle:0",
+          "viewportId": "yaw_minus90",
+          "kind": "human_rectangle",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_minus90:human_rectangle:1",
+          "viewportId": "yaw_minus90",
+          "kind": "human_rectangle",
+          "verdict": "hit"
+        }
+      ],
+      "duplicateGroups": [],
+      "missedImportantRegions": []
+    },
+    {
+      "timestampSeconds": 150.0,
+      "reviewable": true,
+      "ordinaryViewerInterest": 3,
+      "eventLabels": [
+        "person_or_group",
+        "interaction",
+        "obstacle_or_hazard",
+        "environment_context"
+      ],
+      "candidateReviews": [
+        {
+          "id": "yaw_0:attention_saliency:0",
+          "viewportId": "yaw_0",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_90:attention_saliency:0",
+          "viewportId": "yaw_90",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_180:attention_saliency:0",
+          "viewportId": "yaw_180",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_minus90:attention_saliency:0",
+          "viewportId": "yaw_minus90",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_minus90:objectness_saliency:0",
+          "viewportId": "yaw_minus90",
+          "kind": "objectness_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_minus90:human_rectangle:0",
+          "viewportId": "yaw_minus90",
+          "kind": "human_rectangle",
+          "verdict": "hit"
+        }
+      ],
+      "duplicateGroups": [],
+      "missedImportantRegions": []
+    },
+    {
+      "timestampSeconds": 210.0,
+      "reviewable": true,
+      "ordinaryViewerInterest": 3,
+      "eventLabels": [
+        "travel_progress",
+        "obstacle_or_hazard",
+        "environment_context"
+      ],
+      "candidateReviews": [
+        {
+          "id": "yaw_0:attention_saliency:0",
+          "viewportId": "yaw_0",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_90:attention_saliency:0",
+          "viewportId": "yaw_90",
+          "kind": "attention_saliency",
+          "verdict": "false_positive"
+        },
+        {
+          "id": "yaw_180:attention_saliency:0",
+          "viewportId": "yaw_180",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        },
+        {
+          "id": "yaw_minus90:attention_saliency:0",
+          "viewportId": "yaw_minus90",
+          "kind": "attention_saliency",
+          "verdict": "hit"
+        }
+      ],
+      "duplicateGroups": [],
+      "missedImportantRegions": []
+    }
+  ],
+  "limitations": [
+    "inter-rater agreement has not been measured",
+    "model-assisted draft; not human ground truth and not valid for human recall conclusions",
+    "Four 100-degree equatorial viewports do not cover polar regions."
+  ]
+}
