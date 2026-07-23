@@ -30,6 +30,24 @@ All terms must be individually recorded. Weights live in versioned config,
 not source code. Plans are generated from cached analysis, enabling rapid
 weight iteration with proxy previews.
 
+## Continuous-transition constraint
+
+The current renderer path uses independent quintic smootherstep segments.
+Each segment is rest-to-rest: coordinate velocity and acceleration are zero
+at both endpoints, so a multi-segment yaw/pitch/FOV path is C2 at an interior
+keyframe. It is not generally C3. The one-sided coordinate jerk is
+`60 * delta / duration^3`; unequal adjacent displacement or duration therefore
+creates a finite jerk jump even though velocity and acceleration are
+continuous.
+
+`keyframe_continuity` records the exact one-sided yaw, pitch and horizontal-FOV
+derivatives after seam-aware yaw unwrapping. These are coordinate-angular
+metrics, not a perceptual comfort model or a full orientation-space metric.
+No comfort threshold has been selected. Candidate-transition generation must
+expose these measurements before the planner can claim a comfortable path;
+a coupled spline or optimizer remains a later option if benchmark evidence
+shows the rest-to-rest joins are inadequate.
+
 ## Hypotheses
 
 - A bounded candidate graph permits whole-video optimization within modest

@@ -10,6 +10,7 @@ from aegis360.camera_path import (  # noqa: E402
     CameraSample,
     format_ffmpeg_sendcmd,
     interpolate_path,
+    keyframe_continuity,
     segment_limits,
 )
 
@@ -65,6 +66,40 @@ class CameraPathInterpolationTests(unittest.TestCase):
         )
         self.assertGreater(limits.max_pitch_velocity, 0.0)
         self.assertGreater(limits.max_fov_acceleration, 0.0)
+        self.assertAlmostEqual(limits.max_yaw_jerk, math.radians(450))
+
+    def test_multi_segment_path_is_c2_but_exposes_jerk_jump(self):
+        reports = keyframe_continuity(
+            (
+                CameraKeyframe(0.0, math.radians(0), 0.0, math.radians(90)),
+                CameraKeyframe(2.0, math.radians(40), math.radians(10), math.radians(80)),
+                CameraKeyframe(3.0, math.radians(10), math.radians(10), math.radians(100)),
+            )
+        )
+        self.assertEqual(len(reports), 1)
+        report = reports[0]
+        self.assertEqual(report.time, 2.0)
+        self.assertEqual(report.left_velocity, (0.0, 0.0, 0.0))
+        self.assertEqual(report.right_velocity, (0.0, 0.0, 0.0))
+        self.assertEqual(report.left_acceleration, (0.0, 0.0, 0.0))
+        self.assertEqual(report.right_acceleration, (0.0, 0.0, 0.0))
+        self.assertAlmostEqual(report.left_jerk[0], math.radians(300))
+        self.assertAlmostEqual(report.right_jerk[0], math.radians(-1800))
+        self.assertAlmostEqual(report.jerk_jump[0], math.radians(-2100))
+        self.assertAlmostEqual(report.jerk_jump[1], math.radians(-75))
+        self.assertAlmostEqual(report.jerk_jump[2], math.radians(1275))
+
+    def test_continuity_metrics_unwrap_yaw_before_measuring(self):
+        report = keyframe_continuity(
+            (
+                CameraKeyframe(0.0, math.radians(178), 0.0, math.radians(90)),
+                CameraKeyframe(1.0, math.radians(-179), 0.0, math.radians(90)),
+                CameraKeyframe(2.0, math.radians(-176), 0.0, math.radians(90)),
+            )
+        )[0]
+        self.assertAlmostEqual(report.left_jerk[0], math.radians(180))
+        self.assertAlmostEqual(report.right_jerk[0], math.radians(180))
+        self.assertAlmostEqual(report.jerk_jump[0], 0.0, places=12)
 
     def test_invalid_timing_pitch_fov_and_fps_are_rejected(self):
         valid = CameraKeyframe(0.0, 0.0, 0.0, math.radians(90))

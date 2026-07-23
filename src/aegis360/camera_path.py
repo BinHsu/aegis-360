@@ -51,6 +51,35 @@ class SegmentLimits:
     max_yaw_acceleration: float
     max_pitch_acceleration: float
     max_fov_acceleration: float
+    max_yaw_jerk: float
+    max_pitch_jerk: float
+    max_fov_jerk: float
+
+
+@dataclass(frozen=True)
+class KeyframeContinuity:
+    """One-sided coordinate derivatives at an interior path keyframe.
+
+    The three-value tuples are yaw, pitch and horizontal FOV, in that order.
+    Angular units are radians.  Smootherstep makes velocity and acceleration
+    zero on both sides, while jerk generally changes at the join.
+    """
+
+    time: float
+    left_velocity: tuple[float, float, float]
+    right_velocity: tuple[float, float, float]
+    left_acceleration: tuple[float, float, float]
+    right_acceleration: tuple[float, float, float]
+    left_jerk: tuple[float, float, float]
+    right_jerk: tuple[float, float, float]
+
+    @property
+    def jerk_jump(self) -> tuple[float, float, float]:
+        """Return right-minus-left jerk at the keyframe."""
+
+        return tuple(
+            right - left for left, right in zip(self.left_jerk, self.right_jerk)
+        )
 
 
 def _validate_keyframes(keyframes: Iterable[CameraKeyframe]) -> tuple[CameraKeyframe, ...]:
@@ -138,13 +167,14 @@ def segment_limits(first: CameraKeyframe, second: CameraKeyframe) -> SegmentLimi
 
     Smootherstep's maximum normalized speed is 15/8 and its maximum absolute
     normalized acceleration is 10*sqrt(3)/3.  Bounds are per yaw, pitch and
-    FOV coordinate in radians/s and radians/s^2, respectively.
+    FOV coordinate in radians/s, radians/s^2 and radians/s^3, respectively.
     """
 
     first, second = _validate_keyframes((first, second))
     duration = second.time - first.time
     speed_scale = 15.0 / (8.0 * duration)
     acceleration_scale = 10.0 * math.sqrt(3.0) / (3.0 * duration * duration)
+    jerk_scale = 60.0 / (duration * duration * duration)
     deltas = (
         abs(second.yaw - first.yaw),
         abs(second.pitch - first.pitch),
@@ -153,7 +183,53 @@ def segment_limits(first: CameraKeyframe, second: CameraKeyframe) -> SegmentLimi
     return SegmentLimits(
         *(delta * speed_scale for delta in deltas),
         *(delta * acceleration_scale for delta in deltas),
+        *(delta * jerk_scale for delta in deltas),
     )
+
+
+def keyframe_continuity(
+    keyframes: Iterable[CameraKeyframe],
+) -> tuple[KeyframeContinuity, ...]:
+    """Measure exact one-sided derivatives at every interior keyframe.
+
+    Metrics are for the interpolated yaw, pitch and FOV coordinates.  They are
+    reproducible and useful as a planner gate, but they are not a perceptual
+    comfort model and no comfort threshold is implied.
+    """
+
+    path = _validate_keyframes(keyframes)
+    reports: list[KeyframeContinuity] = []
+    zero = (0.0, 0.0, 0.0)
+    for index in range(1, len(path) - 1):
+        previous, current, following = path[index - 1 : index + 2]
+        left_duration = current.time - previous.time
+        right_duration = following.time - current.time
+        left_deltas = (
+            current.yaw - previous.yaw,
+            current.pitch - previous.pitch,
+            current.h_fov - previous.h_fov,
+        )
+        right_deltas = (
+            following.yaw - current.yaw,
+            following.pitch - current.pitch,
+            following.h_fov - current.h_fov,
+        )
+        reports.append(
+            KeyframeContinuity(
+                time=current.time,
+                left_velocity=zero,
+                right_velocity=zero,
+                left_acceleration=zero,
+                right_acceleration=zero,
+                left_jerk=tuple(
+                    60.0 * delta / left_duration**3 for delta in left_deltas
+                ),
+                right_jerk=tuple(
+                    60.0 * delta / right_duration**3 for delta in right_deltas
+                ),
+            )
+        )
+    return tuple(reports)
 
 
 def format_ffmpeg_sendcmd(samples: Iterable[CameraSample]) -> str:

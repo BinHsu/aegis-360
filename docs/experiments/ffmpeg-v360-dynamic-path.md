@@ -125,3 +125,26 @@ progress**.
 The next gate is to feed this dense command output through FFmpeg and verify
 frame-by-frame orientation continuity, command-file semantics and practical
 command-stream size on a longer proxy.
+
+### 2026-07-23 multi-segment derivative gate
+
+This slice measures the interpolation function analytically; it does not set
+or validate a human comfort threshold.
+
+- Implementation: `segment_limits` now reports exact per-coordinate maximum
+  yaw, pitch and horizontal-FOV velocity, acceleration and jerk.
+  `keyframe_continuity` reports exact one-sided derivatives at every interior
+  keyframe after seam-aware yaw unwrapping.
+- Observed property: each independent quintic segment has zero endpoint
+  velocity and acceleration, so joins are C2. Endpoint jerk is
+  `60 * delta / duration^3`; jerk is generally discontinuous when adjacent
+  segment displacement or duration differs.
+- Reproducible asymmetric fixture: yaw `0 -> 40 -> 10` degrees at timestamps
+  `0, 2, 3` seconds produces left/right yaw jerk of `300` and `-1800`
+  degrees/s^3, a `-2100` degrees/s^3 jump. Pitch and FOV jumps are also
+  asserted. A symmetric seam-crossing fixture verifies unwrapped yaw can have
+  zero jerk jump.
+- Scope: these are coordinate-angular derivatives. They do not establish
+  perceived comfort, a spherical orientation-space jerk metric, rendered
+  frame continuity, or acceptable planner weights.
+- Command: `python3 -m unittest discover -s tests -v`.
