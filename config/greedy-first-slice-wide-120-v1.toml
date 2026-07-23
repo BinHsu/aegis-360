@@ -1,0 +1,21 @@
+schema_version = "aegis360.greedy-config.v1"
+
+# Controlled 120-degree review variant. Editorial and switching settings are
+# identical to greedy-first-slice-v1.toml; only the minimum framing width is
+# wider so its output can be compared directly with the 110-degree baseline.
+[weights]
+presence = 0.35
+persistence = 0.30
+composition = 0.20
+forward_prior = 0.15
+
+[hysteresis]
+minimum_dwell_seconds = 2.0
+switch_margin = 0.10
+challenger_hold_seconds = 0.5
+
+[camera]
+min_angular_change_degrees = 2.0
+minimum_horizontal_fov_degrees = 120.0
+candidate_extent_padding_degrees = 10.0
+maximum_zoom_in_change_degrees = 15.0
