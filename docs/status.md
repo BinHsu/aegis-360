@@ -281,6 +281,17 @@ new review candidate:
    direction/sign calibration pass. The next gate is a bounded multiview ERP
    runner that enforces the calibrated per-step rotation range and produces a
    source-motion proxy artifact on a synthetic ERP sequence.
+
+A bounded six-viewport ERP runner and synthetic non-commuting
+yaw/pitch/roll fixture are implemented. The versioned scalar step cap is
+1.25° (the calibrated 1° yaw step plus 0.25° measurement tolerance), with
+additional minimum confidence, inlier-ratio, viewport-coverage and maximum
+residual gates. A stricter 0.5° configuration must fail closed. The portable
+119-test suite passes, but the final host Vision gate for the increased
+temporal sampling fixture remains pending because the current Codex
+non-sandbox execution budget is unavailable; do not record it as passing
+until `tests/test_synthetic_erp_multiview_motion_gate.sh` succeeds on the
+macOS host.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

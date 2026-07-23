@@ -47,6 +47,11 @@ def assemble_source_motion(document: dict[str, Any]) -> dict[str, Any]:
         matches = pair.get("matches")
         if not isinstance(matches, list):
             raise ValueError("matches must be an array")
+        declared_failure = pair.get("failureReason")
+        if declared_failure is not None:
+            declared_failure = _safe_id(declared_failure, "failureReason")
+            if matches:
+                raise ValueError("a failed pair must not contain matches")
         correspondences = []
         contributing_views: set[str] = set()
         for match_index, match in enumerate(matches):
@@ -61,6 +66,8 @@ def assemble_source_motion(document: dict[str, Any]) -> dict[str, Any]:
             contributing_views.add(viewport_id)
 
         try:
+            if declared_failure is not None:
+                raise ValueError(declared_failure)
             fit = fit_rotation(correspondences)
             if not connected:
                 samples.append(
@@ -231,6 +238,8 @@ def _finite_nonnegative(value: Any, label: str) -> float:
 
 def _reason(error: ValueError) -> str:
     text = str(error)
+    if _SAFE_ID.fullmatch(text):
+        return text
     if "at least two" in text:
         return "insufficient_correspondences"
     if "angular diversity" in text:

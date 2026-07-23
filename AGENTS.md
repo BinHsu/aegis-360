@@ -219,6 +219,8 @@ These commands have been verified on the reference machine:
 - Apple Vision synthetic gate: `tests/test_vision_frame_gate.sh`
 - Vision viewport homography-to-SO(3) host calibration:
   `tests/test_vision_viewport_so3_gate.sh`
+- Bounded synthetic ERP multiview Vision source-motion host gate:
+  `tests/test_synthetic_erp_multiview_motion_gate.sh`
 - Apple Vision batch orchestration test: `tests/test_vision_batch_gate.sh`
 - Apple Vision short-sequence tracking test:
   `tests/test_vision_tracking_gate.sh`
