@@ -30,6 +30,23 @@ All terms must be individually recorded. Weights live in versioned config,
 not source code. Plans are generated from cached analysis, enabling rapid
 weight iteration with proxy previews.
 
+## First-slice greedy configuration
+
+The initial executable contract is
+`config/greedy-first-slice-v1.toml`, with schema
+`aegis360.greedy-config.v1`. It requires exactly four editorial weights:
+`presence`, `persistence`, `composition`, and `forward_prior`. Detector
+confidence is adapter/perception evidence and must not be added as an
+editorial weight. The loader fails closed on missing fields, unknown fields,
+unsupported schema versions, and non-finite or out-of-range numbers.
+
+The same file persists minimum dwell, switch margin, challenger hold, and
+`camera.min_angular_change_degrees`. The camera value only decides whether a
+camera change is large enough to retain as a sparse keyframe. It is a tunable
+POC threshold, not evidence of perceptual comfort and not a maximum angular
+speed. Traces retain the validated values and schema version so runs can be
+reproduced.
+
 ## Continuous-transition constraint
 
 The current renderer path uses independent quintic smootherstep segments.

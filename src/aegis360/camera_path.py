@@ -15,9 +15,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
-from typing import Iterable
+from typing import Iterable, Mapping
 
-from .geometry import HALF_PI, unwrap_yaw, wrap_yaw
+from .geometry import HALF_PI, spherical_distance, unwrap_yaw, wrap_yaw
 
 
 @dataclass(frozen=True)
@@ -39,6 +39,183 @@ class CameraSample:
     yaw: float
     pitch: float
     h_fov: float
+
+
+def greedy_trace_to_keyframes(
+    trace: Mapping[str, object],
+    duration: float,
+    direction_threshold: float = math.radians(5.0),
+) -> tuple[CameraKeyframe, ...]:
+    """Adapt greedy decisions to sparse, clip-relative camera keyframes.
+
+    The trace may use arbitrary nonnegative analysis timestamps.  They are
+    rebased so the first decision is at zero, and ``duration`` is the resulting
+    clip duration.  Interior keyframes are emitted only when the selected
+    candidate ID changes or its spherical direction has moved at least
+    ``direction_threshold`` from the last emitted keyframe.  Required start and
+    end keyframes are added even when neither condition fires.
+    """
+
+    if not math.isfinite(duration) or duration < 0.0:
+        raise ValueError("duration must be finite and nonnegative")
+    if not math.isfinite(direction_threshold) or direction_threshold < 0.0:
+        raise ValueError("direction threshold must be finite and nonnegative")
+
+    decisions_object = trace.get("decisions")
+    if not isinstance(decisions_object, (list, tuple)) or not decisions_object:
+        raise ValueError("greedy trace requires at least one decision")
+
+    decisions: list[tuple[float, str, CameraKeyframe]] = []
+    previous_timestamp = -math.inf
+    for decision_object in decisions_object:
+        if not isinstance(decision_object, Mapping):
+            raise ValueError("greedy decisions must be mappings")
+        timestamp = decision_object.get("timestamp")
+        selected_id = decision_object.get("selected_candidate_id")
+        candidates = decision_object.get("candidates")
+        if (
+            not isinstance(timestamp, (int, float))
+            or isinstance(timestamp, bool)
+            or not math.isfinite(timestamp)
+            or timestamp < 0.0
+            or timestamp <= previous_timestamp
+        ):
+            raise ValueError("greedy decision timestamps must be finite and increasing")
+        if not isinstance(selected_id, str) or not selected_id:
+            raise ValueError("greedy decisions require a selected candidate ID")
+        if not isinstance(candidates, (list, tuple)):
+            raise ValueError("greedy decisions require candidate geometry")
+
+        selected = next(
+            (
+                candidate
+                for candidate in candidates
+                if isinstance(candidate, Mapping)
+                and candidate.get("candidate_id") == selected_id
+            ),
+            None,
+        )
+        if selected is None:
+            raise ValueError("selected candidate geometry is missing from decision")
+        geometry = (
+            selected.get("yaw_radians"),
+            selected.get("pitch_radians"),
+            selected.get("h_fov_radians"),
+        )
+        if not all(
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and math.isfinite(value)
+            for value in geometry
+        ):
+            raise ValueError("selected candidate geometry must be finite")
+        yaw, pitch, h_fov = geometry
+        # Reuse the camera-path validation rules below after timestamps are
+        # rebased; retaining the source timestamp here keeps this adapter small.
+        decisions.append(
+            (float(timestamp), selected_id, CameraKeyframe(0.0, yaw, pitch, h_fov))
+        )
+        previous_timestamp = float(timestamp)
+
+    origin = decisions[0][0]
+    relative_end = decisions[-1][0] - origin
+    if relative_end > duration + 1e-12:
+        raise ValueError("greedy decisions extend beyond the clip duration")
+
+    first = decisions[0]
+    keyframes = [CameraKeyframe(0.0, first[2].yaw, first[2].pitch, first[2].h_fov)]
+    emitted_id = first[1]
+    emitted_pose = first[2]
+    for timestamp, selected_id, pose in decisions[1:]:
+        relative_time = timestamp - origin
+        direction_change = spherical_distance(
+            (emitted_pose.yaw, emitted_pose.pitch), (pose.yaw, pose.pitch)
+        )
+        if selected_id != emitted_id or direction_change >= direction_threshold:
+            keyframes.append(
+                CameraKeyframe(relative_time, pose.yaw, pose.pitch, pose.h_fov)
+            )
+            emitted_id = selected_id
+            emitted_pose = pose
+
+    final_pose = decisions[-1][2]
+    if duration > 0.0 and keyframes[-1].time < duration:
+        keyframes.append(
+            CameraKeyframe(duration, final_pose.yaw, final_pose.pitch, final_pose.h_fov)
+        )
+    return _validate_keyframes(keyframes)
+
+
+def greedy_trace_to_camera_path(
+    trace: Mapping[str, object],
+    duration: float,
+    direction_threshold: float = math.radians(5.0),
+) -> dict[str, object]:
+    """Return the sparse adapter result in the orchestrator JSON contract."""
+
+    keyframes = greedy_trace_to_keyframes(trace, duration, direction_threshold)
+    decisions = trace["decisions"]
+    assert isinstance(decisions, (list, tuple))  # validated by the call above
+    first = decisions[0]
+    assert isinstance(first, Mapping)
+    origin = float(first["timestamp"])
+
+    ids_by_time = {
+        float(decision["timestamp"]) - origin: decision["selected_candidate_id"]
+        for decision in decisions
+        if isinstance(decision, Mapping)
+    }
+    final = decisions[-1]
+    assert isinstance(final, Mapping)
+    rows = []
+    for index, keyframe in enumerate(keyframes):
+        if index == 0:
+            selected_id = first["selected_candidate_id"]
+        elif index == len(keyframes) - 1:
+            selected_id = final["selected_candidate_id"]
+        else:
+            selected_id = ids_by_time[keyframe.time]
+        rows.append(
+            {
+                "timestamp": keyframe.time,
+                "yaw": keyframe.yaw,
+                "pitch": keyframe.pitch,
+                "h_fov": keyframe.h_fov,
+                "selected_candidate_id": selected_id,
+            }
+        )
+    return {
+        "schema_version": "aegis360.camera-path.v1",
+        "coordinate_units": "radians",
+        "keyframes": rows,
+    }
+
+
+def camera_path_document_to_keyframes(
+    document: Mapping[str, object],
+) -> tuple[CameraKeyframe, ...]:
+    """Load the orchestrator JSON contract for interpolation/sendcmd."""
+
+    if document.get("schema_version") != "aegis360.camera-path.v1":
+        raise ValueError("unsupported camera path schema version")
+    if document.get("coordinate_units") != "radians":
+        raise ValueError("camera path coordinate units must be radians")
+    rows = document.get("keyframes")
+    if not isinstance(rows, (list, tuple)) or not rows:
+        raise ValueError("camera path requires at least one keyframe")
+    try:
+        keyframes = tuple(
+            CameraKeyframe(
+                row["timestamp"], row["yaw"], row["pitch"], row["h_fov"]
+            )
+            for row in rows
+            if isinstance(row, Mapping)
+        )
+    except (KeyError, TypeError) as error:
+        raise ValueError("camera path keyframe geometry is incomplete") from error
+    if len(keyframes) != len(rows):
+        raise ValueError("camera path keyframes must be mappings")
+    return _validate_keyframes(keyframes)
 
 
 @dataclass(frozen=True)

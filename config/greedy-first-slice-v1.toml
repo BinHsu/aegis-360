@@ -1,0 +1,19 @@
+schema_version = "aegis360.greedy-config.v1"
+
+# These are editorial signals derived from temporal candidates. Detector
+# confidence is perception evidence and is intentionally not a scoring weight.
+[weights]
+presence = 0.35
+persistence = 0.30
+composition = 0.20
+forward_prior = 0.15
+
+[hysteresis]
+minimum_dwell_seconds = 2.0
+switch_margin = 0.10
+challenger_hold_seconds = 0.5
+
+[camera]
+# POC threshold for omitting near-identical sparse camera keyframes. This is
+# not a perceptual-comfort threshold or a maximum camera speed.
+min_angular_change_degrees = 2.0
