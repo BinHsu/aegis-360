@@ -11,26 +11,35 @@ current authority.
 Dependency-free spherical-geometry primitives and 12 unit tests exist. Static
 FFmpeg `v360` orientation, pitch, horizontal FOV, seam, and pole-adjacent
 conventions pass synthetic regression tests. Timestamped `sendcmd` steps for
-yaw, pitch, and FOV also pass with synthetic A/V timing checks. These results
-do not establish smooth camera paths, real-media quality, throughput, memory
-use, thermal behavior, model accuracy, or hardware acceleration.
+yaw, pitch, and FOV also pass with synthetic A/V timing checks. A dependency-
+free quintic path interpolator now produces dense seam-aware commands with
+analytic velocity and acceleration bounds. These results do not establish
+multi-segment jerk comfort, real-media quality, throughput, memory use,
+thermal behavior, model accuracy, or hardware acceleration.
 
 The three benchmark originals have been explicitly acquired outside Git. Their
 source facts, byte sizes, SHA-256 values, and stream probes are recorded in the
-manifest. Projection validation and content/audio publication review remain
+manifest. Manual source/container/multi-view validation accepts Old Ghost Road
+and Skiing as monoscopic ERP for POC use. Bellpuig remains override-required:
+its ERP-like 360 content has unexplained 15:8 stored geometry and must not be
+used as geometry ground truth. Content/audio publication review remains
 pending.
+
+A fixed-forward renderer passes synthetic A/V regression and produced a local,
+decodable 10-second Bellpuig smoke-test proxy outside Git. That run establishes
+an executable baseline path, not projection correctness or viewing quality.
 
 ## Next evidence gate
 
 Build the smallest executable vertical slice that can disprove geometry or
 rendering assumptions before adding perception models:
 
-1. Convert planner keyframes into a seam-aware, smooth per-frame camera path
-   and test angular velocity, acceleration, jerk, and command timing.
-2. Validate the projection of each benchmark asset before treating it as ERP.
-3. Produce low-resolution fixed-forward proxies without silently publishing
-   or redistributing the source media.
+1. Add multi-segment path constraints and measure angular velocity,
+   acceleration, and jerk at planner transitions.
+2. Resolve or explicitly normalize Bellpuig's non-2:1 projection ambiguity.
+3. Implement the greedy-with-hysteresis decision-trace baseline on validated
+   benchmark inputs.
 
-After that gate, implement the greedy-with-hysteresis baseline and compare its
-decision trace with fixed-forward. Do not report performance or quality until
+After that gate, compare the greedy decision trace with fixed-forward and begin
+the first perception-adapter spike. Do not report performance or quality until
 the corresponding executable path and artifacts exist.

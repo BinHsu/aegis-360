@@ -3,9 +3,10 @@
 Status: Active index
 
 Experiments answer feasibility questions; they do not silently establish
-architecture decisions. All current experiments are **Planned** and contain no
-results. Record raw artifacts under the configured external data root and
-commit only compact, privacy-safe summaries when results exist.
+architecture decisions. Each record states its own execution status; an
+experiment protocol is not evidence until it records an actual run. Record raw
+artifacts under the configured external data root and commit only compact,
+privacy-safe summaries when results exist.
 
 ## Experiment index
 
@@ -18,6 +19,8 @@ commit only compact, privacy-safe summaries when results exist.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.
 - `m4-air-sustained-performance.md`: memory, swap, thermals and sustained
   throughput on the reference machine.
+- `benchmark-projection-validation.md`: source/container/manual projection
+  evidence and the per-asset accept-or-override gate.
 
 ## Required experiment record
 

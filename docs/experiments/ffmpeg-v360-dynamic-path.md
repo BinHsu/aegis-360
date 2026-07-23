@@ -94,3 +94,34 @@ The verified mechanism implements timestamped **step changes**, not a smooth
 camera path. A planner must currently emit dense enough commands (potentially
 one per output frame) or another renderer/control mechanism must supply
 interpolation. That is the next evidence gate.
+
+### 2026-07-23 dense smooth-path data slice
+
+This slice implements and unit-tests the planner-to-renderer path data. It
+does not yet render the dense command stream, so the experiment remains **In
+progress**.
+
+- Implementation: dependency-free `src/aegis360/camera_path.py`.
+- Sparse yaw/pitch/FOV keyframes are expanded at output-frame timestamps with
+  monotone quintic smootherstep interpolation. Each segment has zero endpoint
+  velocity and acceleration, does not overshoot its coordinate endpoints, and
+  has documented analytic per-coordinate velocity and acceleration bounds.
+- Yaw is unwrapped by shortest displacement before interpolation, then wrapped
+  back to FFmpeg's degree range only while formatting `v360` commands. Pitch
+  is validated within the poles; the implementation explicitly does not claim
+  geodesic interpolation or meaningful yaw intent at an exact pole.
+- The formatter emits yaw, pitch and horizontal-FOV values for every frame and
+  targets the default `v360` filter name established by the prior runtime test.
+- A local FFmpeg syntax smoke test also passed with yaw, pitch and FOV emitted
+  as three commands at the same timestamp. This checks the formatter's command
+  layout, not the continuity of a rendered dense path.
+- Command: `python3 -m unittest discover -s tests -v`.
+- Observed result: PASS, 19 tests total (7 camera-path tests and 12 geometry
+  tests). Coverage includes shortest-path `+179` to `-179` seam crossing,
+  exact on-grid keyframe timing, near-pole/FOV no-overshoot behavior, analytic
+  derivative bounds, invalid input rejection, degree formatting, and renderer-
+  boundary yaw wrapping.
+
+The next gate is to feed this dense command output through FFmpeg and verify
+frame-by-frame orientation continuity, command-file semantics and practical
+command-stream size on a longer proxy.

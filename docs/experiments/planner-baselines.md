@@ -1,6 +1,6 @@
 # Planner baselines
 
-Status: Planned
+Status: In progress — fixed-forward renderer exists; comparative evaluation remains planned
 
 ## Question
 
@@ -37,4 +37,6 @@ not sufficient.
 
 Commit, candidate cache IDs, config hashes, preview hashes, annotation/viewer
 protocol, results, statistical limitations, artifacts and conclusion: TBD. No
-result has been observed.
+comparative result has been observed. The fixed-forward smoke run is recorded
+in [fixed-forward-baseline.md](fixed-forward-baseline.md); it makes no quality
+claim.

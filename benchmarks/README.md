@@ -28,9 +28,14 @@ records the original download URLs, exact byte sizes, SHA-256 values, and
 the media or an implicit acquisition command; independently acquired files
 must match the manifest before use.
 
-Projection remains pending where the containers do not provide authoritative
-projection metadata. Never infer it from a 2:1 aspect ratio or filename. Review
-faces, logos, performances, and audio before publishing derived media.
+Projection validation combines source evidence, stream/container inspection,
+and manual multi-timestamp `v360` review; it is never inferred from a 2:1
+aspect ratio or filename. Old Ghost Road and Skiing are manually verified as
+monoscopic ERP for POC use. Bellpuig is confirmed as ERP-like 360 content but
+requires an explicit override/normalization decision because its 15:8 stored
+geometry is unexplained. See
+`docs/experiments/benchmark-projection-validation.md`. Review faces, logos,
+performances, and audio before publishing derived media.
 
 Compare fixed-forward, greedy motion/saliency with hysteresis, and the aegis
 global planner. Keep Full Story evaluation separate from aggressive Highlights
