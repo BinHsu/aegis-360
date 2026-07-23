@@ -191,6 +191,9 @@ These commands have been verified on the reference machine:
 - Fixed-forward baseline test: `tests/test_fixed_forward_baseline.sh`
 - Apple Vision synthetic gate: `tests/test_vision_frame_gate.sh`
 - Apple Vision batch orchestration test: `tests/test_vision_batch_gate.sh`
+- Manual perception review validator:
+  `python3 scripts/validate_review_annotations.py REVIEW.json`
+- Local Vision review-pack test: `tests/test_vision_review_pack.sh`
 - Shell syntax check: `sh -n scripts/*.sh tests/*.sh`
 
 Current layout:

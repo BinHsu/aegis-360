@@ -49,7 +49,9 @@ All requests executed; only attention saliency returned candidates at that
 timestamp. A fixed five-timestamp, scene-distributed batch subsequently ran
 without request errors and recorded privacy-safe candidate counts and
 runtime/RSS evidence. The timestamps are not event ground truth, and the
-candidates have not been manually reviewed. No tracking, reviewed recall,
+candidates have not been manually reviewed. A local-only review pack now
+provides five contact sheets, 20 annotated viewports and an index whose human
+recall fields remain explicitly unset. No tracking, reviewed recall,
 projection comparison or backend decision exists.
 
 ## Next evidence gate

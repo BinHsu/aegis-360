@@ -16,10 +16,14 @@ privacy-safe summaries when results exist.
   timestamps and iteration cost.
 - `perception-projection-comparison.md`: ERP versus overlapping viewport
   perception/tracking.
+- `perception-review-annotations.md`: privacy-safe manual review schema for
+  fixed-timestamp four-viewport perception evidence.
 - `perception-environment-probe-2026-07-23.md`: installed runtimes and
   acceleration surfaces available for the first perception backend.
 - `apple-vision-real-frame-gate-2026-07-23.md`: synthetic and Old Ghost Road
   single-frame Apple Vision bootstrap evidence.
+- `apple-vision-review-pack-2026-07-23.md`: local-only fixed-sample contact
+  sheets and privacy-safe index prepared for human candidate review.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.
 - `m4-air-sustained-performance.md`: memory, swap, thermals and sustained
   throughput on the reference machine.

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "review": {
+    "reviewerId": "",
+    "reviewedDate": "",
+    "protocolVersion": "perception-review-v1",
+    "interRaterStatus": "not_performed"
+  },
+  "evidence": {
+    "sourceId": "",
+    "evidenceSchemaVersion": 1,
+    "projectionStrategy": "four_rectilinear_viewports",
+    "viewportIds": ["front", "right", "back", "left"]
+  },
+  "frames": [],
+  "limitations": [
+    "inter-rater agreement has not been measured"
+  ]
+}
