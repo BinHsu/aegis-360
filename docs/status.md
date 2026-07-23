@@ -210,14 +210,16 @@ rejected and is not a review candidate. Stabilization must first pass a
 known-motion end-to-end fixture, including sampled-to-output-frame
 interpolation, before another real-media attempt.
 
-The planner-to-native-renderer synthetic motion-reduction gate now generates
-known alternating translation and rotation, plans corrections, and requires
-the rendered adjacent-luma motion mean to fall below 65% of the input. Its
-fixture generation and planner stages pass, but the end-to-end result remains
-unverified because the host currently cannot create a VideoToolbox H.264
-compression session (`-12908`). The gate reports this as
-`ENVIRONMENT_UNAVAILABLE` with exit status 77; it must be rerun after the
-encoder becomes available and must not be recorded as a stabilization pass.
+The planner-to-native-renderer synthetic motion-reduction gate generates known
+alternating translation and rotation, plans corrections, and requires the
+rendered adjacent-luma motion mean to fall below 65% of the input. In the
+approved non-sandboxed macOS execution environment, the mean fell from
+42.3061 to 7.0689, a ratio of 0.167, and the gate passed. The same
+VideoToolbox preflight returns `-12908` inside the restricted command sandbox
+but succeeds in the owner's Terminal and in approved non-sandboxed execution;
+this is an execution-environment boundary, not evidence that the host encoder
+is busy or broken. Future native-render gates must use the approved execution
+path and retain exit 77 for an actual unavailable encoder.
 
 The proposed spherical stabilization and segment-treatment boundary is
 documented in
