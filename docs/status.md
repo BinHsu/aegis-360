@@ -39,6 +39,14 @@ challengers, deterministic ties, missing-incumbent fallback, and seam-aware
 transition distance. It has not yet consumed real perception output or
 demonstrated better viewing quality than fixed-forward.
 
+The replaceable perception boundary is executable and synthetic-tested. It
+records privacy-safe sample identity, adapter/backend/projection provenance,
+spherical candidates, explicit missing signals, and optional weights checksum,
+while keeping editorial scoring outside the adapter. No real detector or
+tracker has run yet. The installed-environment probe favors a small Swift/
+Vision real-frame gate because the active Python has no numerical or ML stack;
+this is a provisional time-to-evidence recommendation, not a backend decision.
+
 ## Next evidence gate
 
 Build the smallest executable vertical slice that can disprove geometry or
@@ -48,8 +56,8 @@ rendering assumptions before adding perception models:
    the first planner needs a coupled spline, while avoiding an unevidenced
    comfort threshold.
 2. Resolve or explicitly normalize Bellpuig's non-2:1 projection ambiguity.
-3. Define the first replaceable perception adapter and produce normalized
-   candidate observations for a short validated benchmark segment.
+3. Run the first Swift/Vision saliency and human-rectangle adapter spike on a
+   short validated benchmark segment, recording runtime and resource behavior.
 
 After that gate, feed those observations to the greedy baseline and compare its
 decision trace with fixed-forward. Do not report performance or quality until

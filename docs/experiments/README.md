@@ -16,6 +16,8 @@ privacy-safe summaries when results exist.
   timestamps and iteration cost.
 - `perception-projection-comparison.md`: ERP versus overlapping viewport
   perception/tracking.
+- `perception-environment-probe-2026-07-23.md`: installed runtimes and
+  acceleration surfaces available for the first perception backend.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.
 - `m4-air-sustained-performance.md`: memory, swap, thermals and sustained
   throughput on the reference machine.

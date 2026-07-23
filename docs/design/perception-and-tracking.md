@@ -40,6 +40,18 @@ Timestamped observations, tracks, confidence, class, direction/extent,
 projection provenance and optional low-dimensional motion evidence. Outputs
 must be cacheable independently of the planner.
 
+The executable core contract is `src/aegis360/perception.py`. A frame sample
+contains privacy-safe source and decode metadata, while an adapter returns
+model-independent spherical candidates and named normalized evidence. Missing
+signals carry an explicit reason. Adapter/backend/projection provenance is
+retained, and model weights are identified by checksum when present.
+
+Editorial weights are deliberately absent from adapter outputs. An explicit
+`ScoringConfig` converts selected evidence into the greedy baseline's
+`CandidateObservation`; unselected evidence remains in the cacheable
+perception result. The current tests use only a synthetic no-model adapter and
+do not establish real detector or tracker quality.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,
