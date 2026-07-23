@@ -1,0 +1,65 @@
+manifest_version = 1
+verified_date = "2026-07-23"
+data_root_env = "AEGIS_DATA_DIR"
+implicit_downloads_allowed = false
+
+[[asset]]
+id = "bellpuig_onboard_360"
+title = "Video 360 VR on board de Raul Sanchez en Bellpuig"
+source_page = "https://commons.wikimedia.org/wiki/File:Video_360_VR_on_board_de_Raul_Sanchez_en_Bellpuig.webm"
+creator = "Fotos, Joel Molina"
+license_spdx = "CC-BY-3.0"
+license_url = "https://creativecommons.org/licenses/by/3.0/"
+attribution = "Fotos, Joel Molina — CC BY 3.0; modified by aegis-360."
+verified_date = "2026-07-23"
+reported_duration_seconds = 282.381
+reported_width = 3840
+reported_height = 2048
+benchmark_role = "High-speed on-board motion; forward-motion prior; stabilization and camera-path stress."
+direct_url = "pending"
+sha256 = "pending"
+media_probe = "pending"
+projection_validation = "pending — reported dimensions are not exact 2:1"
+audio_rights_review = "pending"
+content_rights_review = "pending"
+
+[[asset]]
+id = "old_ghost_road_360"
+title = "3-mins-in-360 on The Old Ghost Road"
+source_page = "https://commons.wikimedia.org/wiki/File:3-mins-in-360_on_The_Old_Ghost_Road.webm"
+creator = "360 New Zealand Ltd"
+license_spdx = "CC-BY-SA-3.0"
+license_url = "https://creativecommons.org/licenses/by-sa/3.0/"
+attribution = "360 New Zealand Ltd — CC BY-SA 3.0; modified by aegis-360."
+verified_date = "2026-07-23"
+reported_duration_seconds = 225.453
+reported_width = 4096
+reported_height = 2048
+benchmark_role = "Mountain-bike travel story; multiple mounts; subject/environment selection and narrative continuity."
+direct_url = "pending"
+sha256 = "pending"
+media_probe = "pending"
+projection_validation = "pending — dimensions are 2:1 but aspect ratio alone is insufficient"
+audio_rights_review = "pending"
+content_rights_review = "pending"
+derivative_obligation = "Distribute adapted media under CC BY-SA 3.0 or a compatible license."
+
+[[asset]]
+id = "skiing_may_2019_360"
+title = "360 SKIING MAY 2019"
+source_page = "https://commons.wikimedia.org/wiki/File:360_SKIING_MAY_2019.webm"
+creator = "Medical News Minute"
+license_spdx = "CC-BY-3.0"
+license_url = "https://creativecommons.org/licenses/by/3.0/"
+attribution = "Medical News Minute — CC BY 3.0; modified by aegis-360."
+verified_date = "2026-07-23"
+reported_duration_seconds = 616.392
+reported_width = 5120
+reported_height = 2560
+benchmark_role = "Long moving-sports footage; sustained analysis, forward-motion, highlights, and camera comfort."
+direct_url = "pending"
+sha256 = "pending"
+media_probe = "pending"
+projection_validation = "pending — dimensions are 2:1 but aspect ratio alone is insufficient"
+audio_rights_review = "pending"
+content_rights_review = "pending"

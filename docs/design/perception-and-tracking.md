@@ -1,0 +1,48 @@
+# Perception and tracking
+
+Status: Design hypothesis pending projection comparison
+
+## Responsibility
+
+Perception discovers people, objects, motion/event regions and contextual
+views. Tracking associates observations through time and across the ERP seam.
+Neither layer decides what the viewer should watch.
+
+Implement detector and tracker adapters with explicit model/weight identity,
+input projection, timestamps, confidence and output coordinate space. The POC
+may start with an available Ultralytics backend; no downstream schema may
+depend on it.
+
+## Candidate projection strategies
+
+1. Downscaled ERP inference: fastest baseline, with severe seam/pole
+   distortion risk.
+2. Overlapping rectilinear viewports: less distortion, more inference and
+   duplicate-merging cost.
+3. Hybrid ERP proposals followed by selected viewport refinement.
+
+No strategy is selected before the projection experiment. Cube faces are an
+optional comparison only if the first two fail acceptance criteria.
+
+## Identity rules
+
+- Track positions are stored as unit directions plus optional spherical
+  extents, never solely as planar ERP boxes.
+- Duplicate observations in overlapping viewports are merged by spherical
+  overlap/appearance evidence with provenance retained.
+- Seam crossings must preserve identity through yaw wrapping.
+- Lost tracks retain a bounded grace interval; confidence decays explicitly.
+- Re-identification embeddings, if used, are ephemeral sensitive artifacts.
+
+## POC outputs
+
+Timestamped observations, tracks, confidence, class, direction/extent,
+projection provenance and optional low-dimensional motion evidence. Outputs
+must be cacheable independently of the planner.
+
+## Acceptance criteria
+
+On annotated benchmark excerpts, compare candidate recall, duplicate rate,
+track fragmentation, identity switches, seam continuity, elapsed time and peak
+memory. The chosen strategy must enable useful directing on the reference
+machine; maximum detector accuracy is not itself the goal.

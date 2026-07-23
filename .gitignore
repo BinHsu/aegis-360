@@ -1,0 +1,40 @@
+# Local machine configuration
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# macOS and editors
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Local media, models, caches, and outputs
+/assets/
+/models/
+/proxies/
+/cache/
+/outputs/
+/experiments/
+*.360
+*.insv
+*.lrv
+*.mp4
+*.mov
+*.webm
+*.mkv
+*.onnx
+*.mlmodel
+*.mlpackage/
+*.pt
+*.pth
