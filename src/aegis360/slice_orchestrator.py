@@ -87,6 +87,7 @@ def run_slice(
     slice_config: GreedySliceConfig | None = None,
     render_adapter: Path | None = None,
     source_media: Path | None = None,
+    render_mode: str = "dynamic",
 ) -> None:
     """Create a complete bundle atomically and never overwrite a prior run.
 
@@ -99,6 +100,8 @@ def run_slice(
         raise FileExistsError(f"refusing to overwrite output bundle: {output_dir}")
     if not SAFE_ID.fullmatch(source_id):
         raise ValueError("source_id must be a privacy-safe job token")
+    if render_mode not in {"dynamic", "shot_static_v360"}:
+        raise ValueError("unsupported render_mode")
     if (
         not math.isfinite(start_seconds)
         or start_seconds < 0
@@ -212,6 +215,7 @@ def run_slice(
                 "trace": str((staging / "trace.json").resolve()),
                 "start_seconds": start_seconds,
                 "duration_seconds": duration_seconds,
+                "render_mode": render_mode,
                 "artifacts": artifacts,
             }
             with tempfile.NamedTemporaryFile(

@@ -221,8 +221,12 @@ These commands have been verified on the reference machine:
   `python3 -m unittest tests.test_auto_directed_slice -v`
 - Three-output FFmpeg render-adapter test:
   `tests/test_render_slice_adapter.sh`
+- Shot-static FFmpeg render-adapter test:
+  `tests/test_render_slice_shot_static.sh`
+- FFmpeg repeated-runtime-pose regression:
+  `tests/test_ffmpeg_v360_runtime_pose_regression.sh`
 - First auto-directed planning/bundle runner:
-  `python3 scripts/run_auto_directed_slice.py VISION_SEQUENCE.json OUTPUT_DIR --source-id SOURCE_ID --width WIDTH --height HEIGHT --start START --duration DURATION [--config CONFIG.toml] [--render-adapter EXECUTABLE --source-media INPUT_VIDEO]`
+  `python3 scripts/run_auto_directed_slice.py VISION_SEQUENCE.json OUTPUT_DIR --source-id SOURCE_ID --width WIDTH --height HEIGHT --start START --duration DURATION [--config CONFIG.toml] [--render-adapter EXECUTABLE --render-mode {dynamic,shot_static_v360} --source-media INPUT_VIDEO]`
 - Manual perception review validator:
   `python3 scripts/validate_review_annotations.py REVIEW.json`
 - Local Vision review-pack test: `tests/test_vision_review_pack.sh`

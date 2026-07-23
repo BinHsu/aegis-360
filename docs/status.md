@@ -109,25 +109,44 @@ orchestrator can atomically persist a privacy-safe trace, resolved config,
 camera path and artifact manifest, and can invoke an explicit render-adapter
 boundary for fixed-forward, auto-directed and debug-overlay outputs. Tests use
 a fake adapter to prove orchestration and artifact contracts. A real FFmpeg
-adapter now produces three decodable, synchronized artifacts from a two-second
-synthetic ERP A/V fixture. That synthetic render does not prove real-media
-projection, camera behavior or quality. No real 30-second rung has run, and no
-viewpoint, motion, editing or viewing quality has been accepted.
+adapter produces three decodable, synchronized artifacts from a two-second
+synthetic ERP A/V fixture.
+
+Two real Old Ghost Road 30-second attempts now also exist outside Git. The
+first selected the context fallback for all 60 decisions because of a
+fallback-scoring bug, fixed in `cbe6d37`. The second selected context for 5
+decisions and a track for 55, made one switch, and emitted 40 keyframes. Its
+three outputs are complete, decode for 30 seconds, and preserve aligned
+audio/video.
+
+The second attempt did not pass the camera-path application gate. Dynamic
+FFmpeg `v360` output diverged from an equal static-pose render after repeated
+timestamped pose commands. The outputs therefore establish real-media
+analysis, planning, bundle creation, decoding and A/V preservation, but not
+correct application of the planned camera poses. They are not suitable for
+human review; no viewpoint, motion, editing or viewing quality has been
+accepted. Privacy-safe artifact-root-relative records are in
+`docs/experiments/first-auto-directed-slice.md`; source-media absolute paths
+remain unrecorded.
+
+A third attempt reused the same evidence and planning configuration with
+`shot_static_v360`. It grouped the decisions into two shots, rendered each
+with an explicit static `v360` pose, and concatenated them with audio. All
+three outputs decode; auto/debug duration is about 30.04 seconds with about
+20 ms video/audio duration difference. Sampled frames no longer show the
+repeated-command pose divergence. This opens qualitative review for framing
+and cut behavior only; v3 does not validate smooth tracking motion.
 
 ## Next evidence gate
 
-Run the smallest real-media vertical slice that can disprove sequence,
-directing or rendering assumptions:
+Complete qualitative review of the cut-based 30-second v3:
 
-1. Use the synthetic-tested FFmpeg render adapter and one immutable
-   configuration to create fixed-forward, auto-directed and debug-overlay
-   outputs from the same nested real-media 30-second prefix.
-2. Validate the artifact bundle, A/V timing, camera-path application and debug
-   overlay mechanically before requesting qualitative review.
-3. If the 30-second slice is mechanically valid, ask the project owner to
-   review framing, obvious camera motion and switch behavior; do not infer
-   comfort or quality from synthetic orchestration tests.
-4. Advance the unchanged configuration through the 60/180/300-second duration
+1. Give the project owner the complete fixed, auto and debug paths.
+2. Review whether the two selected views are sensible and whether the single
+   cut is preferable to fixed-forward.
+3. Treat smooth tracking motion as untested; do not infer it from this
+   cut-based result.
+5. Advance the unchanged configuration through the 60/180/300-second duration
    ladder only for eligible assets. Use the 300-second Skiing rung for
    sustained performance evidence.
 

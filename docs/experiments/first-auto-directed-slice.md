@@ -1,7 +1,7 @@
 # First auto-directed slice protocol
 
-Status: Protocol and synthetic contract evidence only; no real-media result or
-quality claim.
+Status: Real-media 30-second v1/v2 negative evidence and mechanically valid
+cut-based v3 recorded; v3 is ready for qualitative framing/cut review.
 
 ## Question
 
@@ -133,5 +133,57 @@ paths, mechanical probes, camera/switch metrics, reviewer outcome and all
 limitations. Performance claims additionally follow
 `m4-air-sustained-performance.md`.
 
-Generated media and local source paths remain outside Git. Do not add a result
-section until a real run has completed.
+Generated media and local source paths remain outside Git.
+
+## Old Ghost Road 30-second run record
+
+The first real-media rung used the deliberately selected zero-second prefix of
+Old Ghost Road. The analysis cadence was 2 fps, yielding 60 decisions over 30
+seconds. Generated evidence remains outside Git under the external artifact
+root:
+
+- `outputs/auto-directed/old-ghost-road-30s-v1/vision-sequence.json`
+- `outputs/auto-directed/old-ghost-road-30s-v1/bundle/` (v1)
+- `outputs/auto-directed/old-ghost-road-30s-v1/bundle-v2/` (v2)
+- `outputs/auto-directed/old-ghost-road-30s-v1/bundle-v3/` (v3)
+
+These are artifact-root-relative locations, not source-media paths. No local
+source absolute path is recorded here.
+
+### v1: invalid fallback scoring
+
+The v1 trace selected `context:forward` for all 60 decisions and generated two
+camera-path keyframes. This was not a meaningful directing result: a scoring
+bug allowed the permanent context fallback to outrank observed subjects. The
+bug was fixed in commit `cbe6d37` (`fix: keep context fallback below observed
+subjects`). The v1 media is retained as negative integration evidence and must
+not be used for qualitative review.
+
+### v2: planning evidence passes, dynamic render evidence fails
+
+After the scoring fix, v2 selected context for 5 decisions and a tracked
+candidate for 55 decisions. It made one switch and emitted 40 camera-path
+keyframes. The bundle is complete, and all three 30-second outputs decode with
+the intended audio/video streams and aligned duration:
+`fixed-forward.mp4`, `auto-directed.mp4`, and `debug-overlay.mp4`.
+
+The renderer nevertheless failed the camera-path application gate. A
+controlled comparison showed that dynamic FFmpeg `v360` output diverges from
+an equal static-pose render after repeated timestamped pose commands. Thus the
+files prove bounded real-media analysis, planning, bundle creation, decoding
+and A/V preservation, but they do not prove that the rendered view follows the
+planned poses. The v2 videos are not suitable for human review, and no paths
+should be sent to the reviewer as review candidates.
+
+### v3: cut-based camera application passes mechanical checks
+
+The v3 run reused the same Vision evidence and planning configuration, but
+grouped the decisions into two shots and rendered each with a static `v360`
+pose. Fixed-forward is 30.000 seconds; auto and debug are about 30.040 seconds
+with about 20 ms video/audio duration difference. All three decode with video
+and audio. Sampled frames no longer exhibit the v2 repeated-command pose
+divergence, so v3 is suitable for qualitative framing and cut review.
+
+This is not smooth tracking evidence: the renderer deliberately holds one
+representative pose per shot. Do not advance to 60 seconds until the project
+owner reviews v3 against fixed-forward.

@@ -14,6 +14,9 @@ privacy-safe summaries when results exist.
   correctness.
 - `ffmpeg-v360-dynamic-path.md`: installed `v360` command semantics, quality,
   timestamps and iteration cost.
+- `ffmpeg-v360-runtime-pose-regression-2026-07-23.md`: synthetic evidence that
+  a single first-frame yaw update matches a static pose while repeated runtime
+  yaw updates on FFmpeg 8.1.1 can become path-dependent.
 - `perception-projection-comparison.md`: ERP versus overlapping viewport
   perception/tracking.
 - `perception-review-annotations.md`: privacy-safe manual review schema for

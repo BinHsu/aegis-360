@@ -29,6 +29,11 @@ def main() -> None:
     )
     parser.add_argument("--render-adapter", type=Path)
     parser.add_argument("--source-media", type=Path)
+    parser.add_argument(
+        "--render-mode",
+        choices=("dynamic", "shot_static_v360"),
+        default="dynamic",
+    )
     args = parser.parse_args()
     try:
         run_slice(
@@ -42,6 +47,7 @@ def main() -> None:
             slice_config=load_greedy_config(args.config),
             render_adapter=args.render_adapter,
             source_media=args.source_media,
+            render_mode=args.render_mode,
         )
     except (OSError, ValueError, RuntimeError) as error:
         parser.error(str(error))

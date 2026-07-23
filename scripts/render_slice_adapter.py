@@ -18,6 +18,7 @@ from aegis360.camera_path import (  # noqa: E402
     format_ffmpeg_sendcmd,
     interpolate_path,
 )
+from aegis360.shot_render import greedy_trace_to_static_shots  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,6 +32,7 @@ REQUIRED = {
     "artifacts",
 }
 ARTIFACTS = {"fixed", "auto", "debug"}
+RENDER_MODES = {"dynamic", "shot_static_v360"}
 
 
 def fail(message: str, code: int = 1) -> None:
@@ -129,6 +131,55 @@ def trace_tsv(trace: dict[str, object], duration: float) -> str:
     return "\n".join(output) + "\n"
 
 
+def render_static_shots(
+    source: Path,
+    output: Path,
+    trace: dict[str, object],
+    start: float,
+    duration: float,
+) -> None:
+    """Render hard-cut shots with one static v360 pose per selected-ID run."""
+
+    shots = greedy_trace_to_static_shots(trace, duration)
+    command = ["ffmpeg", "-hide_banner", "-loglevel", "error"]
+    for shot in shots:
+        command.extend(
+            [
+                "-ss", f"{start + shot.start:.9f}",
+                "-t", f"{shot.end - shot.start:.9f}",
+                "-i", str(source),
+            ]
+        )
+    filters: list[str] = []
+    concat_inputs: list[str] = []
+    for index, shot in enumerate(shots):
+        filters.extend(
+            [
+                f"[{index}:v:0]setpts=PTS-STARTPTS,"
+                "v360=input=equirect:output=flat:w=640:h=360:"
+                f"yaw={math.degrees(shot.yaw):.9f}:"
+                f"pitch={math.degrees(shot.pitch):.9f}:"
+                f"h_fov={math.degrees(shot.h_fov):.9f}:interp=linear[v{index}]",
+                f"[{index}:a:0]asetpts=PTS-STARTPTS[a{index}]",
+            ]
+        )
+        concat_inputs.extend((f"[v{index}]", f"[a{index}]"))
+    filters.append(
+        "".join(concat_inputs)
+        + f"concat=n={len(shots)}:v=1:a=1[outv][outa]"
+    )
+    command.extend(
+        [
+            "-filter_complex", ";".join(filters),
+            "-map", "[outv]", "-map", "[outa]",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "0",
+            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k",
+            "-movflags", "+faststart", str(output),
+        ]
+    )
+    subprocess.run(command, check=True)
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         fail(f"usage: {sys.argv[0]} REQUEST.json", 2)
@@ -142,6 +193,9 @@ def main() -> None:
         fail("incomplete request; missing: " + ", ".join(sorted(missing)), 2)
     if request["schema_version"] != "aegis360.render-request.v1":
         fail("unsupported request schema version", 2)
+    render_mode = request.get("render_mode", "dynamic")
+    if render_mode not in RENDER_MODES:
+        fail("render_mode must be dynamic or shot_static_v360", 2)
     start, duration = request["start_seconds"], request["duration_seconds"]
     if (
         not finite_number(start) or start < 0
@@ -174,7 +228,8 @@ def main() -> None:
             fail("camera path extends beyond requested duration", 2)
         fps = media_fps(source)
         commands = format_ffmpeg_sendcmd(interpolate_path(camera, fps))
-        overlay = trace_tsv(load_object(trace_file, "trace"), float(duration))
+        trace = load_object(trace_file, "trace")
+        overlay = trace_tsv(trace, float(duration))
     except (TypeError, ValueError) as error:
         fail(str(error), 2)
 
@@ -193,14 +248,19 @@ def main() -> None:
                 ],
                 check=True,
             )
-            subprocess.run(
-                [
-                    str(ROOT / "scripts/render_dynamic_v360_proxy.sh"),
-                    str(source), str(outputs["auto"]), str(commands_file),
-                    str(start), str(duration),
-                ],
-                check=True,
-            )
+            if render_mode == "shot_static_v360":
+                render_static_shots(
+                    source, outputs["auto"], trace, float(start), float(duration)
+                )
+            else:
+                subprocess.run(
+                    [
+                        str(ROOT / "scripts/render_dynamic_v360_proxy.sh"),
+                        str(source), str(outputs["auto"]), str(commands_file),
+                        str(start), str(duration),
+                    ],
+                    check=True,
+                )
             subprocess.run(
                 [
                     sys.executable, str(ROOT / "scripts/render_debug_preview.py"),
