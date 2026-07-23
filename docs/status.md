@@ -42,10 +42,13 @@ demonstrated better viewing quality than fixed-forward.
 The replaceable perception boundary is executable and synthetic-tested. It
 records privacy-safe sample identity, adapter/backend/projection provenance,
 spherical candidates, explicit missing signals, and optional weights checksum,
-while keeping editorial scoring outside the adapter. No real detector or
-tracker has run yet. The installed-environment probe favors a small Swift/
-Vision real-frame gate because the active Python has no numerical or ML stack;
-this is a provisional time-to-evidence recommendation, not a backend decision.
+while keeping editorial scoring outside the adapter. A native Swift/Apple
+Vision bootstrap gate has now run attention/objectness saliency and human-
+rectangle requests on four rectilinear views from one Old Ghost Road frame.
+All requests executed; only attention saliency returned candidates at that
+timestamp. The one-run runtime/RSS evidence is recorded in the experiment
+log. No tracking, reviewed recall, projection comparison or backend decision
+exists.
 
 ## Next evidence gate
 
@@ -56,8 +59,9 @@ rendering assumptions before adding perception models:
    the first planner needs a coupled spline, while avoiding an unevidenced
    comfort threshold.
 2. Resolve or explicitly normalize Bellpuig's non-2:1 projection ambiguity.
-3. Run the first Swift/Vision saliency and human-rectangle adapter spike on a
-   short validated benchmark segment, recording runtime and resource behavior.
+3. Manually review multiple benchmark timestamps, quantify Vision candidate
+   recall/duplicates, and add spherical cross-viewport deduplication before
+   comparing projection/backend options.
 
 After that gate, feed those observations to the greedy baseline and compare its
 decision trace with fixed-forward. Do not report performance or quality until

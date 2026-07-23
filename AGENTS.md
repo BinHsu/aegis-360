@@ -189,12 +189,14 @@ These commands have been verified on the reference machine:
 - FFmpeg/internal convention gate: `tests/check_ffmpeg_v360_conventions.py`
 - Timestamped FFmpeg `v360` control test: `tests/test_ffmpeg_v360_dynamic.sh`
 - Fixed-forward baseline test: `tests/test_fixed_forward_baseline.sh`
+- Apple Vision synthetic gate: `tests/test_vision_frame_gate.sh`
 - Shell syntax check: `sh -n scripts/*.sh tests/*.sh`
 
 Current layout:
 
 - `src/aegis360/`: dependency-free core geometry primitives
 - `scripts/`: explicit synthetic-fixture and render helpers
+- `tools/`: small native probes whose source and behavior are versioned
 - `tests/`: unit and executable evidence tests
 - `benchmarks/`: public asset manifest and attribution policy, not media
 - `docs/`: decisions, design, research, experiment records, and history

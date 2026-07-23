@@ -18,6 +18,8 @@ privacy-safe summaries when results exist.
   perception/tracking.
 - `perception-environment-probe-2026-07-23.md`: installed runtimes and
   acceleration surfaces available for the first perception backend.
+- `apple-vision-real-frame-gate-2026-07-23.md`: synthetic and Old Ghost Road
+  single-frame Apple Vision bootstrap evidence.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.
 - `m4-air-sustained-performance.md`: memory, swap, thermals and sustained
   throughput on the reference machine.
