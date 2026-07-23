@@ -22,10 +22,15 @@ download these files automatically.
   multiple mounts; derivatives must satisfy ShareAlike.
 - 360 Skiing May 2019 — CC BY 3.0. Long 5K 2:1 moving-sports footage.
 
-Before first use, fill only facts measured from the acquired Commons file:
-direct URL, SHA-256, media probe, and projection validation. Never infer them
-from a page preview or filename. Review faces, logos, performances, and audio
-before publishing derived media.
+The reference-machine acquisition was verified on 2026-07-23. The manifest
+records the original download URLs, exact byte sizes, SHA-256 values, and
+`ffprobe` metadata measured from those files. A fresh checkout does not contain
+the media or an implicit acquisition command; independently acquired files
+must match the manifest before use.
+
+Projection remains pending where the containers do not provide authoritative
+projection metadata. Never infer it from a 2:1 aspect ratio or filename. Review
+faces, logos, performances, and audio before publishing derived media.
 
 Compare fixed-forward, greedy motion/saliency with hysteresis, and the aegis
 global planner. Keep Full Story evaluation separate from aggressive Highlights

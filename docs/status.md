@@ -8,26 +8,29 @@ research ledger, experiment protocols, and three-asset benchmark manifest
 exist. The original scaffold is preserved under `docs/archive/` and is not
 current authority.
 
-Dependency-free spherical-geometry primitives and 12 unit tests exist. A
-synthetic 20-frame ERP fixture can be rendered through the installed FFmpeg
-`v360` filter at two static yaw values; both outputs decode and differ. These
-results do not establish absolute orientation, dynamic camera control,
-real-media quality, throughput, memory use, thermal behavior, model accuracy,
-or hardware acceleration.
+Dependency-free spherical-geometry primitives and 12 unit tests exist. Static
+FFmpeg `v360` orientation, pitch, horizontal FOV, seam, and pole-adjacent
+conventions pass synthetic regression tests. Timestamped `sendcmd` steps for
+yaw, pitch, and FOV also pass with synthetic A/V timing checks. These results
+do not establish smooth camera paths, real-media quality, throughput, memory
+use, thermal behavior, model accuracy, or hardware acceleration.
+
+The three benchmark originals have been explicitly acquired outside Git. Their
+source facts, byte sizes, SHA-256 values, and stream probes are recorded in the
+manifest. Projection validation and content/audio publication review remain
+pending.
 
 ## Next evidence gate
 
 Build the smallest executable vertical slice that can disprove geometry or
 rendering assumptions before adding perception models:
 
-1. Add image-based orientation, FOV, seam, pole, and black-gap assertions that
-   connect the internal geometry convention to FFmpeg `v360` output.
-2. Determine and test a timestamped dynamic yaw/pitch/FOV control path while
-   preserving timestamps and audio.
-3. Record the exact commands and environment only after they execute
-   successfully.
+1. Convert planner keyframes into a seam-aware, smooth per-frame camera path
+   and test angular velocity, acceleration, jerk, and command timing.
+2. Validate the projection of each benchmark asset before treating it as ERP.
+3. Produce low-resolution fixed-forward proxies without silently publishing
+   or redistributing the source media.
 
-After that gate, acquire the benchmark media explicitly, verify its metadata
-and checksum, and implement fixed-forward and greedy-with-hysteresis baselines.
-Do not report performance or quality until executable paths and artifacts
-exist.
+After that gate, implement the greedy-with-hysteresis baseline and compare its
+decision trace with fixed-forward. Do not report performance or quality until
+the corresponding executable path and artifacts exist.

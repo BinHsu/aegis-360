@@ -1,6 +1,6 @@
 # Geometry validation
 
-Status: In progress — pure geometry slice passed; renderer comparison pending
+Status: In progress — pure geometry and static renderer convention slices passed
 
 ## Question
 
@@ -56,5 +56,30 @@ The implementation and regression tests are in `src/aegis360/geometry.py` and
 yaw wrap/unwrap, direction mapping and great-circle distance. It does **not**
 complete this experiment or freeze renderer conventions: generated image
 fixtures, FOV/orientation, interpolation and comparison with FFmpeg `v360`
-8.1.1 remain untested. No performance conclusion is drawn from unit-test
-runtime.
+8.1.1 were untested by this slice. No performance conclusion is drawn from
+unit-test runtime.
+
+## Run record: static renderer convention slice, 2026-07-23
+
+- Environment: same reference Mac and installed FFmpeg 8.1.1 described above.
+- Input: locally generated, single-frame 720x360 FFV1/RGB24 ERP fixture with
+  a non-black background and markers at yaw `0`, `+90`, `-90`, `+/-180`,
+  pitch `+60`, `-60`, and yaw `+20` degrees. No downloaded media.
+- Command: `tests/check_ffmpeg_v360_conventions.py`.
+- Output: 640x360 raw RGB24 flat projections using nearest interpolation.
+- Result: PASS. FFmpeg `yaw` and `pitch` have the same sign as the internal
+  convention after radians-to-degrees conversion. Yaw `+180` and `-180` both
+  selected the seam marker; pole-adjacent views at pitch `+89` and `-89`
+  decoded with no black projection gaps.
+- FOV evidence: the yaw `+20` marker appeared to the right of center and its
+  centroid moved toward the center when `h_fov` widened from 60 to 120
+  degrees. The executable test records the exact centroids on each run.
+- Gap evidence: zero exact-black RGB pixels for seam-centered and both
+  pole-adjacent views at horizontal FOV 120 degrees.
+- Artifacts: fixture and raw frames were created in a temporary directory and
+  removed after the test.
+
+This freezes the minimum static mapping needed by the renderer adapter:
+`degrees(internal yaw) -> v360 yaw`, `degrees(internal pitch) -> v360 pitch`,
+and horizontal FOV degrees to `h_fov`. It does not validate roll, interpolation
+error, timestamped updates, path continuity, audio/timestamps, or performance.

@@ -186,6 +186,8 @@ These commands have been verified on the reference machine:
 
 - Geometry tests: `python3 -m unittest discover -s tests -v`
 - Static FFmpeg `v360` evidence test: `tests/test_ffmpeg_v360_static.sh`
+- FFmpeg/internal convention gate: `tests/check_ffmpeg_v360_conventions.py`
+- Timestamped FFmpeg `v360` control test: `tests/test_ffmpeg_v360_dynamic.sh`
 - Shell syntax check: `sh -n scripts/*.sh tests/*.sh`
 
 Current layout:

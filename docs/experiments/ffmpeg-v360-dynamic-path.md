@@ -1,6 +1,6 @@
 # FFmpeg v360 dynamic path
 
-Status: Planned
+Status: In progress
 
 ## Question
 
@@ -62,3 +62,35 @@ static ERP-to-flat path and that changing static yaw changes pixels. It does
 not yet verify absolute orientation, seam behavior, black-border absence,
 audio/timestamp preservation, runtime/sendcmd control, performance, memory,
 thermal behavior, or suitability as the final renderer.
+
+### 2026-07-23 timestamped command slice
+
+This run establishes discrete timestamped control and basic synthetic A/V
+timing only. It does not establish smooth interpolation, absolute orientation,
+real-media sync, performance, memory, thermal behavior, or final-renderer
+suitability, so the overall experiment remains **In progress**.
+
+- Environment: same host and FFmpeg 8.1.1 build as the static slice.
+- Input: locally generated, static 1024x512 ERP-like grid at 10 fps for 2
+  seconds, with a continuous 997 Hz PCM tone at 48 kHz. No external media.
+- Control: `sendcmd` steps `yaw` from 0 to 45 degrees at 0.5 s, `pitch` from
+  0 to 35 degrees at 1.0 s, and horizontal FOV from 90 to 55 degrees at 1.5 s.
+- Render: 640x360 lossless H.264/YUV420P plus AAC in MP4. Lossless encoding
+  makes equal-frame assertions meaningful; this is a correctness fixture, not
+  the intended delivery bitrate.
+- Command: `tests/test_ffmpeg_v360_dynamic.sh`.
+- Observed result: PASS. The output had 20 video frames and audio; commands
+  changed decoded pixels exactly at frames 5, 10 and 15 (zero-based), frames
+  within each constant-pose segment matched, video PTS ran from 0.0 to 1.9 s,
+  and both stream durations were within the test's 30 ms A/V tolerance.
+- Runtime-control detail: the command target must be `v360` for the default
+  filter instance. A probe that targeted only the custom suffix `camera` of
+  `v360@camera` returned `Function not implemented` and produced unchanged
+  frames. The float options do not accept per-frame expressions such as
+  `45*t` in this build.
+- Artifacts: generated in a temporary directory and removed by the test.
+
+The verified mechanism implements timestamped **step changes**, not a smooth
+camera path. A planner must currently emit dense enough commands (potentially
+one per output frame) or another renderer/control mechanism must supply
+interpolation. That is the next evidence gate.
