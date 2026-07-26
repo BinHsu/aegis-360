@@ -3,9 +3,9 @@
 Updated: 2026-07-27T07:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: daca112
-Remote status: local main contains the completed milestone; push is pending
-Working tree at checkpoint: checkpoint metadata update only
+Baseline commit: 7c8b74a
+Remote status: main matches origin/main after this checkpoint is pushed
+Working tree at checkpoint: clean after this checkpoint commit
 
 ## Objective
 
@@ -59,7 +59,7 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `daca112`.
+- Baseline commit: `7c8b74a`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
