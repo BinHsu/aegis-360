@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T11:52:58+08:00
+Updated: 2026-07-26T12:05:12+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: c756536
-Remote status: main is three commits ahead of origin/main at this checkpoint
-Working tree at checkpoint: per-view diagnostics, tests, and result records are uncommitted
+Baseline commit: 504a9e6
+Remote status: main matches origin/main at this checkpoint
+Working tree at checkpoint: leave-one-view-out diagnostics, tests, and results are uncommitted
 
 ## Objective
 
@@ -43,22 +43,25 @@ same 23/124 fused acceptance result. Disagreement is not confined to down:
 back, down, and left have median fused disagreement of 1.883°, 1.506°, and
 1.099°, versus 0.444–0.521° for front, right, and up.
 
+The fixed leave-one-out run accepted 66/124 pairs without back and 54/124
+without down, versus 23/124 for all six views. Omitting front, right, or up
+reduced acceptance. The best fixed omission still failed 58 pairs.
+
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `c756536`.
+- Baseline commit: `504a9e6`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits `f3c081d`, `331664d`, and `c756536` contain the real ERP runner and
-  its two completed comparisons; they are not yet pushed at this checkpoint.
+- Commits through `504a9e6` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 126 tests including the handoff-contract and per-view report tests.
+  - PASS: 127 tests including the handoff-contract and leave-one-out report tests.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -88,6 +91,12 @@ back, down, and left have median fused disagreement of 1.883°, 1.506°, and
     0.500°/2.256°, up 0.521°/1.070°.
   - Elapsed: 83.25 seconds; maximum child RSS: 285,294,592 bytes.
   - Swap was unchanged; no recorded thermal or performance warning.
+- Fixed leave-one-view-out diagnosis:
+  - Baseline remained exactly 23/124 accepted.
+  - Omit back: 66/124 accepted; omit down: 54/124; omit left: 34/124.
+  - Omit up/front/right: 16/13/12 accepted, all worse than baseline.
+  - Elapsed: 156.76 seconds; maximum child RSS: 283,754,496 bytes.
+  - Swap decreased by 8 MB; no recorded thermal or performance warning.
 - Flat homographic post-warp remains rejected as the primary stabilization
   path; see `docs/experiments/vision-homographic-motion-probe.md`.
 
@@ -103,10 +112,11 @@ back, down, and left have median fused disagreement of 1.883°, 1.506°, and
 
 ## Pending
 
-- Add a bounded robust view-level consensus or leave-one-view-out diagnostic
-  that records per-pair rejected view identities while preserving the current
-  all-ray fusion as baseline. Do not globally discard down, increase
-  sampling, relax thresholds, or render a viewer candidate.
+- Add a deterministic per-pair view-consensus selector, validated on
+  synthetic corrupted-view fixtures. Require at least four views and compare
+  against the unchanged all-ray baseline plus all fixed omissions. Do not
+  select subsets by peeking at final acceptance, globally discard a view,
+  relax thresholds, or render a viewer candidate.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -161,7 +171,27 @@ python3 scripts/run_real_erp_multiview_motion.py \
 ```
 
 The per-view command above has completed and must not be rerun into the same
-directory. The exact next implementation command is:
+directory. The exact next implementation check is:
+
+```sh
+python3 -m unittest tests.test_so3 tests.test_real_motion_report \
+  tests.test_bounded_multiview_motion -v
+```
+
+That targeted check passes. After the synthetic host gate, run the bounded
+real comparison into a new directory:
+
+```sh
+python3 scripts/run_real_erp_multiview_motion.py \
+  "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
+  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-25-30-fps25-leave-one-out-v3" \
+  --config config/old-ghost-road-multiview-motion-fps25-v1.json \
+  --source-id old-ghost-road-25-30-fps25-leave-one-out-v3 \
+  --start 25 --duration 5
+```
+
+The leave-one-out command above has completed and must not be rerun into the
+same directory. The exact next command is:
 
 ```sh
 python3 -m unittest discover -s tests -v
@@ -178,6 +208,8 @@ python3 -m unittest discover -s tests -v
   `outputs/source-motion/old-ghost-road-25-30-fps25-v1/`.
 - The per-view 25 fps diagnosis is under
   `outputs/source-motion/old-ghost-road-25-30-fps25-per-view-v2/`.
+- The fixed leave-one-view-out diagnosis is under
+  `outputs/source-motion/old-ghost-road-25-30-fps25-leave-one-out-v3/`.
 
 ## Active agents
 

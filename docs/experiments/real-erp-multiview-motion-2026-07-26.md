@@ -194,3 +194,38 @@ The next bounded estimator experiment should compare robust view-level
 consensus or leave-one-view-out fits and record which views are rejected for
 each pair. That experiment must first pass synthetic geometry and must retain
 the current all-ray fusion as its baseline.
+
+## Fixed leave-one-view-out diagnosis
+
+The same interval was repeated once more. The production all-ray fit remained
+unchanged, while each pair also computed six diagnostic fits, each omitting
+one viewport. Artifact root relative output:
+`outputs/source-motion/old-ghost-road-25-30-fps25-leave-one-out-v3/`.
+
+| Omitted view | Accepted pairs | Accepted fraction | Residual / step failures | Median / p95 residual |
+| --- | ---: | ---: | ---: | ---: |
+| back | 66 | 53.2% | 43 / 15 | 0.967° / 1.412° |
+| down | 54 | 43.5% | 56 / 14 | 1.032° / 1.532° |
+| left | 34 | 27.4% | 79 / 11 | 1.065° / 1.503° |
+| up | 16 | 12.9% | 86 / 22 | 1.180° / 1.581° |
+| front | 13 | 10.5% | 100 / 11 | 1.181° / 1.654° |
+| right | 12 | 9.7% | 95 / 17 | 1.178° / 1.545° |
+
+The unchanged six-view baseline again accepted 23/124 pairs. Omitting back
+or down therefore produces a real but incomplete improvement, while omitting
+front, right, or up makes acceptance worse. This corroborates the spatial
+asymmetry seen in the per-view fits, but 46.8% of pairs still fail even in
+the best fixed omission. A global five-view rig is not justified by one
+interval, and a fixed omission cannot respond when the unreliable region
+moves with scene content.
+
+This diagnostic took 156.76 seconds because it performed six additional
+robust fits per pair. Maximum child RSS was 283,754,496 bytes; swap decreased
+by 8 MB and macOS recorded no thermal or performance warning.
+
+The next bounded experiment should perform per-pair view-level consensus:
+select a subset using a declared, deterministic disagreement criterion,
+retain at least four views, and compare it with both the six-view baseline
+and all six fixed omissions. Selection must not use the final acceptance
+label as an oracle. Validate the selector on synthetic corrupted-view cases
+before another real-media run.

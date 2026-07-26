@@ -49,6 +49,41 @@ def distribution(values: list[float]) -> dict[str, float] | None:
     }
 
 
+def summarize_leave_one_out(
+    diagnostics: list[dict], viewport_ids: list[str]
+) -> dict[str, dict]:
+    summary = {}
+    for viewport_id in viewport_ids:
+        rows = [
+            trial
+            for row in diagnostics
+            for trial in row["leave_one_view_out"]
+            if trial["omitted_viewport_id"] == viewport_id
+        ]
+        reasons: dict[str, int] = {}
+        for row in rows:
+            if row["failure_reason"]:
+                reasons[row["failure_reason"]] = (
+                    reasons.get(row["failure_reason"], 0) + 1
+                )
+        measured = sum(row["state"] == "measured" for row in rows)
+        summary[viewport_id] = {
+            "pair_count": len(rows),
+            "measured_pair_count": measured,
+            "measured_pair_fraction": measured / len(rows) if rows else None,
+            "failure_reasons": reasons,
+            "step_rotation_radians": distribution([
+                row["step_rotation_radians"] for row in rows
+                if row["step_rotation_radians"] is not None
+            ]),
+            "residual_radians": distribution([
+                row["residual_radians"] for row in rows
+                if row["residual_radians"] is not None
+            ]),
+        }
+    return summary
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input_erp", type=Path)
@@ -168,6 +203,9 @@ def main() -> int:
                 if view["fused_disagreement_radians"] is not None
             ]),
         }
+    leave_one_view_out_summary = summarize_leave_one_out(
+        diagnostics, viewport_ids
+    )
     ffmpeg_version = (safe_command_output(["ffmpeg", "-version"]) or "").splitlines()
     swap_after = safe_command_output(["sysctl", "-n", "vm.swapusage"])
     thermal_after = safe_command_output(["pmset", "-g", "therm"])
@@ -190,6 +228,7 @@ def main() -> int:
         },
         "viewport_summaries": viewport_summaries,
         "per_view_fit_summary": per_view_fit_summary,
+        "leave_one_view_out_summary": leave_one_view_out_summary,
         "environment": {
             "platform": platform.platform(),
             "machine": platform.machine(),

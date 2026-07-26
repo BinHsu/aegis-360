@@ -73,6 +73,7 @@ def main():
         contributing = 0
         per_view = []
         per_view_rotations = {}
+        correspondences_by_view = {}
         for viewport_data, item in zip(declared, config["viewports"]):
             observation = evidence[item["id"]]["observations"][index]
             reference = evidence[item["id"]]["observations"][index - 1]
@@ -130,6 +131,11 @@ def main():
                 continue
             contributing += 1
             per_view_rotations[item["id"]] = view_fit.rotation_xyzw
+            view_correspondences = [
+                (current_ray, previous_ray)
+                for previous_ray, current_ray in rays
+            ]
+            correspondences_by_view[item["id"]] = view_correspondences
             per_view.append({
                 "viewport_id": item["id"],
                 "state": "measured",
@@ -164,6 +170,7 @@ def main():
             "state": "measured",
             "failure_reason": None,
             "per_view": per_view,
+            "leave_one_view_out": [],
         }
         if contributing < minimum_views:
             pair["matches"] = []
@@ -185,6 +192,64 @@ def main():
                                 rotation, fit.rotation_xyzw
                             )
                         )
+                for omitted_viewport_id in correspondences_by_view:
+                    remaining = [
+                        match
+                        for viewport_id, view_matches
+                        in correspondences_by_view.items()
+                        if viewport_id != omitted_viewport_id
+                        for match in view_matches
+                    ]
+                    leave_out = {
+                        "omitted_viewport_id": omitted_viewport_id,
+                        "contributing_viewports": contributing - 1,
+                        "step_rotation_radians": None,
+                        "fit_confidence": None,
+                        "inlier_ratio": None,
+                        "residual_radians": None,
+                        "state": "measured",
+                        "failure_reason": None,
+                    }
+                    if contributing - 1 < minimum_views:
+                        leave_out["state"] = "invalid"
+                        leave_out["failure_reason"] = (
+                            "insufficient_viewport_coverage"
+                        )
+                    else:
+                        try:
+                            leave_fit = fit_rotation(remaining)
+                            leave_out["step_rotation_radians"] = angle(
+                                leave_fit.rotation_xyzw
+                            )
+                            leave_out["fit_confidence"] = leave_fit.confidence
+                            leave_out["inlier_ratio"] = leave_fit.inlier_ratio
+                            leave_out["residual_radians"] = (
+                                leave_fit.residual_radians
+                            )
+                            if leave_out["step_rotation_radians"] > maximum:
+                                leave_out["state"] = "invalid"
+                                leave_out["failure_reason"] = (
+                                    "rotation_step_exceeds_configured_bound"
+                                )
+                            elif leave_fit.confidence < minimum_confidence:
+                                leave_out["state"] = "invalid"
+                                leave_out["failure_reason"] = (
+                                    "rotation_fit_confidence_below_bound"
+                                )
+                            elif leave_fit.inlier_ratio < minimum_inlier_ratio:
+                                leave_out["state"] = "invalid"
+                                leave_out["failure_reason"] = (
+                                    "rotation_fit_inlier_ratio_below_bound"
+                                )
+                            elif leave_fit.residual_radians > maximum_residual:
+                                leave_out["state"] = "invalid"
+                                leave_out["failure_reason"] = (
+                                    "rotation_fit_residual_exceeds_bound"
+                                )
+                        except ValueError:
+                            leave_out["state"] = "invalid"
+                            leave_out["failure_reason"] = "rotation_fit_failed"
+                    diagnostic["leave_one_view_out"].append(leave_out)
                 if diagnostic["step_rotation_radians"] > maximum:
                     pair["matches"] = []
                     pair["failureReason"] = "rotation_step_exceeds_configured_bound"

@@ -325,6 +325,15 @@ and only 0.444–0.521° front/right/up. The next gate is therefore robust
 view-level consensus or leave-one-view-out diagnosis with per-pair rejected
 view identities. Do not solve this by relaxing residual limits or dropping
 the down view globally.
+
+Fixed leave-one-view-out evidence now sharpens that result. Omitting back
+accepted 66/124 pairs (53.2%) and omitting down accepted 54/124 (43.5%),
+versus 23/124 (18.5%) for all six views. Omitting front, right, or up reduced
+acceptance to 9.7–12.9%. Even the best fixed omission still failed 58 pairs,
+so do not hard-code a five-view rig from this interval. The next gate is a
+deterministic per-pair view-consensus selector, validated first against
+synthetic corrupted-view fixtures and compared against all existing
+baselines without using the acceptance result as an oracle.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and
