@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from aegis360.multiview_motion import assemble_source_motion
+from aegis360.causal_view_reliability import CausalViewReliability
 from aegis360.so3 import fit_rotation, rotation_distance_radians
 from aegis360.view_consensus import select_rotation_consensus
 from aegis360.viewport_rays import RectilinearViewport, homography_to_world_rays
@@ -66,8 +67,26 @@ def main():
     minimum_inlier_ratio = config["fit"]["minimumInlierRatio"]
     maximum_residual = math.radians(config["fit"]["maximumFitResidualDegrees"])
     consensus_config = config.get("viewConsensus")
+    causal_config = config.get("causalViewReliability")
+    causal_reliability = None
+    if causal_config is not None:
+        causal_reliability = CausalViewReliability(
+            [item["id"] for item in config["viewports"]],
+            selected_viewport_count=causal_config[
+                "selectedViewportCount"
+            ],
+            update_alpha=causal_config["updateAlpha"],
+        )
     pair_diagnostics = []
     for index in range(1, frame_count):
+        causal_selected_ids = (
+            causal_reliability.select_for_current_pair()
+            if causal_reliability is not None else ()
+        )
+        causal_scores_before = (
+            causal_reliability.scores_radians
+            if causal_reliability is not None else {}
+        )
         correspondences = []
         serialized = []
         previous_time = None
@@ -174,6 +193,7 @@ def main():
             "per_view": per_view,
             "leave_one_view_out": [],
             "view_consensus": None,
+            "causal_view_reliability": None,
         }
         if contributing < minimum_views:
             pair["matches"] = []
@@ -336,6 +356,79 @@ def main():
                                 "rotation_fit_failed"
                             )
                     diagnostic["view_consensus"] = consensus
+                if causal_reliability is not None:
+                    available_selected = [
+                        viewport_id for viewport_id in causal_selected_ids
+                        if viewport_id in correspondences_by_view
+                    ]
+                    causal = {
+                        "selected_viewport_ids": available_selected,
+                        "rejected_viewport_ids": [
+                            viewport_id for viewport_id
+                            in sorted(correspondences_by_view)
+                            if viewport_id not in available_selected
+                        ],
+                        "scores_before_radians": causal_scores_before,
+                        "rotation_xyzw": None,
+                        "step_rotation_radians": None,
+                        "fit_confidence": None,
+                        "inlier_ratio": None,
+                        "residual_radians": None,
+                        "state": "measured",
+                        "failure_reason": None,
+                    }
+                    if len(available_selected) < minimum_views:
+                        causal["state"] = "invalid"
+                        causal["failure_reason"] = (
+                            "insufficient_viewport_coverage"
+                        )
+                    else:
+                        causal_matches = [
+                            match
+                            for viewport_id in available_selected
+                            for match in correspondences_by_view[viewport_id]
+                        ]
+                        try:
+                            causal_fit = fit_rotation(causal_matches)
+                            causal["step_rotation_radians"] = angle(
+                                causal_fit.rotation_xyzw
+                            )
+                            causal["rotation_xyzw"] = list(
+                                causal_fit.rotation_xyzw
+                            )
+                            causal["fit_confidence"] = causal_fit.confidence
+                            causal["inlier_ratio"] = causal_fit.inlier_ratio
+                            causal["residual_radians"] = (
+                                causal_fit.residual_radians
+                            )
+                            if causal["step_rotation_radians"] > maximum:
+                                causal["state"] = "invalid"
+                                causal["failure_reason"] = (
+                                    "rotation_step_exceeds_configured_bound"
+                                )
+                            elif causal_fit.confidence < minimum_confidence:
+                                causal["state"] = "invalid"
+                                causal["failure_reason"] = (
+                                    "rotation_fit_confidence_below_bound"
+                                )
+                            elif causal_fit.inlier_ratio < minimum_inlier_ratio:
+                                causal["state"] = "invalid"
+                                causal["failure_reason"] = (
+                                    "rotation_fit_inlier_ratio_below_bound"
+                                )
+                            elif causal_fit.residual_radians > maximum_residual:
+                                causal["state"] = "invalid"
+                                causal["failure_reason"] = (
+                                    "rotation_fit_residual_exceeds_bound"
+                                )
+                        except ValueError:
+                            causal["state"] = "invalid"
+                            causal["failure_reason"] = "rotation_fit_failed"
+                    diagnostic["causal_view_reliability"] = causal
+                    if len(per_view_rotations) == len(config["viewports"]):
+                        causal_reliability.observe_completed_pair(
+                            per_view_rotations
+                        )
                 if diagnostic["step_rotation_radians"] > maximum:
                     pair["matches"] = []
                     pair["failureReason"] = "rotation_step_exceeds_configured_bound"

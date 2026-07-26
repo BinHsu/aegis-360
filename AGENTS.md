@@ -159,6 +159,10 @@ data.
 - Work in bounded milestones. A milestone is complete only when its durable
   outputs, verification state, rejected alternatives, remaining work, and
   exact next command are recorded so another unfamiliar agent can continue.
+- A milestone boundary is a checkpoint, not a reason to end the main turn.
+  When another safe, authorized, non-blocked milestone remains, continue into
+  it automatically after checkpointing. Stop only for a genuine user
+  decision, new authority, external-state dependency, or completed objective.
 - Update `docs/handoff/current.md` at every milestone boundary and before
   starting another large task or delegating new work. Do not wait for a usage,
   context, time, or service-limit warning to prepare a handoff.

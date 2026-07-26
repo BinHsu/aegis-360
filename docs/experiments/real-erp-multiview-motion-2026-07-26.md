@@ -271,3 +271,54 @@ interval. Candidate evidence includes temporal reliability priors learned
 only from preceding pairs, foreground/near-field exclusion, or a robust
 view-level estimator that weights consensus continuously rather than using a
 hard radius. The current medoid selector remains a negative baseline.
+
+## Temporally causal reliability diagnosis
+
+A second selector ranks each current pair using only earlier-pair evidence.
+After an all-six-view first pair, it selects the four viewports with the
+lowest EWMA of prior rotation-medoid disagreement. The update alpha is
+predeclared as 0.2, an effective window of roughly five observations. The
+current pair updates reliability only after its subset and fit are complete,
+so a current failure cannot improve its own selection.
+
+Unit tests prove past-only selection, deterministic ranking, and bounded EWMA
+updates. The full synthetic ERP/Vision gate passes. Artifact root relative
+output:
+`outputs/source-motion/old-ghost-road-25-30-fps25-causal-v5/`.
+
+| Metric | Six-view | Hard medoid | Causal reliability |
+| --- | ---: | ---: | ---: |
+| Accepted pairs | 23/124 | 36/124 | 86/124 |
+| Accepted fraction | 18.5% | 29.0% | 69.4% |
+| Residual failures | 90 | 0 after subset formed | 23 |
+| Step failures | 11 | 0 after subset formed | 15 |
+
+Viewport selection counts over 124 pairs were front 124, up 120, right 119,
+left 97, down 35, and back 3. This is stronger than the best fixed omission
+(66/124 without back), supporting a time-varying reliability policy.
+
+Failures are not uniformly distributed. The first 23 pairs form one
+0.92-second invalid run. After that initial burst, 86/101 pairs pass (85.1%);
+the remaining fifteen failures form nine runs: five of one frame, two of two
+frames, and two of three frames. Thus the post-burst maximum gap is 0.12
+seconds at 25 fps. Do not hide the initial burst in the aggregate score.
+
+The run took 66.29 seconds, maximum child RSS was 282,148,864 bytes, swap was
+unchanged, and macOS recorded no thermal or performance warning.
+
+This result justifies making causal pair rotations explicit in a separate
+analysis artifact and evaluating a declared gap policy. It does not yet
+justify rendering: the current production source-motion output still uses
+the unchanged six-view baseline, causal diagnostic rows do not yet persist
+their fitted quaternion, and neither the 0.92-second initial gap nor later
+short-gap interpolation has been validated for visual comfort.
+
+The same configuration was rerun after adding
+`aegis360.causal-rotation-steps.v1`. The v6 artifact contains 124 local pair
+steps: 86 measured steps each have one quaternion, while all 38 invalid steps
+have `rotation_xyzw: null`. It contains no pixels, identity data, source path,
+or absolute local path. Results reproduce v5 exactly. The artifact is under
+`outputs/source-motion/old-ghost-road-25-30-fps25-causal-steps-v6/`.
+
+This is deliberately not named source motion: local rotation steps separated
+by gaps do not yet form a connected absolute orientation path.

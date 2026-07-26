@@ -124,6 +124,89 @@ def summarize_view_consensus(diagnostics: list[dict]) -> dict | None:
     }
 
 
+def summarize_causal_view_reliability(
+    diagnostics: list[dict],
+) -> dict | None:
+    rows = [
+        row["causal_view_reliability"] for row in diagnostics
+        if row["causal_view_reliability"] is not None
+    ]
+    if not rows:
+        return None
+    reasons: dict[str, int] = {}
+    selected_counts: dict[str, int] = {}
+    for row in rows:
+        if row["failure_reason"]:
+            reasons[row["failure_reason"]] = (
+                reasons.get(row["failure_reason"], 0) + 1
+            )
+        for viewport_id in row["selected_viewport_ids"]:
+            selected_counts[viewport_id] = (
+                selected_counts.get(viewport_id, 0) + 1
+            )
+    measured = sum(row["state"] == "measured" for row in rows)
+    return {
+        "pair_count": len(rows),
+        "measured_pair_count": measured,
+        "measured_pair_fraction": measured / len(rows),
+        "failure_reasons": reasons,
+        "selected_viewport_counts": selected_counts,
+        "step_rotation_radians": distribution([
+            row["step_rotation_radians"] for row in rows
+            if row["step_rotation_radians"] is not None
+        ]),
+        "residual_radians": distribution([
+            row["residual_radians"] for row in rows
+            if row["residual_radians"] is not None
+        ]),
+    }
+
+
+def causal_rotation_steps_document(
+    motion: dict, config: dict, source_id: str
+) -> dict | None:
+    diagnostics = motion["estimator"]["fit_bounds"]["pair_diagnostics"]
+    if not any(
+        row["causal_view_reliability"] is not None
+        for row in diagnostics
+    ):
+        return None
+    steps = []
+    for row in diagnostics:
+        causal = row["causal_view_reliability"]
+        steps.append({
+            "previous_pts_seconds": row["previous_pts_seconds"],
+            "current_pts_seconds": row["current_pts_seconds"],
+            "state": causal["state"],
+            "failure_reason": causal["failure_reason"],
+            "rotation_xyzw": (
+                causal["rotation_xyzw"]
+                if causal["state"] == "measured" else None
+            ),
+            "selected_viewport_ids": causal["selected_viewport_ids"],
+            "fit_confidence": causal["fit_confidence"],
+            "inlier_ratio": causal["inlier_ratio"],
+            "residual_radians": causal["residual_radians"],
+        })
+    return {
+        "schema_version": "aegis360.causal-rotation-steps.v1",
+        "source_id": source_id,
+        "config_id": config["configId"],
+        "coordinate_convention": "current-source-frame-to-previous-source-frame",
+        "steps": steps,
+        "privacy": {
+            "contains_source_path": False,
+            "contains_pixels": False,
+            "contains_identity_data": False,
+        },
+        "limitations": [
+            "Pair rotations are not an absolute orientation path.",
+            "Invalid steps remain explicit and are not interpolated.",
+            "Visual registration is not gyro ground truth.",
+        ],
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input_erp", type=Path)
@@ -247,6 +330,17 @@ def main() -> int:
         diagnostics, viewport_ids
     )
     view_consensus_summary = summarize_view_consensus(diagnostics)
+    causal_view_reliability_summary = summarize_causal_view_reliability(
+        diagnostics
+    )
+    causal_steps = causal_rotation_steps_document(
+        motion, config, arguments.source_id
+    )
+    if causal_steps is not None:
+        (arguments.output_dir / "causal-rotation-steps.json").write_text(
+            json.dumps(causal_steps, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
     ffmpeg_version = (safe_command_output(["ffmpeg", "-version"]) or "").splitlines()
     swap_after = safe_command_output(["sysctl", "-n", "vm.swapusage"])
     thermal_after = safe_command_output(["pmset", "-g", "therm"])
@@ -271,6 +365,9 @@ def main() -> int:
         "per_view_fit_summary": per_view_fit_summary,
         "leave_one_view_out_summary": leave_one_view_out_summary,
         "view_consensus_summary": view_consensus_summary,
+        "causal_view_reliability_summary": (
+            causal_view_reliability_summary
+        ),
         "environment": {
             "platform": platform.platform(),
             "machine": platform.machine(),
@@ -286,6 +383,10 @@ def main() -> int:
         },
         "artifacts": {
             "source_motion": "source-motion.json",
+            "causal_rotation_steps": (
+                "causal-rotation-steps.json"
+                if causal_steps is not None else None
+            ),
             "contains_source_path": False,
             "contains_frames": False,
         },

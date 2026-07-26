@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T12:26:05+08:00
+Updated: 2026-07-26T12:45:18+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 621937f
+Baseline commit: ae3682a
 Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: clean after rotation-medoid consensus milestone
+Working tree at checkpoint: causal selector, rotation-step artifact, tests, and v5/v6 records are uncommitted
 
 ## Objective
 
@@ -52,21 +52,25 @@ four-or-more-view subset passed the existing fit bounds, but 88 pairs failed
 as insufficient consensus. It improves on all-six fusion but underperforms
 fixed omission of back or down.
 
+The past-only EWMA reliability selector accepted 86/124 pairs (69.4%).
+Failures include an initial 23-pair/0.92-second burst. After that burst,
+86/101 pass and the longest later gap is three frames/0.12 seconds.
+
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `621937f`.
+- Baseline commit: `ae3682a`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `621937f` are signed and pushed to `origin/main`.
+- Commits through `ae3682a` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 131 tests including the handoff, consensus, and report tests.
+  - PASS: 136 tests including handoff, causal selection, and artifact tests.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -110,6 +114,16 @@ fixed omission of back or down.
   - Median/p95 selected-fit residual: 0.585°/0.885°.
   - Elapsed: 61.65 seconds; maximum child RSS: 283,115,520 bytes.
   - Swap was unchanged; no recorded thermal or performance warning.
+- Temporally causal reliability diagnosis:
+  - Unit tests prove current observations cannot affect current selection;
+    the full synthetic ERP/Vision gate passes.
+  - Accepted 86/124 pairs; 23 residual and 15 step failures.
+  - First gap is 23 frames/0.92 seconds; later gaps have maximum length three.
+  - Selected front/up/right/left/down/back 124/120/119/97/35/3 times.
+  - Elapsed: 66.29 seconds; maximum child RSS: 282,148,864 bytes.
+  - Swap was unchanged; no recorded thermal or performance warning.
+  - v6 reproduced v5 and materialized 124 privacy-safe local steps: 86 valid
+    quaternions and 38 explicit null gaps, with no absolute paths.
 - Flat homographic post-warp remains rejected as the primary stabilization
   path; see `docs/experiments/vision-homographic-motion-probe.md`.
 
@@ -130,6 +144,13 @@ fixed omission of back or down.
   exclusion, or continuous robust view weighting. Do not widen the radius
   after observing v4, select by final acceptance, globally discard a view,
   relax fit thresholds, or render a viewer candidate.
+- Implement a temporally causal reliability selector whose current-pair
+  subset depends only on earlier-pair disagreement. Validate that a corrupt
+  observation cannot affect its own selection, then compare it without
+  changing the all-ray baseline or fit bounds.
+- Persist causal fitted rotations in a separate privacy-safe analysis
+  artifact and define a versioned gap policy. Keep the initial 0.92-second
+  gap explicit; do not silently interpolate it or render a viewer candidate.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -230,6 +251,44 @@ directory. The exact next command is:
 python3 -m unittest discover -s tests -v
 ```
 
+The causal selector unit and synthetic integration gates pass. Run its real
+comparison into a new directory:
+
+```sh
+python3 scripts/run_real_erp_multiview_motion.py \
+  "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
+  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-25-30-fps25-causal-v5" \
+  --config config/old-ghost-road-multiview-motion-causal-v1.json \
+  --source-id old-ghost-road-25-30-fps25-causal-v5 \
+  --start 25 --duration 5
+```
+
+The causal command above has completed and must not be rerun into the same
+directory. The exact next command is:
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
+The privacy-safe causal rotation-step artifact tests and synthetic host gate
+pass. Materialize it into a new real result directory:
+
+```sh
+python3 scripts/run_real_erp_multiview_motion.py \
+  "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
+  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-25-30-fps25-causal-steps-v6" \
+  --config config/old-ghost-road-multiview-motion-causal-v1.json \
+  --source-id old-ghost-road-25-30-fps25-causal-steps-v6 \
+  --start 25 --duration 5
+```
+
+The v6 command above has completed and must not be rerun into the same
+directory. The exact next command remains:
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
 ## External artifacts
 
 - Artifact root is configured outside Git through `AEGIS_DATA_DIR`.
@@ -245,6 +304,10 @@ python3 -m unittest discover -s tests -v
   `outputs/source-motion/old-ghost-road-25-30-fps25-leave-one-out-v3/`.
 - The rotation-medoid consensus diagnosis is under
   `outputs/source-motion/old-ghost-road-25-30-fps25-consensus-v4/`.
+- The temporally causal diagnosis is under
+  `outputs/source-motion/old-ghost-road-25-30-fps25-causal-v5/`.
+- The causal local-rotation artifact is under
+  `outputs/source-motion/old-ghost-road-25-30-fps25-causal-steps-v6/`.
 
 ## Active agents
 

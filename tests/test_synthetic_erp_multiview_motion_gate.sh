@@ -113,6 +113,10 @@ for diagnostic in diagnostics:
     consensus = diagnostic["view_consensus"]
     assert consensus["state"] == "measured", consensus
     assert len(consensus["selected_viewport_ids"]) >= 4, consensus
+    causal = diagnostic["causal_view_reliability"]
+    assert causal["state"] == "measured", causal
+    assert len(causal["selected_viewport_ids"]) >= 4, causal
+    assert len(causal["rotation_xyzw"]) == 4, causal
 for index, (sample, wanted) in enumerate(zip(
         actual["samples"], expected["rawOrientationXyzw"])):
     observed = sample["raw_orientation_xyzw"]

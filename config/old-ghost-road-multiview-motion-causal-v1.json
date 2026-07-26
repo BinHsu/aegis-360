@@ -1,10 +1,10 @@
 {
   "schemaVersion": "aegis360.multiview-motion-config.v1",
-  "configId": "synthetic-six-overlap-110-step1.25-v1",
+  "configId": "old-ghost-road-six-overlap-110-fps25-causal4-alpha0.2-v1",
   "proxy": {
-    "width": 1024,
-    "height": 512,
-    "sampleFps": 2.0
+    "width": 4096,
+    "height": 2048,
+    "sampleFps": 25.0
   },
   "viewport": {
     "width": 640,
@@ -12,12 +12,36 @@
     "horizontalFovDegrees": 110.0
   },
   "viewports": [
-    {"id": "front", "yawDegrees": 0.0, "pitchDegrees": 0.0},
-    {"id": "right", "yawDegrees": 90.0, "pitchDegrees": 0.0},
-    {"id": "back", "yawDegrees": 180.0, "pitchDegrees": 0.0},
-    {"id": "left", "yawDegrees": -90.0, "pitchDegrees": 0.0},
-    {"id": "up", "yawDegrees": 0.0, "pitchDegrees": 65.0},
-    {"id": "down", "yawDegrees": 0.0, "pitchDegrees": -65.0}
+    {
+      "id": "front",
+      "yawDegrees": 0.0,
+      "pitchDegrees": 0.0
+    },
+    {
+      "id": "right",
+      "yawDegrees": 90.0,
+      "pitchDegrees": 0.0
+    },
+    {
+      "id": "back",
+      "yawDegrees": 180.0,
+      "pitchDegrees": 0.0
+    },
+    {
+      "id": "left",
+      "yawDegrees": -90.0,
+      "pitchDegrees": 0.0
+    },
+    {
+      "id": "up",
+      "yawDegrees": 0.0,
+      "pitchDegrees": 65.0
+    },
+    {
+      "id": "down",
+      "yawDegrees": 0.0,
+      "pitchDegrees": -65.0
+    }
   ],
   "fit": {
     "homographyColumns": 9,
@@ -45,6 +69,6 @@
       "pitch": 2.0,
       "roll": 3.0
     },
-    "policy": "The scalar cap is the 1 degree calibrated yaw step plus 0.25 degree measurement tolerance; larger motion fails closed pending axis-specific calibration."
+    "policy": "Current-pair selection uses only earlier-pair EWMA disagreement. Alpha 0.2 is a predeclared five-observation effective window; the current fit outcome never affects its own subset."
   }
 }

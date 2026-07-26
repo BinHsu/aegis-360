@@ -344,6 +344,15 @@ fusion but is worse than fixed omission of back or down. Do not widen the
 radius post hoc. Treat hard-radius medoid selection as a negative baseline
 and investigate temporally causal reliability, foreground/near-field
 exclusion, or continuous robust view weighting before another real run.
+
+Past-only causal reliability materially improves the same interval to
+86/124 accepted pairs (69.4%), exceeding the best fixed omission at 53.2%.
+The first 23 pairs are one 0.92-second failure burst; after it, 86/101 pass
+(85.1%) and no later failure run exceeds three frames or 0.12 seconds.
+Selection counts strongly suppress back (3/124) while dynamically using down
+(35/124) and left (97/124). The next gate is a separate causal source-motion
+artifact plus an explicit gap policy; do not render from diagnostic rows or
+silently interpolate the initial gap.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

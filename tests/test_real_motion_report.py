@@ -7,7 +7,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from run_real_erp_multiview_motion import (
     distribution,
+    causal_rotation_steps_document,
     summarize_leave_one_out,
+    summarize_causal_view_reliability,
     summarize_view_consensus,
 )
 
@@ -82,6 +84,70 @@ class RealMotionReportTests(unittest.TestCase):
         self.assertEqual(summary["failure_reasons"], {
             "insufficient_view_consensus": 1,
         })
+
+    def test_causal_summary_records_selected_view_frequency(self):
+        diagnostics = [
+            {"causal_view_reliability": {
+                "state": "measured",
+                "failure_reason": None,
+                "selected_viewport_ids": ["front", "right", "up", "left"],
+                "step_rotation_radians": 0.01,
+                "residual_radians": 0.005,
+            }},
+            {"causal_view_reliability": {
+                "state": "invalid",
+                "failure_reason": "rotation_fit_residual_exceeds_bound",
+                "selected_viewport_ids": ["front", "right", "up", "down"],
+                "step_rotation_radians": 0.02,
+                "residual_radians": 0.03,
+            }},
+        ]
+        summary = summarize_causal_view_reliability(diagnostics)
+        self.assertEqual(summary["measured_pair_fraction"], 0.5)
+        self.assertEqual(summary["selected_viewport_counts"], {
+            "down": 1, "front": 2, "left": 1, "right": 2, "up": 2,
+        })
+        self.assertEqual(summary["failure_reasons"], {
+            "rotation_fit_residual_exceeds_bound": 1,
+        })
+
+    def test_causal_steps_keep_gaps_explicit_and_paths_private(self):
+        motion = {"estimator": {"fit_bounds": {"pair_diagnostics": [
+            {
+                "previous_pts_seconds": 0.0,
+                "current_pts_seconds": 0.04,
+                "causal_view_reliability": {
+                    "state": "measured",
+                    "failure_reason": None,
+                    "rotation_xyzw": [0.0, 0.0, 0.0, 1.0],
+                    "selected_viewport_ids": ["a", "b", "c", "d"],
+                    "fit_confidence": 0.8,
+                    "inlier_ratio": 1.0,
+                    "residual_radians": 0.01,
+                },
+            },
+            {
+                "previous_pts_seconds": 0.04,
+                "current_pts_seconds": 0.08,
+                "causal_view_reliability": {
+                    "state": "invalid",
+                    "failure_reason": "rotation_fit_failed",
+                    "rotation_xyzw": [1.0, 0.0, 0.0, 0.0],
+                    "selected_viewport_ids": ["a", "b", "c", "d"],
+                    "fit_confidence": 0.0,
+                    "inlier_ratio": 0.0,
+                    "residual_radians": None,
+                },
+            },
+        ]}}}
+        result = causal_rotation_steps_document(
+            motion, {"configId": "causal-v1"}, "safe-source"
+        )
+        self.assertEqual(
+            result["schema_version"], "aegis360.causal-rotation-steps.v1"
+        )
+        self.assertIsNone(result["steps"][1]["rotation_xyzw"])
+        self.assertFalse(result["privacy"]["contains_source_path"])
 
 
 if __name__ == "__main__":
