@@ -13,9 +13,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from aegis360.multiview_motion import assemble_source_motion
 from aegis360.causal_view_reliability import CausalViewReliability
-from aegis360.so3 import fit_rotation, rotation_distance_radians
+from aegis360.so3 import fit_rotation, rotate_ray, rotation_distance_radians
 from aegis360.view_consensus import select_rotation_consensus
-from aegis360.viewport_rays import RectilinearViewport, homography_to_world_rays
+from aegis360.viewport_rays import (
+    RectilinearViewport,
+    homography_to_world_ray_samples,
+)
 from aegis360.vision_homography import vision_native_to_source_target_top_left
 
 
@@ -95,6 +98,7 @@ def main():
         per_view = []
         per_view_rotations = {}
         correspondences_by_view = {}
+        ray_samples_by_view = {}
         for viewport_data, item in zip(declared, config["viewports"]):
             observation = evidence[item["id"]]["observations"][index]
             reference = evidence[item["id"]]["observations"][index - 1]
@@ -129,11 +133,15 @@ def main():
                 # Vision supplies previous(source)->current(target). The
                 # source-motion contract wants current rays paired with
                 # previous rays.
-                rays = homography_to_world_rays(
+                ray_samples = homography_to_world_ray_samples(
                     converted, viewport,
                     columns=config["fit"]["homographyColumns"],
                     rows=config["fit"]["homographyRows"],
                 )
+                rays = [
+                    (sample["source_ray"], sample["target_ray"])
+                    for sample in ray_samples
+                ]
                 view_fit = fit_rotation(
                     [(current_ray, previous_ray)
                      for previous_ray, current_ray in rays]
@@ -157,6 +165,7 @@ def main():
                 for previous_ray, current_ray in rays
             ]
             correspondences_by_view[item["id"]] = view_correspondences
+            ray_samples_by_view[item["id"]] = ray_samples
             per_view.append({
                 "viewport_id": item["id"],
                 "state": "measured",
@@ -370,6 +379,7 @@ def main():
                         ],
                         "scores_before_radians": causal_scores_before,
                         "rotation_xyzw": None,
+                        "spatial_residuals": [],
                         "step_rotation_radians": None,
                         "fit_confidence": None,
                         "inlier_ratio": None,
@@ -396,6 +406,40 @@ def main():
                             causal["rotation_xyzw"] = list(
                                 causal_fit.rotation_xyzw
                             )
+                            for viewport_id in available_selected:
+                                bands = {"top": [], "middle": [], "bottom": []}
+                                for sample in ray_samples_by_view[viewport_id]:
+                                    row = sample["row_fraction"]
+                                    band = (
+                                        "top" if row < 1 / 3
+                                        else "middle" if row < 2 / 3
+                                        else "bottom"
+                                    )
+                                    predicted = rotate_ray(
+                                        causal_fit.rotation_xyzw,
+                                        sample["target_ray"],
+                                    )
+                                    residual = math.acos(max(
+                                        -1.0,
+                                        min(1.0, sum(
+                                            a * b for a, b in zip(
+                                                predicted,
+                                                sample["source_ray"],
+                                            )
+                                        )),
+                                    ))
+                                    bands[band].append(residual)
+                                for band, values in bands.items():
+                                    if values:
+                                        causal["spatial_residuals"].append({
+                                            "viewport_id": viewport_id,
+                                            "vertical_band": band,
+                                            "sample_count": len(values),
+                                            "rms_residual_radians": math.sqrt(
+                                                sum(value * value for value in values)
+                                                / len(values)
+                                            ),
+                                        })
                             causal["fit_confidence"] = causal_fit.confidence
                             causal["inlier_ratio"] = causal_fit.inlier_ratio
                             causal["residual_radians"] = (

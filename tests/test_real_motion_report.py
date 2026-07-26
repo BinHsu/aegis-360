@@ -10,6 +10,7 @@ from run_real_erp_multiview_motion import (
     causal_rotation_steps_document,
     summarize_leave_one_out,
     summarize_causal_view_reliability,
+    summarize_spatial_residuals,
     summarize_view_consensus,
 )
 
@@ -148,6 +149,28 @@ class RealMotionReportTests(unittest.TestCase):
         )
         self.assertIsNone(result["steps"][1]["rotation_xyzw"])
         self.assertFalse(result["privacy"]["contains_source_path"])
+
+    def test_spatial_summary_groups_only_privacy_safe_band_metrics(self):
+        diagnostics = [{"causal_view_reliability": {
+            "spatial_residuals": [
+                {
+                    "viewport_id": "front",
+                    "vertical_band": "bottom",
+                    "rms_residual_radians": 0.03,
+                },
+                {
+                    "viewport_id": "front",
+                    "vertical_band": "bottom",
+                    "rms_residual_radians": 0.01,
+                },
+            ],
+        }}]
+        summary = summarize_spatial_residuals(diagnostics)
+        bottom = summary["front"]["bottom"]
+        self.assertEqual(bottom["pair_count"], 2)
+        self.assertAlmostEqual(
+            bottom["pair_rms_residual_radians"]["median"], 0.02
+        )
 
 
 if __name__ == "__main__":

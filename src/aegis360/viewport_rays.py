@@ -155,6 +155,28 @@ def homography_to_world_rays(
     rejected instead of returning an empty correspondence set.
     """
 
+    return [
+        (sample["source_ray"], sample["target_ray"])
+        for sample in homography_to_world_ray_samples(
+            homography_row_major,
+            source_viewport,
+            target_viewport,
+            columns=columns,
+            rows=rows,
+        )
+    ]
+
+
+def homography_to_world_ray_samples(
+    homography_row_major: Sequence[float],
+    source_viewport: RectilinearViewport,
+    target_viewport: RectilinearViewport | None = None,
+    *,
+    columns: int = 5,
+    rows: int = 3,
+) -> list[dict]:
+    """Return ray matches with privacy-safe normalized grid coordinates."""
+
     target_viewport = target_viewport or source_viewport
     matrix = tuple(homography_row_major)
     if len(matrix) != 9 or not all(math.isfinite(value) for value in matrix):
@@ -175,10 +197,24 @@ def homography_to_world_rays(
                 (matrix[3] * x + matrix[4] * y + matrix[5]) / denominator,
             )
             if _inside(target, target_viewport):
-                matches.append(((x, y), target))
+                matches.append((row, column, (x, y), target))
     if not matches:
         raise ValueError("homography produced no valid viewport correspondences")
-    return pixel_matches_to_world_rays(matches, source_viewport, target_viewport)
+    rays = pixel_matches_to_world_rays(
+        [(source, target) for _, _, source, target in matches],
+        source_viewport,
+        target_viewport,
+    )
+    return [
+        {
+            "row_fraction": (row + 0.5) / rows,
+            "column_fraction": (column + 0.5) / columns,
+            "source_ray": source_ray,
+            "target_ray": target_ray,
+        }
+        for (row, column, _, _), (source_ray, target_ray)
+        in zip(matches, rays)
+    ]
 
 
 def _pixel(

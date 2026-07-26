@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-27T06:16:02+08:00
+Updated: 2026-07-27T06:24:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 111d508
+Baseline commit: 67c9c40
 Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: clean; waiting for human fixed-versus-canonical comfort review
+Working tree at checkpoint: owner rejected canonical; spatial residual diagnosis is active
 
 ## Objective
 
@@ -59,18 +59,18 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `111d508`.
+- Baseline commit: `67c9c40`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `111d508` are signed and pushed to `origin/main`.
+- Commits through `67c9c40` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 150 tests including renderer-orientation composition fixtures.
+  - PASS: 152 tests including privacy-safe spatial residual aggregation.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -182,6 +182,17 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
   2.24 px; p95 vector change 11.49 vs 7.75 px). Diagnostic inverse is worse
   than canonical, so simple sign reversal is rejected. Human comfort review
   of fixed versus canonical is now required.
+- Owner review judged fixed-forward less dizzy. Canonical action-natural v1
+  is rejected. Diagnose residuals by viewport and vertical image band before
+  considering foreground masks or spatial weights.
+- Spatial diagnostics now retain only normalized grid-band RMS residuals;
+  no pixels or coordinates are persisted. Targeted unit tests pass. Run the
+  synthetic host gate, then the same bounded real interval into a new v7
+  directory.
+- v7 reproduced 86/124 causal acceptance. Median residual rises from top to
+  bottom in front, left, and down, but not universally in right/up. Define an
+  equatorial-only bottom-third exclusion and evaluate it together with the
+  unmasked baseline on held-out source time 35–40 seconds.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -195,6 +206,17 @@ git log -1 --oneline
 git status --branch --short
 python3 scripts/check_handoff.py
 python3 -m unittest discover -s tests -v
+```
+
+For the active spatial-residual milestone:
+
+```sh
+python3 scripts/run_real_erp_multiview_motion.py \
+  "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
+  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-25-30-spatial-v7" \
+  --config config/old-ghost-road-multiview-motion-causal-v1.json \
+  --source-id old-ghost-road-25-30-spatial-v7 \
+  --start 25 --duration 5
 ```
 
 For the active milestone, the intended next command will be a bounded runner
@@ -349,6 +371,8 @@ python3 -m unittest discover -s tests -v
   `outputs/source-motion/old-ghost-road-25-30-action-natural-smoothing-v1/`.
 - The 1920x1080 fixed/canonical review pair is under
   `outputs/stabilization/old-ghost-road-25.92-29.96-action-natural-v1/`.
+- The spatial residual diagnosis is under
+  `outputs/source-motion/old-ghost-road-25-30-spatial-v7/`.
 
 ## Active agents
 

@@ -9,6 +9,7 @@ from aegis360.so3 import fit_rotation, rotate_ray
 from aegis360.viewport_rays import (
     RectilinearViewport,
     homography_to_world_rays,
+    homography_to_world_ray_samples,
     pixel_matches_to_world_rays,
     pixel_to_world_ray,
     viewport_normalized_to_world_ray,
@@ -32,6 +33,19 @@ def world_ray_to_pixel(ray, viewport):
 
 
 class ViewportRayTests(unittest.TestCase):
+    def test_homography_samples_preserve_normalized_grid_location(self):
+        samples = homography_to_world_ray_samples(
+            (1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0),
+            self.viewport,
+            columns=3,
+            rows=3,
+        )
+        self.assertEqual(len(samples), 9)
+        self.assertAlmostEqual(samples[0]["row_fraction"], 1 / 6)
+        self.assertAlmostEqual(samples[-1]["row_fraction"], 5 / 6)
+        self.assertAlmostEqual(samples[0]["column_fraction"], 1 / 6)
+        self.assertAlmostEqual(samples[-1]["column_fraction"], 5 / 6)
+
     def setUp(self):
         self.viewport = RectilinearViewport(
             width=801, height=601, yaw=0.0, pitch=0.0,

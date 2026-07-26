@@ -385,6 +385,11 @@ canonical render loses to fixed-forward on the translation proxy: median step
 deliberately inverted diagnostic is worse still, rejecting simple sign
 reversal. The 4.04-second fixed/canonical pair now requires human comfort
 review; do not call canonical stabilization successful.
+
+The owner subsequently judged fixed-forward less dizzy than canonical.
+Canonical `action-natural` v1 is rejected. The next gate is privacy-safe
+spatial residual diagnosis by viewport and vertical image band; do not tune
+the smoothing horizon around a contaminated source-motion estimate.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and
@@ -404,3 +409,10 @@ candidate review, projection/backend comparison, global planning and a
 comfort-threshold decision remain separate follow-ups. Do not report
 performance or quality until the corresponding executable path, artifacts and
 experiment record exist.
+
+Spatial diagnosis reproduces causal acceptance and finds a top-to-bottom
+median residual increase in front (0.315→0.496°), left (1.017→1.474°), and
+down (1.213→1.523°), but not universally in right or up. This justifies an
+equatorial-only bottom-third mask hypothesis. Evaluate it against unmasked
+causal fitting on a held-out 35–40 second interval, not the development
+interval used to formulate it.

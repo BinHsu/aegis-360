@@ -162,6 +162,26 @@ def summarize_causal_view_reliability(
     }
 
 
+def summarize_spatial_residuals(diagnostics: list[dict]) -> dict:
+    grouped: dict[tuple[str, str], list[float]] = {}
+    for diagnostic in diagnostics:
+        causal = diagnostic["causal_view_reliability"]
+        if causal is None:
+            continue
+        for row in causal.get("spatial_residuals", []):
+            key = (row["viewport_id"], row["vertical_band"])
+            grouped.setdefault(key, []).append(
+                row["rms_residual_radians"]
+            )
+    summary: dict[str, dict] = {}
+    for (viewport_id, band), values in grouped.items():
+        summary.setdefault(viewport_id, {})[band] = {
+            "pair_count": len(values),
+            "pair_rms_residual_radians": distribution(values),
+        }
+    return summary
+
+
 def causal_rotation_steps_document(
     motion: dict, config: dict, source_id: str
 ) -> dict | None:
@@ -333,6 +353,7 @@ def main() -> int:
     causal_view_reliability_summary = summarize_causal_view_reliability(
         diagnostics
     )
+    spatial_residual_summary = summarize_spatial_residuals(diagnostics)
     causal_steps = causal_rotation_steps_document(
         motion, config, arguments.source_id
     )
@@ -368,6 +389,7 @@ def main() -> int:
         "causal_view_reliability_summary": (
             causal_view_reliability_summary
         ),
+        "spatial_residual_summary": spatial_residual_summary,
         "environment": {
             "platform": platform.platform(),
             "machine": platform.machine(),

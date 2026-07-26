@@ -426,3 +426,35 @@ Because the proxy does not measure roll or perspective rotation and is
 confounded by parallax, human comfort review is required before rejecting or
 advancing canonical stabilization. Do not present the inverse diagnostic as
 a candidate.
+
+The project owner reviewed the fixed and canonical files and judged
+fixed-forward less dizzy. This agrees with the negative translation proxy.
+Canonical `action-natural` v1 is rejected. Do not tune its smoothing horizon:
+the next investigation returns to spatially localized estimator residuals to
+test whether near-field/parallax contamination justifies masking or weighting.
+
+## Spatial residual diagnosis
+
+The causal v5 configuration was repeated with privacy-safe residual
+aggregation by selected viewport and normalized vertical image third. The
+86/124 causal acceptance result reproduced exactly. Median top/middle/bottom
+pair-RMS residuals were:
+
+| View | Top | Middle | Bottom |
+| --- | ---: | ---: | ---: |
+| front | 0.315° | 0.401° | 0.496° |
+| left | 1.017° | 1.310° | 1.474° |
+| down | 1.213° | 1.540° | 1.523° |
+| right | 0.390° | 0.447° | 0.445° |
+| up | 0.459° | 0.422° | 0.320° |
+
+Back was selected only three times and is not statistically comparable. The
+front, left, and down pattern supports spatially localized near-field or
+ground parallax, but up and right show that image-bottom is not a universal
+proxy for contamination. The artifact is under
+`outputs/source-motion/old-ghost-road-25-30-spatial-v7/`.
+
+Define an equatorial-only bottom-third exclusion from this development
+interval, then evaluate masked and unmasked fits together on the held-out
+35–40 second interval. Do not report improvement from 25–30 seconds as
+generalization evidence.
