@@ -492,3 +492,16 @@ a coherent cluster confined to one corner fails spatial coverage; and evenly
 split motion fails minimum tile consensus. This is algorithm-contract
 evidence only. Apple Vision tile acquisition, tile-to-viewport ray geometry,
 runtime cost, and real-media quality remain unverified.
+
+The generated-image Apple Vision acquisition gate then compared four
+independently cropped tiles. At 640x360, configured horizontal translations
+of 2/8/14/20 pixels produced Vision proxies of
+2.10/7.97/11.98/18.59 pixels and passed the predeclared ordering and
+eight-pixel separation gates. The earlier 320x180 fixture did not preserve
+motion magnitude or ordering and is rejected for this backend.
+
+Tile-local homographies now map through their crop origin into the parent
+viewport intrinsics, with unit tests covering nonzero origin, normalized
+location, translation, and invalid extent. No claim is yet made that a
+1280x720 parent viewport with four 640x360 registrations is fast enough at
+25 fps on the reference MacBook Air.

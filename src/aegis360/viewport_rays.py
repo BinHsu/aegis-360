@@ -45,6 +45,14 @@ class RectilinearViewport:
             raise ValueError("horizontal FOV must be in (0, pi)")
 
 
+@dataclass(frozen=True)
+class ViewportTile:
+    x: int
+    y: int
+    width: int
+    height: int
+
+
 def pixel_to_world_ray(pixel: Pixel, viewport: RectilinearViewport) -> Ray:
     """Return the unit world ray through a viewport pixel-center coordinate."""
 
@@ -215,6 +223,82 @@ def homography_to_world_ray_samples(
         for (row, column, _, _), (source_ray, target_ray)
         in zip(matches, rays)
     ]
+
+
+def tile_homography_to_world_ray_samples(
+    homography_row_major: Sequence[float],
+    viewport: RectilinearViewport,
+    tile: ViewportTile,
+    *,
+    columns: int = 5,
+    rows: int = 3,
+) -> list[dict]:
+    """Map a tile-local homography through the parent viewport intrinsics."""
+
+    _validate_tile(tile, viewport)
+    matrix = tuple(homography_row_major)
+    if len(matrix) != 9 or not all(math.isfinite(value) for value in matrix):
+        raise ValueError("homography must contain nine finite row-major values")
+    if columns <= 0 or rows <= 0:
+        raise ValueError("homography sample grid dimensions must be positive")
+
+    samples = []
+    for row in range(rows):
+        local_y = ((row + 0.5) * tile.height / rows) - 0.5
+        for column in range(columns):
+            local_x = ((column + 0.5) * tile.width / columns) - 0.5
+            denominator = (
+                matrix[6] * local_x
+                + matrix[7] * local_y
+                + matrix[8]
+            )
+            if abs(denominator) <= 1e-12:
+                continue
+            target_local = (
+                (
+                    matrix[0] * local_x
+                    + matrix[1] * local_y
+                    + matrix[2]
+                ) / denominator,
+                (
+                    matrix[3] * local_x
+                    + matrix[4] * local_y
+                    + matrix[5]
+                ) / denominator,
+            )
+            if not (
+                -0.5 <= target_local[0] <= tile.width - 0.5
+                and -0.5 <= target_local[1] <= tile.height - 0.5
+            ):
+                continue
+            source_full = (tile.x + local_x, tile.y + local_y)
+            target_full = (
+                tile.x + target_local[0],
+                tile.y + target_local[1],
+            )
+            samples.append({
+                "row_fraction": (tile.y + local_y + 0.5) / viewport.height,
+                "column_fraction": (
+                    tile.x + local_x + 0.5
+                ) / viewport.width,
+                "source_ray": pixel_to_world_ray(source_full, viewport),
+                "target_ray": pixel_to_world_ray(target_full, viewport),
+            })
+    if not samples:
+        raise ValueError("homography produced no valid tile correspondences")
+    return samples
+
+
+def _validate_tile(tile: ViewportTile, viewport: RectilinearViewport) -> None:
+    if tile.width <= 0 or tile.height <= 0:
+        raise ValueError("tile dimensions must be positive")
+    if tile.x < 0 or tile.y < 0:
+        raise ValueError("tile origin must be nonnegative")
+    if (
+        tile.x + tile.width > viewport.width
+        or tile.y + tile.height > viewport.height
+    ):
+        raise ValueError("tile must lie inside the viewport")
 
 
 def _pixel(

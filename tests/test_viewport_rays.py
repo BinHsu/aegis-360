@@ -8,10 +8,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from aegis360.so3 import fit_rotation, rotate_ray
 from aegis360.viewport_rays import (
     RectilinearViewport,
+    ViewportTile,
     homography_to_world_rays,
     homography_to_world_ray_samples,
     pixel_matches_to_world_rays,
     pixel_to_world_ray,
+    tile_homography_to_world_ray_samples,
     viewport_normalized_to_world_ray,
 )
 
@@ -45,6 +47,34 @@ class ViewportRayTests(unittest.TestCase):
         self.assertAlmostEqual(samples[-1]["row_fraction"], 5 / 6)
         self.assertAlmostEqual(samples[0]["column_fraction"], 1 / 6)
         self.assertAlmostEqual(samples[-1]["column_fraction"], 5 / 6)
+
+    def test_tile_homography_uses_parent_viewport_coordinates(self):
+        tile = ViewportTile(x=400, y=300, width=200, height=150)
+        samples = tile_homography_to_world_ray_samples(
+            (1.0, 0.0, 5.0, 0.0, 1.0, -3.0, 0.0, 0.0, 1.0),
+            self.viewport,
+            tile,
+            columns=2,
+            rows=2,
+        )
+        self.assertEqual(len(samples), 4)
+        source = pixel_to_world_ray((449.5, 337.0), self.viewport)
+        target = pixel_to_world_ray((454.5, 334.0), self.viewport)
+        for observed, expected in zip(
+            samples[0]["source_ray"] + samples[0]["target_ray"],
+            source + target,
+        ):
+            self.assertAlmostEqual(observed, expected)
+        self.assertAlmostEqual(samples[0]["column_fraction"], 450 / 801)
+        self.assertAlmostEqual(samples[0]["row_fraction"], 337.5 / 601)
+
+    def test_tile_homography_rejects_invalid_extent(self):
+        with self.assertRaisesRegex(ValueError, "inside"):
+            tile_homography_to_world_ray_samples(
+                (1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0),
+                self.viewport,
+                ViewportTile(x=700, y=500, width=200, height=150),
+            )
 
     def setUp(self):
         self.viewport = RectilinearViewport(

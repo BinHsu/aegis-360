@@ -423,3 +423,10 @@ to 119/124 and adds a step-bound failure. Normalized image-bottom is therefore
 not a sufficiently reliable foreground/parallax proxy. Preserve the unmasked
 causal estimator as the current baseline; do not render or tune the rejected
 mask on this interval.
+
+Independent tile-motion selection now has synthetic consensus and geometry
+contracts. Apple Vision preserves deliberately divergent motion for generated
+640x360 tiles, while 320x180 was unreliable and is rejected. The implied
+2x2 parent viewport is 1280x720; measure its bounded acquisition cost and
+thermal/memory behavior before integrating it into the six-viewport estimator
+or running benchmark footage.

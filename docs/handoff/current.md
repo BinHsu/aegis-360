@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T07:23:00+08:00
+Updated: 2026-07-27T07:42:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -262,6 +262,16 @@ foreground, local-cluster coverage failure, split-motion failure, and
 deterministic validation. The next bounded step is a generated-image host gate
 showing that independently cropped tiles can return divergent Vision
 registrations. It must not read benchmark media.
+
+The host gate passes only at the retained 640x360 tile size: configured
+2/8/14/20 pixel translations produced 2.10/7.97/11.98/18.59 pixel Vision
+proxies. The 320x180 attempt was non-monotonic and is rejected. Tile-local
+homographies also pass parent-viewport ray tests at nonzero crop origins.
+
+The next bounded milestone is performance-only: measure a generated 2x2,
+1280x720 parent sequence with four 640x360 registrations using a bounded frame
+count. Record elapsed time and peak RSS before any six-viewport integration or
+benchmark-media run.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
