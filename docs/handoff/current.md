@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T12:50:36+08:00
+Updated: 2026-07-26T13:00:41+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 730d7df
+Baseline commit: ff39e19
 Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: causal milestone plus classify-only gap policy are uncommitted
+Working tree at checkpoint: clean after relative-rotation segment milestone
 
 ## Objective
 
@@ -59,11 +59,11 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `730d7df`.
+- Baseline commit: `ff39e19`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `730d7df` are signed and pushed to `origin/main`.
+- Commits through `ff39e19` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
