@@ -28,6 +28,11 @@
     "minimumInlierRatio": 0.5,
     "maximumFitResidualDegrees": 1.0
   },
+  "viewConsensus": {
+    "method": "rotation-medoid-radius",
+    "maximumMedoidDisagreementDegrees": 1.0,
+    "minimumSelectedViewports": 4
+  },
   "calibrationBasis": {
     "fixture": "tests/test_vision_viewport_so3_gate.sh",
     "validatedSmallAngleDegrees": {

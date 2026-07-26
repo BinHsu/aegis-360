@@ -108,6 +108,11 @@ if any(sample["state"] == "invalid" for sample in actual["samples"]):
     raise AssertionError(actual)
 assert not actual["gaps"], actual["gaps"]
 assert len(actual["samples"]) == len(expected["rawOrientationXyzw"])
+diagnostics = actual["estimator"]["fit_bounds"]["pair_diagnostics"]
+for diagnostic in diagnostics:
+    consensus = diagnostic["view_consensus"]
+    assert consensus["state"] == "measured", consensus
+    assert len(consensus["selected_viewport_ids"]) >= 4, consensus
 for index, (sample, wanted) in enumerate(zip(
         actual["samples"], expected["rawOrientationXyzw"])):
     observed = sample["raw_orientation_xyzw"]

@@ -84,6 +84,46 @@ def summarize_leave_one_out(
     return summary
 
 
+def summarize_view_consensus(diagnostics: list[dict]) -> dict | None:
+    rows = [
+        row["view_consensus"] for row in diagnostics
+        if row["view_consensus"] is not None
+    ]
+    if not rows:
+        return None
+    reasons: dict[str, int] = {}
+    rejected_counts: dict[str, int] = {}
+    selected_counts: dict[str, int] = {}
+    for row in rows:
+        if row["failure_reason"]:
+            reasons[row["failure_reason"]] = (
+                reasons.get(row["failure_reason"], 0) + 1
+            )
+        for viewport_id in row["rejected_viewport_ids"]:
+            rejected_counts[viewport_id] = (
+                rejected_counts.get(viewport_id, 0) + 1
+            )
+        count = len(row["selected_viewport_ids"])
+        selected_counts[str(count)] = selected_counts.get(str(count), 0) + 1
+    measured = sum(row["state"] == "measured" for row in rows)
+    return {
+        "pair_count": len(rows),
+        "measured_pair_count": measured,
+        "measured_pair_fraction": measured / len(rows),
+        "failure_reasons": reasons,
+        "rejected_viewport_counts": rejected_counts,
+        "selected_viewport_count_histogram": selected_counts,
+        "step_rotation_radians": distribution([
+            row["step_rotation_radians"] for row in rows
+            if row["step_rotation_radians"] is not None
+        ]),
+        "residual_radians": distribution([
+            row["residual_radians"] for row in rows
+            if row["residual_radians"] is not None
+        ]),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input_erp", type=Path)
@@ -206,6 +246,7 @@ def main() -> int:
     leave_one_view_out_summary = summarize_leave_one_out(
         diagnostics, viewport_ids
     )
+    view_consensus_summary = summarize_view_consensus(diagnostics)
     ffmpeg_version = (safe_command_output(["ffmpeg", "-version"]) or "").splitlines()
     swap_after = safe_command_output(["sysctl", "-n", "vm.swapusage"])
     thermal_after = safe_command_output(["pmset", "-g", "therm"])
@@ -229,6 +270,7 @@ def main() -> int:
         "viewport_summaries": viewport_summaries,
         "per_view_fit_summary": per_view_fit_summary,
         "leave_one_view_out_summary": leave_one_view_out_summary,
+        "view_consensus_summary": view_consensus_summary,
         "environment": {
             "platform": platform.platform(),
             "machine": platform.machine(),

@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "aegis360.multiview-motion-config.v1",
+  "configId": "old-ghost-road-six-overlap-110-fps25-consensus1-v1",
+  "proxy": {
+    "width": 4096,
+    "height": 2048,
+    "sampleFps": 25.0
+  },
+  "viewport": {
+    "width": 640,
+    "height": 360,
+    "horizontalFovDegrees": 110.0
+  },
+  "viewports": [
+    {
+      "id": "front",
+      "yawDegrees": 0.0,
+      "pitchDegrees": 0.0
+    },
+    {
+      "id": "right",
+      "yawDegrees": 90.0,
+      "pitchDegrees": 0.0
+    },
+    {
+      "id": "back",
+      "yawDegrees": 180.0,
+      "pitchDegrees": 0.0
+    },
+    {
+      "id": "left",
+      "yawDegrees": -90.0,
+      "pitchDegrees": 0.0
+    },
+    {
+      "id": "up",
+      "yawDegrees": 0.0,
+      "pitchDegrees": 65.0
+    },
+    {
+      "id": "down",
+      "yawDegrees": 0.0,
+      "pitchDegrees": -65.0
+    }
+  ],
+  "fit": {
+    "homographyColumns": 9,
+    "homographyRows": 7,
+    "maxStepRotationDegrees": 1.25,
+    "minimumContributingViewports": 4,
+    "minimumFitConfidence": 0.2,
+    "minimumInlierRatio": 0.5,
+    "maximumFitResidualDegrees": 1.0
+  },
+  "viewConsensus": {
+    "method": "rotation-medoid-radius",
+    "maximumMedoidDisagreementDegrees": 1.0,
+    "minimumSelectedViewports": 4
+  },
+  "calibrationBasis": {
+    "fixture": "tests/test_vision_viewport_so3_gate.sh",
+    "validatedSmallAngleDegrees": {
+      "yaw": 1.0,
+      "pitch": 2.0,
+      "roll": 3.0
+    },
+    "policy": "The consensus radius equals the unchanged 1 degree fit-residual bound. Selection uses only pairwise per-view rotation distance and never the final fit acceptance outcome."
+  }
+}

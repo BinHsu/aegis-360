@@ -5,7 +5,11 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from run_real_erp_multiview_motion import distribution, summarize_leave_one_out
+from run_real_erp_multiview_motion import (
+    distribution,
+    summarize_leave_one_out,
+    summarize_view_consensus,
+)
 
 
 class RealMotionReportTests(unittest.TestCase):
@@ -49,6 +53,35 @@ class RealMotionReportTests(unittest.TestCase):
             "rotation_fit_residual_exceeds_bound": 1,
         })
         self.assertIsNone(summary["missing"]["measured_pair_fraction"])
+
+    def test_view_consensus_summary_records_selection_not_pixels(self):
+        diagnostics = [
+            {"view_consensus": {
+                "state": "measured",
+                "failure_reason": None,
+                "selected_viewport_ids": ["front", "right", "up", "left"],
+                "rejected_viewport_ids": ["back", "down"],
+                "step_rotation_radians": 0.01,
+                "residual_radians": 0.005,
+            }},
+            {"view_consensus": {
+                "state": "invalid",
+                "failure_reason": "insufficient_view_consensus",
+                "selected_viewport_ids": ["front", "right", "up"],
+                "rejected_viewport_ids": ["back", "down", "left"],
+                "step_rotation_radians": None,
+                "residual_radians": None,
+            }},
+        ]
+        summary = summarize_view_consensus(diagnostics)
+        self.assertEqual(summary["measured_pair_fraction"], 0.5)
+        self.assertEqual(summary["rejected_viewport_counts"]["back"], 2)
+        self.assertEqual(summary["selected_viewport_count_histogram"], {
+            "3": 1, "4": 1,
+        })
+        self.assertEqual(summary["failure_reasons"], {
+            "insufficient_view_consensus": 1,
+        })
 
 
 if __name__ == "__main__":

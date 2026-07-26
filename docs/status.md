@@ -334,6 +334,16 @@ so do not hard-code a five-view rig from this interval. The next gate is a
 deterministic per-pair view-consensus selector, validated first against
 synthetic corrupted-view fixtures and compared against all existing
 baselines without using the acceptance result as an oracle.
+
+The first deterministic per-pair selector used a 1° rotation-medoid radius
+and required four views. It passed corrupted-view unit fixtures and the full
+synthetic ERP/Vision gate, then accepted 36/124 real pairs (29.0%). All 36
+retained subsets passed the existing fit gates, but 88 pairs failed because
+only one to three views were inside the radius. It improves on six-view
+fusion but is worse than fixed omission of back or down. Do not widen the
+radius post hoc. Treat hard-radius medoid selection as a negative baseline
+and investigate temporally causal reliability, foreground/near-field
+exclusion, or continuous robust view weighting before another real run.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

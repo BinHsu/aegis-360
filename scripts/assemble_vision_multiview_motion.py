@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from aegis360.multiview_motion import assemble_source_motion
 from aegis360.so3 import fit_rotation, rotation_distance_radians
+from aegis360.view_consensus import select_rotation_consensus
 from aegis360.viewport_rays import RectilinearViewport, homography_to_world_rays
 from aegis360.vision_homography import vision_native_to_source_target_top_left
 
@@ -64,6 +65,7 @@ def main():
     minimum_confidence = config["fit"]["minimumFitConfidence"]
     minimum_inlier_ratio = config["fit"]["minimumInlierRatio"]
     maximum_residual = math.radians(config["fit"]["maximumFitResidualDegrees"])
+    consensus_config = config.get("viewConsensus")
     pair_diagnostics = []
     for index in range(1, frame_count):
         correspondences = []
@@ -171,6 +173,7 @@ def main():
             "failure_reason": None,
             "per_view": per_view,
             "leave_one_view_out": [],
+            "view_consensus": None,
         }
         if contributing < minimum_views:
             pair["matches"] = []
@@ -250,6 +253,89 @@ def main():
                             leave_out["state"] = "invalid"
                             leave_out["failure_reason"] = "rotation_fit_failed"
                     diagnostic["leave_one_view_out"].append(leave_out)
+                if consensus_config is not None:
+                    selection = select_rotation_consensus(
+                        per_view_rotations,
+                        maximum_disagreement_radians=math.radians(
+                            consensus_config[
+                                "maximumMedoidDisagreementDegrees"
+                            ]
+                        ),
+                        minimum_viewports=consensus_config[
+                            "minimumSelectedViewports"
+                        ],
+                    )
+                    consensus = {
+                        "medoid_viewport_id": selection.medoid_viewport_id,
+                        "selected_viewport_ids": list(
+                            selection.selected_viewport_ids
+                        ),
+                        "rejected_viewport_ids": list(
+                            selection.rejected_viewport_ids
+                        ),
+                        "medoid_distances_radians": (
+                            selection.medoid_distances_radians
+                        ),
+                        "step_rotation_radians": None,
+                        "fit_confidence": None,
+                        "inlier_ratio": None,
+                        "residual_radians": None,
+                        "state": selection.state,
+                        "failure_reason": selection.failure_reason,
+                    }
+                    if selection.state == "selected":
+                        selected_matches = [
+                            match
+                            for viewport_id in selection.selected_viewport_ids
+                            for match in correspondences_by_view[viewport_id]
+                        ]
+                        try:
+                            consensus_fit = fit_rotation(selected_matches)
+                            consensus["step_rotation_radians"] = angle(
+                                consensus_fit.rotation_xyzw
+                            )
+                            consensus["fit_confidence"] = (
+                                consensus_fit.confidence
+                            )
+                            consensus["inlier_ratio"] = (
+                                consensus_fit.inlier_ratio
+                            )
+                            consensus["residual_radians"] = (
+                                consensus_fit.residual_radians
+                            )
+                            consensus["state"] = "measured"
+                            if consensus["step_rotation_radians"] > maximum:
+                                consensus["state"] = "invalid"
+                                consensus["failure_reason"] = (
+                                    "rotation_step_exceeds_configured_bound"
+                                )
+                            elif consensus_fit.confidence < minimum_confidence:
+                                consensus["state"] = "invalid"
+                                consensus["failure_reason"] = (
+                                    "rotation_fit_confidence_below_bound"
+                                )
+                            elif (
+                                consensus_fit.inlier_ratio
+                                < minimum_inlier_ratio
+                            ):
+                                consensus["state"] = "invalid"
+                                consensus["failure_reason"] = (
+                                    "rotation_fit_inlier_ratio_below_bound"
+                                )
+                            elif (
+                                consensus_fit.residual_radians
+                                > maximum_residual
+                            ):
+                                consensus["state"] = "invalid"
+                                consensus["failure_reason"] = (
+                                    "rotation_fit_residual_exceeds_bound"
+                                )
+                        except ValueError:
+                            consensus["state"] = "invalid"
+                            consensus["failure_reason"] = (
+                                "rotation_fit_failed"
+                            )
+                    diagnostic["view_consensus"] = consensus
                 if diagnostic["step_rotation_radians"] > maximum:
                     pair["matches"] = []
                     pair["failureReason"] = "rotation_step_exceeds_configured_bound"

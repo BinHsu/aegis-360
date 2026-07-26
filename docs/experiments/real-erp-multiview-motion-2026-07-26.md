@@ -229,3 +229,45 @@ retain at least four views, and compare it with both the six-view baseline
 and all six fixed omissions. Selection must not use the final acceptance
 label as an oracle. Validate the selector on synthetic corrupted-view cases
 before another real-media run.
+
+## Rotation-medoid consensus diagnosis
+
+A deterministic selector was implemented and validated before the real run.
+It chooses the per-pair rotation medoid, retains every view within 1° of that
+medoid, and requires at least four retained views. The radius equals the
+unchanged fit-residual bound; selection never inspects the selected fit's
+acceptance result. Synthetic tests reject one corrupted view, fail closed on
+a 3-versus-3 split, and preserve deterministic tie-breaking. The complete
+synthetic ERP/Vision gate also passes.
+
+Artifact root relative output:
+`outputs/source-motion/old-ghost-road-25-30-fps25-consensus-v4/`.
+
+| Metric | Six-view baseline | Rotation-medoid consensus |
+| --- | ---: | ---: |
+| Accepted pairs | 23/124 | 36/124 |
+| Accepted fraction | 18.5% | 29.0% |
+| Insufficient-consensus failures | n/a | 88 |
+| Selected-view count, 1 / 2 / 3 / 4 / 5 | n/a | 15 / 25 / 48 / 35 / 1 |
+| Median / p95 residual of fitted subsets | 1.115° / 1.551° | 0.585° / 0.885° |
+
+Every subset that retained at least four views passed the existing step,
+confidence, inlier, and residual gates. The limiting factor was coverage:
+88 pairs had only one to three views inside the predeclared radius. Rejection
+counts were back 121, down 101, left 90, right 31, up 26, and front 21.
+
+The selector improves on all-six fusion but underperforms the best fixed
+omissions (66 pairs without back and 54 without down). Do not widen the 1°
+radius after observing this run: that would tune on the evaluation interval
+and could merely reintroduce incompatible views. The evidence instead says
+that one compact medoid ball is too brittle for this scene.
+
+The run took 61.65 seconds, maximum child RSS was 283,115,520 bytes, swap was
+unchanged, and macOS recorded no thermal or performance warning.
+
+Before another real run, define and test a selector that can distinguish
+spatially coherent parallax from camera rotation without tuning against this
+interval. Candidate evidence includes temporal reliability priors learned
+only from preceding pairs, foreground/near-field exclusion, or a robust
+view-level estimator that weights consensus continuously rather than using a
+hard radius. The current medoid selector remains a negative baseline.
