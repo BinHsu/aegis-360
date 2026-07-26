@@ -399,3 +399,30 @@ the configured 25° cap. The artifact is under
 These are path-dynamics metrics, not visual comfort evidence. Before a render,
 lock the correction composition `inverse(R) * S` and quaternion-to-renderer
 yaw/pitch/roll signs with synthetic fixtures.
+
+## Renderer convention and first bounded review pair
+
+Quaternion composition passes identity, pure-yaw inverse, and composed
+yaw/pitch/roll round-trip tests. The existing FFmpeg marker convention gate
+passes for yaw, pitch, seam, poles, FOV, and black-edge absence. The existing
+known-motion render gate retains the 29.5° slow turn while reducing the
+injected shake to 10%.
+
+A 4.04-second, 1920x1080, 25 fps review pair was rendered for source time
+25.92–29.96 seconds at 110° HFOV. VideoToolbox encoded the canonical
+candidate; both files retain AAC audio and decode fully.
+
+The translation-only screen-space proxy is negative:
+
+| Render | Median step | p95 vector change |
+| --- | ---: | ---: |
+| Fixed-forward | 2.24 px | 7.75 px |
+| Canonical `inverse(R) * S` | 3.61 px | 11.49 px |
+| Diagnostic inverse | 4.06 px | 11.70 px |
+
+The inverse diagnostic is worse than canonical, so a simple correction-sign
+reversal is rejected. Canonical also fails to beat fixed on this proxy.
+Because the proxy does not measure roll or perspective rotation and is
+confounded by parallax, human comfort review is required before rejecting or
+advancing canonical stabilization. Do not present the inverse diagnostic as
+a candidate.

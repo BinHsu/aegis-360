@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-27T06:02:00+08:00
+Updated: 2026-07-27T06:13:21+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 878234b
+Baseline commit: 589f7b3
 Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: action-natural quaternion smoothing implementation and synthetic fixtures are uncommitted
+Working tree at checkpoint: smoothing and renderer-orientation convention gates are uncommitted
 
 ## Objective
 
@@ -59,18 +59,18 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `878234b`.
+- Baseline commit: `589f7b3`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `878234b` are signed and pushed to `origin/main`.
+- Commits through `589f7b3` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 147 tests including quaternion smoothing fixtures.
+  - PASS: 150 tests including renderer-orientation composition fixtures.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -174,6 +174,14 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
   angular-speed p95 falls 24.86→7.19°/s and jerk-proxy p95
   9,119.6→257.3°/s³; maximum correction is 1.40°. Next lock
   `inverse(R) * S` and renderer yaw/pitch/roll conventions synthetically.
+- Quaternion composition now has unit tests for no-stabilization identity,
+  pure-yaw inverse correction, and composed yaw/pitch/roll round trips.
+  Run the existing host v360 convention gate before exporting real commands.
+- FFmpeg marker and known-motion render gates pass. The real canonical
+  candidate loses to fixed on the translation proxy (median step 3.61 vs
+  2.24 px; p95 vector change 11.49 vs 7.75 px). Diagnostic inverse is worse
+  than canonical, so simple sign reversal is rejected. Human comfort review
+  of fixed versus canonical is now required.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -339,6 +347,8 @@ python3 -m unittest discover -s tests -v
   `outputs/source-motion/old-ghost-road-25-30-fps25-relative-segment-v1/`.
 - The action-natural smoothed segment is under
   `outputs/source-motion/old-ghost-road-25-30-action-natural-smoothing-v1/`.
+- The 1920x1080 fixed/canonical review pair is under
+  `outputs/stabilization/old-ghost-road-25.92-29.96-action-natural-v1/`.
 
 ## Active agents
 
