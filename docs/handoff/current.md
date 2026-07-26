@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T09:31:50+08:00
+Updated: 2026-07-26T09:33:41+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 4b76cb6
-Remote status: main is one commit ahead of origin/main; 4b76cb6 and the handoff work require push
-Working tree at checkpoint: vendor-neutral handoff contract has uncommitted changes
+Baseline commit: b98b64d
+Remote status: main and origin/main were synchronized at b98b64d when this checkpoint was updated
+Working tree at checkpoint: clean before this checkpoint metadata update
 
 ## Objective
 
@@ -31,10 +31,9 @@ PASS: bounded synthetic ERP multiview Vision source-motion gate
 
 - Expected branch: `main`.
 - Baseline commit: `4b76cb6`.
-- Current HEAD at checkpoint time is `4b76cb6`; `origin/main` is `a30b134`,
-  so the bounded ERP runner has not yet been pushed.
-- The handoff contract, validator, tests and CI workflow are uncommitted at
-  checkpoint time.
+- Commit `b98b64d` contains the handoff contract, validator, tests and CI
+  enforcement. It and the bounded ERP runner were pushed to `origin/main`
+  before this checkpoint metadata update.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
@@ -66,8 +65,6 @@ PASS: bounded synthetic ERP multiview Vision source-motion gate
 
 ## Pending
 
-- Commit the handoff contract and push both local commits when network and
-  account state permit.
 - After the handoff contract lands, design an analysis-only five-second
   Old Ghost Road ERP multiview run. Do not render a viewer candidate yet.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
