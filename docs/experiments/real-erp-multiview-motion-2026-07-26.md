@@ -373,3 +373,29 @@ are high: acceleration median/p95/max 110/431/628°/s² and jerk
 threshold violations. They justify evaluating quaternion-space smoothing
 using the proposed `action-natural` horizon without rendering the raw segment
 as a successful candidate.
+
+## Action-natural quaternion smoothing
+
+A hemisphere-aligned, symmetric truncated-Gaussian smoother now passes four
+synthetic gates: static/sign-flipped identity remains static, a slow linear
+turn is retained away from boundaries, alternating ±2° high-frequency jitter
+falls below 20% of its raw RMS, and correction is capped at 25°. The
+predeclared radius is 0.35 seconds, the lower edge of the proposed
+`action-natural` range.
+
+Applied to the one real relative segment:
+
+| Metric | Raw | Smoothed |
+| --- | ---: | ---: |
+| Angular-speed median | 10.80°/s | 4.15°/s |
+| Angular-speed p95 | 24.86°/s | 7.19°/s |
+| Acceleration-proxy p95 | 430.99°/s² | 17.35°/s² |
+| Jerk-proxy p95 | 9,119.6°/s³ | 257.3°/s³ |
+
+Correction angle is median 0.486°, p95 1.008°, and maximum 1.400°, far below
+the configured 25° cap. The artifact is under
+`outputs/source-motion/old-ghost-road-25-30-action-natural-smoothing-v1/`.
+
+These are path-dynamics metrics, not visual comfort evidence. Before a render,
+lock the correction composition `inverse(R) * S` and quaternion-to-renderer
+yaw/pitch/roll signs with synthetic fixtures.

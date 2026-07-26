@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "aegis360.quaternion-smoothing-config.v1",
+  "configId": "action-natural-gaussian-r0.35-maxcorr25-v1",
+  "mode": "action-natural",
+  "method": "hemisphere-aligned-truncated-gaussian",
+  "radiusSeconds": 0.35,
+  "sigmaSeconds": 0.175,
+  "maximumCorrectionDegrees": 25.0,
+  "policy": "Offline symmetric smoothing. Radius is the lower edge of the proposed action-natural 0.35-0.75 second range. Maximum correction is inside the proposed 20-40 degree range. Both remain unvalidated viewer-comfort hypotheses."
+}

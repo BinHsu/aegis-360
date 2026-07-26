@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T13:00:41+08:00
+Updated: 2026-07-27T06:02:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: ff39e19
+Baseline commit: 878234b
 Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: clean after relative-rotation segment milestone
+Working tree at checkpoint: action-natural quaternion smoothing implementation and synthetic fixtures are uncommitted
 
 ## Objective
 
@@ -59,18 +59,18 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `ff39e19`.
+- Baseline commit: `878234b`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `ff39e19` are signed and pushed to `origin/main`.
+- Commits through `878234b` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 143 tests including SLERP and relative-segment assembly.
+  - PASS: 147 tests including quaternion smoothing fixtures.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -170,6 +170,10 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
   seconds with 102 samples. Raw angular speed median/p95 is 10.80°/24.86° per
   second and scalar jerk-proxy p95 is 9,120°/s³. Next validate quaternion
   smoothing on static, slow-turn, jitter, and quaternion-sign fixtures.
+- Quaternion smoothing passes all four fixtures. On the real segment,
+  angular-speed p95 falls 24.86→7.19°/s and jerk-proxy p95
+  9,119.6→257.3°/s³; maximum correction is 1.40°. Next lock
+  `inverse(R) * S` and renderer yaw/pitch/roll conventions synthetically.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -333,6 +337,8 @@ python3 -m unittest discover -s tests -v
   `outputs/source-motion/old-ghost-road-25-30-fps25-bridged-steps-v1/`.
 - The connected relative segment is under
   `outputs/source-motion/old-ghost-road-25-30-fps25-relative-segment-v1/`.
+- The action-natural smoothed segment is under
+  `outputs/source-motion/old-ghost-road-25-30-action-natural-smoothing-v1/`.
 
 ## Active agents
 

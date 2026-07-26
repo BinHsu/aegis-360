@@ -372,6 +372,12 @@ median/p95 angular speed 10.80°/s and 24.86°/s; scalar jerk proxy p95 is
 9,120°/s³. The next gate is quaternion-space `action-natural` smoothing with
 synthetic static, slow-turn, high-frequency jitter, and sign-continuity
 fixtures before any viewer render.
+
+The 0.35-second `action-natural` quaternion smoother passes static,
+sign-continuity, slow-turn, jitter-reduction, and 25° correction-cap fixtures.
+On the real relative segment, angular-speed p95 falls 24.86→7.19°/s and
+jerk-proxy p95 9,119.6→257.3°/s³ with only 1.40° maximum correction. This
+unlocks a synthetic renderer-convention gate, not a comfort claim.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and
