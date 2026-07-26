@@ -23,13 +23,18 @@ footage come later.
 
 ## Current status
 
-The repository now has dependency-free spherical-geometry tests and a minimal
-synthetic FFmpeg `v360` static-render evidence test. There is no perception,
-tracking, planner, end-to-end processing pipeline, or real-media benchmark
-result yet.
+The repository has geometry, perception-adapter, tracking-policy, greedy
+planning, rendering, motion-estimation, and synthetic spherical-stabilization
+gates. The first real-media auto-directed candidate failed its qualitative
+comfort gate, and flat post-warp stabilization was rejected as the primary
+remedy. Work is now focused on gyro-free spherical source-motion estimation
+before another review candidate is rendered.
 
 See [`docs/README.md`](docs/README.md) for the documentation index and
-[`docs/status.md`](docs/status.md) for the current acceptance gate.
+[`docs/status.md`](docs/status.md) for the current acceptance gate. Agents and
+contributors should also read
+[`docs/handoff/current.md`](docs/handoff/current.md) before acting; it is the
+vendor-neutral operational checkpoint.
 
 ## Reference environment
 

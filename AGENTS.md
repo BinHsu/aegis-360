@@ -153,6 +153,25 @@ data.
 ## Agent workflow
 
 - Read relevant ADRs and design notes before changing architecture.
+- Before starting work, read `docs/handoff/current.md`. Treat it as the
+  vendor-neutral operational checkpoint; verify its Git claims locally rather
+  than relying on a prior chat, agent thread, memory, or UI.
+- Work in bounded milestones. A milestone is complete only when its durable
+  outputs, verification state, rejected alternatives, remaining work, and
+  exact next command are recorded so another unfamiliar agent can continue.
+- Update `docs/handoff/current.md` at every milestone boundary and before
+  starting another large task or delegating new work. Do not wait for a usage,
+  context, time, or service-limit warning to prepare a handoff.
+- If a usage warning appears, `/usage` is reported near its limit, or any tool
+  returns a credit/quota/rate-limit error, enter handoff mode immediately:
+  stop expanding scope, request bounded completion packets from active
+  subagents, integrate or identify their dirty files, update the handoff, run
+  the smallest relevant checks, and commit/push when available.
+- Handoffs must be usable by Codex, Claude, Grok, a human engineer, or another
+  tool with only the repository. Never require access to a chat transcript,
+  opaque session identifier, product-specific memory, or agent UI.
+- Run `python3 scripts/check_handoff.py` before declaring a milestone complete.
+  Core repository changes without a matching handoff update fail CI.
 - Supervise delegated work with bounded waits; do not assume a still-running
   subagent or external job will report that it is stuck.
 - Do not end the main turn with a final response while authorized delegated
@@ -176,6 +195,10 @@ data.
   recovered, and the next concrete action; do not inspect silently.
 - A progress report must say whether the work is advancing, waiting, blocked,
   or being recovered; a timer-only “still running” message is insufficient.
+- Subagents return a completion packet containing `status`, `files_changed`,
+  `tests_run`, `verified`, `limitations`, `unresolved`, and
+  `recommended_next_action`. The main agent alone normally updates the shared
+  `docs/handoff/current.md` to avoid concurrent edits.
 - Accepted decisions belong in `docs/adr/`; unsettled exploration belongs in
   `docs/design/`. Do not promote an assumption to an ADR without evidence.
 - Add or update tests with behavioral changes.
@@ -193,6 +216,8 @@ Start with `docs/README.md`. It is the canonical documentation index and
 routes work by task.
 
 - Current phase and next acceptance gate: `docs/status.md`
+- Current cross-agent checkpoint: `docs/handoff/current.md`
+- Handoff format and lifecycle: `docs/handoff/README.md`
 - Accepted decisions: `docs/adr/README.md`
 - Current system design: `docs/design/system-overview.md`
 - External claims and evidence: `docs/research/claim-ledger.md`
@@ -208,6 +233,7 @@ conflict.
 These commands have been verified on the reference machine:
 
 - Geometry tests: `python3 -m unittest discover -s tests -v`
+- Handoff contract: `python3 scripts/check_handoff.py`
 - Static FFmpeg `v360` evidence test: `tests/test_ffmpeg_v360_static.sh`
 - FFmpeg/internal convention gate: `tests/check_ffmpeg_v360_conventions.py`
 - Timestamped FFmpeg `v360` control test: `tests/test_ffmpeg_v360_dynamic.sh`

@@ -287,11 +287,14 @@ yaw/pitch/roll fixture are implemented. The versioned scalar step cap is
 1.25° (the calibrated 1° yaw step plus 0.25° measurement tolerance), with
 additional minimum confidence, inlier-ratio, viewport-coverage and maximum
 residual gates. A stricter 0.5° configuration must fail closed. The portable
-119-test suite passes, but the final host Vision gate for the increased
-temporal sampling fixture remains pending because the current Codex
-non-sandbox execution budget is unavailable; do not record it as passing
-until `tests/test_synthetic_erp_multiview_motion_gate.sh` succeeds on the
-macOS host.
+119-test suite passes. The owner subsequently ran
+`tests/test_synthetic_erp_multiview_motion_gate.sh` on the macOS host: all six
+samples were measured with finite residuals, no gap was emitted, and the gate
+reported `PASS`. This establishes the bounded synthetic ERP-to-multiview
+Vision-to-source-motion path; it does not establish real-media estimator
+quality or viewer comfort. The next source-motion gate is an analysis-only
+five-second Old Ghost Road ERP run with measured gap rate, per-view
+contribution, residual, confidence, step angle and sustained resource use.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

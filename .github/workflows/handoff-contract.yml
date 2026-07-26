@@ -1,0 +1,34 @@
+name: handoff-contract
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate handoff content
+        run: python3 scripts/check_handoff.py
+      - name: Require handoff update on pull requests
+        if: github.event_name == 'pull_request'
+        run: >-
+          python3 scripts/check_handoff.py
+          --base-ref "${{ github.event.pull_request.base.sha }}"
+      - name: Require handoff update on main pushes
+        if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
+        run: >-
+          python3 scripts/check_handoff.py
+          --base-ref "${{ github.event.before }}"
+      - name: Run portable unit tests
+        run: python3 -m unittest discover -s tests -v

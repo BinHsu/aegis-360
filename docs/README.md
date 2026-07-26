@@ -19,6 +19,8 @@ When documents conflict, use this order:
 5. `docs/research/` records external claims, sources, and inferences; it is
    evidence, not a project decision.
 6. `docs/status.md` reports current progress and the next evidence gate.
+7. `docs/handoff/current.md` reports the latest operational checkpoint,
+   repository delivery state, and exact continuation command.
 
 If two authoritative documents disagree, stop, report the conflict, and do
 not invent a resolution.
@@ -28,6 +30,7 @@ not invent a resolution.
 | Task | Read first |
 | --- | --- |
 | Understand current progress | `docs/status.md`, then `docs/adr/README.md` |
+| Resume interrupted or cross-agent work | `docs/handoff/current.md`, then the documents it links |
 | Change product scope or offline behavior | ADR 0001, ADR 0002 |
 | Change accepted input formats or validation | ADR 0003 |
 | Choose storage, compute, or Apple-specific acceleration | ADR 0004, ADR 0005 |
@@ -42,9 +45,10 @@ not invent a resolution.
 ## Suggested first read for a new agent
 
 1. `AGENTS.md`
-2. `docs/status.md`
-3. `docs/adr/README.md`
-4. The ADRs and design/experiment documents named for the assigned task
+2. `docs/handoff/current.md`
+3. `docs/status.md`
+4. `docs/adr/README.md`
+5. The ADRs and design/experiment documents named for the assigned task
 
 Do not read the historical
 `docs/archive/aegis-360-scaffold-v2.md` as current authority. It is an input
