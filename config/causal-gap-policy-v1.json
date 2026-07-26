@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis360.causal-gap-policy-config.v1",
+  "configId": "interior-max3-no-boundary-bridge-v1",
+  "maximumInteriorGapFrames": 3,
+  "boundaryGapPolicy": "unbridgeable",
+  "interiorGapPolicy": "classify-only",
+  "rationale": "Three frames at 25 fps is 0.12 seconds. This is a pre-render hypothesis to validate, not permission to interpolate or a viewer-comfort claim."
+}

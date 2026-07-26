@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T12:45:18+08:00
+Updated: 2026-07-26T12:50:36+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: ae3682a
+Baseline commit: 6ee1680
 Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: causal selector, rotation-step artifact, tests, and v5/v6 records are uncommitted
+Working tree at checkpoint: causal milestone plus classify-only gap policy are uncommitted
 
 ## Objective
 
@@ -59,18 +59,18 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `ae3682a`.
+- Baseline commit: `6ee1680`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `ae3682a` are signed and pushed to `origin/main`.
+- Commits through `6ee1680` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 136 tests including handoff, causal selection, and artifact tests.
+  - PASS: 139 tests including causal selection, artifact, and gap-policy tests.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -151,6 +151,10 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 - Persist causal fitted rotations in a separate privacy-safe analysis
   artifact and define a versioned gap policy. Keep the initial 0.92-second
   gap explicit; do not silently interpolate it or render a viewer candidate.
+- Gap classification is complete: nine interior runs totaling fifteen steps
+  are bridge candidates; the initial 23-step boundary gap is unbridgeable.
+  Implement and angularly validate spherical short-gap reconstruction on
+  known synthetic motion before applying it to real steps.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -308,6 +312,8 @@ python3 -m unittest discover -s tests -v
   `outputs/source-motion/old-ghost-road-25-30-fps25-causal-v5/`.
 - The causal local-rotation artifact is under
   `outputs/source-motion/old-ghost-road-25-30-fps25-causal-steps-v6/`.
+- The classify-only gap result is under
+  `outputs/source-motion/old-ghost-road-25-30-fps25-causal-gap-policy-v1/`.
 
 ## Active agents
 

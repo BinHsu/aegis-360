@@ -322,3 +322,23 @@ or absolute local path. Results reproduce v5 exactly. The artifact is under
 
 This is deliberately not named source motion: local rotation steps separated
 by gaps do not yet form a connected absolute orientation path.
+
+## Gap-policy classification
+
+A versioned classify-only policy was applied to v6. Boundary gaps are always
+unbridgeable. Interior runs of at most three frames are labeled
+`bridge_candidate`, not filled. The 0.12-second bound is an explicit
+pre-render hypothesis and not a viewer-comfort claim.
+
+The result contains ten runs and 38 invalid steps:
+
+- one unbridgeable boundary run containing the first 23 steps;
+- nine interior bridge candidates containing the remaining 15 steps.
+
+The privacy-safe result is under
+`outputs/source-motion/old-ghost-road-25-30-fps25-causal-gap-policy-v1/`.
+Its policy declares `performs_interpolation: false`.
+
+The next gate is synthetic known-motion validation of a short-gap spherical
+interpolator. It must continue to reject boundary gaps and must quantify
+angular reconstruction error before being applied to real local steps.

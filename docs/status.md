@@ -353,6 +353,11 @@ Selection counts strongly suppress back (3/124) while dynamically using down
 (35/124) and left (97/124). The next gate is a separate causal source-motion
 artifact plus an explicit gap policy; do not render from diagnostic rows or
 silently interpolate the initial gap.
+
+The classify-only gap policy marks nine later runs (15 total frames) as
+bridge candidates and keeps the initial 23-frame boundary gap unbridgeable.
+It performs no interpolation. Synthetic known-motion reconstruction with an
+angular error gate is required before producing any filled causal path.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and
