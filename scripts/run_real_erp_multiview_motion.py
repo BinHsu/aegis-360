@@ -59,6 +59,8 @@ def main() -> int:
     if expected_frames < 2:
         parser.error("configured interval must contain at least two samples")
 
+    swap_before = safe_command_output(["sysctl", "-n", "vm.swapusage"])
+    thermal_before = safe_command_output(["pmset", "-g", "therm"])
     started = time.monotonic()
     usage_before = resource.getrusage(resource.RUSAGE_CHILDREN)
     with tempfile.TemporaryDirectory(prefix="aegis-real-multiview-") as temporary:
@@ -130,7 +132,8 @@ def main() -> int:
         if row["failure_reason"]:
             reasons[row["failure_reason"]] = reasons.get(row["failure_reason"], 0) + 1
     ffmpeg_version = (safe_command_output(["ffmpeg", "-version"]) or "").splitlines()
-    swap = safe_command_output(["sysctl", "-n", "vm.swapusage"])
+    swap_after = safe_command_output(["sysctl", "-n", "vm.swapusage"])
+    thermal_after = safe_command_output(["pmset", "-g", "therm"])
     report = {
         "schema_version": "aegis360.real-multiview-motion-report.v1",
         "source_id": arguments.source_id,
@@ -157,7 +160,10 @@ def main() -> int:
             "child_max_rss_bytes": max(
                 usage_before.ru_maxrss, usage_after.ru_maxrss
             ),
-            "swapusage": swap or "unavailable",
+            "swapusage_before": swap_before or "unavailable",
+            "swapusage_after": swap_after or "unavailable",
+            "thermal_before": thermal_before or "unavailable",
+            "thermal_after": thermal_after or "unavailable",
         },
         "artifacts": {
             "source_motion": "source-motion.json",

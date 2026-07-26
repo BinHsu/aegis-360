@@ -1,6 +1,6 @@
 # Real ERP multiview source-motion probe — 2026-07-26
 
-Status: 12.5 fps run complete; 25 fps comparison pending
+Status: 12.5 and 25 fps runs complete; per-view disagreement diagnosis pending
 
 ## Question
 
@@ -116,7 +116,43 @@ masking rather than threshold relaxation.
 
 ## Conclusion and follow-up
 
-Do not advance this 12.5 fps path to smoothing or rendering. Run the identical
-25–30 second interval at the source rate of 25 fps with unchanged motion and
-fit thresholds, add before/after swap observations, and compare failure
-reasons, residuals, step angles, elapsed time and memory.
+Do not advance this 12.5 fps path to smoothing or rendering.
+
+## Source-rate 25 fps comparison
+
+The same interval was rerun at the source rate with no fit-threshold change.
+Artifact root relative output:
+`outputs/source-motion/old-ghost-road-25-30-fps25-v1/`.
+
+| Metric | 12.5 fps | 25 fps |
+| --- | ---: | ---: |
+| Adjacent pairs | 62 | 124 |
+| Accepted measured pairs | 2 | 23 |
+| Measured fraction | 0.0323 | 0.1855 |
+| Residual-bound failures | 44 | 90 |
+| Step-angle-bound failures | 16 | 11 |
+| Median step angle | 0.816° | 0.525° |
+| p95 step angle | 1.848° | 1.388° |
+| Median fit residual | 1.253° | 1.115° |
+| p95 fit residual | 1.728° | 1.551° |
+| Median fit confidence | 0.520 | 0.626 |
+| Median inlier ratio | 0.893 | 0.996 |
+| Elapsed wall time | 52.37 s | 74.80 s |
+| Maximum child-process RSS | 278,659,072 B | 283,377,664 B |
+
+The 25 fps run recorded 8,526.12 MB swap before and 8,502.12 MB after, so it
+did not increase the already-high system swap observation. `pmset -g therm`
+reported no recorded thermal or performance warning before or after. These
+are bounded observations, not proof of long-duration thermal behavior.
+
+Higher sampling reduced step-angle failures substantially and raised the
+accepted fraction, but 81.5% of pairs remained invalid. Residual failures
+still dominated. All six viewports returned 124/124 Vision observations, and
+all were present in every fused pair. The down viewport's Vision affine
+rotation proxy RMS was 0.150 radians, versus 0.014–0.025 for five other
+viewports, making per-view disagreement a concrete next diagnostic.
+
+Do not increase sampling beyond the 25 fps source rate or relax thresholds.
+Persist bounded per-view fit angle, residual, confidence and agreement with
+the fused rotation, then rerun this same interval to determine whether the
+down view, foreground/parallax, or multiple views are responsible.

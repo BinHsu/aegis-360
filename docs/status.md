@@ -305,6 +305,17 @@ median/p95 residuals were 1.253°/1.728°. This rejects 12.5 fps for path
 smoothing. The next comparison uses the source rate of 25 fps with unchanged
 fit thresholds; failure to materially reduce residual gaps will redirect work
 to per-view disagreement and foreground/parallax handling.
+
+The unchanged-bound 25 fps comparison accepted 23/124 pairs (18.5%).
+Step-angle failures fell to eleven, but ninety pairs still exceeded the 1°
+fused residual bound. Median/p95 step angles improved to 0.525°/1.388° and
+median/p95 residuals to 1.115°/1.551°. The run took 74.80 seconds, maximum
+child RSS was 283,377,664 bytes, swap decreased by 24 MB during the run, and
+macOS reported no recorded thermal or performance warning. Increasing to the
+source rate therefore helps but does not make the path usable. The down
+viewport's rotation proxy RMS was an outlier at 0.150 radians versus
+0.014–0.025 for the other five; the next gate records per-view fits and their
+agreement with the fused rotation without changing thresholds.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

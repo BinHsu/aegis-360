@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T11:39:48+08:00
+Updated: 2026-07-26T11:43:01+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f3c081d
-Remote status: main is one commit ahead of origin/main at this checkpoint
-Working tree at checkpoint: 12.5 fps experiment record and status update are uncommitted
+Baseline commit: 331664d
+Remote status: main is two commits ahead of origin/main at this checkpoint
+Working tree at checkpoint: 25 fps config, resource capture and result records are uncommitted
 
 ## Objective
 
@@ -32,6 +32,11 @@ at 12.5 fps. All six viewport Vision sequences returned 62/62 observations,
 but the fused gate accepted only 2/62 pairs (3.2%): 44 exceeded the 1°
 residual bound and 16 exceeded the 1.25° step bound. No viewer video was
 rendered.
+
+The unchanged-bound 25 fps comparison accepted 23/124 pairs (18.5%).
+Step-angle failures fell from sixteen to eleven, but residual failures
+increased with pair count to ninety and remained dominant. The down
+viewport's affine rotation-proxy RMS was a clear outlier.
 
 ## Repository state
 
@@ -63,6 +68,12 @@ rendered.
   - Median/p95 step angle: 0.816° / 1.848°.
   - Median/p95 fit residual: 1.253° / 1.728°.
   - Elapsed: 52.37 seconds; maximum child RSS: 278,659,072 bytes.
+- Real 25 fps analysis:
+  - 124 pairs, 23 measured, 101 invalid.
+  - Median/p95 step angle: 0.525° / 1.388°.
+  - Median/p95 fit residual: 1.115° / 1.551°.
+  - Elapsed: 74.80 seconds; maximum child RSS: 283,377,664 bytes.
+  - Swap changed from 8,526.12 MB to 8,502.12 MB; no recorded thermal warning.
 - Flat homographic post-warp remains rejected as the primary stabilization
   path; see `docs/experiments/vision-homographic-motion-probe.md`.
 
@@ -78,10 +89,10 @@ rendered.
 
 ## Pending
 
-- Record and commit the 12.5 fps negative real-media experiment.
-- Run the same analysis at the source rate of 25 fps without relaxing fit
-  thresholds. Compare gap reasons and resource use. Do not render a viewer
-  candidate.
+- Record and commit the 25 fps negative comparison.
+- Add privacy-safe per-view fit diagnostics and fused-rotation disagreement,
+  then rerun the same 25 fps interval. Do not increase sampling or relax
+  thresholds, and do not render a viewer candidate.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -110,7 +121,17 @@ python3 scripts/run_real_erp_multiview_motion.py \
 ```
 
 The 12.5 fps command above has completed and must not overwrite its output.
-The next run needs a separate 25 fps config and artifact directory.
+The following 25 fps command has also completed and must not overwrite its
+output:
+
+```sh
+python3 scripts/run_real_erp_multiview_motion.py \
+  "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
+  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-25-30-fps25-v1" \
+  --config config/old-ghost-road-multiview-motion-fps25-v1.json \
+  --source-id old-ghost-road-25-30-fps25-v1 \
+  --start 25 --duration 5
+```
 
 ## External artifacts
 
@@ -119,6 +140,8 @@ The next run needs a separate 25 fps config and artifact directory.
   `outputs/auto-directed/old-ghost-road-30s-v1/` relative to that root.
 - The 12.5 fps source-motion evidence is under
   `outputs/source-motion/old-ghost-road-25-30-fps12.5-v1/`.
+- The 25 fps comparison is under
+  `outputs/source-motion/old-ghost-road-25-30-fps25-v1/`.
 
 ## Active agents
 
