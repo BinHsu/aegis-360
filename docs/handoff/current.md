@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T12:05:12+08:00
+Updated: 2026-07-26T12:09:24+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 504a9e6
+Baseline commit: bcf3056
 Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: leave-one-view-out diagnostics, tests, and results are uncommitted
+Working tree at checkpoint: clean after leave-one-view-out milestone
 
 ## Objective
 
@@ -50,11 +50,11 @@ reduced acceptance. The best fixed omission still failed 58 pairs.
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `504a9e6`.
+- Baseline commit: `bcf3056`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `504a9e6` are signed and pushed to `origin/main`.
+- Commits through `bcf3056` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
