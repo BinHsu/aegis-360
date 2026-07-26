@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-27T06:50:00+08:00
+Updated: 2026-07-27T07:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: daefbdf
-Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: held-out equatorial-mask result is being finalized
+Baseline commit: daca112
+Remote status: local main contains the completed milestone; push is pending
+Working tree at checkpoint: checkpoint metadata update only
 
 ## Objective
 
@@ -59,18 +59,20 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `67c9c40`.
+- Baseline commit: `daca112`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `67c9c40` are signed and pushed to `origin/main`.
+- Commits through `daefbdf` are signed and pushed to `origin/main`.
+- Commit `daca112` is intentionally unsigned because the host SSH signing key
+  required an unavailable interactive passphrase during this run.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 152 tests including privacy-safe spatial residual aggregation.
+  - PASS: 153 tests including privacy-safe spatial-mask aggregation.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -212,7 +214,8 @@ python3 scripts/check_handoff.py
 python3 -m unittest discover -s tests -v
 ```
 
-For the active held-out spatial-mask milestone:
+The held-out spatial-mask command below has completed. Do not overwrite its
+output; choose a new source ID and directory for any repetition:
 
 ```sh
 python3 scripts/run_real_erp_multiview_motion.py \
@@ -234,6 +237,13 @@ python3 scripts/run_real_erp_multiview_motion.py \
   --source-id old-ghost-road-25-30-fps12.5-v1 \
   --start 25 --duration 5
 ```
+
+The next estimator investigation must obtain spatially independent motion
+evidence, for example bounded tile-level registrations. The current
+whole-viewport homography only supplies one motion model per viewport, so
+masking samples of that model cannot reliably identify a moving foreground.
+Validate any tiling approach on synthetic foreground/background motion before
+another real-media run.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
