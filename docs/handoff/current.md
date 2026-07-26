@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T07:42:00+08:00
+Updated: 2026-07-27T07:49:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -272,6 +272,13 @@ The next bounded milestone is performance-only: measure a generated 2x2,
 1280x720 parent sequence with four 640x360 registrations using a bounded frame
 count. Record elapsed time and peak RSS before any six-viewport integration or
 benchmark-media run.
+
+A two-frame bootstrap measurement took 3.91 seconds, maximum RSS was
+190,332,928 bytes, and `/usr/bin/time` reported zero swaps. It compiled Swift
+four times and includes fixture generation/cropping, so do not treat it as
+per-frame throughput. The exact next implementation is a compile-once,
+multi-frame generated benchmark; no real-media command is authorized by this
+checkpoint.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

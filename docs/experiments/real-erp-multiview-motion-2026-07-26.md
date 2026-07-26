@@ -505,3 +505,10 @@ viewport intrinsics, with unit tests covering nonzero origin, normalized
 location, translation, and invalid extent. No claim is yet made that a
 1280x720 parent viewport with four 640x360 registrations is fast enough at
 25 fps on the reference MacBook Air.
+
+A two-frame bootstrap timing of the generated host gate took 3.91 seconds and
+reported 190,332,928 bytes maximum RSS with zero swaps. This includes fixture
+generation, FFmpeg assembly/cropping, and four separate Swift compilations, so
+it is an orchestration upper bound rather than Vision throughput evidence.
+The sustained benchmark must compile once and process a bounded multi-frame
+sequence before deciding whether 2x2 tiling is viable.
