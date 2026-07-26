@@ -342,3 +342,20 @@ Its policy declares `performs_interpolation: false`.
 The next gate is synthetic known-motion validation of a short-gap spherical
 interpolator. It must continue to reject boundary gaps and must quantify
 angular reconstruction error before being applied to real local steps.
+
+Local-step SLERP exactly recovers a known smooth yaw sequence within a
+1e-6-radian numeric gate and leaves boundary gaps null. Applying it to the
+nine classified real candidates produced 86 measured, 15 interpolated, and
+23 still-invalid steps. The candidate artifact is under
+`outputs/source-motion/old-ghost-road-25-30-fps25-bridged-steps-v1/`.
+
+Across the 24 adjacent-step transitions touching interpolation, angular
+change has median 0.210°, p95 0.432°, and maximum 0.432°. Across all 100
+valid adjacent transitions after the boundary gap, median is 0.429°, p95
+1.242°, and maximum 1.797°. Interpolation therefore introduces no new local
+step-change maximum in this artifact. This is a local continuity metric, not
+viewer-comfort evidence.
+
+The next representation must expose a connected relative-orientation segment
+starting after the 0.92-second boundary gap. It must not assign an absolute
+orientation across the missing beginning.

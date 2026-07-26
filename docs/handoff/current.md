@@ -3,7 +3,7 @@
 Updated: 2026-07-26T12:50:36+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 6ee1680
+Baseline commit: 0ed24a7
 Remote status: main matches origin/main at this checkpoint
 Working tree at checkpoint: causal milestone plus classify-only gap policy are uncommitted
 
@@ -59,18 +59,18 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `6ee1680`.
+- Baseline commit: `0ed24a7`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `6ee1680` are signed and pushed to `origin/main`.
+- Commits through `0ed24a7` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 139 tests including causal selection, artifact, and gap-policy tests.
+  - PASS: 141 tests including gap classification and SLERP reconstruction.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -155,6 +155,14 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
   are bridge candidates; the initial 23-step boundary gap is unbridgeable.
   Implement and angularly validate spherical short-gap reconstruction on
   known synthetic motion before applying it to real steps.
+- Local-step SLERP now recovers a known smooth 1°→4° synthetic sequence
+  across a two-step gap within 1e-6 radians, while boundary gaps remain null.
+  Materialize a candidate real artifact without treating it as measured or
+  as an absolute path.
+- The real bridge candidate contains 86 measured, 15 interpolated, and 23
+  boundary-invalid steps. Transitions touching interpolation have maximum
+  local-step change 0.432°; the artifact-wide valid maximum is 1.797°.
+  Build a connected relative segment starting only after the initial gap.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -314,6 +322,8 @@ python3 -m unittest discover -s tests -v
   `outputs/source-motion/old-ghost-road-25-30-fps25-causal-steps-v6/`.
 - The classify-only gap result is under
   `outputs/source-motion/old-ghost-road-25-30-fps25-causal-gap-policy-v1/`.
+- The bridged local-step candidate is under
+  `outputs/source-motion/old-ghost-road-25-30-fps25-bridged-steps-v1/`.
 
 ## Active agents
 

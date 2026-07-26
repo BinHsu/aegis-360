@@ -358,6 +358,13 @@ The classify-only gap policy marks nine later runs (15 total frames) as
 bridge candidates and keeps the initial 23-frame boundary gap unbridgeable.
 It performs no interpolation. Synthetic known-motion reconstruction with an
 angular error gate is required before producing any filled causal path.
+
+Synthetic local-step SLERP passes within 1e-6 radians. The real candidate
+fills only the fifteen classified interior steps and leaves the first 23
+invalid. Transitions touching interpolation have maximum local-step angular
+change 0.432°, below the artifact-wide 1.797° maximum. Next, form an explicit
+connected relative-orientation segment beginning at 0.92 seconds; do not
+claim or infer the missing initial orientation.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

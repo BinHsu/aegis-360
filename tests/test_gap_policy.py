@@ -4,7 +4,8 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from aegis360.gap_policy import classify_gap_runs
+from aegis360.gap_policy import bridge_candidate_gaps, classify_gap_runs
+from aegis360.so3 import rotation_distance_radians
 
 
 def step(index, state):
@@ -13,6 +14,12 @@ def step(index, state):
         "current_pts_seconds": (index + 1) * 0.04,
         "state": state,
     }
+
+
+def yaw(degrees):
+    import math
+    half = math.radians(degrees) / 2.0
+    return [0.0, math.sin(half), 0.0, math.cos(half)]
 
 
 class GapPolicyTests(unittest.TestCase):
@@ -50,6 +57,44 @@ class GapPolicyTests(unittest.TestCase):
             [run.classification for run in runs],
             ["unbridgeable", "unbridgeable"],
         )
+
+    def test_slerp_recovers_known_smooth_local_rotation_steps(self):
+        steps = [
+            {**step(0, "measured"), "rotation_xyzw": yaw(1.0)},
+            {**step(1, "invalid"), "rotation_xyzw": None},
+            {**step(2, "invalid"), "rotation_xyzw": None},
+            {**step(3, "measured"), "rotation_xyzw": yaw(4.0)},
+        ]
+        bridged = bridge_candidate_gaps(
+            steps, maximum_interior_gap_frames=3
+        )
+        self.assertEqual(
+            [item["state"] for item in bridged],
+            ["measured", "interpolated", "interpolated", "measured"],
+        )
+        self.assertLess(
+            rotation_distance_radians(
+                tuple(bridged[1]["rotation_xyzw"]), tuple(yaw(2.0))
+            ),
+            1e-6,
+        )
+        self.assertLess(
+            rotation_distance_radians(
+                tuple(bridged[2]["rotation_xyzw"]), tuple(yaw(3.0))
+            ),
+            1e-6,
+        )
+
+    def test_bridge_keeps_boundary_gap_null(self):
+        steps = [
+            {**step(0, "invalid"), "rotation_xyzw": None},
+            {**step(1, "measured"), "rotation_xyzw": yaw(1.0)},
+        ]
+        bridged = bridge_candidate_gaps(
+            steps, maximum_interior_gap_frames=3
+        )
+        self.assertEqual(bridged[0]["state"], "invalid")
+        self.assertIsNone(bridged[0]["rotation_xyzw"])
 
 
 if __name__ == "__main__":
