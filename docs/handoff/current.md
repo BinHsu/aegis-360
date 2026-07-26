@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T11:43:01+08:00
+Updated: 2026-07-26T11:52:58+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 331664d
-Remote status: main is two commits ahead of origin/main at this checkpoint
-Working tree at checkpoint: 25 fps config, resource capture and result records are uncommitted
+Baseline commit: c756536
+Remote status: main is three commits ahead of origin/main at this checkpoint
+Working tree at checkpoint: per-view diagnostics, tests, and result records are uncommitted
 
 ## Objective
 
@@ -38,22 +38,27 @@ Step-angle failures fell from sixteen to eleven, but residual failures
 increased with pair count to ninety and remained dominant. The down
 viewport's affine rotation-proxy RMS was a clear outlier.
 
+The repeated 25 fps run with per-view spherical diagnostics reproduced the
+same 23/124 fused acceptance result. Disagreement is not confined to down:
+back, down, and left have median fused disagreement of 1.883°, 1.506°, and
+1.099°, versus 0.444–0.521° for front, right, and up.
+
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `4b76cb6`.
+- Baseline commit: `c756536`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commit `f3c081d` contains the real ERP analysis runner and is not yet pushed
-  at this checkpoint.
+- Commits `f3c081d`, `331664d`, and `c756536` contain the real ERP runner and
+  its two completed comparisons; they are not yet pushed at this checkpoint.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 122 tests including the handoff-contract tests.
+  - PASS: 126 tests including the handoff-contract and per-view report tests.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -74,6 +79,15 @@ viewport's affine rotation-proxy RMS was a clear outlier.
   - Median/p95 fit residual: 1.115° / 1.551°.
   - Elapsed: 74.80 seconds; maximum child RSS: 283,377,664 bytes.
   - Swap changed from 8,526.12 MB to 8,502.12 MB; no recorded thermal warning.
+- Per-view 25 fps diagnosis:
+  - Reproduced 23 measured, 101 invalid, 90 residual failures, and 11
+    step-bound failures.
+  - All six viewports produced 124/124 spherical fits.
+  - Median/p95 fused disagreement: back 1.883°/3.238°, down
+    1.506°/2.749°, left 1.099°/2.170°, front 0.444°/1.465°, right
+    0.500°/2.256°, up 0.521°/1.070°.
+  - Elapsed: 83.25 seconds; maximum child RSS: 285,294,592 bytes.
+  - Swap was unchanged; no recorded thermal or performance warning.
 - Flat homographic post-warp remains rejected as the primary stabilization
   path; see `docs/experiments/vision-homographic-motion-probe.md`.
 
@@ -89,10 +103,10 @@ viewport's affine rotation-proxy RMS was a clear outlier.
 
 ## Pending
 
-- Record and commit the 25 fps negative comparison.
-- Add privacy-safe per-view fit diagnostics and fused-rotation disagreement,
-  then rerun the same 25 fps interval. Do not increase sampling or relax
-  thresholds, and do not render a viewer candidate.
+- Add a bounded robust view-level consensus or leave-one-view-out diagnostic
+  that records per-pair rejected view identities while preserving the current
+  all-ray fusion as baseline. Do not globally discard down, increase
+  sampling, relax thresholds, or render a viewer candidate.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -133,6 +147,26 @@ python3 scripts/run_real_erp_multiview_motion.py \
   --start 25 --duration 5
 ```
 
+After validating the uncommitted per-view diagnostics, run this new bounded
+analysis. It must write a new directory and must not overwrite either prior
+result:
+
+```sh
+python3 scripts/run_real_erp_multiview_motion.py \
+  "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
+  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-25-30-fps25-per-view-v2" \
+  --config config/old-ghost-road-multiview-motion-fps25-v1.json \
+  --source-id old-ghost-road-25-30-fps25-per-view-v2 \
+  --start 25 --duration 5
+```
+
+The per-view command above has completed and must not be rerun into the same
+directory. The exact next implementation command is:
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
 ## External artifacts
 
 - Artifact root is configured outside Git through `AEGIS_DATA_DIR`.
@@ -142,6 +176,8 @@ python3 scripts/run_real_erp_multiview_motion.py \
   `outputs/source-motion/old-ghost-road-25-30-fps12.5-v1/`.
 - The 25 fps comparison is under
   `outputs/source-motion/old-ghost-road-25-30-fps25-v1/`.
+- The per-view 25 fps diagnosis is under
+  `outputs/source-motion/old-ghost-road-25-30-fps25-per-view-v2/`.
 
 ## Active agents
 

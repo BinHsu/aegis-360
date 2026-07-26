@@ -43,6 +43,15 @@ def rotate_ray(rotation_xyzw: Quaternion, ray: Ray) -> Ray:
     )
 
 
+def rotation_distance_radians(first: Quaternion, second: Quaternion) -> float:
+    """Return the shortest angular distance between two rotations."""
+
+    left = _unit_quaternion(first)
+    right = _unit_quaternion(second)
+    dot = abs(sum(a * b for a, b in zip(left, right)))
+    return 2.0 * math.acos(max(-1.0, min(1.0, dot)))
+
+
 def fit_rotation(
     correspondences: Iterable[tuple[Ray, Ray]],
     *,

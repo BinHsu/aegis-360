@@ -1,6 +1,6 @@
 # Real ERP multiview source-motion probe — 2026-07-26
 
-Status: 12.5 and 25 fps runs complete; per-view disagreement diagnosis pending
+Status: 12.5 fps, 25 fps, and per-view disagreement runs complete
 
 ## Question
 
@@ -156,3 +156,41 @@ Do not increase sampling beyond the 25 fps source rate or relax thresholds.
 Persist bounded per-view fit angle, residual, confidence and agreement with
 the fused rotation, then rerun this same interval to determine whether the
 down view, foreground/parallax, or multiple views are responsible.
+
+## Per-view rotation-fit diagnosis
+
+The 25 fps run was repeated with identical input, interval, viewports, and
+acceptance thresholds. Only privacy-safe per-view `SO(3)` fit summaries and
+their angular distance from the all-ray fused rotation were added. Artifact
+root relative output:
+`outputs/source-motion/old-ghost-road-25-30-fps25-per-view-v2/`.
+
+| View | Median step | Median fit residual | Median / p95 fused disagreement |
+| --- | ---: | ---: | ---: |
+| front | 0.763° | 0.267° | 0.444° / 1.465° |
+| right | 0.630° | 0.208° | 0.500° / 2.256° |
+| up | 0.681° | 0.210° | 0.521° / 1.070° |
+| left | 1.396° | 0.839° | 1.099° / 2.170° |
+| down | 1.823° | 0.563° | 1.506° / 2.749° |
+| back | 1.978° | 0.898° | 1.883° / 3.238° |
+
+Every view produced 124/124 per-view fits. The fused outcome reproduced the
+prior run exactly: 23 measured pairs, 90 residual failures, and 11 step-bound
+failures. The run took 83.25 seconds, maximum child RSS was 285,294,592
+bytes, swap was unchanged at 8,422.12 MB, and macOS recorded no thermal or
+performance warning.
+
+The earlier down-view affine rotation-proxy RMS outlier does not identify a
+single removable culprit. In spherical fits, back, down, and left all
+systematically report larger motion and disagree more strongly with the
+all-ray fused rotation than front, right, and up. The up view also has one
+rare 9.53° disagreement maximum despite its low p95. This pattern is
+consistent with spatially varying motion evidence such as near-field
+bicycle/rider parallax, blur, or stitching behavior; without ground truth it
+does not prove which cause dominates.
+
+Do not relax the fused residual gate and do not discard only the down view.
+The next bounded estimator experiment should compare robust view-level
+consensus or leave-one-view-out fits and record which views are rejected for
+each pair. That experiment must first pass synthetic geometry and must retain
+the current all-ray fusion as its baseline.

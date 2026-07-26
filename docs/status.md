@@ -316,6 +316,15 @@ source rate therefore helps but does not make the path usable. The down
 viewport's rotation proxy RMS was an outlier at 0.150 radians versus
 0.014–0.025 for the other five; the next gate records per-view fits and their
 agreement with the fused rotation without changing thresholds.
+
+The repeated 25 fps per-view diagnosis reproduced the same fused result
+exactly. All six views returned 124/124 spherical fits, but disagreement was
+spatially distributed rather than isolated to the down view: median
+per-view-to-fused disagreement was 1.883° back, 1.506° down, 1.099° left,
+and only 0.444–0.521° front/right/up. The next gate is therefore robust
+view-level consensus or leave-one-view-out diagnosis with per-pair rejected
+view identities. Do not solve this by relaxing residual limits or dropping
+the down view globally.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

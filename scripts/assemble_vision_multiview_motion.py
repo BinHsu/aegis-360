@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from aegis360.multiview_motion import assemble_source_motion
-from aegis360.so3 import fit_rotation
+from aegis360.so3 import fit_rotation, rotation_distance_radians
 from aegis360.viewport_rays import RectilinearViewport, homography_to_world_rays
 from aegis360.vision_homography import vision_native_to_source_target_top_left
 
@@ -71,6 +71,8 @@ def main():
         previous_time = None
         current_time = None
         contributing = 0
+        per_view = []
+        per_view_rotations = {}
         for viewport_data, item in zip(declared, config["viewports"]):
             observation = evidence[item["id"]]["observations"][index]
             reference = evidence[item["id"]]["observations"][index - 1]
@@ -83,22 +85,61 @@ def main():
                   or not math.isclose(current_time, candidate_current, abs_tol=1e-9)):
                 raise SystemExit("Vision viewport timestamps disagree")
             if observation["state"] != "measured":
+                per_view.append({
+                    "viewport_id": item["id"],
+                    "state": "invalid",
+                    "failure_reason": "vision_observation_unavailable",
+                    "step_rotation_radians": None,
+                    "fit_confidence": None,
+                    "inlier_ratio": None,
+                    "residual_radians": None,
+                    "fused_disagreement_radians": None,
+                })
                 continue
             viewport = RectilinearViewport(
                 width, height, viewport_data["yawRadians"],
                 viewport_data["pitchRadians"], hfov
             )
-            converted = vision_native_to_source_target_top_left(
-                observation["homographyRowMajor"], height
-            )
-            # Vision supplies previous(source)->current(target).  The source
-            # motion contract wants current rays paired with previous rays.
-            rays = homography_to_world_rays(
-                converted, viewport,
-                columns=config["fit"]["homographyColumns"],
-                rows=config["fit"]["homographyRows"],
-            )
+            try:
+                converted = vision_native_to_source_target_top_left(
+                    observation["homographyRowMajor"], height
+                )
+                # Vision supplies previous(source)->current(target). The
+                # source-motion contract wants current rays paired with
+                # previous rays.
+                rays = homography_to_world_rays(
+                    converted, viewport,
+                    columns=config["fit"]["homographyColumns"],
+                    rows=config["fit"]["homographyRows"],
+                )
+                view_fit = fit_rotation(
+                    [(current_ray, previous_ray)
+                     for previous_ray, current_ray in rays]
+                )
+            except ValueError:
+                per_view.append({
+                    "viewport_id": item["id"],
+                    "state": "invalid",
+                    "failure_reason": "viewport_rotation_fit_failed",
+                    "step_rotation_radians": None,
+                    "fit_confidence": None,
+                    "inlier_ratio": None,
+                    "residual_radians": None,
+                    "fused_disagreement_radians": None,
+                })
+                continue
             contributing += 1
+            per_view_rotations[item["id"]] = view_fit.rotation_xyzw
+            per_view.append({
+                "viewport_id": item["id"],
+                "state": "measured",
+                "failure_reason": None,
+                "step_rotation_radians": angle(view_fit.rotation_xyzw),
+                "fit_confidence": view_fit.confidence,
+                "inlier_ratio": view_fit.inlier_ratio,
+                "residual_radians": view_fit.residual_radians,
+                "fused_disagreement_radians": None,
+            })
             for previous_ray, current_ray in rays:
                 correspondences.append((current_ray, previous_ray))
                 serialized.append({
@@ -122,6 +163,7 @@ def main():
             "residual_radians": None,
             "state": "measured",
             "failure_reason": None,
+            "per_view": per_view,
         }
         if contributing < minimum_views:
             pair["matches"] = []
@@ -135,6 +177,14 @@ def main():
                 diagnostic["fit_confidence"] = fit.confidence
                 diagnostic["inlier_ratio"] = fit.inlier_ratio
                 diagnostic["residual_radians"] = fit.residual_radians
+                for view in diagnostic["per_view"]:
+                    rotation = per_view_rotations.get(view["viewport_id"])
+                    if rotation is not None:
+                        view["fused_disagreement_radians"] = (
+                            rotation_distance_radians(
+                                rotation, fit.rotation_xyzw
+                            )
+                        )
                 if diagnostic["step_rotation_radians"] > maximum:
                     pair["matches"] = []
                     pair["failureReason"] = "rotation_step_exceeds_configured_bound"

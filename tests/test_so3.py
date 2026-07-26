@@ -5,7 +5,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from aegis360.so3 import fit_rotation, rotate_ray
+from aegis360.so3 import fit_rotation, rotate_ray, rotation_distance_radians
 
 
 def axis_angle(axis, angle):
@@ -37,6 +37,19 @@ RAYS = [
 
 
 class RotationFitTests(unittest.TestCase):
+    def test_rotation_distance_is_sign_invariant_and_shortest(self):
+        first = axis_angle((0.0, 1.0, 0.0), math.radians(179))
+        second = axis_angle((0.0, 1.0, 0.0), math.radians(-179))
+        self.assertAlmostEqual(
+            math.degrees(rotation_distance_radians(first, second)), 2.0,
+            places=7,
+        )
+        self.assertAlmostEqual(
+            rotation_distance_radians(first, tuple(-value for value in first)),
+            0.0,
+            places=12,
+        )
+
     def assert_rotation(self, expected, fit, tolerance=5e-8):
         for ray in RAYS:
             wanted = rotate_ray(expected, ray)

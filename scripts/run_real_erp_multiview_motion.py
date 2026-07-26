@@ -10,6 +10,7 @@ from pathlib import Path
 import platform
 import resource
 import subprocess
+import statistics
 import sys
 import tempfile
 import time
@@ -34,6 +35,18 @@ def safe_command_output(command: list[str]) -> str | None:
         ).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
         return None
+
+
+def distribution(values: list[float]) -> dict[str, float] | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    p95 = ordered[min(len(ordered) - 1, math.ceil(0.95 * len(ordered)) - 1)]
+    return {
+        "median": statistics.median(ordered),
+        "p95": p95,
+        "maximum": ordered[-1],
+    }
 
 
 def main() -> int:
@@ -131,6 +144,30 @@ def main() -> int:
     for row in diagnostics:
         if row["failure_reason"]:
             reasons[row["failure_reason"]] = reasons.get(row["failure_reason"], 0) + 1
+    per_view_fit_summary = {}
+    viewport_ids = [view["id"] for view in config["viewports"]]
+    for viewport_id in viewport_ids:
+        view_rows = [
+            view
+            for row in diagnostics
+            for view in row["per_view"]
+            if view["viewport_id"] == viewport_id
+        ]
+        per_view_fit_summary[viewport_id] = {
+            "measured_count": sum(view["state"] == "measured" for view in view_rows),
+            "step_rotation_radians": distribution([
+                view["step_rotation_radians"] for view in view_rows
+                if view["step_rotation_radians"] is not None
+            ]),
+            "residual_radians": distribution([
+                view["residual_radians"] for view in view_rows
+                if view["residual_radians"] is not None
+            ]),
+            "fused_disagreement_radians": distribution([
+                view["fused_disagreement_radians"] for view in view_rows
+                if view["fused_disagreement_radians"] is not None
+            ]),
+        }
     ffmpeg_version = (safe_command_output(["ffmpeg", "-version"]) or "").splitlines()
     swap_after = safe_command_output(["sysctl", "-n", "vm.swapusage"])
     thermal_after = safe_command_output(["pmset", "-g", "therm"])
@@ -152,6 +189,7 @@ def main() -> int:
             "failure_reasons": reasons,
         },
         "viewport_summaries": viewport_summaries,
+        "per_view_fit_summary": per_view_fit_summary,
         "environment": {
             "platform": platform.platform(),
             "machine": platform.machine(),
