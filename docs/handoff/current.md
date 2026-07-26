@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T12:22:41+08:00
+Updated: 2026-07-26T12:26:05+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: bcf3056
+Baseline commit: 621937f
 Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: rotation-medoid implementation, tests, and v4 result records are uncommitted
+Working tree at checkpoint: clean after rotation-medoid consensus milestone
 
 ## Objective
 
@@ -55,11 +55,11 @@ fixed omission of back or down.
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `bcf3056`.
+- Baseline commit: `621937f`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `bcf3056` are signed and pushed to `origin/main`.
+- Commits through `621937f` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
