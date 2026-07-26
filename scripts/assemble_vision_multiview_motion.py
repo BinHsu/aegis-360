@@ -64,6 +64,7 @@ def main():
     minimum_confidence = config["fit"]["minimumFitConfidence"]
     minimum_inlier_ratio = config["fit"]["minimumInlierRatio"]
     maximum_residual = math.radians(config["fit"]["maximumFitResidualDegrees"])
+    pair_diagnostics = []
     for index in range(1, frame_count):
         correspondences = []
         serialized = []
@@ -110,13 +111,31 @@ def main():
             "currentPtsSeconds": current_time,
             "matches": serialized,
         }
+        diagnostic = {
+            "previous_pts_seconds": previous_time,
+            "current_pts_seconds": current_time,
+            "contributing_viewports": contributing,
+            "correspondence_count": len(correspondences),
+            "step_rotation_radians": None,
+            "fit_confidence": None,
+            "inlier_ratio": None,
+            "residual_radians": None,
+            "state": "measured",
+            "failure_reason": None,
+        }
         if contributing < minimum_views:
             pair["matches"] = []
             pair["failureReason"] = "insufficient_viewport_coverage"
+            diagnostic["state"] = "invalid"
+            diagnostic["failure_reason"] = pair["failureReason"]
         else:
             try:
                 fit = fit_rotation(correspondences)
-                if angle(fit.rotation_xyzw) > maximum:
+                diagnostic["step_rotation_radians"] = angle(fit.rotation_xyzw)
+                diagnostic["fit_confidence"] = fit.confidence
+                diagnostic["inlier_ratio"] = fit.inlier_ratio
+                diagnostic["residual_radians"] = fit.residual_radians
+                if diagnostic["step_rotation_radians"] > maximum:
                     pair["matches"] = []
                     pair["failureReason"] = "rotation_step_exceeds_configured_bound"
                 elif fit.confidence < minimum_confidence:
@@ -128,10 +147,16 @@ def main():
                 elif fit.residual_radians > maximum_residual:
                     pair["matches"] = []
                     pair["failureReason"] = "rotation_fit_residual_exceeds_bound"
+                if "failureReason" in pair:
+                    diagnostic["state"] = "invalid"
+                    diagnostic["failure_reason"] = pair["failureReason"]
             except ValueError:
                 pair["matches"] = []
                 pair["failureReason"] = "rotation_fit_failed"
+                diagnostic["state"] = "invalid"
+                diagnostic["failure_reason"] = pair["failureReason"]
         pairs.append(pair)
+        pair_diagnostics.append(diagnostic)
 
     bundle = {
         "schemaVersion": "aegis360.multiview-ray-matches.v1",
@@ -149,6 +174,7 @@ def main():
         "minimum_inlier_ratio": minimum_inlier_ratio,
         "maximum_fit_residual_radians": maximum_residual,
         "calibration_basis": config["calibrationBasis"],
+        "pair_diagnostics": pair_diagnostics,
     }
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     with arguments.output.open("x", encoding="utf-8") as handle:

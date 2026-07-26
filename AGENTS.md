@@ -247,6 +247,8 @@ These commands have been verified on the reference machine:
   `tests/test_vision_viewport_so3_gate.sh`
 - Bounded synthetic ERP multiview Vision source-motion host gate:
   `tests/test_synthetic_erp_multiview_motion_gate.sh`
+- Real/local analysis-only ERP multiview source-motion runner:
+  `python3 scripts/run_real_erp_multiview_motion.py INPUT_ERP OUTPUT_DIR --config CONFIG.json --source-id SOURCE_ID --start SECONDS --duration SECONDS`
 - Apple Vision batch orchestration test: `tests/test_vision_batch_gate.sh`
 - Apple Vision short-sequence tracking test:
   `tests/test_vision_tracking_gate.sh`

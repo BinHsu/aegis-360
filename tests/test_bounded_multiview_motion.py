@@ -36,6 +36,7 @@ class BoundedMultiviewMotionTests(unittest.TestCase):
             result["gaps"][-1]["reason"],
             "rotation_step_exceeds_configured_bound",
         )
+        self.assertEqual(result["samples"][-1]["state"], "invalid")
 
     def test_declared_failure_cannot_hide_valid_matches(self):
         with self.assertRaisesRegex(ValueError, "failed pair"):
