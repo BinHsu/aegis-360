@@ -365,6 +365,13 @@ invalid. Transitions touching interpolation have maximum local-step angular
 change 0.432°, below the artifact-wide 1.797° maximum. Next, form an explicit
 connected relative-orientation segment beginning at 0.92 seconds; do not
 claim or infer the missing initial orientation.
+
+One relative path segment is now available from 0.92–4.96 seconds with 102
+samples and an explicit identity-relative anchor. Raw estimated motion has
+median/p95 angular speed 10.80°/s and 24.86°/s; scalar jerk proxy p95 is
+9,120°/s³. The next gate is quaternion-space `action-natural` smoothing with
+synthetic static, slow-turn, high-frequency jitter, and sign-continuity
+fixtures before any viewer render.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and

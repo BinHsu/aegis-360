@@ -359,3 +359,17 @@ viewer-comfort evidence.
 The next representation must expose a connected relative-orientation segment
 starting after the 0.92-second boundary gap. It must not assign an absolute
 orientation across the missing beginning.
+
+The relative-segment artifact now contains one independently identity-anchored
+segment from 0.92 to 4.96 seconds, covering step indices 23–123 with 102
+orientation samples. No relationship is claimed to the missing first 0.92
+seconds. It is under
+`outputs/source-motion/old-ghost-road-25-30-fps25-relative-segment-v1/`.
+
+Before smoothing, the segment's angular-speed distribution is median
+10.80°/s, p95 24.86°/s, and maximum 30.42°/s. Scalar magnitude-change proxies
+are high: acceleration median/p95/max 110/431/628°/s² and jerk
+2413/9120/10443°/s³. These are diagnostics on estimated motion, not comfort
+threshold violations. They justify evaluating quaternion-space smoothing
+using the proposed `action-natural` horizon without rendering the raw segment
+as a successful candidate.

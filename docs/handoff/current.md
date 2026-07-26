@@ -3,7 +3,7 @@
 Updated: 2026-07-26T12:50:36+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 0ed24a7
+Baseline commit: 730d7df
 Remote status: main matches origin/main at this checkpoint
 Working tree at checkpoint: causal milestone plus classify-only gap policy are uncommitted
 
@@ -59,18 +59,18 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit: `0ed24a7`.
+- Baseline commit: `730d7df`.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
-- Commits through `0ed24a7` are signed and pushed to `origin/main`.
+- Commits through `730d7df` are signed and pushed to `origin/main`.
 - Media and generated video remain outside Git under the configured artifact
   root.
 
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`
-  - PASS: 141 tests including gap classification and SLERP reconstruction.
+  - PASS: 143 tests including SLERP and relative-segment assembly.
 - `python3 -m unittest tests.test_handoff_contract -v`
   - PASS: 3 tests.
 - `python3 scripts/check_handoff.py`
@@ -163,6 +163,13 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
   boundary-invalid steps. Transitions touching interpolation have maximum
   local-step change 0.432°; the artifact-wide valid maximum is 1.797°.
   Build a connected relative segment starting only after the initial gap.
+- Relative-segment assembly is the active milestone. Every segment must use
+  an independent identity anchor and must make no orientation claim across
+  remaining invalid gaps.
+- The real artifact has one independently anchored segment from 0.92–4.96
+  seconds with 102 samples. Raw angular speed median/p95 is 10.80°/24.86° per
+  second and scalar jerk-proxy p95 is 9,120°/s³. Next validate quaternion
+  smoothing on static, slow-turn, jitter, and quaternion-sign fixtures.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -324,6 +331,8 @@ python3 -m unittest discover -s tests -v
   `outputs/source-motion/old-ghost-road-25-30-fps25-causal-gap-policy-v1/`.
 - The bridged local-step candidate is under
   `outputs/source-motion/old-ghost-road-25-30-fps25-bridged-steps-v1/`.
+- The connected relative segment is under
+  `outputs/source-motion/old-ghost-road-25-30-fps25-relative-segment-v1/`.
 
 ## Active agents
 
