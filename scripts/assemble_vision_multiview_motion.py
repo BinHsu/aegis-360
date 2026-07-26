@@ -71,6 +71,7 @@ def main():
     maximum_residual = math.radians(config["fit"]["maximumFitResidualDegrees"])
     consensus_config = config.get("viewConsensus")
     causal_config = config.get("causalViewReliability")
+    spatial_mask_config = config.get("spatialMask")
     causal_reliability = None
     if causal_config is not None:
         causal_reliability = CausalViewReliability(
@@ -203,6 +204,7 @@ def main():
             "leave_one_view_out": [],
             "view_consensus": None,
             "causal_view_reliability": None,
+            "spatial_mask_fit": None,
         }
         if contributing < minimum_views:
             pair["matches"] = []
@@ -469,6 +471,76 @@ def main():
                             causal["state"] = "invalid"
                             causal["failure_reason"] = "rotation_fit_failed"
                     diagnostic["causal_view_reliability"] = causal
+                    if spatial_mask_config is not None:
+                        masked_matches = []
+                        for viewport_id in available_selected:
+                            exclude_bottom = (
+                                viewport_id
+                                in spatial_mask_config[
+                                    "excludeBottomFractionByViewport"
+                                ]
+                            )
+                            for sample in ray_samples_by_view[viewport_id]:
+                                if (
+                                    exclude_bottom
+                                    and sample["row_fraction"]
+                                    > 1.0 - spatial_mask_config[
+                                        "excludeBottomFraction"
+                                    ]
+                                ):
+                                    continue
+                                masked_matches.append((
+                                    sample["target_ray"],
+                                    sample["source_ray"],
+                                ))
+                        masked = {
+                            "selected_viewport_ids": available_selected,
+                            "correspondence_count": len(masked_matches),
+                            "rotation_xyzw": None,
+                            "step_rotation_radians": None,
+                            "fit_confidence": None,
+                            "inlier_ratio": None,
+                            "residual_radians": None,
+                            "state": "measured",
+                            "failure_reason": None,
+                        }
+                        try:
+                            masked_fit = fit_rotation(masked_matches)
+                            masked["rotation_xyzw"] = list(
+                                masked_fit.rotation_xyzw
+                            )
+                            masked["step_rotation_radians"] = angle(
+                                masked_fit.rotation_xyzw
+                            )
+                            masked["fit_confidence"] = masked_fit.confidence
+                            masked["inlier_ratio"] = masked_fit.inlier_ratio
+                            masked["residual_radians"] = (
+                                masked_fit.residual_radians
+                            )
+                            if masked["step_rotation_radians"] > maximum:
+                                masked["state"] = "invalid"
+                                masked["failure_reason"] = (
+                                    "rotation_step_exceeds_configured_bound"
+                                )
+                            elif masked_fit.confidence < minimum_confidence:
+                                masked["state"] = "invalid"
+                                masked["failure_reason"] = (
+                                    "rotation_fit_confidence_below_bound"
+                                )
+                            elif masked_fit.inlier_ratio < minimum_inlier_ratio:
+                                masked["state"] = "invalid"
+                                masked["failure_reason"] = (
+                                    "rotation_fit_inlier_ratio_below_bound"
+                                )
+                            elif masked_fit.residual_radians > maximum_residual:
+                                masked["state"] = "invalid"
+                                masked["failure_reason"] = (
+                                    "rotation_fit_residual_exceeds_bound"
+                                )
+                        except ValueError:
+                            masked["state"] = "invalid"
+                            masked["failure_reason"] = "rotation_fit_failed"
+                        diagnostic["spatial_mask_fit"] = masked
                     if len(per_view_rotations) == len(config["viewports"]):
                         causal_reliability.observe_completed_pair(
                             per_view_rotations

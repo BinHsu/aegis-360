@@ -11,6 +11,7 @@ from run_real_erp_multiview_motion import (
     summarize_leave_one_out,
     summarize_causal_view_reliability,
     summarize_spatial_residuals,
+    summarize_spatial_mask_fit,
     summarize_view_consensus,
 )
 
@@ -171,6 +172,24 @@ class RealMotionReportTests(unittest.TestCase):
         self.assertAlmostEqual(
             bottom["pair_rms_residual_radians"]["median"], 0.02
         )
+
+    def test_spatial_mask_summary_preserves_failure_counts(self):
+        diagnostics = [
+            {"spatial_mask_fit": {
+                "state": "measured", "failure_reason": None,
+                "residual_radians": 0.01, "step_rotation_radians": 0.02,
+            }},
+            {"spatial_mask_fit": {
+                "state": "invalid",
+                "failure_reason": "rotation_fit_residual_exceeds_bound",
+                "residual_radians": 0.03, "step_rotation_radians": 0.02,
+            }},
+        ]
+        summary = summarize_spatial_mask_fit(diagnostics)
+        self.assertEqual(summary["measured_pair_fraction"], 0.5)
+        self.assertEqual(summary["failure_reasons"], {
+            "rotation_fit_residual_exceeds_bound": 1,
+        })
 
 
 if __name__ == "__main__":

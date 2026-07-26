@@ -416,3 +416,10 @@ down (1.213→1.523°), but not universally in right or up. This justifies an
 equatorial-only bottom-third mask hypothesis. Evaluate it against unmasked
 causal fitting on a held-out 35–40 second interval, not the development
 interval used to formulate it.
+
+The held-out comparison rejects that mask as a default: it marginally lowers
+median residual (0.00790→0.00754 rad) but reduces accepted pairs from 121/124
+to 119/124 and adds a step-bound failure. Normalized image-bottom is therefore
+not a sufficiently reliable foreground/parallax proxy. Preserve the unmasked
+causal estimator as the current baseline; do not render or tune the rejected
+mask on this interval.

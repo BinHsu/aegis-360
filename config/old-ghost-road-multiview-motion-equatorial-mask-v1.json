@@ -1,11 +1,7 @@
 {
   "schemaVersion": "aegis360.multiview-motion-config.v1",
-  "configId": "synthetic-six-overlap-110-step1.25-v1",
-  "proxy": {
-    "width": 1024,
-    "height": 512,
-    "sampleFps": 2.0
-  },
+  "configId": "old-ghost-road-fps25-causal4-equatorial-bottom-third-mask-v1",
+  "proxy": {"width": 4096, "height": 2048, "sampleFps": 25.0},
   "viewport": {
     "width": 640,
     "height": 360,
@@ -41,20 +37,11 @@
   "spatialMask": {
     "method": "exclude-normalized-image-bottom",
     "excludeBottomFraction": 0.3333333333333333,
-    "excludeBottomFractionByViewport": [
-      "front",
-      "right",
-      "back",
-      "left"
-    ]
+    "excludeBottomFractionByViewport": ["front", "right", "back", "left"]
   },
   "calibrationBasis": {
     "fixture": "tests/test_vision_viewport_so3_gate.sh",
-    "validatedSmallAngleDegrees": {
-      "yaw": 1.0,
-      "pitch": 2.0,
-      "roll": 3.0
-    },
-    "policy": "The scalar cap is the 1 degree calibrated yaw step plus 0.25 degree measurement tolerance; larger motion fails closed pending axis-specific calibration."
+    "validatedSmallAngleDegrees": {"yaw": 1.0, "pitch": 2.0, "roll": 3.0},
+    "policy": "Mask hypothesis was defined from development interval 25-30 seconds. Compare masked and unmasked causal fits only on held-out interval 35-40 seconds; do not change fit bounds."
   }
 }

@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-27T06:24:00+08:00
+Updated: 2026-07-27T06:50:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 67c9c40
+Baseline commit: daefbdf
 Remote status: main matches origin/main at this checkpoint
-Working tree at checkpoint: owner rejected canonical; spatial residual diagnosis is active
+Working tree at checkpoint: held-out equatorial-mask result is being finalized
 
 ## Objective
 
@@ -193,6 +193,10 @@ Failures include an initial 23-pair/0.92-second burst. After that burst,
   bottom in front, left, and down, but not universally in right/up. Define an
   equatorial-only bottom-third exclusion and evaluate it together with the
   unmasked baseline on held-out source time 35–40 seconds.
+- The held-out mask comparison accepted 119/124 versus 121/124 for unmasked
+  causal fitting. Although median residual fell 0.00790→0.00754 rad, the mask
+  lost two accepted pairs and added a step-bound failure. Reject it as the
+  default and retain the unmasked causal estimator.
 - Real-media estimator thresholds, gap rate, parallax behavior, source-path
   smoothing, and `action-natural` output remain unverified.
 
@@ -208,15 +212,15 @@ python3 scripts/check_handoff.py
 python3 -m unittest discover -s tests -v
 ```
 
-For the active spatial-residual milestone:
+For the active held-out spatial-mask milestone:
 
 ```sh
 python3 scripts/run_real_erp_multiview_motion.py \
   "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
-  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-25-30-spatial-v7" \
-  --config config/old-ghost-road-multiview-motion-causal-v1.json \
-  --source-id old-ghost-road-25-30-spatial-v7 \
-  --start 25 --duration 5
+  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-35-40-equatorial-mask-heldout-v1" \
+  --config config/old-ghost-road-multiview-motion-equatorial-mask-v1.json \
+  --source-id old-ghost-road-35-40-equatorial-mask-heldout-v1 \
+  --start 35 --duration 5
 ```
 
 For the active milestone, the intended next command will be a bounded runner
@@ -373,6 +377,8 @@ python3 -m unittest discover -s tests -v
   `outputs/stabilization/old-ghost-road-25.92-29.96-action-natural-v1/`.
 - The spatial residual diagnosis is under
   `outputs/source-motion/old-ghost-road-25-30-spatial-v7/`.
+- The rejected held-out equatorial-mask comparison is under
+  `outputs/source-motion/old-ghost-road-35-40-equatorial-mask-heldout-v1/`.
 
 ## Active agents
 

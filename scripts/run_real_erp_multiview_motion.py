@@ -182,6 +182,36 @@ def summarize_spatial_residuals(diagnostics: list[dict]) -> dict:
     return summary
 
 
+def summarize_spatial_mask_fit(diagnostics: list[dict]) -> dict | None:
+    rows = [
+        row["spatial_mask_fit"] for row in diagnostics
+        if row["spatial_mask_fit"] is not None
+    ]
+    if not rows:
+        return None
+    reasons: dict[str, int] = {}
+    for row in rows:
+        if row["failure_reason"]:
+            reasons[row["failure_reason"]] = (
+                reasons.get(row["failure_reason"], 0) + 1
+            )
+    measured = sum(row["state"] == "measured" for row in rows)
+    return {
+        "pair_count": len(rows),
+        "measured_pair_count": measured,
+        "measured_pair_fraction": measured / len(rows),
+        "failure_reasons": reasons,
+        "residual_radians": distribution([
+            row["residual_radians"] for row in rows
+            if row["residual_radians"] is not None
+        ]),
+        "step_rotation_radians": distribution([
+            row["step_rotation_radians"] for row in rows
+            if row["step_rotation_radians"] is not None
+        ]),
+    }
+
+
 def causal_rotation_steps_document(
     motion: dict, config: dict, source_id: str
 ) -> dict | None:
@@ -354,6 +384,7 @@ def main() -> int:
         diagnostics
     )
     spatial_residual_summary = summarize_spatial_residuals(diagnostics)
+    spatial_mask_fit_summary = summarize_spatial_mask_fit(diagnostics)
     causal_steps = causal_rotation_steps_document(
         motion, config, arguments.source_id
     )
@@ -390,6 +421,7 @@ def main() -> int:
             causal_view_reliability_summary
         ),
         "spatial_residual_summary": spatial_residual_summary,
+        "spatial_mask_fit_summary": spatial_mask_fit_summary,
         "environment": {
             "platform": platform.platform(),
             "machine": platform.machine(),

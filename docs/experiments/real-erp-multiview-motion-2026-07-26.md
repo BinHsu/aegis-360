@@ -458,3 +458,22 @@ Define an equatorial-only bottom-third exclusion from this development
 interval, then evaluate masked and unmasked fits together on the held-out
 35–40 second interval. Do not report improvement from 25–30 seconds as
 generalization evidence.
+
+## Held-out equatorial mask result
+
+The bottom-third mask passed the synthetic ERP/Vision gate, then was evaluated
+once on the previously untouched 35–40 second interval with unchanged fit
+bounds. Masked and unmasked fits used the same decoded registrations and the
+same causal viewport selection.
+
+| Fit | Accepted pairs | Median residual | p95 residual |
+| --- | ---: | ---: | ---: |
+| Unmasked causal | 121/124 (97.6%) | 0.00790 rad | 0.01575 rad |
+| Equatorial bottom-third mask | 119/124 (96.0%) | 0.00754 rad | 0.01544 rad |
+
+The mask slightly lowers aggregate residuals but loses two accepted pairs and
+introduces one step-bound failure. It therefore fails the reliability gate and
+is rejected as a default estimator policy. This also confirms that normalized
+image-bottom alone is too coarse a proxy for near-field/parallax
+contamination. The artifact is under
+`outputs/source-motion/old-ghost-road-35-40-equatorial-mask-heldout-v1/`.

@@ -117,6 +117,10 @@ for diagnostic in diagnostics:
     assert causal["state"] == "measured", causal
     assert len(causal["selected_viewport_ids"]) >= 4, causal
     assert len(causal["rotation_xyzw"]) == 4, causal
+    masked = diagnostic["spatial_mask_fit"]
+    assert masked["state"] == "measured", masked
+    assert masked["correspondence_count"] > 0, masked
+    assert len(masked["rotation_xyzw"]) == 4, masked
 for index, (sample, wanted) in enumerate(zip(
         actual["samples"], expected["rawOrientationXyzw"])):
     observed = sample["raw_orientation_xyzw"]
