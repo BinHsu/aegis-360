@@ -477,3 +477,18 @@ is rejected as a default estimator policy. This also confirms that normalized
 image-bottom alone is too coarse a proxy for near-field/parallax
 contamination. The artifact is under
 `outputs/source-motion/old-ghost-road-35-40-equatorial-mask-heldout-v1/`.
+
+## Independent-tile consensus contract
+
+The rejected mask sampled different image locations from one whole-viewport
+homography; those samples were not independent motion measurements. Before
+native tiling, a dependency-free selection contract now consumes independently
+fitted tile rotations, selects a deterministic rotation-medoid cluster, and
+requires that cluster to span a configured image grid.
+
+Synthetic tests establish three fail-closed behaviors: a two-tile local
+foreground is rejected when six spatially distributed background tiles agree;
+a coherent cluster confined to one corner fails spatial coverage; and evenly
+split motion fails minimum tile consensus. This is algorithm-contract
+evidence only. Apple Vision tile acquisition, tile-to-viewport ray geometry,
+runtime cost, and real-media quality remain unverified.

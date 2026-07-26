@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-27T07:00:00+08:00
+Updated: 2026-07-27T07:23:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
 Remote status: main matches origin/main after this checkpoint is pushed
-Working tree at checkpoint: clean after this checkpoint commit
+Working tree at checkpoint: tile-level background-consensus milestone active
 
 ## Objective
 
@@ -244,6 +244,24 @@ whole-viewport homography only supplies one motion model per viewport, so
 masking samples of that model cannot reliably identify a moving foreground.
 Validate any tiling approach on synthetic foreground/background motion before
 another real-media run.
+
+The active bounded step is a dependency-free tile-rotation consensus with
+minimum spatial coverage. Its exact first check is:
+
+```sh
+python3 -m unittest tests.test_tile_motion_consensus -v
+```
+
+It must reject a coherent local foreground cluster and fail closed when the
+apparent background motion lacks configured image-area coverage. Do not wire
+native Vision tiling or run benchmark media until this synthetic contract
+passes.
+
+That contract now passes four tests: distributed background versus local
+foreground, local-cluster coverage failure, split-motion failure, and
+deterministic validation. The next bounded step is a generated-image host gate
+showing that independently cropped tiles can return divergent Vision
+registrations. It must not read benchmark media.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
