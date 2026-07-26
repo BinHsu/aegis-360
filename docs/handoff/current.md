@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-26T11:36:00+08:00
+Updated: 2026-07-26T11:39:48+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: b98b64d
-Remote status: main and origin/main were synchronized at b98b64d when this checkpoint was updated
-Working tree at checkpoint: real-media analysis runner and 12.5 fps result are uncommitted
+Baseline commit: f3c081d
+Remote status: main is one commit ahead of origin/main at this checkpoint
+Working tree at checkpoint: 12.5 fps experiment record and status update are uncommitted
 
 ## Objective
 
@@ -40,6 +40,8 @@ rendered.
 - Commit `b98b64d` contains the handoff contract, validator, tests and CI
   enforcement. It and the bounded ERP runner were pushed to `origin/main`
   before this checkpoint metadata update.
+- Commit `f3c081d` contains the real ERP analysis runner and is not yet pushed
+  at this checkpoint.
 - Media and generated video remain outside Git under the configured artifact
   root.
 

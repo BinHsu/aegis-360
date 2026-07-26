@@ -46,6 +46,8 @@ privacy-safe summaries when results exist.
 - `rendered-flat-shake-probe-2026-07-23.md`: dependency-light paired
   screen-space translation/jitter protocol for fixed versus auto renders and
   leading versus trailing windows.
+- `real-erp-multiview-motion-2026-07-26.md`: analysis-only Old Ghost Road
+  25–30 second spherical source-motion evidence at bounded sampling rates.
 
 ## Required experiment record
 

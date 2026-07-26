@@ -295,6 +295,16 @@ Vision-to-source-motion path; it does not establish real-media estimator
 quality or viewer comfort. The next source-motion gate is an analysis-only
 five-second Old Ghost Road ERP run with measured gap rate, per-view
 contribution, residual, confidence, step angle and sustained resource use.
+
+The first real analysis-only run used Old Ghost Road 25–30 seconds at 12.5
+fps. Vision returned observations for all 62 adjacent pairs in all six
+viewports, but the fused bounded gate accepted only 2/62 pairs (3.2%).
+Forty-four pairs exceeded the 1° residual bound and sixteen exceeded the
+1.25° step bound. Median/p95 step angles were 0.816°/1.848° and
+median/p95 residuals were 1.253°/1.728°. This rejects 12.5 fps for path
+smoothing. The next comparison uses the source rate of 25 fps with unchanged
+fit thresholds; failure to materially reduce residual gaps will redirect work
+to per-view disagreement and foreground/parallax handling.
 2. Separate attention-saliency continuity from bicycle identity continuity;
    do not label the current selected track as subject tracking.
 3. Gate later experiments on stabilization, horizon stability, and
