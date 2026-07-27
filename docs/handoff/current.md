@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T10:01:00+08:00
+Updated: 2026-07-27T10:19:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -383,6 +383,18 @@ Next inspect the gap-free 45–50 second causal rotation artifact and reuse the
 already-tested relative-path, quaternion smoothing, renderer convention, and
 fixed comparison gates. Do not render until path coverage and command
 provenance are explicit.
+
+That gate completed. The path has 125 samples over 4.96 seconds with no gap;
+maximum smoothing correction is 0.47°. Both fixed and canonical MP4s are
+1920x1080 H.264/AAC and exactly 4.96 seconds. Fixed wins the translation proxy:
+canonical/fixed p95 step is 2.0/1.0 px and p95 vector change is 2.65/1.0 px.
+Both trailing windows are zero.
+
+Do not ask the owner to review this negative candidate. Preserve raw/fixed as
+the POC comfort treatment and return to the auto-director path. The next
+bounded task is to inspect `docs/experiments/first-auto-directed-slice.md` and
+the existing 30-second tracking/planning evidence, then define the smallest
+new directing gate without revisiting rejected stabilization thresholds.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

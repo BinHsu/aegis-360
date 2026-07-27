@@ -462,3 +462,9 @@ unchanged causal accepted 123/124 while global accepted 93/124. Keep
 independent tiles as analysis evidence for spatial disagreement, not the
 primary source-motion fusion path. The unchanged causal estimator remains the
 candidate for the next bounded path/render gate.
+
+The next gap-free causal candidate also loses to fixed on the screen-space
+proxy: equal 1 px median step, but canonical has 2.0 versus 1.0 px p95 step
+and 2.65 versus 1.0 px p95 vector change. Do not request owner review or tune
+source-motion thresholds again. For the POC, retain raw/fixed treatment and
+resume auto-director perception/planning experiments.

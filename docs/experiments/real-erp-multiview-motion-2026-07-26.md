@@ -600,3 +600,26 @@ step-bound failure; global had 31 strict-majority failures. Together with the
 held-out tie, the evidence says tiling can diagnose spatial disagreement but
 its strict global selector reduces coverage on difficult motion. Retain the
 whole-viewport causal estimator and do not tune global thresholds.
+
+## Second bounded stabilization candidate
+
+The gap-free 45–50 second causal artifact produced one 125-sample relative
+segment covering 0.00–4.96 seconds. Action-natural smoothing reduced scalar
+jerk-proxy p95 from 46.15 to 1.36 rad/s³ with maximum correction 0.00822 rad
+(0.47°). Fixed and canonical 1920x1080, 110° HFOV renders both retain AAC
+audio and decode to exactly 4.96 seconds.
+
+The same translation proxy again favors fixed:
+
+| Render | Median step | p95 step | p95 vector change |
+| --- | ---: | ---: | ---: |
+| Fixed | 1.0 px | 1.0 px | 1.0 px |
+| Canonical | 1.0 px | 2.0 px | 2.65 px |
+
+Both trailing windows measured zero, so this interval does not reproduce the
+prior end shake. Canonical still fails to improve the proxy and is not
+advanced to owner review. The files remain under
+`outputs/stabilization/old-ghost-road-45-49.96-action-natural-v1/` as negative
+evidence. After two negative canonical candidates, use raw/fixed comfort
+treatment for the current POC and return effort to directing rather than
+further source-motion tuning.
