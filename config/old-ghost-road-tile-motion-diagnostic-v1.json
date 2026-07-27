@@ -30,6 +30,11 @@
     "coverageRows": 2,
     "minimumCoveredCells": 3
   },
+  "globalTileFit": {
+    "maximumDisagreementDegrees": 0.5,
+    "minimumTiles": 13,
+    "minimumViewports": 4
+  },
   "fusedFit": {
     "maxStepRotationDegrees": 1.25,
     "minimumFitConfidence": 0.2,

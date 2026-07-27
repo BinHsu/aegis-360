@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T09:03:00+08:00
+Updated: 2026-07-27T09:31:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -340,6 +340,31 @@ Next retain the 0.5° tile radius and add a synthetic global selector over all
 24 tiles. It must require at least thirteen agreeing tiles and coverage from
 at least four viewports. Do not rerun real media until that fail-closed
 contract passes.
+
+The synthetic selector and six-viewport ERP/Vision smoke gate now pass. The
+smoke gate measured 3/3 global pairs with all 24 tiles and all six viewports.
+Run the same development interval only to compare fusion boundaries:
+
+```sh
+python3 scripts/run_real_erp_tile_motion.py \
+  "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
+  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-40-45-global-tile-v2" \
+  --config config/old-ghost-road-tile-motion-diagnostic-v1.json \
+  --source-id old-ghost-road-40-45-global-tile-v2 \
+  --start 40 --duration 5
+```
+
+Do not call this a held-out result and do not overwrite v1.
+
+The v2 development comparison completed: global tiles accepted 93/124, with
+31 strict-majority failures and no later fit-bound failures. Median selection
+was fifteen tiles across five viewports; median residual was 0.00355 rad.
+
+The held-out 45–50 second rule is fixed before running: global accepted pairs
+must be at least the unchanged causal baseline count. Run causal first into
+`old-ghost-road-45-50-causal-heldout-v1`, then global tiles into
+`old-ghost-road-45-50-global-tile-heldout-v1`. Do not change thresholds or
+render from either result.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

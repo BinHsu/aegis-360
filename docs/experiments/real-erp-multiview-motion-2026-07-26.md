@@ -569,3 +569,16 @@ relax the predeclared 0.5° radius post hoc. The next synthetic contract should
 select a strict majority across all 24 spherical tiles while requiring
 multi-viewport coverage, allowing one or two clean tiles from a locally
 contaminated viewport to contribute.
+
+The unchanged-radius global selector passed strict-majority and
+multi-viewport synthetic fixtures plus a six-viewport ERP/Vision smoke gate.
+On the same 40–45 second development interval it accepted 93/124 pairs
+(75.0%); all 31 failures lacked thirteen agreeing tiles. Selected pairs had
+median 15 tiles across median five viewports, median residual 0.00355 rad, and
+no fit-bound failures. This is development evidence only.
+
+Before results, the held-out 45–50 second acceptance rule is fixed: run the
+existing unchanged causal baseline and global tiles on identical timestamps.
+Global tiles must accept at least as many pairs as causal fitting. Failure
+rejects global tiling for the next render path; success permits gap-pattern
+analysis but not a comfort or stabilization claim.

@@ -444,3 +444,9 @@ back/right/down accepted only 38–40%. Per-viewport three-of-four consensus is
 therefore too lossy as a fusion boundary. Preserve its negative result and
 test an unchanged-radius strict-majority consensus across all 24 tiles with
 explicit multi-viewport coverage.
+
+Global 24-tile fusion accepted 93/124 development pairs with no fit-bound
+failure after selection. Evaluate it once on held-out 45–50 seconds against
+the unchanged causal baseline. Require global accepted pairs to be greater
+than or equal to causal; do not tune the 0.5° radius, thirteen-tile majority,
+or four-viewport coverage after observing that interval.

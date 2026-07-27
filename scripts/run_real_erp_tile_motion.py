@@ -19,6 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from aegis360.so3 import fit_rotation
+from aegis360.global_tile_consensus import (
+    SphericalTileRotation,
+    select_global_tile_consensus,
+)
 from aegis360.tile_motion_evidence import TileHomography, fit_tile_motion
 from aegis360.vision_homography import (
     vision_native_to_source_target_top_left,
@@ -64,6 +68,7 @@ def main() -> int:
     started = time.monotonic()
     usage_before = resource.getrusage(resource.RUSAGE_CHILDREN)
     view_reports = {}
+    global_pair_tiles = [[] for _ in range(expected_frames - 1)]
 
     with tempfile.TemporaryDirectory(prefix="aegis-real-tile-motion-") as raw:
         private = Path(raw)
@@ -171,6 +176,15 @@ def main() -> int:
                     coverage_rows=config["tileFit"]["coverageRows"],
                     minimum_covered_cells=config["tileFit"]["minimumCoveredCells"],
                 )
+                for tile_id, tile_fit in fitted.tile_fits.items():
+                    global_pair_tiles[index - 1].append((
+                        SphericalTileRotation(
+                            f"{view['id']}:{tile_id}",
+                            view["id"],
+                            tile_fit.fit.rotation_xyzw,
+                        ),
+                        tile_fit.correspondences,
+                    ))
                 if fitted.consensus.state != "selected":
                     pairs.append({
                         "state": "invalid",
@@ -221,7 +235,72 @@ def main() -> int:
             }
             shutil.rmtree(view_dir)
 
+    global_pairs = []
+    for available in global_pair_tiles:
+        if len(available) != (
+            tile_config["columns"] * tile_config["rows"]
+            * len(config["viewports"])
+        ):
+            global_pairs.append({
+                "state": "invalid",
+                "failure_reason": "global_tile_observation_unavailable",
+            })
+            continue
+        global_config = config["globalTileFit"]
+        selection = select_global_tile_consensus(
+            [item[0] for item in available],
+            maximum_disagreement_radians=math.radians(
+                global_config["maximumDisagreementDegrees"]
+            ),
+            minimum_tiles=global_config["minimumTiles"],
+            minimum_viewports=global_config["minimumViewports"],
+        )
+        if selection.state != "selected":
+            global_pairs.append({
+                "state": "invalid",
+                "failure_reason": selection.failure_reason,
+                "selected_tile_count": len(selection.selected_tile_ids),
+                "selected_viewport_ids": selection.selected_viewport_ids,
+            })
+            continue
+        selected_ids = set(selection.selected_tile_ids)
+        correspondences = [
+            (target, source)
+            for tile, tile_correspondences in available
+            if tile.tile_id in selected_ids
+            for source, target in tile_correspondences
+        ]
+        fused = fit_rotation(correspondences)
+        bounds = config["fusedFit"]
+        failure = None
+        if angle(fused.rotation_xyzw) > math.radians(
+            bounds["maxStepRotationDegrees"]
+        ):
+            failure = "rotation_step_exceeds_configured_bound"
+        elif fused.confidence < bounds["minimumFitConfidence"]:
+            failure = "rotation_fit_confidence_below_bound"
+        elif fused.inlier_ratio < bounds["minimumInlierRatio"]:
+            failure = "rotation_fit_inlier_ratio_below_bound"
+        elif fused.residual_radians > math.radians(
+            bounds["maximumFitResidualDegrees"]
+        ):
+            failure = "rotation_fit_residual_exceeds_bound"
+        global_pairs.append({
+            "state": "measured" if failure is None else "invalid",
+            "failure_reason": failure,
+            "selected_tile_count": len(selection.selected_tile_ids),
+            "selected_viewport_ids": selection.selected_viewport_ids,
+            "step_rotation_radians": angle(fused.rotation_xyzw),
+            "residual_radians": fused.residual_radians,
+        })
+
     usage_after = resource.getrusage(resource.RUSAGE_CHILDREN)
+    global_reasons = {}
+    for pair in global_pairs:
+        if pair["failure_reason"]:
+            global_reasons[pair["failure_reason"]] = (
+                global_reasons.get(pair["failure_reason"], 0) + 1
+            )
     report = {
         "schema_version": "aegis360.real-erp-tile-motion-report.v1",
         "source_id": arguments.source_id,
@@ -232,6 +311,14 @@ def main() -> int:
             "sample_fps": fps,
         },
         "viewports": view_reports,
+        "global_tile_consensus": {
+            "pair_count": len(global_pairs),
+            "measured_pair_count": sum(
+                pair["state"] == "measured" for pair in global_pairs
+            ),
+            "failure_reasons": global_reasons,
+            "pairs": global_pairs,
+        },
         "environment": {
             "platform": platform.platform(),
             "machine": platform.machine(),
