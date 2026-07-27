@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T08:16:00+08:00
+Updated: 2026-07-27T08:27:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -301,6 +301,14 @@ The exact next milestone is the native JSON boundary. Extend or wrap
 privacy-safe artifact for four serial tile sequences. Add a fake/artifact
 contract test before connecting it to ERP projection. Do not persist image
 paths, pixels, or crop files in the output.
+
+The wrapper boundary is implemented as
+`scripts/assemble_vision_tile_evidence.py`. Its artifact contract removes
+private manifest/evidence paths, aligns timestamps, validates tile extents,
+and sanitizes backend errors. Three artifact tests pass. The next integration
+step is to make the bounded real runner optionally generate a 1280x720 parent
+viewport, execute four serial 640x360 sequences, and feed this artifact into a
+separate tile diagnostic without changing the current causal baseline.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

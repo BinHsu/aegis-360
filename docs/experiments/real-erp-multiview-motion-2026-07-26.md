@@ -535,3 +535,10 @@ Synthetic evidence preserves all four identity tiles and rejects a lower-right
 tile with an independent 80-pixel translation while retaining the other three
 spatial cells. This validates in-memory assembly behavior; a versioned native
 tile-evidence JSON writer and full ERP orchestration are still absent.
+
+A vendor-neutral tile-evidence artifact assembler now strips its private input
+manifest and backend evidence paths while retaining parent dimensions, tile
+extents, aligned timestamps, states, and measured homographies. Contract tests
+reject timestamp disagreement, invalid extents, duplicate/unsafe IDs, and
+sanitize a backend error that resembles a path. Native ERP orchestration and
+the final multiview comparison remain unwired.
