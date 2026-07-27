@@ -527,3 +527,11 @@ with four tiles at 25 fps imply about 600 registrations/s, or roughly 2.8x
 slower than source time for Vision alone. This is acceptable for a bounded
 offline five-second evidence run, not proof of 30-second sustained behavior.
 Projection, source decode, tile extraction, and spherical fusion are excluded.
+
+The assembly boundary now accepts independent tile homographies, maps each
+through the parent viewport crop geometry, fits each tile rotation separately,
+and applies the spatial tile consensus before pooling ray correspondences.
+Synthetic evidence preserves all four identity tiles and rejects a lower-right
+tile with an independent 80-pixel translation while retaining the other three
+spatial cells. This validates in-memory assembly behavior; a versioned native
+tile-evidence JSON writer and full ERP orchestration are still absent.

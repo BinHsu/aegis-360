@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T08:03:00+08:00
+Updated: 2026-07-27T08:16:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -290,6 +290,17 @@ Next implement a versioned tile-evidence artifact and assembly adapter using
 the tested parent-viewport crop geometry. Keep four tile sequences serial,
 compile Vision once, and preserve the existing whole-viewport causal result
 as an unchanged comparison. Do not render or overwrite prior artifacts.
+
+The in-memory assembly adapter is now implemented and passes synthetic tests:
+four identity tiles retain all four spatial cells; an independently translated
+lower-right tile is rejected while the other three cells remain selected.
+Duplicate IDs and invalid crop extents fail closed.
+
+The exact next milestone is the native JSON boundary. Extend or wrap
+`tools/vision_motion_probe.swift` so one compile emits a versioned,
+privacy-safe artifact for four serial tile sequences. Add a fake/artifact
+contract test before connecting it to ERP projection. Do not persist image
+paths, pixels, or crop files in the output.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
