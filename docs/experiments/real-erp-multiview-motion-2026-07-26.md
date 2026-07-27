@@ -512,3 +512,18 @@ generation, FFmpeg assembly/cropping, and four separate Swift compilations, so
 it is an orchestration upper bound rather than Vision throughput evidence.
 The sustained benchmark must compile once and process a bounded multi-frame
 sequence before deciding whether 2x2 tiling is viable.
+
+The compile-once benchmark separates generated fixture preparation from
+Vision execution and runs four tile sequences serially:
+
+| Frames/tile | Total pairs | Vision elapsed | Pairs/s | Max child RSS |
+| ---: | ---: | ---: | ---: | ---: |
+| 25 | 96 | 0.991 s | 96.9 | 48,414,720 B |
+| 125 | 496 | 2.295 s | 216.2 | 56,852,480 B |
+
+Both runs measured every pair with zero errors, unchanged swap, and no
+recorded thermal/performance warning. At the longer-run rate, six viewports
+with four tiles at 25 fps imply about 600 registrations/s, or roughly 2.8x
+slower than source time for Vision alone. This is acceptable for a bounded
+offline five-second evidence run, not proof of 30-second sustained behavior.
+Projection, source decode, tile extraction, and spherical fusion are excluded.

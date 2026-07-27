@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T07:49:00+08:00
+Updated: 2026-07-27T08:03:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -279,6 +279,17 @@ four times and includes fixture generation/cropping, so do not treat it as
 per-frame throughput. The exact next implementation is a compile-once,
 multi-frame generated benchmark; no real-media command is authorized by this
 checkpoint.
+
+The compile-once runner now measures 96/96 pairs in 0.991 seconds at 25
+frames/tile and 496/496 in 2.295 seconds at 125 frames/tile. The longer run is
+216.2 registrations/s with 56,852,480 bytes maximum child RSS, unchanged swap,
+and no recorded warning. This permits a bounded analysis-only integration;
+it does not establish realtime or 30-second sustained performance.
+
+Next implement a versioned tile-evidence artifact and assembly adapter using
+the tested parent-viewport crop geometry. Keep four tile sequences serial,
+compile Vision once, and preserve the existing whole-viewport causal result
+as an unchanged comparison. Do not render or overwrite prior artifacts.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

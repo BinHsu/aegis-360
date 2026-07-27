@@ -430,3 +430,10 @@ contracts. Apple Vision preserves deliberately divergent motion for generated
 2x2 parent viewport is 1280x720; measure its bounded acquisition cost and
 thermal/memory behavior before integrating it into the six-viewport estimator
 or running benchmark footage.
+
+Compile-once generated evidence measured 496/496 tile pairs in 2.295 seconds
+(216.2 registrations/s), with about 56.9 MB maximum child RSS, unchanged swap,
+and no recorded thermal warning. That supports implementing a bounded
+analysis-only integration, but not a realtime or 30-second sustained claim.
+Keep tile sequences serial and retain the unmasked causal estimator as the
+comparison baseline.
