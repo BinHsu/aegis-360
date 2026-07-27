@@ -13,6 +13,7 @@ import math
 from typing import Iterable
 
 from .geometry import spherical_distance, wrap_yaw
+from .group_shot import GroupMember, build_group_shots
 from .perception import PerceptionResult
 
 
@@ -242,6 +243,42 @@ def associate_candidate_sequence(
                         association_provenance=track.association_provenance,
                     )
                 )
+
+        saliency = [
+            candidate for candidate in frame_candidates
+            if candidate.observed
+            and candidate.candidate_type in {
+                "attention_saliency", "objectness_saliency"
+            }
+        ]
+        groups = build_group_shots([
+            GroupMember(
+                candidate.candidate_id,
+                candidate.yaw,
+                candidate.pitch,
+                candidate.h_fov,
+            )
+            for candidate in saliency
+        ])
+        for group_index, group in enumerate(groups):
+            frame_candidates.append(
+                TemporalCandidate(
+                    candidate_id=f"context:saliency-group:{group_index}",
+                    track_id=None,
+                    yaw=group.yaw,
+                    pitch=group.pitch,
+                    h_fov=group.horizontal_fov,
+                    candidate_type="group_context",
+                    observed=True,
+                    observed_frames=1,
+                    age_frames=1,
+                    missing_frames=0,
+                    source_candidate_id=",".join(group.member_ids),
+                    association_provenance=(
+                        AssociationProvenance.SYNTHETIC_CONTEXT
+                    ),
+                )
+            )
 
         frame_candidates.append(
             TemporalCandidate(

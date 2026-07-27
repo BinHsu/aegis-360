@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T10:34:00+08:00
+Updated: 2026-07-27T10:52:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -406,6 +406,17 @@ Next implement a seam-aware group/context candidate from simultaneous saliency
 regions with a bounded wide FOV. Synthetic tests must cover seam crossing,
 single-candidate fallback, pole-safe pitch, deterministic membership, and
 minimum framing padding before wiring it into the planner.
+
+That geometry is implemented. An all-saliency group was correctly unavailable
+because required HFOV was 290–442°. Local clustering produced valid groups on
+23/60 frames, but v7 selected them 0/60 under unchanged scoring/hysteresis.
+Do not lower the 0.1 switch margin.
+
+Next add a named group-coverage interest signal whose raw value is the number
+of distinct covered saliency members and whose normalized value is bounded.
+Prove detector confidence is absent, context fallback remains below observed
+evidence, and signal ablation is deterministic before adding a new config
+weight or replaying the plan.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

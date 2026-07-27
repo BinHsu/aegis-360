@@ -34,6 +34,26 @@ def frame(index, candidates):
 
 
 class CandidateSequenceTests(unittest.TestCase):
+    def test_nearby_saliency_regions_create_nonidentity_group_context(self):
+        results = (
+            frame(0, [
+                item("a", -8, kind="attention_saliency"),
+                item("b", 8, kind="objectness_saliency"),
+            ]),
+        )
+        sequence = associate_candidate_sequence(results)
+        group = next(
+            item for item in sequence[0].candidates
+            if item.candidate_id == "context:saliency-group:0"
+        )
+        self.assertEqual(group.candidate_type, "group_context")
+        self.assertIsNone(group.track_id)
+        self.assertEqual(
+            group.association_provenance,
+            AssociationProvenance.SYNTHETIC_CONTEXT,
+        )
+        self.assertFalse(group.editorial_persistence_valid)
+
     def test_forward_context_age_is_relative_to_the_sequence(self):
         frames = associate_candidate_sequence((frame(100, ()), frame(101, ())))
         contexts = [

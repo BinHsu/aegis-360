@@ -266,3 +266,17 @@ wide group/context shot from multiple simultaneous salient regions instead of
 treating one geometrically associated region as an identity subject. Validate
 seam-aware group geometry and bounded FOV synthetically before another
 30-second series.
+
+### v6/v7 planning-only group-context diagnostics
+
+A first all-saliency group required 290–442° HFOV on every usable frame and
+was correctly rejected rather than clipped into a false coverage claim.
+Deterministic local clustering then produced fully containable, at-most-110°
+group candidates on 23/60 frames. Synthetic gates cover seam, pole, padding,
+bounded FOV, deterministic membership and separated local groups.
+
+The v7 planner selected a group on 0/60 frames and retained the v5 selection
+counts. Group utility sometimes ranked first, but did not sustain the existing
+0.1 challenger margin. Do not lower hysteresis to manufacture a switch.
+Instead add an explicit, explainable group-coverage interest term and validate
+its ablation synthetically before creating a new versioned planning config.

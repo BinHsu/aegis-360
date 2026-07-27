@@ -474,3 +474,8 @@ policy gives generic saliency zero editorial persistence, yet one saliency
 region still receives 46/60 decisions because equal presence is resolved by
 composition and forward prior. The next gate is seam-aware wide group/context
 candidate generation, not identity tracking or another render.
+
+Local group/context geometry now passes synthetic gates and yields candidates
+on 23/60 replay frames, but the unchanged scorer selects none. Do not weaken
+switch hysteresis. Add a named group-coverage signal with synthetic ablation
+and a new versioned config before another planning replay or render.
