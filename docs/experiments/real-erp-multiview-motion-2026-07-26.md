@@ -582,3 +582,21 @@ existing unchanged causal baseline and global tiles on identical timestamps.
 Global tiles must accept at least as many pairs as causal fitting. Failure
 rejects global tiling for the next render path; success permits gap-pattern
 analysis but not a comfort or stabilization claim.
+
+The held-out result passes that narrow rule: causal and global tiles both
+accepted 124/124 pairs. Causal/global median residuals were
+0.000776/0.001644 rad, while median step angles were 0.002005/0.001675 rad.
+Global selected 20–24 tiles (median 23), ran in 63.71 seconds, and used
+351,617,024 bytes maximum child RSS. Equal coverage with higher residual does
+not establish greater accuracy or comfort.
+
+The next diagnostic is an unchanged causal run on the already-used 40–45
+second development interval, solely to compare against global's 93/124 on
+identical timestamps. It is not another held-out test.
+
+That direct comparison rejects global tiling as the primary fusion boundary:
+unchanged causal accepted 123/124 versus global's 93/124. Causal had one
+step-bound failure; global had 31 strict-majority failures. Together with the
+held-out tie, the evidence says tiling can diagnose spatial disagreement but
+its strict global selector reduces coverage on difficult motion. Retain the
+whole-viewport causal estimator and do not tune global thresholds.

@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T09:31:00+08:00
+Updated: 2026-07-27T10:01:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -365,6 +365,24 @@ must be at least the unchanged causal baseline count. Run causal first into
 `old-ghost-road-45-50-causal-heldout-v1`, then global tiles into
 `old-ghost-road-45-50-global-tile-heldout-v1`. Do not change thresholds or
 render from either result.
+
+Both held-out commands completed at 124/124, so global passes the coverage
+rule. Causal/global median residuals are 0.000776/0.001644 rad and median
+steps are 0.002005/0.001675 rad. This is not an accuracy or comfort win.
+
+Next run unchanged causal on the already-used 40–45 second development
+interval into `old-ghost-road-40-45-causal-comparison-v1`; compare it with
+global v2's 93/124. Do not describe this as held-out evidence.
+
+That comparison completed: unchanged causal accepted 123/124 with one
+step-bound failure, versus global's 93/124 and 31 strict-majority failures.
+Reject global tiles as the primary fusion boundary and retain them only as a
+spatial diagnostic. Do not tune their thresholds.
+
+Next inspect the gap-free 45–50 second causal rotation artifact and reuse the
+already-tested relative-path, quaternion smoothing, renderer convention, and
+fixed comparison gates. Do not render until path coverage and command
+provenance are explicit.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

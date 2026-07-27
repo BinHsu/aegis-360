@@ -450,3 +450,15 @@ failure after selection. Evaluate it once on held-out 45–50 seconds against
 the unchanged causal baseline. Require global accepted pairs to be greater
 than or equal to causal; do not tune the 0.5° radius, thirteen-tile majority,
 or four-viewport coverage after observing that interval.
+
+Held-out causal and global both accepted 124/124, so global passes the
+predeclared coverage rule. Its median residual is about 2.1x causal, while its
+median step is about 16% lower; neither proves motion accuracy. Before any
+render, compare unchanged causal against global on the difficult 40–45 second
+development interval and retain both failure patterns.
+
+The identical-timestamp development comparison rejects global tiling:
+unchanged causal accepted 123/124 while global accepted 93/124. Keep
+independent tiles as analysis evidence for spatial disagreement, not the
+primary source-motion fusion path. The unchanged causal estimator remains the
+candidate for the next bounded path/render gate.
