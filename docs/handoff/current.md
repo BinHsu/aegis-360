@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-07-27T10:19:00+08:00
+Updated: 2026-07-27T10:34:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
@@ -395,6 +395,17 @@ the POC comfort treatment and return to the auto-director path. The next
 bounded task is to inspect `docs/experiments/first-auto-directed-slice.md` and
 the existing 30-second tracking/planning evidence, then define the smallest
 new directing gate without revisiting rejected stabilization thresholds.
+
+That planning-only replay is complete. Generic saliency has zero nonzero
+persistence terms, but selections remain `track:000002` 46/60,
+`track:000010` 8/60, and context 6/60. The bundle is planned-only under
+`outputs/auto-directed/old-ghost-road-30s-v1/`
+`bundle-v5-current-persistence-plan/`; do not render it.
+
+Next implement a seam-aware group/context candidate from simultaneous saliency
+regions with a bounded wide FOV. Synthetic tests must cover seam crossing,
+single-candidate fallback, pole-safe pitch, deterministic membership, and
+minimum framing padding before wiring it into the planner.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

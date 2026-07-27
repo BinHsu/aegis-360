@@ -468,3 +468,9 @@ proxy: equal 1 px median step, but canonical has 2.0 versus 1.0 px p95 step
 and 2.65 versus 1.0 px p95 vector change. Do not request owner review or tune
 source-motion thresholds again. For the POC, retain raw/fixed treatment and
 resume auto-director perception/planning experiments.
+
+Replaying the original 30-second evidence under the corrected persistence
+policy gives generic saliency zero editorial persistence, yet one saliency
+region still receives 46/60 decisions because equal presence is resolved by
+composition and forward prior. The next gate is seam-aware wide group/context
+candidate generation, not identity tracking or another render.

@@ -247,3 +247,22 @@ This probe is translation-only and is sensitive to moving subjects and
 parallax. It does not estimate roll or perspective rotation, prove a causal
 source of motion, measure stabilization quality, or substitute for comfort
 review.
+
+### v5 planning-only persistence-policy replay
+
+After stabilization experiments retained raw/fixed treatment, the original
+privacy-safe Vision sequence was replayed through the current planner without
+rendering. Generic attention/objectness saliency now correctly receives zero
+editorial persistence: no saliency candidate had a nonzero persistence term.
+
+The planned result still selected `track:000002` for 46/60 decisions,
+`track:000010` for 8/60, and forward context for 6/60, with 42 camera
+keyframes. Thus old persistence leakage is fixed but was not the only cause of
+single-region dominance. Equal presence leaves composition and forward prior
+to favor one near-forward saliency region.
+
+Do not render this replay. The next candidate-generation gate should create a
+wide group/context shot from multiple simultaneous salient regions instead of
+treating one geometrically associated region as an identity subject. Validate
+seam-aware group geometry and bounded FOV synthetically before another
+30-second series.
