@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-27T08:27:00+08:00
+Updated: 2026-07-27T09:03:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 7c8b74a
 Remote status: main matches origin/main after this checkpoint is pushed
-Working tree at checkpoint: tile-level background-consensus milestone active
+Working tree at checkpoint: analysis-only real tile runner integration active
 
 ## Objective
 
@@ -309,6 +309,37 @@ and sanitizes backend errors. Three artifact tests pass. The next integration
 step is to make the bounded real runner optionally generate a 1280x720 parent
 viewport, execute four serial 640x360 sequences, and feed this artifact into a
 separate tile diagnostic without changing the current causal baseline.
+
+That integration is now active. It must first pass a generated ERP/Vision
+smoke gate, keep one viewport's temporary parent/tile frames live at a time,
+and emit only aggregate tile selection/failure evidence. No benchmark run or
+viewer render occurs before that gate passes.
+
+The generated full-path smoke gate passes 3/3 front-viewport pairs with all
+four tiles selected, zero rotation/residual, path-free output, 2.32 seconds
+elapsed, and 189,923,328 bytes maximum child RSS.
+
+The next authorized analysis-only command uses a new Old Ghost Road interval
+and output:
+
+```sh
+python3 scripts/run_real_erp_tile_motion.py \
+  "$AEGIS_DATA_DIR/benchmarks/originals/old_ghost_road_360.webm" \
+  "$AEGIS_DATA_DIR/outputs/source-motion/old-ghost-road-40-45-tile-motion-v1" \
+  --config config/old-ghost-road-tile-motion-diagnostic-v1.json \
+  --source-id old-ghost-road-40-45-tile-motion-v1 \
+  --start 40 --duration 5
+```
+
+That command completed and must not overwrite its output. Front/left/up
+accepted 103/116/113 of 124 pairs; back/right/down accepted 50/47/49. The run
+took 54.37 seconds with 355,368,960 bytes maximum child RSS. Per-viewport
+three-of-four tile consensus is rejected as the final fusion boundary.
+
+Next retain the 0.5° tile radius and add a synthetic global selector over all
+24 tiles. It must require at least thirteen agreeing tiles and coverage from
+at least four viewports. Do not rerun real media until that fail-closed
+contract passes.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

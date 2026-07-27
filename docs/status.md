@@ -437,3 +437,10 @@ and no recorded thermal warning. That supports implementing a bounded
 analysis-only integration, but not a realtime or 30-second sustained claim.
 Keep tile sequences serial and retain the unmasked causal estimator as the
 comparison baseline.
+
+The first 40–45 second real tile diagnostic completed in 54.37 seconds and
+355 MB maximum child RSS. Front/left/up accepted 83–94% of pairs, while
+back/right/down accepted only 38–40%. Per-viewport three-of-four consensus is
+therefore too lossy as a fusion boundary. Preserve its negative result and
+test an unchanged-radius strict-majority consensus across all 24 tiles with
+explicit multi-viewport coverage.

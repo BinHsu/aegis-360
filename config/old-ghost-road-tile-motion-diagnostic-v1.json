@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "aegis360.tile-motion-diagnostic-config.v1",
+  "configId": "old-ghost-road-tile-2x2-640-fps25-v1",
+  "sampleFps": 25.0,
+  "parentViewport": {
+    "width": 1280,
+    "height": 720,
+    "horizontalFovDegrees": 110.0
+  },
+  "tiles": {
+    "columns": 2,
+    "rows": 2,
+    "width": 640,
+    "height": 360
+  },
+  "viewports": [
+    {"id": "front", "yawDegrees": 0.0, "pitchDegrees": 0.0},
+    {"id": "right", "yawDegrees": 90.0, "pitchDegrees": 0.0},
+    {"id": "back", "yawDegrees": 180.0, "pitchDegrees": 0.0},
+    {"id": "left", "yawDegrees": -90.0, "pitchDegrees": 0.0},
+    {"id": "up", "yawDegrees": 0.0, "pitchDegrees": 65.0},
+    {"id": "down", "yawDegrees": 0.0, "pitchDegrees": -65.0}
+  ],
+  "tileFit": {
+    "homographyColumns": 5,
+    "homographyRows": 3,
+    "maximumDisagreementDegrees": 0.5,
+    "minimumTiles": 3,
+    "coverageColumns": 2,
+    "coverageRows": 2,
+    "minimumCoveredCells": 3
+  },
+  "fusedFit": {
+    "maxStepRotationDegrees": 1.25,
+    "minimumFitConfidence": 0.2,
+    "minimumInlierRatio": 0.5,
+    "maximumFitResidualDegrees": 1.0
+  },
+  "policy": "Analysis-only diagnostic. Thresholds precede the first real run. Do not render, relax bounds, or replace the whole-viewport causal baseline from this result alone."
+}

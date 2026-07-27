@@ -542,3 +542,30 @@ extents, aligned timestamps, states, and measured homographies. Contract tests
 reject timestamp disagreement, invalid extents, duplicate/unsafe IDs, and
 sanitize a backend error that resembles a path. Native ERP orchestration and
 the final multiview comparison remain unwired.
+
+## First real independent-tile diagnostic
+
+The full generated ERP smoke gate measured 3/3 pairs with all four tiles,
+zero rotation/residual, and path-free output. The predeclared 2x2 diagnostic
+then ran once on Old Ghost Road 40–45 seconds:
+
+| Viewport | Accepted pairs |
+| --- | ---: |
+| front | 103/124 |
+| left | 116/124 |
+| up | 113/124 |
+| back | 50/124 |
+| right | 47/124 |
+| down | 49/124 |
+
+All failures except thirteen down-view step-bound failures were insufficient
+three-of-four tile consensus. Elapsed time was 54.37 seconds and maximum child
+RSS was 355,368,960 bytes. The artifact is under
+`outputs/source-motion/old-ghost-road-40-45-tile-motion-v1/`.
+
+This validates that independent tiles expose spatial disagreement, but rejects
+per-viewport three-of-four consensus as the final fusion boundary. Do not
+relax the predeclared 0.5° radius post hoc. The next synthetic contract should
+select a strict majority across all 24 spherical tiles while requiring
+multi-viewport coverage, allowing one or two clean tiles from a locally
+contaminated viewport to contribute.
