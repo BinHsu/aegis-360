@@ -15,6 +15,10 @@ from aegis360.greedy_config import (  # noqa: E402
 CONFIG_PATH = (
     Path(__file__).resolve().parents[1] / "config" / "greedy-first-slice-v1.toml"
 )
+GROUP_CONFIG_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "config" / "greedy-group-context-v1.toml"
+)
 
 
 class GreedyConfigTests(unittest.TestCase):
@@ -41,6 +45,20 @@ class GreedyConfigTests(unittest.TestCase):
         self.assertAlmostEqual(
             math.degrees(config.framing_safety.max_zoom_in_change), 15.0
         )
+
+    def test_optional_group_coverage_weight_is_versioned_and_bounded(self):
+        config = load_greedy_config(GROUP_CONFIG_PATH)
+        self.assertEqual(
+            dict(config.scoring.weights),
+            {
+                "presence": .20,
+                "persistence": .30,
+                "composition": .20,
+                "forward_prior": .15,
+                "group_coverage": .15,
+            },
+        )
+        self.assertAlmostEqual(sum(dict(config.scoring.weights).values()), 1.0)
 
     def test_camera_threshold_has_inclusive_sparse_keyframe_semantics(self):
         config = load_greedy_config(CONFIG_PATH)

@@ -71,6 +71,7 @@ class TemporalCandidate:
     missing_frames: int
     source_candidate_id: str | None
     association_provenance: AssociationProvenance
+    covered_candidate_ids: tuple[str, ...] = ()
 
     @property
     def editorial_persistence_valid(self) -> bool:
@@ -277,6 +278,7 @@ def associate_candidate_sequence(
                     association_provenance=(
                         AssociationProvenance.SYNTHETIC_CONTEXT
                     ),
+                    covered_candidate_ids=group.member_ids,
                 )
             )
 

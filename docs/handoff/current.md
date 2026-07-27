@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-27T10:52:00+08:00
+Updated: 2026-07-27T13:10:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 7c8b74a
-Remote status: main matches origin/main after this checkpoint is pushed
-Working tree at checkpoint: analysis-only real tile runner integration active
+Baseline commit: 417cd14
+Remote status: push the group-coverage checkpoint described below
+Working tree at checkpoint: group-coverage directing gate complete
 
 ## Objective
 
@@ -417,6 +417,26 @@ of distinct covered saliency members and whose normalized value is bounded.
 Prove detector confidence is absent, context fallback remains below observed
 evidence, and signal ablation is deterministic before adding a new config
 weight or replaying the plan.
+
+That gate is complete. `group_coverage` is optional so the original config
+remains valid; only `group_context` receives its bounded `count / 3` value.
+The new `config/greedy-group-context-v1.toml` keeps the two-second dwell and
+0.1 switch margin. Its v8 replay selects context 6/60, group 7/60, and
+`track:000002` 47/60, with group context held from 3.0 through 6.5 seconds.
+
+The mechanically checked render is external at
+`outputs/auto-directed/old-ghost-road-30s-v1/`
+`bundle-v8-group-coverage-render/`. `fixed-forward.mp4`,
+`auto-directed.mp4`, and `debug-overlay.mp4` are 1920x1080 H.264/AAC and
+approximately 30 seconds. `shake-proxy.json` shows identical auto/debug
+motion and comparable fixed/auto final-segment movement. Do not claim comfort
+or stabilization success from that proxy.
+
+Next ask the owner to compare the three outputs, concentrating on whether the
+3.0–6.5 second group view provides useful context, whether both switches feel
+natural, and whether the post-6.5 selection is interesting to an ordinary
+viewer. The ending shake is shared source behavior and should be judged
+separately from framing. Do not change scoring thresholds before that review.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

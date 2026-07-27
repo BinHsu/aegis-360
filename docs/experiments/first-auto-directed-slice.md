@@ -280,3 +280,28 @@ counts. Group utility sometimes ranked first, but did not sustain the existing
 0.1 challenger margin. Do not lower hysteresis to manufacture a switch.
 Instead add an explicit, explainable group-coverage interest term and validate
 its ablation synthetically before creating a new versioned planning config.
+
+### v8 group-coverage replay and render
+
+`group_coverage` is an optional, versioned interest signal. Its raw value is
+the number of distinct local saliency candidates contained by a
+`group_context` candidate; its normalized value is `min(1, count / 3)`.
+Non-group candidates always receive zero. The original config remains valid,
+and `config/greedy-group-context-v1.toml` assigns this signal 0.15 without
+changing the 0.1 switch margin or two-second dwell.
+
+The planning replay selected forward context for 6/60 decisions, local group
+context for 7/60, and `track:000002` for 47/60. It produced two explainable
+switches: forward to group at 3.0 seconds after a sustained challenge, then
+group to the observed region at 6.5 seconds when the group became unavailable.
+The group shot therefore lasts 3.5 seconds; it is context coverage, not an
+identity claim.
+
+The mechanically valid 1920x1080 render is stored externally under
+`outputs/auto-directed/old-ghost-road-30s-v1/`
+`bundle-v8-group-coverage-render/`. All three outputs contain H.264 video and
+AAC audio for approximately 30 seconds. Auto and debug have identical
+screen-space shake-proxy results. Their final-segment motion is similar to
+fixed-forward, so the shared ending shake is primarily source content, not
+new group-shot motion. This proxy is not a comfort judgment; owner review is
+still required.

@@ -9,7 +9,7 @@ import tomllib
 
 from .greedy_planner import GreedyConfig
 from .framing import FramingSafetyConfig
-from .interest import INTEREST_SIGNAL_NAMES
+from .interest import INTEREST_SIGNAL_NAMES, OPTIONAL_INTEREST_SIGNAL_NAMES
 from .perception import ScoringConfig
 
 
@@ -115,9 +115,12 @@ def loads_greedy_config(content: bytes | str) -> GreedySliceConfig:
         raise ValueError(f"schema_version must be {SCHEMA_VERSION!r}")
 
     weights = _require_table(document, "weights")
-    expected_weights = frozenset(INTEREST_SIGNAL_NAMES)
-    _reject_unknown(weights, expected_weights, "weights")
-    missing_weights = expected_weights - set(weights)
+    required_weights = frozenset(INTEREST_SIGNAL_NAMES)
+    allowed_weights = required_weights | frozenset(
+        OPTIONAL_INTEREST_SIGNAL_NAMES
+    )
+    _reject_unknown(weights, allowed_weights, "weights")
+    missing_weights = required_weights - set(weights)
     if missing_weights:
         raise ValueError(
             f"missing editorial weight(s): {', '.join(sorted(missing_weights))}"
@@ -126,7 +129,13 @@ def loads_greedy_config(content: bytes | str) -> GreedySliceConfig:
     # makes it impossible to introduce it (or another backend score) as an
     # editorial weight by configuration.
     scoring = ScoringConfig(
-        tuple((name, _number(weights, name)) for name in INTEREST_SIGNAL_NAMES)
+        tuple(
+            (name, _number(weights, name))
+            for name in (
+                INTEREST_SIGNAL_NAMES + OPTIONAL_INTEREST_SIGNAL_NAMES
+            )
+            if name in weights
+        )
     )
 
     hysteresis = _require_table(document, "hysteresis")

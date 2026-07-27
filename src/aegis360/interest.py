@@ -16,6 +16,7 @@ INTEREST_SIGNAL_NAMES = (
     "composition",
     "forward_prior",
 )
+OPTIONAL_INTEREST_SIGNAL_NAMES = ("group_coverage",)
 
 
 @dataclass(frozen=True)
@@ -73,6 +74,12 @@ def candidate_interest(
     )
     forward_prior = max(0.0, 1.0 - forward_distance / config.forward_falloff)
     provenance = "aegis360.interest:v1"
+    covered_count = len(candidate.covered_candidate_ids)
+    group_coverage = (
+        min(1.0, covered_count / 3.0)
+        if candidate.candidate_type == "group_context"
+        else 0.0
+    )
     return (
         SignalEvidence("presence", presence, presence, provenance),
         SignalEvidence(
@@ -99,6 +106,12 @@ def candidate_interest(
             forward_distance,
             forward_prior,
             f"{provenance};great-circle-forward",
+        ),
+        SignalEvidence(
+            "group_coverage",
+            float(covered_count),
+            group_coverage,
+            f"{provenance};normalizer:3-covered-candidates",
         ),
     )
 

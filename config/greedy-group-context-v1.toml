@@ -1,0 +1,22 @@
+schema_version = "aegis360.greedy-config.v1"
+
+# First group-context ablation. Generic saliency has no editorial persistence;
+# group coverage rewards a wide view that contains several simultaneous
+# regions. Detector confidence remains excluded.
+[weights]
+presence = 0.20
+persistence = 0.30
+composition = 0.20
+forward_prior = 0.15
+group_coverage = 0.15
+
+[hysteresis]
+minimum_dwell_seconds = 2.0
+switch_margin = 0.10
+challenger_hold_seconds = 0.5
+
+[camera]
+min_angular_change_degrees = 2.0
+minimum_horizontal_fov_degrees = 110.0
+candidate_extent_padding_degrees = 10.0
+maximum_zoom_in_change_degrees = 15.0

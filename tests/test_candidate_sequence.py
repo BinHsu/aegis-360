@@ -8,7 +8,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from aegis360.candidate_sequence import (
     AssociationConfig, AssociationProvenance, associate_candidate_sequence,
 )
-from aegis360.interest import INTEREST_SIGNAL_NAMES, InterestConfig, evaluate_interest
+from aegis360.interest import (
+    INTEREST_SIGNAL_NAMES,
+    OPTIONAL_INTEREST_SIGNAL_NAMES,
+    InterestConfig,
+    evaluate_interest,
+)
 from aegis360.perception import (
     AdapterProvenance, FrameSample, PerceptionResult, SignalEvidence,
     SphericalCandidateEvidence,
@@ -53,6 +58,13 @@ class CandidateSequenceTests(unittest.TestCase):
             AssociationProvenance.SYNTHETIC_CONTEXT,
         )
         self.assertFalse(group.editorial_persistence_valid)
+        interested = next(
+            item for item in evaluate_interest(sequence)[0].candidates
+            if item.candidate.candidate_id == "context:saliency-group:0"
+        )
+        signals = {signal.name: signal for signal in interested.signals}
+        self.assertAlmostEqual(signals["group_coverage"].raw, 2.0)
+        self.assertAlmostEqual(signals["group_coverage"].normalized, 2 / 3)
 
     def test_forward_context_age_is_relative_to_the_sequence(self):
         frames = associate_candidate_sequence((frame(100, ()), frame(101, ())))
@@ -109,7 +121,10 @@ class CandidateSequenceTests(unittest.TestCase):
         high_signals = evaluate_interest(high, config)[0].candidates
         low_subject = next(c for c in low_signals if c.candidate.track_id)
         high_subject = next(c for c in high_signals if c.candidate.track_id)
-        self.assertEqual(tuple(s.name for s in low_subject.signals), INTEREST_SIGNAL_NAMES)
+        self.assertEqual(
+            tuple(s.name for s in low_subject.signals),
+            INTEREST_SIGNAL_NAMES + OPTIONAL_INTEREST_SIGNAL_NAMES,
+        )
         self.assertEqual(low_subject.signals, high_subject.signals)
 
     def test_presence_persistence_composition_and_forward_prior(self):
@@ -123,6 +138,7 @@ class CandidateSequenceTests(unittest.TestCase):
         self.assertEqual(values, {
             "presence": 1.0, "persistence": 1.0,
             "composition": 1.0, "forward_prior": 1.0,
+            "group_coverage": 0.0,
         })
 
     def test_forward_context_is_a_fallback_not_a_detected_persistent_subject(self):

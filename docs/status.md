@@ -479,3 +479,14 @@ Local group/context geometry now passes synthetic gates and yields candidates
 on 23/60 replay frames, but the unchanged scorer selects none. Do not weaken
 switch hysteresis. Add a named group-coverage signal with synthetic ablation
 and a new versioned config before another planning replay or render.
+
+That gate is now complete. The optional bounded `group_coverage` signal and
+`greedy-group-context-v1.toml` preserve the old config and hysteresis. The v8
+replay selects forward context for 6/60 decisions, a local group for 7/60
+(3.0–6.5 seconds), and `track:000002` for 47/60. Its 1920x1080, 30-second
+static-shot series is mechanically valid at
+`outputs/auto-directed/old-ghost-road-30s-v1/`
+`bundle-v8-group-coverage-render/`. Auto and debug share the same motion proxy;
+their ending motion is comparable to fixed-forward. The next evidence gate is
+owner review of contextual usefulness and switch comfort, not another
+threshold change.
