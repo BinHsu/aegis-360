@@ -503,6 +503,19 @@ the same model without tracker initialization. Persist only labels,
 confidences, normalized boxes, viewport pose and timing. This is a
 person/bicycle recall diagnostic, not a directing or identity claim.
 
+That fixed-five smoke is complete via
+`scripts/run_semantic_detector_multiview_smoke.sh`. Timestamps 15, 60 and 210
+had no detections; 105 had three `person` detections; 150 had one `person`;
+all had zero `bicycle`. Agent contact-sheet inspection found the person boxes
+plausible, while the 150-second view visibly contains additional people and
+bicycles that were missed. See
+`docs/experiments/apple-coreml-semantic-detector-smoke-2026-07-29.md`.
+
+Next initialize the existing Vision tracker from the reviewed 150-second
+yaw=-90 person box (`x=0.366455078125`, `y=0.4805908203125`,
+`width=0.138671875`, `height=0.498779296875`) over a short forward sequence.
+Record loss/continuity without calling the track a bicycle or main character.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

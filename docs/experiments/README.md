@@ -33,6 +33,8 @@ privacy-safe summaries when results exist.
   privacy-safe aggregation of several bounded tracking clips.
 - `apple-coreml-semantic-detector-contract-2026-07-29.md`: acquired model,
   checksum, Core ML/Vision recognized-object and privacy-safe synthetic gate.
+- `apple-coreml-semantic-detector-smoke-2026-07-29.md`: fixed-five
+  multi-viewport natural-image person/bicycle seed evidence and visual audit.
 - `vision-spherical-dedup-wiring-2026-07-23.md`: fixed-five Vision JSON
   ingestion, spherical dedup report, and neutral perception-to-planner wiring.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.
