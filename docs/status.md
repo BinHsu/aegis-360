@@ -500,3 +500,13 @@ Fixed and auto now share libx264 fast/CRF 18/yuv420p, and
 `scripts/check_render_pre_review.py` fails closed on decoded stream mismatch
 or insufficient actual-shot differentiation. The next candidate must pass
 that gate and agent visual frame inspection before owner paths are disclosed.
+
+The first semantic detector asset has been explicitly acquired outside Git:
+Apple-hosted YOLOv3 Tiny FP16, 17,769,580 bytes, SHA-256
+`73406178d0f5793d0d5d1e38274acd146a744c2245c9b63a11998a5015925dda`.
+`model-manifests/manifest.toml` is the canonical inventory and
+`scripts/verify_model_manifest.py` prevents redundant or implicit downloads.
+Core ML compilation/loading passes on the host and confirms a 416x416 RGB
+input, coordinates plus 80-class confidence outputs, and person/bicycle
+labels. The next gate remains a synthetic Swift detector contract before
+real-media or tracker integration.

@@ -235,6 +235,7 @@ routes work by task.
 - External claims and evidence: `docs/research/claim-ledger.md`
 - Experiment protocols and results: `docs/experiments/README.md`
 - Benchmark assets and licensing: `benchmarks/README.md`
+- External model/weight inventory: `model-manifests/README.md`
 
 Read only the documents relevant to the task, plus every ADR they link. If a
 design document conflicts with an accepted ADR, follow the ADR and report the

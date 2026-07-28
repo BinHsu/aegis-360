@@ -1,0 +1,30 @@
+manifest_version = 1
+verified_date = "2026-07-29"
+data_root_env = "AEGIS_DATA_DIR"
+implicit_downloads_allowed = false
+
+[[model]]
+id = "apple_yolov3_tiny_fp16_v2"
+purpose = "Replaceable low-cadence person/bicycle detector seed for the semantic tracking POC."
+vendor = "Apple-hosted Core ML model derived from YOLOv3 Tiny"
+filename = "YOLOv3TinyFP16.mlmodel"
+relative_path = "models/apple/yolov3-tiny-fp16/YOLOv3TinyFP16.mlmodel"
+source_page = "https://developer.apple.com/machine-learning/models/"
+direct_url = "https://ml-assets.apple.com/coreml/models/Image/ObjectDetection/YOLOv3Tiny/YOLOv3TinyFP16.mlmodel"
+accessed_date = "2026-07-29"
+sha256 = "73406178d0f5793d0d5d1e38274acd146a744c2245c9b63a11998a5015925dda"
+byte_size = 17769580
+format = "Core ML neural network (.mlmodel)"
+input_contract = "image: RGB 416x416; optional Double confidenceThreshold; optional Double iouThreshold"
+output_contract = "coordinates: variable rows x 4 Double; confidence: variable rows x 80 Double"
+labels_required_for_poc = ["person", "bicycle"]
+embedded_name = "YOLOv3TinyFP16.mlmodel"
+embedded_version = "2.0"
+embedded_model_version = "YOLOv3-tiny"
+embedded_author = "Joseph Redmon, Ali Farhadi"
+embedded_license = "Please see https://github.com/pjreddie/darknet for license information."
+upstream_license_url = "https://github.com/pjreddie/darknet/blob/master/LICENSE"
+upstream_license_finding = "Darknet upstream LICENSE states that Darknet is public domain."
+redistribution_policy = "Local POC use only; do not commit or redistribute the Apple-hosted model until its distribution terms are independently cleared."
+runtime = "Swift + Vision/Core ML; no PyTorch, Ultralytics, Core ML Tools, ONNX Runtime, or OpenCV required."
+host_validation = "MLModel.compileModel and MLModel(contentsOf:) passed on 2026-07-29; full Xcode/coremlcompiler CLI is not installed."

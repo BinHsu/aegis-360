@@ -39,6 +39,7 @@ not invent a resolution.
 | Change stabilization, motion-character, or segment treatment | `docs/design/spherical-stabilization-and-segment-policy.md`, ADR 0002, ADR 0005, ADR 0006 |
 | Add media or change evaluation | ADR 0007 and `benchmarks/README.md` when present |
 | Choose or replace a model backend | ADR 0008 |
+| Locate or verify external model weights | `model-manifests/README.md`, then `model-manifests/manifest.toml` |
 | Make a claim about GoPro, Insta360, prior art, or licensing | Relevant material in `docs/research/` when present; do not rely on README prose |
 | Report performance or quality | Relevant protocol in `docs/experiments/` when present; include its environment and artifacts |
 

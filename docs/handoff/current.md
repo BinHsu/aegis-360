@@ -474,6 +474,22 @@ detector probe over generated rectilinear input that emits privacy-safe
 unexpected model outputs. Do not run a real-media tracking or render gate
 before that synthetic/model-contract gate passes.
 
+The owner authorized acquisition and the Apple-hosted
+`YOLOv3TinyFP16.mlmodel` is now present under the external data root at
+`models/apple/yolov3-tiny-fp16/YOLOv3TinyFP16.mlmodel`. The canonical
+non-secret record is `model-manifests/manifest.toml`; its SHA-256 is
+`73406178d0f5793d0d5d1e38274acd146a744c2245c9b63a11998a5015925dda`
+and its byte size is 17,769,580. Always run
+`python3 scripts/verify_model_manifest.py model-manifests/manifest.toml
+"$AEGIS_DATA_DIR"` before any acquisition; a pass means do not download
+again.
+
+Host-side `MLModel.compileModel` and load passed. The model takes a 416x416 RGB
+image plus optional confidence/IoU thresholds and emits coordinates plus
+80-class confidence. `person` and `bicycle` labels are embedded. Only Command
+Line Tools are installed, so `coremlcompiler` is unavailable; runtime
+compilation through Core ML works and is the verified path.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:
