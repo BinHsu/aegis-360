@@ -543,6 +543,16 @@ and `missing` outcomes, retain model/viewport provenance, and withhold
 editorial persistence whenever refresh is ambiguous. Do not render before a
 reviewable refresh trace demonstrates that identity is not silently reassigned.
 
+The privacy-safe artifact contract is now implemented in
+`src/aegis360/refresh_trace.py`. It preserves compatible, ambiguous and missing
+events, model-independent track/class IDs and the configured angular radius.
+Every v1 event explicitly denies editorial persistence. Tests cover all three
+outcomes, monotonic timestamps and absence of local paths.
+
+Next wire the native detector and tracker outputs into this trace for one
+bounded, detector-matched viewport sequence. Do not add planner candidates
+until the trace plus a visual audit agree on isolated versus crowded behavior.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

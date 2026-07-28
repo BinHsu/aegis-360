@@ -136,6 +136,12 @@ explicitly ambiguous even when one is nearer; wrong-class or distant evidence
 is missing. The seam-aware rule deliberately prevents nearest-neighbor
 geometry from manufacturing identity in crowded scenes.
 
+`src/aegis360/refresh_trace.py` persists those outcomes without pixels, paths
+or embeddings. Every v1 row sets `editorial_persistence_allowed=false`,
+including a single compatible refresh, because semantic identity has not been
+verified. This trace is the integration boundary for native detector/tracker
+orchestration.
+
 `candidate_sequence.AssociationProvenance` is the executable validity policy.
 `observed_frames` remains a diagnostic continuity count for every association,
 but `interest.candidate_interest` converts it to nonzero persistence only when
