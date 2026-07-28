@@ -176,6 +176,14 @@ data.
   opaque session identifier, product-specific memory, or agent UI.
 - Run `python3 scripts/check_handoff.py` before declaring a milestone complete.
   Core repository changes without a matching handoff update fail CI.
+- Before asking the owner to review rendered videos, run the repository's
+  pre-review gate against the actual renderer representation, not only the
+  planner camera path. Fixed and auto review peers must use the same encoder
+  contract. Also extract and visually inspect representative paired frames or
+  contact sheets for perceptible content difference, blur, blocking, stitching
+  defects, and other obvious quality loss. A mechanical pass is necessary but
+  not sufficient; do not send paths for a candidate that the agent can already
+  reject.
 - Supervise delegated work with bounded waits; do not assume a still-running
   subagent or external job will report that it is stuck.
 - Do not end the main turn with a final response while authorized delegated

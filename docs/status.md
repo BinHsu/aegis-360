@@ -480,7 +480,7 @@ on 23/60 replay frames, but the unchanged scorer selects none. Do not weaken
 switch hysteresis. Add a named group-coverage signal with synthetic ablation
 and a new versioned config before another planning replay or render.
 
-That gate is now complete. The optional bounded `group_coverage` signal and
+That implementation gate is complete. The optional bounded `group_coverage` signal and
 `greedy-group-context-v1.toml` preserve the old config and hysteresis. The v8
 replay selects forward context for 6/60 decisions, a local group for 7/60
 (3.0–6.5 seconds), and `track:000002` for 47/60. Its 1920x1080, 30-second
@@ -490,3 +490,13 @@ static-shot series is mechanically valid at
 their ending motion is comparable to fixed-forward. The next evidence gate is
 owner review of contextual usefulness and switch comfort, not another
 threshold change.
+
+Owner review subsequently rejected v8: fixed and auto looked nearly identical,
+and fixed looked clearer. The renderer-aware audit found that static-shot
+aggregation reduced the three actual view changes to 0°, 1.68°, and 2.65°;
+none clears the new 8° pre-review perceptibility floor. The old outputs also
+used mismatched encoder settings, invalidating direct image-quality comparison.
+Fixed and auto now share libx264 fast/CRF 18/yuv420p, and
+`scripts/check_render_pre_review.py` fails closed on decoded stream mismatch
+or insufficient actual-shot differentiation. The next candidate must pass
+that gate and agent visual frame inspection before owner paths are disclosed.

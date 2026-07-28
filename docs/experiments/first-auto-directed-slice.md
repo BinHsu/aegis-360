@@ -95,10 +95,17 @@ from a source shorter than that rung.
 6. Verify debug-overlay uses the same camera path and trace as auto-directed.
 7. Inspect trace and camera metrics for empty choices, fallback-only behavior,
    rapid switches, reversals, extreme angular steps and multi-segment jerk
-   discontinuities. Record measurements without inventing a comfort threshold.
-8. Only after the mechanical gate passes, give the project owner the complete
+   discontinuities. For static-shot rendering, inspect the robust per-shot
+   poses actually sent to `v360`; planner keyframe extrema are not a proxy for
+   rendered differentiation.
+8. Run `python3 scripts/check_render_pre_review.py BUNDLE`. Fixed and auto must
+   have matching decoded stream properties and the actual rendered poses must
+   clear the versioned perceptibility floor. Then extract and visually inspect
+   paired frames/contact sheets for meaningful content difference and obvious
+   quality loss.
+9. Only after both pre-review checks pass, give the project owner the complete
    absolute paths for the three videos and a short review checklist.
-9. Record the review separately from automated checks. A pass permits the next
+10. Record the review separately from automated checks. A pass permits the next
    duration rung; a configuration change restarts the series.
 
 ## Acceptance criteria
@@ -305,3 +312,18 @@ screen-space shake-proxy results. Their final-segment motion is similar to
 fixed-forward, so the shared ending shake is primarily source content, not
 new group-shot motion. This proxy is not a comfort judgment; owner review is
 still required.
+
+Owner review rejects v8. Fixed and auto appeared materially alike, while fixed
+looked visibly clearer. A renderer-aware audit explains the first result:
+although planner keyframes reached larger instantaneous offsets, static-shot
+aggregation emitted only 0°, 1.68°, and 2.65° effective changes from the
+fixed baseline. No shot cleared the new 8° perceptibility floor. The old
+bundle also used unequal encoder settings (fixed CRF 23, auto CRF 0), so its
+quality comparison is confounded. It must not be promoted or rerendered under
+the same bundle identifier.
+
+The renderer now uses libx264 `fast`, CRF 18, and yuv420p for both fixed and
+auto review peers. The pre-review gate checks their decoded stream contract
+and the actual static shot poses. Its threshold only blocks imperceptibly
+different candidates; it does not prove semantic value or image quality.
+Agents must still inspect paired decoded frames before requesting owner review.

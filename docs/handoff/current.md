@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-27T13:10:00+08:00
+Updated: 2026-07-29T12:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 417cd14
-Remote status: push the group-coverage checkpoint described below
-Working tree at checkpoint: group-coverage directing gate complete
+Baseline commit: 5b0ccfd
+Remote status: push the pre-review gate checkpoint described below
+Working tree at checkpoint: v8 rejected; renderer-aware pre-review gate active
 
 ## Objective
 
@@ -437,6 +437,23 @@ Next ask the owner to compare the three outputs, concentrating on whether the
 natural, and whether the post-6.5 selection is interesting to an ordinary
 viewer. The ending shake is shared source behavior and should be judged
 separately from framing. Do not change scoring thresholds before that review.
+
+The owner completed that review and rejected v8: fixed and auto appeared
+nearly identical, while fixed appeared clearer. A renderer-aware replay shows
+the actual static shots differ from forward by only 0°, 1.68°, and 2.65°,
+despite larger planner-keyframe extrema. The old bundle also compared fixed
+CRF 23 against auto CRF 0, so its image-quality judgment is confounded.
+
+The render contract now uses libx264 fast/CRF 18/yuv420p for both fixed and
+auto. `scripts/check_render_pre_review.py BUNDLE` evaluates decoded stream
+comparability and the actual static-shot poses; the v8 bundle correctly exits
+1 with zero seconds above its 8° floor. Before any future owner review, run
+that gate and visually inspect representative paired frames/contact sheets.
+Do not send paths when either check can already reject the candidate.
+
+Next investigate semantic subject candidates and identity continuity before
+another 30-second render. A new plan must produce materially differentiated
+actual renderer shots without manufacturing switches by lowering hysteresis.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

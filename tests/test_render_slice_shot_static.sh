@@ -46,16 +46,28 @@ for output in fixed auto debug; do
   }'
 done
 
+# Fixed and auto are review peers and must use matching decoded stream
+# properties. Debug is explanatory and may be re-encoded after overlay.
+fixed_properties=$(ffprobe -v error -select_streams v:0 \
+  -show_entries stream=codec_name,profile,pix_fmt,width,height,r_frame_rate \
+  -of csv=p=0 "$work_dir/fixed.mp4")
+auto_properties=$(ffprobe -v error -select_streams v:0 \
+  -show_entries stream=codec_name,profile,pix_fmt,width,height,r_frame_rate \
+  -of csv=p=0 "$work_dir/auto.mp4")
+[ "$fixed_properties" = "$auto_properties" ]
+
 # The first shot's frames must equal a direct static-v360 reference at the
 # seam center; a hard cut at one second must then change the frame content.
 ffmpeg -hide_banner -loglevel error -i "$source" -t 1 \
   -vf "v360=input=equirect:output=flat:w=640:h=360:yaw=-180:pitch=0:h_fov=110:interp=linear" \
-  -an -c:v libx264 -preset fast -crf 0 -pix_fmt yuv420p "$work_dir/reference.mp4"
-reference_hash=$(ffmpeg -v error -i "$work_dir/reference.mp4" -frames:v 1 \
-  -map 0:v:0 -f hash -hash md5 -)
+  -an -c:v libx264 -preset fast -crf 18 -pix_fmt yuv420p "$work_dir/reference.mp4"
 first=$(ffmpeg -v error -i "$work_dir/auto.mp4" -frames:v 1 \
   -map 0:v:0 -f hash -hash md5 -)
-[ "$reference_hash" = "$first" ]
+psnr=$(ffmpeg -hide_banner -i "$work_dir/reference.mp4" \
+  -i "$work_dir/auto.mp4" -filter_complex \
+  "[0:v]trim=end_frame=1,setpts=PTS-STARTPTS[r];[1:v]trim=end_frame=1,setpts=PTS-STARTPTS[a];[r][a]psnr" \
+  -an -f null - 2>&1 | sed -n 's/.*average:\([0-9.]*\).*/\1/p')
+awk -v value="$psnr" 'BEGIN { if (value < 35) exit 1 }'
 after_cut=$(ffmpeg -v error -ss 1 -i "$work_dir/auto.mp4" -frames:v 1 \
   -map 0:v:0 -f hash -hash md5 -)
 [ "$first" != "$after_cut" ]

@@ -208,7 +208,7 @@ def render_static_shots(
         [
             "-filter_complex", ";".join(filters),
             "-map", "[outv]", "-map", "[outa]",
-            "-c:v", "libx264", "-preset", "fast", "-crf", "0",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "18",
             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k",
             "-movflags", "+faststart", str(output),
         ]

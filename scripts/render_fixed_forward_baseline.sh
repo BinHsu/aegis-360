@@ -48,6 +48,6 @@ ffmpeg -hide_banner -loglevel error \
   -ss "$start" -t "$duration" -i "$input_path" \
   -filter_complex "[0:v:0]v360=input=equirect:output=flat:w=${width}:h=${height}:yaw=${yaw}:pitch=${pitch}:h_fov=${h_fov}:interp=linear,setpts=PTS-STARTPTS[v];[0:a:0]asetpts=PTS-STARTPTS[a]" \
   -map "[v]" -map "[a]" \
-  -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p \
+  -c:v libx264 -preset fast -crf 18 -pix_fmt yuv420p \
   -c:a aac -b:a 128k -movflags +faststart \
   "$output_path"
