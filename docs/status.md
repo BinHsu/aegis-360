@@ -510,3 +510,13 @@ Core ML compilation/loading passes on the host and confirms a 416x416 RGB
 input, coordinates plus 80-class confidence outputs, and person/bicycle
 labels. The next gate remains a synthetic Swift detector contract before
 real-media or tracker integration.
+
+Natural-image gates now show three plausible person detections at 105 seconds
+and one at 150 seconds, but zero bicycles and no detections at three other
+fixed timestamps. A three-second Vision track visually retains an isolated
+105-second person; a crowded 150-second track returns 12/12 boxes but does not
+prove stable identity. Detector and tracker dimensions must match.
+`detector_refresh.py` therefore fails closed: one class/geometry match is only
+compatible, multiple matches are ambiguous, and none is missing. The next
+gate is orchestration of periodic detection refresh without promoting
+compatibility to identity or editorial persistence.

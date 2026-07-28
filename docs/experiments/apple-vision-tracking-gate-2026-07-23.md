@@ -24,6 +24,10 @@ scripts/run_vision_tracking_gate.sh \
   START DURATION FPS VIEWPORT_YAW BOX_X BOX_Y BOX_W BOX_H
 ```
 
+Optional trailing `WIDTH HEIGHT` arguments select the exact detector viewport;
+they default to the original 640x360. Detector seeds must not be transferred
+between different viewport dimensions without a new detection.
+
 The runner extracts a bounded 640x360, 100-degree rectilinear sequence into a
 temporary directory, compiles and runs the native probe, then deletes the
 frames. It refuses an existing output directory. JSON contains only safe IDs,

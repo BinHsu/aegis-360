@@ -129,6 +129,13 @@ sampling. It does not yet prove that the detected object is the story's main
 character. Record recall, fragmentation, identity switches, viewport
 handoffs, elapsed time, peak RSS and any thermal throttling.
 
+`src/aegis360/detector_refresh.py` now defines the backend-independent refresh
+boundary. A single same-class detection within the configured spherical radius
+is only `compatible_not_identity_verified`. Multiple compatible detections are
+explicitly ambiguous even when one is nearer; wrong-class or distant evidence
+is missing. The seam-aware rule deliberately prevents nearest-neighbor
+geometry from manufacturing identity in crowded scenes.
+
 `candidate_sequence.AssociationProvenance` is the executable validity policy.
 `observed_frames` remains a diagnostic continuity count for every association,
 but `interest.candidate_interest` converts it to nonzero persistence only when

@@ -516,6 +516,33 @@ yaw=-90 person box (`x=0.366455078125`, `y=0.4805908203125`,
 `width=0.138671875`, `height=0.498779296875`) over a short forward sequence.
 Record loss/continuity without calling the track a bicycle or main character.
 
+Tracking is now tested on two reviewed `person` seeds with detector-matched
+416x416 geometry. Both returned 12/12 boxes over three seconds at 4 fps. Agent
+contact-sheet review accepts the isolated 105-second person as the same target
+but rejects identity continuity in the crowded 150-second riders: persistent
+boxes can transfer or ambiguously cover neighboring people. See
+`docs/experiments/coreml-seeded-vision-tracking-2026-07-29.md`.
+
+`scripts/run_vision_tracking_gate.sh` now accepts optional trailing
+`WIDTH HEIGHT`, defaulting to its original 640x360. Never reuse a normalized
+detector box across different projection dimensions without redetection.
+
+Next implement a backend-independent detector-refresh association policy:
+same semantic class plus bounded geometry may return compatible, multiple
+compatible detections must return ambiguous, and no match must remain missing.
+Do not promote geometric refresh to verified identity.
+
+That core policy is implemented in `src/aegis360/detector_refresh.py`.
+Synthetic gates cover one compatible person, crowded multiple-person
+ambiguity, wrong-class/distant missing evidence and ERP seam proximity.
+Compatibility is explicitly not identity verification.
+
+Next build a bounded orchestration artifact that combines detector refresh
+events with tracker observations. It must preserve `compatible`, `ambiguous`
+and `missing` outcomes, retain model/viewport provenance, and withhold
+editorial persistence whenever refresh is ambiguous. Do not render before a
+reviewable refresh trace demonstrates that identity is not silently reassigned.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

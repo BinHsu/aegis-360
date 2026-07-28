@@ -1,8 +1,8 @@
 #!/bin/sh
 set -eu
 
-if [ "$#" -ne 12 ]; then
-    echo "usage: $0 INPUT_VIDEO OUTPUT_DIR SOURCE_ID TRACK_ID START DURATION FPS VIEWPORT_YAW BOX_X BOX_Y BOX_W BOX_H" >&2
+if [ "$#" -ne 12 ] && [ "$#" -ne 14 ]; then
+    echo "usage: $0 INPUT_VIDEO OUTPUT_DIR SOURCE_ID TRACK_ID START DURATION FPS VIEWPORT_YAW BOX_X BOX_Y BOX_W BOX_H [WIDTH HEIGHT]" >&2
     exit 2
 fi
 
@@ -18,11 +18,16 @@ box_x=$9
 box_y=${10}
 box_w=${11}
 box_h=${12}
+width=${13:-640}
+height=${14:-360}
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 
 [ -f "$input_video" ] || { echo "input video not found" >&2; exit 1; }
 case "$source_id:$track_id" in
     *[!A-Za-z0-9._:-]*|'') echo "SOURCE_ID and TRACK_ID must be privacy-safe" >&2; exit 2 ;;
+esac
+case "$width:$height" in
+    *[!0-9:]*|0:*|*:0|'') echo "WIDTH and HEIGHT must be positive integers" >&2; exit 2 ;;
 esac
 [ ! -e "$output_dir" ] || { echo "refusing to overwrite output directory" >&2; exit 1; }
 mkdir -p "$output_dir"
@@ -36,7 +41,7 @@ trap 'rm -rf "$work_dir"' EXIT HUP INT TERM
 
 ffmpeg -hide_banner -loglevel error -y \
     -ss "$start" -t "$duration" -i "$input_video" \
-    -vf "v360=input=equirect:output=flat:w=640:h=360:yaw=$viewport_yaw:pitch=0:h_fov=100:interp=linear,fps=$fps" \
+    -vf "v360=input=equirect:output=flat:w=$width:h=$height:yaw=$viewport_yaw:pitch=0:h_fov=100:interp=linear,fps=$fps" \
     "$work_dir/frame-%04d.png"
 
 set -- "$work_dir"/frame-*.png
