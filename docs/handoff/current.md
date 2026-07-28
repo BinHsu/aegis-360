@@ -455,6 +455,25 @@ Next investigate semantic subject candidates and identity continuity before
 another 30-second render. A new plan must produce materially differentiated
 actual renderer shots without manufacturing switches by lowering hysteresis.
 
+The dependency/model inventory is empty: no local detector weights were found
+under the configured data root, and torch, Ultralytics, Core ML Tools, ONNX
+Runtime and OpenCV are not installed. Existing Vision tracking requires an
+external initial box and cannot hand off across viewports.
+
+The proposed bounded bootstrap is Apple-hosted YOLOv3 Tiny Core ML detection
+at low cadence plus `VNTrackObjectRequest` between refreshes. It requires an
+explicit model acquisition action; before use, store it outside Git and
+record URL, access date, checksum, bytes, labels, model metadata and license.
+Do not install Ultralytics as the default: its official distribution is
+AGPL-3.0/commercial dual licensed. YOLOX is the Apache-2.0 comparison, not the
+first time-to-evidence path.
+
+After model acquisition, the exact next implementation milestone is a Swift
+detector probe over generated rectilinear input that emits privacy-safe
+`VNRecognizedObjectObservation` labels/boxes and fails closed on missing or
+unexpected model outputs. Do not run a real-media tracking or render gate
+before that synthetic/model-contract gate passes.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

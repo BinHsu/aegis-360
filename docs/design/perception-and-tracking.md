@@ -99,6 +99,36 @@ adapter. It does not search another viewport, associate identities, or prove
 ERP-seam continuity. Whether a box is outside the viewport is likewise an
 upstream geometry decision, not inferred by this core policy.
 
+## Proposed semantic bootstrap
+
+The next bounded POC experiment should use an Apple-hosted YOLOv3 Tiny Core ML
+model as a replaceable, low-frequency detector seed and the existing
+`VNTrackObjectRequest` probe as the high-frequency tracker. Run detection on
+overlapping rectilinear viewports, retain person and bicycle observations as
+semantic evidence, merge duplicates spherically, and initialize a tracker per
+accepted observation. Detection refresh provides an explicit opportunity to
+recover or hand off a track; geometry alone must not claim identity.
+
+This choice is for time-to-evidence on the M4 Mac, not a permanent detector
+selection or an accuracy claim. It keeps the runtime in Swift, Vision and Core
+ML and avoids adding a PyTorch environment. The model and its license must be
+downloaded and recorded explicitly outside Git, with URL, access date,
+checksum, byte size, labels and model metadata. Do not download it implicitly
+from tests or normal commands.
+
+Ultralytics is not the default bootstrap because its current code and model
+distribution use AGPL-3.0 or a commercial license. YOLOX remains a
+permissively licensed comparison candidate, but requires a separate export
+and numerical-validation path before Core ML inference. Both remain behind
+the same detector adapter boundary.
+
+The first acceptance gate is deliberately narrow: on annotated benchmark
+samples, show that semantic detection seeds person/bicycle boxes and that
+detector-refresh plus tracking reduces fragmentation relative to detector-only
+sampling. It does not yet prove that the detected object is the story's main
+character. Record recall, fragmentation, identity switches, viewport
+handoffs, elapsed time, peak RSS and any thermal throttling.
+
 `candidate_sequence.AssociationProvenance` is the executable validity policy.
 `observed_frames` remains a diagnostic continuity count for every association,
 but `interest.candidate_interest` converts it to nonzero persistence only when
