@@ -31,6 +31,8 @@ privacy-safe summaries when results exist.
   Old Ghost Road `VNTrackObjectRequest` continuity evidence.
 - `apple-vision-tracking-batch-gate-2026-07-23.md`: manifest-driven,
   privacy-safe aggregation of several bounded tracking clips.
+- `apple-coreml-semantic-detector-contract-2026-07-29.md`: acquired model,
+  checksum, Core ML/Vision recognized-object and privacy-safe synthetic gate.
 - `vision-spherical-dedup-wiring-2026-07-23.md`: fixed-five Vision JSON
   ingestion, spherical dedup report, and neutral perception-to-planner wiring.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.

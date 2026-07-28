@@ -490,6 +490,19 @@ image plus optional confidence/IoU thresholds and emits coordinates plus
 Line Tools are installed, so `coremlcompiler` is unavailable; runtime
 compilation through Core ML works and is the verified path.
 
+The synthetic detector contract is now executable as
+`scripts/run_semantic_detector_contract_gate.sh "$AEGIS_DATA_DIR" OUTPUT.json`.
+It passed checksum verification, Core ML compilation/loading, a generated
+416x416 input, the `VNRecognizedObjectObservation` result type, provenance and
+privacy checks. Zero detections on the featureless color fixture are allowed.
+The record is
+`docs/experiments/apple-coreml-semantic-detector-contract-2026-07-29.md`.
+
+Next extract a fixed, sparse Old Ghost Road multi-viewport sample pack and run
+the same model without tracker initialization. Persist only labels,
+confidences, normalized boxes, viewport pose and timing. This is a
+person/bicycle recall diagnostic, not a directing or identity claim.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:
