@@ -4,7 +4,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from aegis360.yolox_seed_adapter import vision_seed_box
+from aegis360.yolox_seed_adapter import vision_seed_box, yolox_refresh_event
 
 
 class YoloXSeedAdapterTests(unittest.TestCase):
@@ -27,6 +27,28 @@ class YoloXSeedAdapterTests(unittest.TestCase):
         ):
             with self.assertRaises(ValueError):
                 vision_seed_box(detection)
+
+    def test_refresh_filters_person_before_bicycle_geometry(self):
+        event = yolox_refresh_event(
+            {
+                "timestampSeconds": 1,
+                "state": "tracked",
+                "yawRadians": 0,
+                "pitchRadians": 0,
+            },
+            [
+                {"class_id": 0, "score": .9, "box": [.9, .1, .2, .2]},
+                {"class_id": 1, "score": .7, "box": [.4, .4, .2, .2]},
+            ],
+            track_id="bike-1",
+            track_class="bicycle",
+            viewport_yaw=0,
+            viewport_pitch=0,
+            horizontal_fov=1,
+            aspect_ratio=1,
+        )
+        self.assertEqual(len(event.detections), 1)
+        self.assertEqual(event.detections[0].semantic_class, "bicycle")
 
 
 if __name__ == "__main__":

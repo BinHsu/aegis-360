@@ -744,6 +744,23 @@ Next run low-cadence YOLOX acceptance refreshes at exact tracker timestamps
 within this sequence. Feed only class/geometry evidence into the existing
 refresh lifecycle; never grant identity or editorial persistence.
 
+YOLOX acceptance refreshes were run at t61/t62/t63. All three contain a
+bicycle candidate, but t62 overflows the viewport bottom by approximately
+0.00226 normalized units. The strict seed/refresh adapter rejects it and does
+not clip. Legal t61 and t63 events are both
+`compatible_not_identity_verified`; lifecycle stays active at tracker
+confidence 0.936 then 0.432, with identity/editorial persistence false.
+
+Privacy-safe durable traces are
+`yolox-refresh-trace.json` and `yolox-refresh-lifecycle.json` beside the
+external t60 bicycle tracking artifact. The excluded t62 report remains in
+`/tmp` only and is not a durable dependency.
+
+Next evaluate a versioned boundary-tolerance policy using synthetic boxes and
+actual projection/rounding error. Do not introduce clipping merely to accept
+t62; strict zero tolerance remains current behavior until evidence supports a
+bounded alternative.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

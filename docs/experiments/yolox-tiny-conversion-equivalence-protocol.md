@@ -130,6 +130,20 @@ verified bicycle identity. The contact sheet was deleted after inspection.
 External evidence:
 `outputs/vision-tracking-gate/old-ghost-road-t60-yaw0-yolox-bicycle-v1/`.
 
+YOLOX acceptance refreshes at 61, 62 and 63 seconds all return a bicycle
+candidate, with scores 0.638, 0.728 and 0.476. The t62 top-left box exceeds
+the viewport bottom by approximately 0.00226 normalized units. The strict
+adapter rejects this same-class malformed geometry; no clipping or repair is
+performed.
+
+The legal t61 and t63 boxes both associate as
+`compatible_not_identity_verified`. Their lifecycle states remain active with
+tracker confidence 0.936 and 0.432, while identity verification and editorial
+persistence remain false. Durable privacy-safe evidence is
+`yolox-refresh-trace.json` and `yolox-refresh-lifecycle.json` beside the
+external tracking artifact. The excluded t62 result is not silently
+represented as a valid refresh.
+
 ## Objective
 
 Determine whether the official YOLOX-Tiny COCO checkpoint can become a

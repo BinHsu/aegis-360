@@ -609,3 +609,12 @@ falls near 0.27. This proves bounded operational continuity, not identity.
 Next run low-cadence YOLOX refreshes during the same sequence and require
 class/geometry compatibility without allowing diagnostic boxes or identity
 promotion.
+
+Acceptance refreshes at t61/t62/t63 all produce bicycle candidates. Strict
+geometry rejects t62 because its box overflows the viewport bottom by 0.00226;
+the adapter does not clip. Legal t61 and t63 refreshes are compatible but not
+identity-verified, and lifecycle remains active with editorial persistence
+denied. This demonstrates detector/tracker class-region continuity through
+partial occlusion while preserving the fail-closed boundary. Next decide by
+evidence whether a versioned subpixel boundary tolerance is justified; until
+then strict zero tolerance remains authoritative.
