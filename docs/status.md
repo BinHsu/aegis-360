@@ -547,3 +547,19 @@ YOLOv3 Tiny therefore remains a pipeline-contract and occasional person-seed
 model, not an accepted generic sports-subject detector. Next research a
 replacement candidate under ADR 0008 and the model-manifest rules before any
 asset acquisition.
+
+Primary-source research selects YOLOX-Tiny as the next conversion-feasibility
+candidate: Apache-2.0, official 416×416 COCO weights, 5.06M parameters, 6.45
+GFLOPs and 32.8 reported mAP. YOLOX-Nano is the performance fallback; RT-DETR
+and torchvision detectors are deferred due to a longer path to validated Core
+ML inference. No asset has been acquired. Next prepare a manifest proposal and
+a generated-input numerical-equivalence protocol; acquisition still requires
+explicit authorization.
+
+The proposed asset is now recorded separately in
+`model-manifests/candidates.toml` without invented byte size or checksum, and
+`docs/experiments/yolox-tiny-conversion-equivalence-protocol.md` freezes tensor,
+decoded-output, memory and threshold gates. The installed model verifier must
+not consume candidate records. The next state-changing step is explicit
+YOLOX-Tiny acquisition; until authorized, safe work is limited to validating
+the proposal and preparing the isolated conversion harness contract.

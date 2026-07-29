@@ -627,6 +627,31 @@ Next compare manifest-eligible replacement detector candidates using primary
 model documentation and Apple Silicon feasibility. Do not download weights
 until the candidate, license, checksum source and intended gate are recorded.
 
+Primary-source research is recorded in
+`docs/research/replacement-semantic-detector-2026-07-29.md`. YOLOX-Tiny is the
+next conversion-feasibility candidate because its official Apache-2.0 project
+publishes 416×416 COCO weights, 5.06M parameters, 6.45 GFLOPs and 32.8 mAP.
+YOLOX-Nano is only a performance fallback. RT-DETR and torchvision detectors
+are deferred because their path to validated Core ML object detection is
+longer. General PyTorch support in Core ML Tools is not proof that YOLOX decode
+or NMS converts correctly.
+
+No YOLOX asset or dependency has been downloaded. Next add a proposed,
+not-installed manifest record and a conversion-equivalence protocol with
+exact acceptance criteria. Acquisition remains an explicit user action.
+
+The proposed asset now has a non-installed record in
+`model-manifests/candidates.toml`; it intentionally has no claimed checksum or
+byte size and sets `acquisition_authorized=false`. The frozen conversion gate
+is `docs/experiments/yolox-tiny-conversion-equivalence-protocol.md`. It requires
+raw-tensor equivalence before decoded boxes, then the unchanged fixed-five
+coverage probe. Candidate records must never be passed to the installed-asset
+verifier.
+
+Run repository tests and handoff validation, then commit/push this research
+checkpoint. The next state-changing step—downloading the exact official
+YOLOX-Tiny release asset—requires explicit owner authorization.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:
