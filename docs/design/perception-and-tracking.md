@@ -167,6 +167,14 @@ but `interest.candidate_interest` converts it to nonzero persistence only when
 `editorial_persistence_valid` is true. Detector confidence is not consulted by
 association validity, identity continuation, or editorial interest.
 
+`src/aegis360/lifecycle_candidates.py` is the planner-side boundary for a
+refresh lifecycle that has not verified identity. Active states expose an
+observed candidate, bounded grace states expose an unobserved continuity
+candidate, and the terminal state removes it immediately. All such candidates
+use `GEOMETRIC_ONLY`, so their interest persistence remains zero. Tracking
+observations after termination receive only the forward fallback; a later
+semantic detection requires a new lifecycle and track ID.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,

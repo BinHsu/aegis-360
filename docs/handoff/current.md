@@ -828,6 +828,22 @@ candidate may contribute only while active or in bounded grace and must be
 removed at termination. A later bicycle detection must acquire a new track ID
 rather than reuse `bicycle-yolox-0001`.
 
+That planner boundary is implemented in
+`src/aegis360/lifecycle_candidates.py`. It converts active states to observed
+candidates, bounded grace to unobserved candidates, and terminal/post-terminal
+tracking frames to forward context only. The candidate is always
+`GEOMETRIC_ONLY`, so `interest` persistence remains zero.
+
+Against the real 32-frame artifacts, the bicycle candidate is present for 23
+frames through 65.50, absent at the 65.75 terminal frame, and absent for all
+eight later observations including the 67.0 bicycle detection. A later
+acquisition must use a new track ID.
+
+Next connect this candidate-frame sequence to the existing greedy planner in
+a planning-only diagnostic. Do not render yet: first verify the planner stops
+selecting the bicycle no later than termination and has a deterministic
+forward-context fallback.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

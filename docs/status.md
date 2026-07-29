@@ -645,3 +645,10 @@ a bicycle at 67.0 that would otherwise revive it. Visual inspection shows
 multiple stationary bicycles and crossing people in the region, so the old
 Vision box is identity-ambiguous. The fail-closed termination is the correct
 planner boundary.
+
+The lifecycle-to-candidate adapter now enforces that boundary. On the real
+32-frame artifact, the bicycle candidate exists for 23 frames through the
+65.50 grace state, is absent at the 65.75 terminal state, and remains absent
+for all eight later tracking observations including 67.0. The forward context
+remains available. Operational YOLOX/Vision continuity is `GEOMETRIC_ONLY`,
+so editorial persistence stays zero even while the candidate is active.
