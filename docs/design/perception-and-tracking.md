@@ -181,6 +181,16 @@ reintroduce detector confidence or manufacture persistence. A planning-only
 lifecycle diagnostic can therefore exercise greedy hysteresis while retaining
 the lifecycle's identity limitations.
 
+## Proposed post-termination acquisition
+
+`src/aegis360/new_track_acquisition.py` tests a conservative, tunable proposal:
+after termination, require at least two consecutive compatible semantic
+detections before issuing a fresh track ID. Missing or ambiguous evidence
+resets the count. The fresh ID never implies identity continuity with the
+terminated track and receives neither verified identity nor editorial
+persistence. This remains an experiment rather than an accepted ADR until it
+is exercised on more benchmark scenes.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,

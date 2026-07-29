@@ -661,3 +661,10 @@ immediately falls back to `context:forward` when the candidate is removed at
 persistence component is zero. The trace is
 `greedy-planning-trace-v1.json` beside the external eight-second refresh
 artifact.
+
+The proposed post-terminal acquisition gate requires two consecutive
+compatible detections and always issues a fresh ID. On the real artifact,
+67.0 is an isolated bicycle detection followed by a miss, so
+`bicycle-yolox-0002` is not acquired and the planner remains on forward
+context. The privacy-safe result is `new-track-acquisition-v1.json` beside the
+eight-second artifact. This threshold remains experimental, not an ADR.

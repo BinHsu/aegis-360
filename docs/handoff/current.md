@@ -860,6 +860,20 @@ Next decide a new-track acquisition policy for post-terminal detections. The
 minimum safe rule is a fresh ID after a bounded sequence of compatible
 detections; do not reuse geometry alone to link it to the terminated track.
 
+The proposed acquisition gate is implemented in
+`src/aegis360/new_track_acquisition.py` with a default requirement of two
+consecutive compatible detections. Missing or ambiguous evidence resets the
+count, reuse of an old track ID is rejected, and any fresh acquisition still
+has identity/persistence false.
+
+Real evidence:
+`outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-8s-4fps-v3/new-track-acquisition-v1.json`.
+The isolated 67.0 bicycle raises the count to one; the 67.25 miss resets it.
+No `bicycle-yolox-0002` is acquired. This is a proposed threshold, not an ADR.
+
+Next exercise the same two-confirmation policy on at least one additional
+person or bicycle sequence before deciding whether to accept or revise it.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:
