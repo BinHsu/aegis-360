@@ -574,10 +574,20 @@ missing and ambiguous enter the existing missing grace; repeated misses
 terminate only after the configured limit. None of these states grants
 editorial persistence.
 
-Next run the unchanged detector at 108 seconds on the same yaw=-90 416x416
-viewport. Append 108 to a new refresh trace (do not overwrite the two-event
-trace) and verify whether the observed 107 detector miss recovers within
-grace. Visually audit detector and tracker boxes before interpreting recovery.
+The unchanged detector has now run at 108 seconds on the same yaw=-90 416x416
+viewport. The v3 Vision artifact preserves 16/16 observations, and visual
+inspection shows the tracker and detector person boxes on the same person.
+The resulting compatible→missing→compatible sequence recovers within grace;
+all events continue to deny editorial persistence. The railing is again
+mislabeled `chair`, so `refresh_adapter` now filters by requested class before
+geometry conversion. Invalid same-class boxes still fail closed.
+
+The three-event trace was validated at
+`/tmp/old-ghost-road-t105-yawm90-person-v3-refresh-trace.json`. Copying it to
+the external v3 artifact directory was not completed because automatic
+permission review timed out; do not treat the temporary path as durable.
+Next build a privacy-safe lifecycle-trace CLI that consumes refresh rows plus
+real tracker confidence and explicitly records active→grace→active recovery.
 
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its

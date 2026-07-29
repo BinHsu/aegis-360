@@ -136,6 +136,12 @@ explicitly ambiguous even when one is nearer; wrong-class or distant evidence
 is missing. The seam-aware rule deliberately prevents nearest-neighbor
 geometry from manufacturing identity in crowded scenes.
 
+Native adapters must filter detector outputs by the requested semantic class
+before converting class-specific refresh geometry. This keeps malformed
+wrong-class output from poisoning a valid target-class refresh. Geometry for
+every retained same-class detection remains strictly validated without
+clipping or repair.
+
 `src/aegis360/refresh_trace.py` persists those outcomes without pixels, paths
 or embeddings. Every v1 row sets `editorial_persistence_allowed=false`,
 including a single compatible refresh, because semantic identity has not been

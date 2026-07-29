@@ -521,10 +521,12 @@ compatible, multiple matches are ambiguous, and none is missing. The next
 gate is orchestration of periodic detection refresh without promoting
 compatibility to identity or editorial persistence.
 
-Native refresh orchestration now shows compatible at 106 seconds and missing
-at 107 seconds. Visual overlays confirm the tracker remains on the same person
-while the detector misses that person and labels a railing `chair`; wrong-class
-evidence is correctly ignored. The lifecycle adapter sends missing/ambiguous
-through bounded grace and requires real tracker confidence for compatible
-recovery. The next real gate is a 108-second refresh to test recovery after
-the observed detector miss.
+Native refresh orchestration now shows compatible at 106 seconds, missing at
+107, and compatible recovery at 108. Visual overlays confirm the tracker
+remains on the same person throughout; the detector temporarily misses that
+person and repeatedly labels a railing `chair`. Wrong-class detections are
+filtered before geometry conversion, so even malformed irrelevant boxes
+cannot poison a valid person refresh. The lifecycle adapter sends
+missing/ambiguous through bounded grace and requires real tracker confidence
+for compatible recovery. The next gate is a privacy-safe lifecycle trace that
+materializes the observed compatible→missing→compatible state transition.

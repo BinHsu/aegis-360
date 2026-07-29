@@ -72,6 +72,8 @@ def native_refresh_event(
             top.get("identifier"), str
         ):
             raise ValueError("top detection label is invalid")
+        if top["identifier"] != track_class:
+            continue
         yaw, pitch = vision_box_center_to_angles(
             raw["boundingBox"],
             viewport_yaw=viewport_yaw,

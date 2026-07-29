@@ -53,6 +53,24 @@ class RefreshAdapterTests(unittest.TestCase):
                 horizontal_fov=1, aspect_ratio=1,
             )
 
+    def test_invalid_wrong_class_box_cannot_poison_person_refresh(self):
+        event = native_refresh_event(
+            {
+                "timestampSeconds": 1, "state": "tracked",
+                "yawRadians": 0, "pitchRadians": 0,
+            },
+            {"detections": [{
+                "labels": [{"identifier": "chair", "confidence": .9}],
+                "boundingBox": {
+                    "x": .8, "y": -.01, "width": .3, "height": .2,
+                },
+            }]},
+            track_id="track", track_class="person",
+            viewport_yaw=0, viewport_pitch=0,
+            horizontal_fov=1, aspect_ratio=1,
+        )
+        self.assertEqual(event.detections, ())
+
 
 if __name__ == "__main__":
     unittest.main()
