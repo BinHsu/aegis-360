@@ -14,7 +14,9 @@ import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from aegis360.yolox_decode import decode_yolox  # noqa: E402
+from aegis360.yolox_decode import (  # noqa: E402
+    decode_yolox, detection_document,
+)
 
 
 def timestamps(path: Path) -> list[float]:
@@ -46,6 +48,7 @@ def counts(detections):
         "person": sum(item.class_id == 0 for item in detections),
         "bicycle": sum(item.class_id == 1 for item in detections),
         "class_ids": [item.class_id for item in detections],
+        "detections": detection_document(detections),
     }
 
 

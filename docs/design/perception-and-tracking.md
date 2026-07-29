@@ -142,6 +142,12 @@ wrong-class output from poisoning a valid target-class refresh. Geometry for
 every retained same-class detection remains strictly validated without
 clipping or repair.
 
+YOLOX decoded boxes use a top-left origin, while Apple Vision tracking boxes
+use a bottom-left origin. `src/aegis360/yolox_seed_adapter.py` is the explicit
+boundary: it only accepts in-frame person/bicycle detections at the frozen
+acceptance score and performs `vision_y = 1 - top - height`. Diagnostic-profile
+boxes can never seed a tracker through this adapter.
+
 `src/aegis360/refresh_trace.py` persists those outcomes without pixels, paths
 or embeddings. Every v1 row sets `editorial_persistence_allowed=false`,
 including a single compatible refresh, because semantic identity has not been

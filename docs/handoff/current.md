@@ -726,6 +726,24 @@ detector contract and seed one bounded Vision bicycle track from the confirmed
 60-second box. Preserve class as bicycle but do not claim persistent identity
 or main-character status.
 
+Old Ghost Road coverage v2 now retains accepted detection boxes. The
+dependency-free `src/aegis360/yolox_seed_adapter.py` converts only in-frame
+acceptance person/bicycle detections from top-left to Vision bottom-left
+coordinates; low-score diagnostic rows cannot seed.
+
+The confirmed bicycle seeded
+`outputs/vision-tracking-gate/old-ghost-road-t60-yaw0-yolox-bicycle-v1/`.
+Results: 16/16 tracked over four seconds at 4 fps, zero lost/error, maximum
+center step 2.09 degrees, final confidence 0.273. Visual audit confirms the
+same bicycle region at 60.00 and 61.75 seconds. At 63.75 a foreground rider
+occludes the bicycle and the box mixes bike/rider content. Treat this only as
+operational bicycle-region continuity; the temporary contact sheet was
+deleted.
+
+Next run low-cadence YOLOX acceptance refreshes at exact tracker timestamps
+within this sequence. Feed only class/geometry evidence into the existing
+refresh lifecycle; never grant identity or editorial persistence.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

@@ -106,6 +106,30 @@ plausible bicycle seed where the old model produced zero across its fixed
 probe; it does not establish broad bicycle recall or reliable subject
 identity.
 
+## Bounded bicycle tracking seed
+
+The v2 Old Ghost Road coverage artifact persists accepted top-left boxes.
+`src/aegis360/yolox_seed_adapter.py` accepts only in-frame person/bicycle boxes
+at score at least 0.25 and converts them to Apple Vision bottom-left
+coordinates.
+
+The confirmed t60/yaw0 bicycle seeds a four-second, 4 fps, 416×416
+`VNTrackObjectRequest` run:
+
+- 16/16 tracked, zero lost/error;
+- persistence ratio 1.0;
+- maximum spherical center step 2.09 degrees;
+- confidence 1.0 initially, minimum 0.253 and 0.273 at the final frame.
+
+Three-frame visual inspection shows the box on the same bicycle region at
+60.00 and 61.75 seconds. At 63.75 seconds a foreground rider occludes the bike;
+the box remains in the bicycle region but includes the rider's yellow shorts
+and confidence is low. This is operational bicycle-region continuity, not
+verified bicycle identity. The contact sheet was deleted after inspection.
+
+External evidence:
+`outputs/vision-tracking-gate/old-ghost-road-t60-yaw0-yolox-bicycle-v1/`.
+
 ## Objective
 
 Determine whether the official YOLOX-Tiny COCO checkpoint can become a

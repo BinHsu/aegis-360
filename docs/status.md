@@ -598,3 +598,14 @@ RSS; source decode/reprojection dominates the 7.84–12.70 second total. This is
 the first valid bicycle seed but not broad recall. Next integrate the
 Core ML-only output into the existing semantic detector adapter and seed a
 bounded Vision track from the confirmed bicycle box.
+
+The v2 coverage artifact now persists accepted boxes and the tested seed
+adapter performs the YOLOX top-left→Vision bottom-left conversion without
+manual arithmetic. The confirmed bicycle seeds a four-second 4 fps Vision
+track with 16/16 observations, zero lost/error and 2.09-degree maximum center
+step. Visual audit shows stable bicycle-region coverage initially and through
+61.75 seconds; a foreground rider occludes the bike by 63.75 and confidence
+falls near 0.27. This proves bounded operational continuity, not identity.
+Next run low-cadence YOLOX refreshes during the same sequence and require
+class/geometry compatibility without allowing diagnostic boxes or identity
+promotion.
