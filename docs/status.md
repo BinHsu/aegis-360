@@ -676,3 +676,10 @@ terminates it at 109.0, and sees only one post-terminal person at 109.25.
 No fresh track is acquired. Visual review shows two people in all four sampled
 frames, confirming that repeated class/geometry evidence remains nonidentity.
 The two-confirmation threshold therefore stays proposed.
+
+The proposed gate now also has time bounds: compatible evidence must span at
+least 0.25 seconds and adjacent confirmations may be at most 1.0 second apart.
+This prevents high-cadence instantaneous acquisition and low-cadence stale
+evidence from sharing the same count semantics. Time-bounded v2 traces for
+both real sequences still acquire no fresh track; each has only one isolated
+post-terminal compatible event.

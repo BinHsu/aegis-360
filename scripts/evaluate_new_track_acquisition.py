@@ -22,6 +22,8 @@ def main() -> int:
     parser.add_argument("--terminated-at", type=float, required=True)
     parser.add_argument("--new-track-id", required=True)
     parser.add_argument("--consecutive-compatible", type=int, default=2)
+    parser.add_argument("--minimum-compatible-span-seconds", type=float, default=.25)
+    parser.add_argument("--maximum-compatible-gap-seconds", type=float, default=1.0)
     args = parser.parse_args()
     if args.output_json.exists():
         parser.error("refusing to overwrite output")
@@ -31,7 +33,11 @@ def main() -> int:
         json.loads(args.refresh_trace.read_text()),
         terminated_at=args.terminated_at,
         new_track_id=args.new_track_id,
-        policy=AcquisitionPolicy(args.consecutive_compatible),
+        policy=AcquisitionPolicy(
+            args.consecutive_compatible,
+            args.minimum_compatible_span_seconds,
+            args.maximum_compatible_gap_seconds,
+        ),
     )
     args.output_json.write_text(
         json.dumps(result, allow_nan=False, indent=2, sort_keys=True) + "\n",

@@ -901,6 +901,26 @@ Next evaluate whether the acquisition count should be measured in detector
 refreshes or elapsed time. The current integer count is deterministic but its
 real-time meaning changes with detector cadence.
 
+The proposed policy now combines both: at least two compatible refreshes,
+minimum compatible span 0.25 seconds, and maximum adjacent compatible gap
+1.0 second. Missing, ambiguous, or over-gap evidence resets confirmation.
+These are tunable experimental defaults, not an ADR.
+
+Time-bounded evidence:
+
+- Bicycle:
+  `old-ghost-road-t60-yaw0-bicycle-8s-4fps-v3/new-track-acquisition-time-bounded-v2.json`
+- Person:
+  `old-ghost-road-t105-yawm90-person-8s-4fps-v4/new-track-acquisition-time-bounded-v2.json`
+
+Both remain unacquired because each post-terminal interval has only one
+isolated compatible event. Synthetic cadence checks accept equivalent 4 fps
+(0.25-second span) and 2 fps (0.5-second span) confirmation, while rejecting a
+0.1-second instantaneous pair and a stale 1.1-second gap.
+
+Next keep these values proposed and measure detector cadence during a longer
+benchmark slice before using them in a runtime scheduler.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

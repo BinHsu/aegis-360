@@ -185,11 +185,12 @@ the lifecycle's identity limitations.
 
 `src/aegis360/new_track_acquisition.py` tests a conservative, tunable proposal:
 after termination, require at least two consecutive compatible semantic
-detections before issuing a fresh track ID. Missing or ambiguous evidence
-resets the count. The fresh ID never implies identity continuity with the
-terminated track and receives neither verified identity nor editorial
-persistence. This remains an experiment rather than an accepted ADR until it
-is exercised on more benchmark scenes.
+detections spanning at least 0.25 seconds, with no more than 1.0 second between
+confirmations, before issuing a fresh track ID. These values are explicit,
+tunable proposal defaults. Missing, ambiguous, or over-gap evidence resets the
+count. The fresh ID never implies identity continuity with the terminated
+track and receives neither verified identity nor editorial persistence. This
+remains an experiment rather than an accepted ADR.
 
 ## Acceptance criteria
 
