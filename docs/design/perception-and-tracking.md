@@ -142,6 +142,13 @@ including a single compatible refresh, because semantic identity has not been
 verified. This trace is the integration boundary for native detector/tracker
 orchestration.
 
+`src/aegis360/refresh_lifecycle.py` maps a compatible refresh plus real tracker
+confidence to an operational observed event. Missing and ambiguous refreshes
+both enter the bounded missing-grace policy; neither can reset a track.
+Recovery during grace is allowed, while repeated misses terminate only after
+the configured limit. Operational recovery still does not grant editorial
+persistence or verified identity.
+
 `candidate_sequence.AssociationProvenance` is the executable validity policy.
 `observed_frames` remains a diagnostic continuity count for every association,
 but `interest.candidate_interest` converts it to nonzero persistence only when

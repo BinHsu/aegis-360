@@ -29,6 +29,11 @@ External evidence:
 - `outputs/vision-tracking-gate/old-ghost-road-t105-yawm90-person-v1/`
 - `outputs/vision-tracking-gate/old-ghost-road-t150-yawm90-person-v1/`
 
+These v1 artifacts retain valid boxes but their spherical pitch/step metrics
+used a legacy 16:9 assumption. Use the corresponding `-v2/` artifacts for
+correct 416x416 spherical metrics. See
+`native-detector-refresh-trace-2026-07-29.md`.
+
 Temporary box-overlay contact sheets were inspected by the agent and deleted
 from the durable evidence boundary. The privacy-safe numeric traces remain.
 

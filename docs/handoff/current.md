@@ -553,6 +553,32 @@ Next wire the native detector and tracker outputs into this trace for one
 bounded, detector-matched viewport sequence. Do not add planner candidates
 until the trace plus a visual audit agree on isolated versus crowded behavior.
 
+That native trace now exists for the isolated 105-second person. First, the
+tracking gate was corrected to persist viewport dimensions and derive vertical
+FOV from the actual aspect ratio. The old 416x416 v1 artifacts have valid
+boxes but invalid spherical pitch/step metrics; use `-v2/`.
+
+At 106 seconds detector and tracker agree on the person, producing compatible.
+At 107 seconds the tracker remains visually on that person while the detector
+misses it and labels a railing box `chair`, producing missing. Both deny
+editorial persistence. Evidence and the visual conclusion are recorded in
+`docs/experiments/native-detector-refresh-trace-2026-07-29.md`.
+
+Next map compatible to operational observation and ambiguous/missing to the
+existing bounded lifecycle policy. A detector miss must enter grace, not
+terminate immediately; wrong-class evidence must never reset a person track.
+
+That mapping is implemented in `src/aegis360/refresh_lifecycle.py`.
+Compatible requires a real tracker confidence and restores operational active;
+missing and ambiguous enter the existing missing grace; repeated misses
+terminate only after the configured limit. None of these states grants
+editorial persistence.
+
+Next run the unchanged detector at 108 seconds on the same yaw=-90 416x416
+viewport. Append 108 to a new refresh trace (do not overwrite the two-event
+trace) and verify whether the observed 107 detector miss recovers within
+grace. Visually audit detector and tracker boxes before interpreting recovery.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

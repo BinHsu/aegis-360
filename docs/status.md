@@ -520,3 +520,11 @@ prove stable identity. Detector and tracker dimensions must match.
 compatible, multiple matches are ambiguous, and none is missing. The next
 gate is orchestration of periodic detection refresh without promoting
 compatibility to identity or editorial persistence.
+
+Native refresh orchestration now shows compatible at 106 seconds and missing
+at 107 seconds. Visual overlays confirm the tracker remains on the same person
+while the detector misses that person and labels a railing `chair`; wrong-class
+evidence is correctly ignored. The lifecycle adapter sends missing/ambiguous
+through bounded grace and requires real tracker confidence for compatible
+recovery. The next real gate is a 108-second refresh to test recovery after
+the observed detector miss.

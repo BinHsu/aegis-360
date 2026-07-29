@@ -48,8 +48,8 @@ set -- "$work_dir"/frame-*.png
 [ -f "$1" ] || { echo "no frames extracted" >&2; exit 1; }
 input_json="$work_dir/input.json"
 {
-    printf '{"sourceId":"%s","trackId":"%s","viewportYawDegrees":%s,"viewportPitchDegrees":0,"horizontalFovDegrees":100,' \
-        "$source_id" "$track_id" "$viewport_yaw"
+    printf '{"sourceId":"%s","trackId":"%s","viewportYawDegrees":%s,"viewportPitchDegrees":0,"horizontalFovDegrees":100,"viewportWidth":%s,"viewportHeight":%s,' \
+        "$source_id" "$track_id" "$viewport_yaw" "$width" "$height"
     printf '"initialBox":{"x":%s,"y":%s,"width":%s,"height":%s},"frames":[' \
         "$box_x" "$box_y" "$box_w" "$box_h"
     separator=

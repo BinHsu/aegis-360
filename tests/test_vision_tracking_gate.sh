@@ -13,7 +13,7 @@ for index in 0 1 2 3 4 5; do
 done
 
 {
-    printf '{"sourceId":"synthetic-moving-box","trackId":"box-1","viewportYawDegrees":179,"viewportPitchDegrees":0,"horizontalFovDegrees":100,'
+    printf '{"sourceId":"synthetic-moving-box","trackId":"box-1","viewportYawDegrees":179,"viewportPitchDegrees":0,"horizontalFovDegrees":100,"viewportWidth":640,"viewportHeight":360,'
     printf '"initialBox":{"x":0.125,"y":0.416666667,"width":0.1875,"height":0.277777778},"frames":['
     separator=
     for index in 0 1 2 3 4 5; do
@@ -38,6 +38,8 @@ assert result["schemaVersion"] == 1
 assert result["sourceId"] == "synthetic-moving-box"
 assert result["trackId"] == "box-1"
 assert result["provenance"]["backendId"] == "VNTrackObjectRequest"
+assert result["provenance"]["viewportWidth"] == 640
+assert result["provenance"]["viewportHeight"] == 360
 assert result["summary"]["requestedFrameCount"] == 6
 tracked = [row for row in result["observations"] if row["state"] == "tracked"]
 if result["summary"]["outcome"] == "tracking_observations_returned":

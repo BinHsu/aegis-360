@@ -31,6 +31,8 @@ struct GateInput: Decodable {
     let viewportYawDegrees: Double
     let viewportPitchDegrees: Double
     let horizontalFovDegrees: Double
+    let viewportWidth: Int?
+    let viewportHeight: Int?
     let initialBox: BoxSpec
     let frames: [FrameSpec]
 }
@@ -64,6 +66,8 @@ struct Provenance: Encodable {
     let backendId: String
     let projectionStrategy: String
     let trackingLevel: String
+    let viewportWidth: Int
+    let viewportHeight: Int
 }
 
 struct GateOutput: Encodable {
@@ -123,7 +127,9 @@ func sphericalDistance(_ first: (Double, Double), _ second: (Double, Double)) ->
 
 func sphericalCenter(_ box: CGRect, input: GateInput) -> (Double, Double) {
     let hFov = radians(input.horizontalFovDegrees)
-    let vFov = 2.0 * atan(tan(hFov / 2.0) / (16.0 / 9.0))
+    let width = Double(input.viewportWidth ?? 640)
+    let height = Double(input.viewportHeight ?? 360)
+    let vFov = 2.0 * atan(tan(hFov / 2.0) / (width / height))
     let yawOffset = atan((2.0 * box.midX - 1.0) * tan(hFov / 2.0))
     let pitchOffset = atan((2.0 * box.midY - 1.0) * tan(vFov / 2.0))
     return (
@@ -150,6 +156,10 @@ func validate(_ input: GateInput) throws {
     guard !input.frames.isEmpty else { throw GateError.invalid("at least one frame is required") }
     guard (0.0..<180.0).contains(input.horizontalFovDegrees) else {
         throw GateError.invalid("horizontal FOV must be in (0, 180)")
+    }
+    guard (input.viewportWidth ?? 640) > 0,
+          (input.viewportHeight ?? 360) > 0 else {
+        throw GateError.invalid("viewport dimensions must be positive")
     }
     let box = input.initialBox
     guard box.width > 0, box.height > 0, box.x >= 0, box.y >= 0,
@@ -244,7 +254,9 @@ func run(_ input: GateInput) throws -> GateOutput {
             adapterVersion: "0.1.0",
             backendId: "VNTrackObjectRequest",
             projectionStrategy: "single rectilinear viewport",
-            trackingLevel: "accurate"
+            trackingLevel: "accurate",
+            viewportWidth: input.viewportWidth ?? 640,
+            viewportHeight: input.viewportHeight ?? 360
         ),
         observations: observations,
         summary: Summary(
