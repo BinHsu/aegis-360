@@ -652,3 +652,12 @@ The lifecycle-to-candidate adapter now enforces that boundary. On the real
 for all eight later tracking observations including 67.0. The forward context
 remains available. Operational YOLOX/Vision continuity is `GEOMETRIC_ONLY`,
 so editorial persistence stays zero even while the candidate is active.
+
+The planning-only greedy diagnostic produces 32 decisions without rendering.
+It selects the lifecycle bicycle through the two-frame grace window at 65.25
+and 65.50 because hysteresis temporarily favors camera continuity, then
+immediately falls back to `context:forward` when the candidate is removed at
+65.75. All eight later frames remain forward, including 67.0. Every
+persistence component is zero. The trace is
+`greedy-planning-trace-v1.json` beside the external eight-second refresh
+artifact.

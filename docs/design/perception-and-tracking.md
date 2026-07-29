@@ -175,6 +175,12 @@ use `GEOMETRIC_ONLY`, so their interest persistence remains zero. Tracking
 observations after termination receive only the forward fallback; a later
 semantic detection requires a new lifecycle and track ID.
 
+`interest.interest_to_greedy_observations` applies versioned editorial
+weights only after interest signals have been derived. It does not
+reintroduce detector confidence or manufacture persistence. A planning-only
+lifecycle diagnostic can therefore exercise greedy hysteresis while retaining
+the lifecycle's identity limitations.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,

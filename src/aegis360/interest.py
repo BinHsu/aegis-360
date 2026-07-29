@@ -7,7 +7,10 @@ import math
 
 from .candidate_sequence import CandidateFrame, TemporalCandidate
 from .geometry import spherical_distance
-from .perception import SignalEvidence
+from .greedy_planner import (
+    CandidateObservation, Observation, ScoreComponent,
+)
+from .perception import ScoringConfig, SignalEvidence
 
 
 INTEREST_SIGNAL_NAMES = (
@@ -131,3 +134,41 @@ def evaluate_interest(
         )
         for frame in frames
     )
+
+
+def interest_to_greedy_observations(
+    frames: tuple[InterestFrame, ...],
+    scoring: ScoringConfig,
+) -> tuple[Observation, ...]:
+    """Apply versioned editorial weights to already-derived interest signals."""
+
+    observations = []
+    for frame in frames:
+        candidates = []
+        for interested in frame.candidates:
+            signals = {signal.name: signal for signal in interested.signals}
+            components = []
+            for name, weight in scoring.weights:
+                signal = signals.get(name)
+                if signal is None or signal.normalized is None:
+                    raise ValueError(
+                        f"interest signal {name!r} is missing from candidate"
+                    )
+                components.append(ScoreComponent(
+                    name,
+                    signal.raw,
+                    signal.normalized,
+                    weight,
+                    signal.provenance,
+                ))
+            candidate = interested.candidate
+            candidates.append(CandidateObservation(
+                candidate.candidate_id,
+                candidate.yaw,
+                candidate.pitch,
+                candidate.h_fov,
+                candidate.candidate_type,
+                tuple(components),
+            ))
+        observations.append(Observation(frame.timestamp, tuple(candidates)))
+    return tuple(observations)

@@ -844,6 +844,22 @@ a planning-only diagnostic. Do not render yet: first verify the planner stops
 selecting the bicycle no later than termination and has a deterministic
 forward-context fallback.
 
+The planning-only diagnostic is complete. Durable trace:
+`outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-8s-4fps-v3/greedy-planning-trace-v1.json`.
+It contains 32 decisions and no rendered media. The lifecycle bicycle is
+selected for 23 frames through the 65.50 grace state. At 65.75 its removal
+causes `incumbent_missing_fallback` to `context:forward`; all eight later
+frames remain forward, including 67.0. All persistence components are zero.
+
+`src/aegis360/interest.py` now has an explicit conversion from derived
+interest signals to greedy observations. `scripts/plan_lifecycle_diagnostic.py`
+loads the versioned greedy config, refuses overwrite, records the geometric-
+only/no-persistence input contract, and never calls a renderer.
+
+Next decide a new-track acquisition policy for post-terminal detections. The
+minimum safe rule is a fresh ID after a bounded sequence of compatible
+detections; do not reuse geometry alone to link it to the terminated track.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

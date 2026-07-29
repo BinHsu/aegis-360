@@ -6,7 +6,10 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from aegis360.lifecycle_candidates import lifecycle_candidate_frames
-from aegis360.interest import evaluate_interest
+from aegis360.interest import (
+    evaluate_interest, interest_to_greedy_observations,
+)
+from aegis360.perception import ScoringConfig
 
 
 def state(timestamp, phase, missing):
@@ -68,6 +71,24 @@ class LifecycleCandidateTests(unittest.TestCase):
             if signal.name == "persistence"
         )
         self.assertEqual(persistence.normalized, 0)
+        observations = interest_to_greedy_observations(
+            scored,
+            ScoringConfig((
+                ("presence", .35),
+                ("persistence", .30),
+                ("composition", .20),
+                ("forward_prior", .15),
+            )),
+        )
+        subject = next(
+            item for item in observations[0].candidates
+            if item.candidate_id.startswith("lifecycle:")
+        )
+        persistence_component = next(
+            item for item in subject.components
+            if item.name == "persistence"
+        )
+        self.assertEqual(persistence_component.contribution, 0)
         self.assertEqual(
             [len(frame.candidates) for frame in frames], [2, 2, 1, 1]
         )
