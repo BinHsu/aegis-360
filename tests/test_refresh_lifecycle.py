@@ -5,7 +5,9 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from aegis360.detector_refresh import RefreshOutcome
-from aegis360.refresh_lifecycle import advance_refresh_lifecycle
+from aegis360.refresh_lifecycle import (
+    advance_refresh_lifecycle, build_refresh_lifecycle_trace,
+)
 from aegis360.tracking_policy import (
     ObservationKind, TrackEvent, TrackPhase, TrackingPolicy, start_track,
 )
@@ -58,6 +60,68 @@ class RefreshLifecycleTests(unittest.TestCase):
     def test_compatible_requires_real_tracker_confidence(self):
         with self.assertRaises(ValueError):
             self.advance(self.initial, 1, RefreshOutcome.COMPATIBLE)
+
+    def test_trace_materializes_active_grace_active_without_identity_claim(self):
+        refresh = {
+            "schema_version": "aegis360.detector-refresh-trace.v1",
+            "source_id": "fixture",
+            "events": [
+                self.row(106, "compatible_not_identity_verified"),
+                self.row(107, "no_compatible_detection"),
+                self.row(108, "compatible_not_identity_verified"),
+            ],
+        }
+        trace = build_refresh_lifecycle_trace(
+            refresh, {106.0: .9, 107.0: .8, 108.0: .7},
+            policy=self.policy,
+        )
+        self.assertEqual(
+            [row["phase"] for row in trace["states"]],
+            ["active", "missing_grace", "active"],
+        )
+        self.assertEqual(
+            [row["confidence"] for row in trace["states"]],
+            [.9, .45, .7],
+        )
+        self.assertTrue(all(
+            row["editorial_persistence_allowed"] is False
+            and row["identity_verified"] is False
+            for row in trace["states"]
+        ))
+        self.assertEqual(trace["privacy"]["contains_source_path"], False)
+
+    def test_trace_rejects_missing_start_and_missing_compatible_confidence(self):
+        with self.assertRaisesRegex(ValueError, "start"):
+            build_refresh_lifecycle_trace(
+                {
+                    "schema_version": "aegis360.detector-refresh-trace.v1",
+                    "source_id": "fixture",
+                    "events": [self.row(1, "no_compatible_detection")],
+                },
+                {},
+                policy=self.policy,
+            )
+        with self.assertRaisesRegex(ValueError, "confidence"):
+            build_refresh_lifecycle_trace(
+                {
+                    "schema_version": "aegis360.detector-refresh-trace.v1",
+                    "source_id": "fixture",
+                    "events": [
+                        self.row(1, "compatible_not_identity_verified")
+                    ],
+                },
+                {},
+                policy=self.policy,
+            )
+
+    @staticmethod
+    def row(timestamp, outcome):
+        return {
+            "timestamp": timestamp,
+            "track_id": "person-1",
+            "outcome": outcome,
+            "editorial_persistence_allowed": False,
+        }
 
 
 if __name__ == "__main__":

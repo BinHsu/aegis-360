@@ -59,6 +59,21 @@ permission review timed out before it could be copied beside the external v3
 artifact, so that temporary file is evidence rather than a durable repo
 dependency.
 
+`scripts/build_refresh_lifecycle_trace.py` joins that refresh trace to native
+tracker confidence at exact timestamps. Its privacy-safe output at
+`/tmp/old-ghost-road-t105-yawm90-person-v3-lifecycle-trace.json` records:
+
+| Time | Outcome | Lifecycle | Confidence |
+| ---: | --- | --- | ---: |
+| 106 s | compatible | active | 0.9844 |
+| 107 s | missing | missing grace (1) | 0.7383 |
+| 108 s | compatible | active | 0.7302 |
+
+The confidence at 107 is the prior operational confidence multiplied by the
+configured 0.75 decay; detector or tracker confidence at a missing refresh is
+not substituted as an observation. The trace remains identity-unverified and
+denies editorial persistence in every state.
+
 ## Conclusion
 
 A refresh miss does not prove tracking loss. The observed
@@ -66,5 +81,7 @@ compatible→missing→compatible sequence demonstrates the intended bounded
 missing-grace recovery while Vision continuously tracks the same visible
 person. A wrong-class detection never resets or invalidates that person track.
 Operational continuity still cannot establish identity or editorial
-persistence. Next persist and test a privacy-safe lifecycle trace derived from
-these refresh outcomes and real tracker confidences.
+persistence. The lifecycle builder and its CLI now make that state transition
+reproducible. Next add a bounded multi-refresh fixture where the target remains
+absent long enough to terminate, then verify that a later compatible detection
+cannot revive the terminated track without explicit new-track creation.

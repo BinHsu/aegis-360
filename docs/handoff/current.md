@@ -589,6 +589,19 @@ permission review timed out; do not treat the temporary path as durable.
 Next build a privacy-safe lifecycle-trace CLI that consumes refresh rows plus
 real tracker confidence and explicitly records active→grace→active recovery.
 
+That CLI is now `scripts/build_refresh_lifecycle_trace.py`. Against the v3
+evidence it writes
+`/tmp/old-ghost-road-t105-yawm90-person-v3-lifecycle-trace.json` with active at
+106 (0.9844), missing grace at 107 (0.7383 after configured decay), and active
+at 108 (0.7302 from the tracker). Every state denies identity verification and
+editorial persistence, and the CLI refuses overwrite. Its input refresh trace
+is also temporary, so neither `/tmp` path is a durable dependency.
+
+Next add a bounded timeout trace covering enough consecutive refresh misses to
+terminate and confirm the existing policy refuses later revival. This may use
+a synthetic privacy-safe refresh fixture; do not claim it as real-media
+evidence. If using real media, visually audit the target state first.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:
