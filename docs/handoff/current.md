@@ -681,6 +681,23 @@ Next implement a shared decode/NMS contract frozen at the upstream demo
 defaults: confidence 0.25 and NMS IoU 0.45. Validate decoded parity on
 generated fixtures before running any benchmark viewport.
 
+The shared decoder is `src/aegis360/yolox_decode.py`; synthetic NMS and
+generated decoded parity pass. A source/preprocessing error was found and
+corrected: checkpoint-release source 0.1.1 used legacy normalization, while
+validated current source 0.3.0 commit
+`419778480ab6ec0590e5d3831b3afb3b46ab2aa3` defaults to padded BGR 0–255.
+Reject all earlier legacy-preprocessing semantic reports.
+
+The official dog fixture under 0.3/current returns five matching PyTorch/Core
+ML detections, including COCO bicycle and dog. The valid Old Ghost Road
+150-second yaw -90 viewport passes raw parity but retains zero detections at
+confidence 0.25/NMS 0.45; its top candidate is bird at 0.2395. Do not lower the
+acceptance threshold after observing this.
+
+Next run the official YOLOX COCO evaluation profile (confidence 0.01, NMS
+0.65) as an explicitly diagnostic report to list low-score person/bicycle
+proposals. It cannot replace the predeclared acceptance result.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

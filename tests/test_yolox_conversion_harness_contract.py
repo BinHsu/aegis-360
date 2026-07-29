@@ -23,6 +23,8 @@ class YoloXConversionHarnessContractTests(unittest.TestCase):
             self.assertIn(name, script)
         self.assertIn("np.array_equal(reference, traced_reference)", script)
         self.assertIn("compare_detector_outputs", script)
+        self.assertIn("decode_yolox", script)
+        self.assertIn("detection_document", script)
         self.assertIn('choices=("default", "float32")', script)
         self.assertIn("ct.precision.FLOAT32", script)
         self.assertNotIn("requests.", script)

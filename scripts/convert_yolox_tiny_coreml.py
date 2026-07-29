@@ -9,14 +9,14 @@ from pathlib import Path
 import sys
 
 
-def write_output(path: Path, values, shape) -> None:
+def write_output(path: Path, values, shape, detections) -> None:
     document = {
         "tensors": [{
             "name": "raw_head",
             "shape": list(shape),
             "values": values.reshape(-1).tolist(),
         }],
-        "detections": [],
+        "detections": detections,
     }
     path.write_text(
         json.dumps(document, allow_nan=False, separators=(",", ":")) + "\n"
@@ -60,6 +60,7 @@ def main() -> int:
     import numpy as np
     import torch
     from aegis360.detector_equivalence import compare_detector_outputs
+    from aegis360.yolox_decode import decode_yolox, detection_document
     from yolox.exp import get_exp
 
     exp_path = args.yolox_source / "exps/default/yolox_tiny.py"
@@ -103,8 +104,14 @@ def main() -> int:
         candidate = np.asarray(next(iter(prediction.values())))
         reference_path = args.output_dir / f"reference-{name}.json"
         candidate_path = args.output_dir / f"coreml-{name}.json"
-        write_output(reference_path, reference, reference.shape)
-        write_output(candidate_path, candidate, candidate.shape)
+        reference_detections = detection_document(decode_yolox(reference[0]))
+        candidate_detections = detection_document(decode_yolox(candidate[0]))
+        write_output(
+            reference_path, reference, reference.shape, reference_detections
+        )
+        write_output(
+            candidate_path, candidate, candidate.shape, candidate_detections
+        )
         report = compare_detector_outputs(
             json.loads(reference_path.read_text()),
             json.loads(candidate_path.read_text()),
@@ -126,6 +133,8 @@ def main() -> int:
             "maximum_absolute_error": report["raw"]["maximum_absolute_error"],
             "mean_absolute_error": report["raw"]["mean_absolute_error"],
             "top_index_agreements": report["raw"]["top_index_agreements"],
+            "decoded_detection_count": len(reference_detections),
+            "decoded_passed": report["decoded"]["passed"],
         } for report in reports],
         "privacy": {
             "contains_pixels": False,

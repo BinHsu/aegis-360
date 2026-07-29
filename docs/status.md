@@ -570,3 +570,13 @@ Core ML precision fails the frozen raw gate identically under Torch 2.13 and
 generated fixtures with maximum error at most 0.0001833 and top-20 agreement
 20/20. Next freeze and validate the shared decoder at confidence 0.25 and NMS
 IoU 0.45 before any real benchmark inference.
+
+The shared dependency-free YOLOX decoder and class-aware NMS now pass
+synthetic tests and generated PyTorch/Core ML parity. Source/preprocessing was
+corrected to YOLOX 0.3.0 current BGR 0–255; legacy 0.1.1 normalization reports
+are rejected. The official dog fixture returns five matching detections,
+including bicycle and dog, with near-identical boxes/scores. On the valid Old
+Ghost Road 150-second yaw -90 viewport, however, both backends retain zero at
+confidence 0.25; the top candidate is `bird` at 0.2395. Next use the official
+COCO evaluation profile (0.01 confidence, 0.65 NMS) as a diagnostic only to
+inspect whether low-score person/bicycle proposals exist.

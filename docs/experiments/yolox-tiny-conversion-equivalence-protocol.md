@@ -37,6 +37,33 @@ The passing external artifact is
 under `AEGIS_DATA_DIR`; it occupies approximately 81 MB including reports and
 raw JSON. It is not committed or cleared for redistribution.
 
+## Source and preprocessing correction
+
+The checkpoint release tag `0.1.1rc0` source uses legacy RGB/ImageNet
+normalization in its demo. The maintained YOLOX `0.3.0` source defaults to
+padded BGR 0–255 and exposes legacy normalization only behind `--legacy`.
+Testing established that the current source/preprocessing is the compatible
+contract:
+
+- source tag `0.3.0`, commit
+  `419778480ab6ec0590e5d3831b3afb3b46ab2aa3`;
+- strict checkpoint load passes;
+- official dog fixture returns five matching PyTorch/Core ML detections;
+- class IDs and ordering match, including COCO bicycle and dog;
+- decoded box IoU is at least 0.9999986;
+- maximum decoded score difference is 0.00000355.
+
+Reports produced earlier with the `0.1.1rc0` legacy preprocessing are rejected
+as coverage evidence. Their raw conversion parity remains informative, but
+their semantic outputs must not be compared.
+
+The first valid 360 viewport gate uses Old Ghost Road at 150 seconds, yaw -90.
+PyTorch/Core ML raw equivalence passes (maximum error 0.00002474, top-20
+20/20), but both retain zero detections at the predeclared confidence 0.25 and
+NMS IoU 0.45. The highest pre-threshold candidate is class 14 (`bird`) at
+0.23950, not person or bicycle. YOLOX-Tiny therefore has not yet improved the
+accepted bicycle coverage on this key viewport.
+
 ## Objective
 
 Determine whether the official YOLOX-Tiny COCO checkpoint can become a

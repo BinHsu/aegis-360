@@ -50,4 +50,4 @@ upstream_license_url = "https://github.com/Megvii-BaseDetection/YOLOX/blob/main/
 weights_license_finding = "Official release asset from the Apache-2.0 upstream project; redistribution remains separately unreviewed."
 redistribution_policy = "Local POC and conversion testing only; do not commit or redistribute the checkpoint or derivatives until independently cleared."
 runtime = "Not a runtime dependency. Isolated PyTorch/YOLOX reference and Core ML conversion only."
-host_validation = "Explicitly acquired 2026-07-29. YOLOX tag 0.1.1rc0 commit e1052df71842031413f6030723c3607b839c80ce; strict checkpoint load passed with no missing/unexpected keys. Torch 2.7.0/Core ML Tools 9.0 FLOAT32 raw-head conversion passed five generated fixtures."
+host_validation = "Explicitly acquired 2026-07-29. Checkpoint release tag 0.1.1rc0; current validated source tag 0.3.0 commit 419778480ab6ec0590e5d3831b3afb3b46ab2aa3. Strict load passed. Torch 2.7.0/Core ML Tools 9.0 FLOAT32 raw and decoded gates passed generated fixtures and official dog fixture."
