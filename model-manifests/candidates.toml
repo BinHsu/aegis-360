@@ -2,25 +2,5 @@ candidate_manifest_version = 1
 updated_date = "2026-07-29"
 implicit_downloads_allowed = false
 
-[[candidate]]
-id = "yolox_tiny_coco_upstream_proposed"
-status = "proposed_not_acquired"
-purpose = "Replacement 416x416 person/bicycle detector conversion-equivalence experiment."
-upstream_project = "Megvii-BaseDetection/YOLOX"
-source_page = "https://github.com/Megvii-BaseDetection/YOLOX"
-release_asset_url = "https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_tiny.pth"
-release_label = "0.1.1rc0"
-filename = "yolox_tiny.pth"
-proposed_relative_path = "models/yolox/upstream-0.1.1rc0/yolox_tiny.pth"
-upstream_code_license_spdx = "Apache-2.0"
-upstream_license_url = "https://github.com/Megvii-BaseDetection/YOLOX/blob/main/LICENSE"
-reported_input = "416x416"
-reported_parameters_millions = 5.06
-reported_gflops = 6.45
-reported_coco_map = 32.8
-required_classes = ["person", "bicycle"]
-sha256_status = "must_be_measured_after_explicit_acquisition"
-byte_size_status = "must_be_measured_after_explicit_acquisition"
-conversion_status = "unverified"
-redistribution_status = "unreviewed_for_weights"
-acquisition_authorized = false
+# No proposed candidates. YOLOX-Tiny moved to the installed manifest after
+# explicit acquisition and checksum measurement.

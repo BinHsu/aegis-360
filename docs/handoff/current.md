@@ -663,6 +663,24 @@ After validation and commit/push, no further conversion experiment can run
 without acquiring the exact proposed checkpoint and isolated dependencies.
 Request explicit authorization rather than downloading implicitly.
 
+The owner authorized acquisition. The official checkpoint is installed and
+verified by `model-manifests/manifest.toml`: 40,755,013 bytes, SHA-256
+`9de513de589ac98bb92d3bca53b5af7b9acfa9b0bacb831f7999d0f7afaee8f0`.
+YOLOX source tag `0.1.1rc0` is fixed at commit
+`e1052df71842031413f6030723c3607b839c80ce`. Python 3.12 and two isolated
+external venvs were used; normal runtime dependencies remain unchanged.
+
+Strict checkpoint load passes and raw output is `(1, 3549, 85)`. Core ML
+default precision fails the frozen gate identically under Torch 2.13 and 2.7
+(max error 1.49157, top-20 17/20). FLOAT32 under Torch 2.7/Core ML Tools 9.0
+passes zero, mid-gray, both gradients and seeded noise; worst max error is
+0.0001833 and every top-20 set agrees 20/20. Evidence is recorded in
+`docs/experiments/yolox-tiny-conversion-equivalence-protocol.md`.
+
+Next implement a shared decode/NMS contract frozen at the upstream demo
+defaults: confidence 0.25 and NMS IoU 0.45. Validate decoded parity on
+generated fixtures before running any benchmark viewport.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

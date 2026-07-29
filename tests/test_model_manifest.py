@@ -19,4 +19,7 @@ class ModelManifestTests(unittest.TestCase):
             ], capture_output=True, text=True)
         self.assertEqual(result.returncode, 1)
         self.assertIn("MISSING apple_yolov3_tiny_fp16_v2", result.stderr)
+        self.assertIn(
+            "MISSING yolox_tiny_coco_upstream_0_1_1rc0", result.stderr
+        )
         self.assertNotIn("http", result.stderr)

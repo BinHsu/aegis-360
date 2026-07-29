@@ -1,6 +1,41 @@
 # YOLOX-Tiny conversion-equivalence protocol
 
-Status: Predeclared protocol; candidate not acquired
+Status: Acquired; generated FLOAT32 raw-equivalence gate passed
+
+## Acquisition and generated-gate result
+
+The owner explicitly authorized acquisition. The official release checkpoint
+is externally stored at the manifest path:
+
+- byte size: 40,755,013;
+- SHA-256:
+  `9de513de589ac98bb92d3bca53b5af7b9acfa9b0bacb831f7999d0f7afaee8f0`;
+- source tag: `0.1.1rc0`;
+- source commit: `e1052df71842031413f6030723c3607b839c80ce`.
+
+Strict checkpoint loading reports zero missing and zero unexpected keys. The
+raw, decode-disabled output shape is `(1, 3549, 85)` and all values are finite.
+
+Core ML Tools 9.0 default precision fails the frozen zero gate under both
+Torch 2.13.0 and the Core ML Tools-tested Torch 2.7.0: maximum absolute error
+1.49157, mean error 0.00423 and top-20 agreement 17/20. This repeatability
+isolates default FP16 precision rather than the Torch-version warning.
+
+Explicit FLOAT32 conversion under Torch 2.7.0 passes all five generated
+fixtures:
+
+| Fixture | Maximum absolute error | Mean absolute error | Top-20 |
+| --- | ---: | ---: | ---: |
+| zeros | 0.0001833 | 0.000000236 | 20/20 |
+| mid-gray | 0.0000768 | 0.000000315 | 20/20 |
+| horizontal gradient | 0.0001125 | 0.000000217 | 20/20 |
+| vertical gradient | 0.0000776 | 0.000000187 | 20/20 |
+| seeded noise | 0.0000522 | 0.000000168 | 20/20 |
+
+The passing external artifact is
+`models/yolox/converted/coremltools-9.0-torch-2.7.0-float32-generated-v2/`
+under `AEGIS_DATA_DIR`; it occupies approximately 81 MB including reports and
+raw JSON. It is not committed or cleared for redistribution.
 
 ## Objective
 

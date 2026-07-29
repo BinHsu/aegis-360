@@ -563,10 +563,10 @@ report. Synthetic pass/fail fixtures are covered. Remaining progress requires
 the upstream checkpoint and isolated conversion dependencies, so explicit
 asset-acquisition authorization is now the next boundary.
 
-The proposed asset is now recorded separately in
-`model-manifests/candidates.toml` without invented byte size or checksum, and
-`docs/experiments/yolox-tiny-conversion-equivalence-protocol.md` freezes tensor,
-decoded-output, memory and threshold gates. The installed model verifier must
-not consume candidate records. The next state-changing step is explicit
-YOLOX-Tiny acquisition; until authorized, safe work is limited to validating
-the proposal and preparing the isolated conversion harness contract.
+The owner authorized and the official YOLOX-Tiny checkpoint was acquired,
+checksummed and added to the installed manifest. Strict load passes. Default
+Core ML precision fails the frozen raw gate identically under Torch 2.13 and
+2.7, while explicit FLOAT32 under Torch 2.7/Core ML Tools 9.0 passes all five
+generated fixtures with maximum error at most 0.0001833 and top-20 agreement
+20/20. Next freeze and validate the shared decoder at confidence 0.25 and NMS
+IoU 0.45 before any real benchmark inference.

@@ -28,3 +28,26 @@ upstream_license_finding = "Darknet upstream LICENSE states that Darknet is publ
 redistribution_policy = "Local POC use only; do not commit or redistribute the Apple-hosted model until its distribution terms are independently cleared."
 runtime = "Swift + Vision/Core ML; no PyTorch, Ultralytics, Core ML Tools, ONNX Runtime, or OpenCV required."
 host_validation = "MLModel.compileModel and MLModel(contentsOf:) passed on 2026-07-29; full Xcode/coremlcompiler CLI is not installed."
+
+[[model]]
+id = "yolox_tiny_coco_upstream_0_1_1rc0"
+purpose = "Conversion-equivalence candidate for replacement 416x416 person/bicycle detection."
+vendor = "Megvii-BaseDetection/YOLOX official GitHub release"
+filename = "yolox_tiny.pth"
+relative_path = "models/yolox/upstream-0.1.1rc0/yolox_tiny.pth"
+source_page = "https://github.com/Megvii-BaseDetection/YOLOX"
+direct_url = "https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_tiny.pth"
+accessed_date = "2026-07-29"
+sha256 = "9de513de589ac98bb92d3bca53b5af7b9acfa9b0bacb831f7999d0f7afaee8f0"
+byte_size = 40755013
+format = "PyTorch checkpoint (.pth)"
+input_contract = "Upstream-reported 416x416 RGB preprocessing; exact tensor contract pending isolated reference validation."
+output_contract = "Raw YOLOX tensors and decoded COCO detections; exact shapes pending isolated reference validation."
+labels_required_for_poc = ["person", "bicycle"]
+upstream_release = "0.1.1rc0"
+upstream_code_license_spdx = "Apache-2.0"
+upstream_license_url = "https://github.com/Megvii-BaseDetection/YOLOX/blob/main/LICENSE"
+weights_license_finding = "Official release asset from the Apache-2.0 upstream project; redistribution remains separately unreviewed."
+redistribution_policy = "Local POC and conversion testing only; do not commit or redistribute the checkpoint or derivatives until independently cleared."
+runtime = "Not a runtime dependency. Isolated PyTorch/YOLOX reference and Core ML conversion only."
+host_validation = "Explicitly acquired 2026-07-29. YOLOX tag 0.1.1rc0 commit e1052df71842031413f6030723c3607b839c80ce; strict checkpoint load passed with no missing/unexpected keys. Torch 2.7.0/Core ML Tools 9.0 FLOAT32 raw-head conversion passed five generated fixtures."
