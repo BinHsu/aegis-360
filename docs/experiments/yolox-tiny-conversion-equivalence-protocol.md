@@ -53,6 +53,13 @@ threshold declared before real images:
 A failure is a conversion failure. Do not relax thresholds after inspecting
 benchmark footage.
 
+The vendor-neutral comparison boundary is implemented in
+`src/aegis360/detector_equivalence.py` with CLI
+`scripts/compare_detector_equivalence.py`. Reference and candidate backends
+must export ordered raw tensors plus decoded detections to its JSON contract.
+The checker fails closed on shape, finite-value, class, score or box errors and
+emits a privacy-safe report. It does not load a model or perform NMS itself.
+
 ## Runtime gate
 
 Run twenty viewports in one compile/load process and record:

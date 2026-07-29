@@ -556,6 +556,13 @@ ML inference. No asset has been acquired. Next prepare a manifest proposal and
 a generated-input numerical-equivalence protocol; acquisition still requires
 explicit authorization.
 
+The vendor-neutral equivalence checker is now executable. It compares ordered
+raw tensor shape/values and decoded class, score and box IoU against the frozen
+thresholds, fails closed on invalid numeric output, and writes a path-free
+report. Synthetic pass/fail fixtures are covered. Remaining progress requires
+the upstream checkpoint and isolated conversion dependencies, so explicit
+asset-acquisition authorization is now the next boundary.
+
 The proposed asset is now recorded separately in
 `model-manifests/candidates.toml` without invented byte size or checksum, and
 `docs/experiments/yolox-tiny-conversion-equivalence-protocol.md` freezes tensor,

@@ -652,6 +652,17 @@ Run repository tests and handoff validation, then commit/push this research
 checkpoint. The next state-changing step—downloading the exact official
 YOLOX-Tiny release asset—requires explicit owner authorization.
 
+Before reaching that boundary, the vendor-neutral comparison contract was
+implemented in `src/aegis360/detector_equivalence.py` and
+`scripts/compare_detector_equivalence.py`. It enforces the frozen raw tensor
+and decoded class/score/box thresholds, fails closed on malformed/non-finite
+data and emits no source path or pixels. Synthetic tests cover pass, numeric
+failure, class mismatch, invalid shape, NaN and invalid boxes.
+
+After validation and commit/push, no further conversion experiment can run
+without acquiring the exact proposed checkpoint and isolated dependencies.
+Request explicit authorization rather than downloading implicitly.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

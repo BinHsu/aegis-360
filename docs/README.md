@@ -41,6 +41,7 @@ not invent a resolution.
 | Add media or change evaluation | ADR 0007 and `benchmarks/README.md` when present |
 | Choose or replace a model backend | ADR 0008 |
 | Research the next semantic detector after YOLOv3 Tiny | `docs/research/replacement-semantic-detector-2026-07-29.md`, then ADR 0008 and the model manifest |
+| Validate converted detector numerical equivalence | `docs/experiments/yolox-tiny-conversion-equivalence-protocol.md`, `scripts/compare_detector_equivalence.py` |
 | Locate or verify external model weights | `model-manifests/README.md`, then `model-manifests/manifest.toml` |
 | Inspect proposed, not-yet-acquired model assets | `model-manifests/candidates.toml`; never pass it to the installed-asset verifier |
 | Make a claim about GoPro, Insta360, prior art, or licensing | Relevant material in `docs/research/` when present; do not rely on README prose |
