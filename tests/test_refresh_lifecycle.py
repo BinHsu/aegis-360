@@ -114,6 +114,42 @@ class RefreshLifecycleTests(unittest.TestCase):
                 policy=self.policy,
             )
 
+    def test_trace_terminates_after_bound_and_cannot_revive(self):
+        events = [
+            self.row(1, "compatible_not_identity_verified"),
+            self.row(2, "no_compatible_detection"),
+            self.row(3, "no_compatible_detection"),
+            self.row(4, "no_compatible_detection"),
+        ]
+        trace = build_refresh_lifecycle_trace(
+            {
+                "schema_version": "aegis360.detector-refresh-trace.v1",
+                "source_id": "fixture",
+                "events": events,
+            },
+            {1.0: .8},
+            policy=self.policy,
+        )
+        self.assertEqual(
+            [row["phase"] for row in trace["states"]],
+            ["active", "missing_grace", "missing_grace", "terminated"],
+        )
+        self.assertEqual(
+            trace["states"][-1]["termination_reason"], "missing_timeout"
+        )
+        with self.assertRaisesRegex(ValueError, "terminated"):
+            build_refresh_lifecycle_trace(
+                {
+                    "schema_version": "aegis360.detector-refresh-trace.v1",
+                    "source_id": "fixture",
+                    "events": events + [
+                        self.row(5, "compatible_not_identity_verified")
+                    ],
+                },
+                {1.0: .8, 5.0: .9},
+                policy=self.policy,
+            )
+
     @staticmethod
     def row(timestamp, outcome):
         return {

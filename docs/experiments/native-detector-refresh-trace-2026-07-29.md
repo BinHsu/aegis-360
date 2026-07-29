@@ -82,6 +82,8 @@ missing-grace recovery while Vision continuously tracks the same visible
 person. A wrong-class detection never resets or invalidates that person track.
 Operational continuity still cannot establish identity or editorial
 persistence. The lifecycle builder and its CLI now make that state transition
-reproducible. Next add a bounded multi-refresh fixture where the target remains
-absent long enough to terminate, then verify that a later compatible detection
-cannot revive the terminated track without explicit new-track creation.
+reproducible. A separate synthetic policy gate records
+active→grace(1)→grace(2)→terminated after three consecutive misses under the
+default two-refresh grace. A later compatible event raises instead of reviving
+the terminated track; explicit new-track creation is required. This timeout
+case is policy evidence, not a real-media observation.

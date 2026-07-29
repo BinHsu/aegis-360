@@ -602,6 +602,14 @@ terminate and confirm the existing policy refuses later revival. This may use
 a synthetic privacy-safe refresh fixture; do not claim it as real-media
 evidence. If using real media, visually audit the target state first.
 
+That synthetic fixture now passes in `tests/test_refresh_lifecycle.py`: with
+two allowed missing refreshes, the third miss terminates with
+`missing_timeout`, and a later compatible event raises rather than reviving
+the track. This is policy evidence only. Next return to detector coverage:
+measure whether the indexed YOLOv3 Tiny model can seed intended benchmark
+subjects (especially bicycles) at a bounded sampling cadence. Do not download
+or select a replacement model implicitly; use the model manifest process.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

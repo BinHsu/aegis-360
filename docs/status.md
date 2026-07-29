@@ -533,5 +533,9 @@ materializes the observed compatible→missing→compatible state transition.
 That trace now exists via `scripts/build_refresh_lifecycle_trace.py`: real
 tracker confidence produces active at 106, decayed missing grace at 107, and
 active recovery at 108. Every row denies identity verification and editorial
-persistence. The next bounded gate is timeout behavior across enough real or
-fixture refresh misses, including proof that terminated tracks cannot revive.
+persistence. The synthetic timeout fixture now passes: two misses remain in
+grace, the third terminates with `missing_timeout`, and a later compatible
+refresh cannot revive that track. The next perception gate is broader detector
+coverage: establish whether the current tiny detector can seed the benchmark's
+intended first-person subjects, especially bicycles, or whether a
+manifest-indexed replacement model is required.
