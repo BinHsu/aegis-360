@@ -610,6 +610,23 @@ measure whether the indexed YOLOv3 Tiny model can seed intended benchmark
 subjects (especially bicycles) at a bounded sampling cadence. Do not download
 or select a replacement model implicitly; use the model manifest process.
 
+That compile-once probe now exists as
+`scripts/run_semantic_detector_batch.sh`, with five fixed timestamps per
+benchmark under `benchmarks/semantic-gate-timestamps/`. It processes four
+equatorial viewports per timestamp. Results: Bellpuig 2/5 person and 0/5
+bicycle; Old Ghost Road 2/5 person and 0/5 bicycle; Skiing 1/5 person, one
+`skis`, and 0/5 bicycle. The Old Ghost Road host run took 14.95 seconds with
+235,945,984-byte maximum RSS.
+
+The initial Skiing run was invalid because FFmpeg consumed the timestamp
+loop's stdin and silently skipped the last sample. The corrected runner uses
+a dedicated FD, `ffmpeg -nostdin`, and exact processed-count validation; its
+Skiing v2 result contains 5/5 samples. Tests lock this contract.
+
+Next compare manifest-eligible replacement detector candidates using primary
+model documentation and Apple Silicon feasibility. Do not download weights
+until the candidate, license, checksum source and intended gate are recorded.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

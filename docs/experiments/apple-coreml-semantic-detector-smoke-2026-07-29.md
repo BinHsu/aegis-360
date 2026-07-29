@@ -2,6 +2,35 @@
 
 Status: Natural-image person seed observed; bicycle and recall gates not passed
 
+## Three-benchmark fixed coverage probe
+
+`scripts/run_semantic_detector_batch.sh` compiles the indexed Core ML/Vision
+detector once per source and processes five fixed timestamps with four
+equatorial 100-degree viewports each. The fixed samples are duration
+distributed coverage probes, not recall ground truth.
+
+| Source | Samples with `person` | Samples with `bicycle` | Other relevant labels |
+| --- | ---: | ---: | --- |
+| Bellpuig on-board | 2/5 | 0/5 | none |
+| Old Ghost Road | 2/5 | 0/5 | none |
+| Skiing May 2019 | 1/5 | 0/5 | `skis`: 1 |
+
+The Old Ghost Road host run took 14.95 seconds for twenty viewports and had
+maximum RSS 235,945,984 bytes. This is a bounded M4/16 GB-friendly probe, not a
+sustained throughput result.
+
+The first Skiing run exposed stdin interference: a child process consumed the
+last timestamp while the shell loop returned success. The runner now reads
+timestamps from a dedicated file descriptor, invokes FFmpeg with `-nostdin`,
+and fails closed unless processed and declared sample counts match. The
+corrected run processes all 5/5 timestamps.
+
+These results reinforce the narrow conclusion: YOLOv3 Tiny is usable for the
+native pipeline contract and occasional person seeds, but it has not shown
+adequate coverage for a generic first-person sports auto-director. In
+particular, zero bicycle detections across these probes prevent treating it as
+the intended mountain-bike subject detector.
+
 ## Question
 
 Does the indexed YOLOv3 Tiny FP16 model produce plausible person or bicycle

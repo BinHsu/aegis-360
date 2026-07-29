@@ -1,0 +1,6 @@
+# Five fixed duration-distributed coverage probes; not recall ground truth.
+62
+185
+308
+431
+554

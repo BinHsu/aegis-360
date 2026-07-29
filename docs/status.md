@@ -539,3 +539,11 @@ refresh cannot revive that track. The next perception gate is broader detector
 coverage: establish whether the current tiny detector can seed the benchmark's
 intended first-person subjects, especially bicycles, or whether a
 manifest-indexed replacement model is required.
+
+The compile-once fixed-five coverage probe now spans all three benchmarks.
+Person appears at 2/5 Bellpuig, 2/5 Old Ghost Road and 1/5 Skiing timestamps;
+Skiing also yields one `skis` label. Bicycle remains 0/5 for every source.
+YOLOv3 Tiny therefore remains a pipeline-contract and occasional person-seed
+model, not an accepted generic sports-subject detector. Next research a
+replacement candidate under ADR 0008 and the model-manifest rules before any
+asset acquisition.

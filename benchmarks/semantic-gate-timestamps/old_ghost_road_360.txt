@@ -1,0 +1,6 @@
+# Existing fixed-five semantic coverage probes; not recall ground truth.
+15
+60
+105
+150
+210
