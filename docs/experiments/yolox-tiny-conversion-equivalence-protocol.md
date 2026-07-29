@@ -75,6 +75,37 @@ and are class-confusion false positives. The temporary frame was deleted.
 Conclusion: conversion and shared decoding are numerically valid, but this
 key 360 viewport provides no bicycle evidence at either profile.
 
+## Three-benchmark Core ML coverage
+
+`scripts/run_yolox_coreml_coverage.py` loads the FLOAT32 package once per
+source and processes the same five timestamps and four viewports as the prior
+YOLOv3 Tiny probe. Acceptance and official-evaluation diagnostic profiles are
+reported separately.
+
+| Source | Acceptance person | Acceptance bicycle | Acceptance target-class viewports | Diagnostic person/bicycle |
+| --- | ---: | ---: | ---: | ---: |
+| Bellpuig | 7 | 0 | 5/20 | 135 / 0 |
+| Old Ghost Road | 1 | 1 | 2/20 | 15 / 2 |
+| Skiing | 7 | 0 | 4/20 | 68 / 0 |
+
+The one accepted bicycle occurs at Old Ghost Road 60 seconds, yaw 0, score
+0.29753. Its normalized box is approximately `(0.5173, 0.5632, 0.2062,
+0.4342)`. Agent visual inspection confirms that it covers the bicycle frame
+and front wheel on the hut porch, with some rider/stair overlap. PyTorch/Core
+ML box IoU is 0.999999 and score difference is 0.00000335. The temporary frame
+was deleted after inspection.
+
+Core ML inference for twenty viewports took 0.35–0.41 seconds per source.
+End-to-end elapsed including high-resolution seek/reprojection was 7.84–12.70
+seconds. Maximum RSS was 391,888,896–406,142,976 bytes. These are bounded
+coverage measurements, not sustained thermal benchmarks.
+
+The diagnostic profile returns many low-score person candidates and cannot be
+used as accepted recall evidence. The acceptance result establishes one
+plausible bicycle seed where the old model produced zero across its fixed
+probe; it does not establish broad bicycle recall or reliable subject
+identity.
+
 ## Objective
 
 Determine whether the official YOLOX-Tiny COCO checkpoint can become a

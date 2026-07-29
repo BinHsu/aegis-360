@@ -709,6 +709,23 @@ source 0.3 current preprocessing. Emit separate acceptance (0.25/0.45) and
 diagnostic official-evaluation (0.01/0.65) summaries. Never merge the profiles
 or reinterpret diagnostic candidates as accepted detections.
 
+The load-once runner is `scripts/run_yolox_coreml_coverage.py` and all three
+fixed-five probes are complete. Acceptance counts across twenty viewports:
+Bellpuig 7 person/0 bicycle; Old Ghost Road 1 person/1 bicycle; Skiing 7
+person/0 bicycle. The accepted Old Ghost Road bicycle is at 60 seconds yaw 0,
+score 0.29753, normalized box approximately
+`(0.5173, 0.5632, 0.2062, 0.4342)`. Visual inspection confirms the box covers
+the bicycle frame/front wheel on the hut porch. The temporary frame was
+deleted.
+
+Core ML inference is 0.35–0.41 seconds per twenty viewports, end-to-end
+elapsed 7.84–12.70 seconds, and maximum RSS 391,888,896–406,142,976 bytes.
+Diagnostic-profile person counts are high and cannot be treated as accepted
+recall. Next adapt the Core ML-only decoded rows to the existing semantic
+detector contract and seed one bounded Vision bicycle track from the confirmed
+60-second box. Preserve class as bicycle but do not claim persistent identity
+or main-character status.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

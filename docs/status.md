@@ -588,3 +588,13 @@ bikes. PyTorch/Core ML parity remains valid, so conversion is not the cause.
 Next run a bounded fixed-five Core ML-only coverage probe using the validated
 0.3/current preprocessing and report acceptance and diagnostic profiles
 separately.
+
+The load-once fixed-five probe is complete. Acceptance counts are Bellpuig
+7 person/0 bicycle, Old Ghost Road 1 person/1 bicycle, and Skiing 7 person/0
+bicycle across twenty viewports each. The Old Ghost Road bicycle at 60 seconds
+yaw 0 was visually confirmed on the actual bike frame/wheel. Core ML inference
+is only 0.35–0.41 seconds per twenty viewports with roughly 392–406 MB maximum
+RSS; source decode/reprojection dominates the 7.84–12.70 second total. This is
+the first valid bicycle seed but not broad recall. Next integrate the
+Core ML-only output into the existing semantic detector adapter and seed a
+bounded Vision track from the confirmed bicycle box.
