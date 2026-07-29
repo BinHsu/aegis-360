@@ -636,3 +636,12 @@ accepts a person but no bicycle, so class separation holds and the bicycle
 track remains in bounded grace without identity or persistence promotion.
 Core ML inference for all 16 frames is 0.287 seconds, total runtime 5.66
 seconds, and maximum RSS about 394 MB.
+
+An eight-second extension returns 32/32 Vision boxes but demonstrates why box
+continuity is not identity. Intermittent bicycle refreshes recover the
+lifecycle through 65.0; misses at 65.25/65.50/65.75 terminate the original
+track. Eight later detector events are rejected from that lifecycle, including
+a bicycle at 67.0 that would otherwise revive it. Visual inspection shows
+multiple stationary bicycles and crossing people in the region, so the old
+Vision box is identity-ambiguous. The fail-closed termination is the correct
+planner boundary.

@@ -802,6 +802,32 @@ observe whether the bicycle legitimately recovers or terminates after the
 grace bound. Use a new external output directory and preserve the existing
 four-second track and v2 refresh sequence.
 
+The extension is complete. Vision artifact:
+`outputs/vision-tracking-gate/old-ghost-road-t60-yaw0-yolox-bicycle-8s-v2/`.
+It returns 32/32 boxes, zero lost/error and the same 2.09-degree maximum
+center step, but this remains region continuity only.
+
+Detector/lifecycle artifact:
+`outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-8s-4fps-v3/`.
+Refreshes recover intermittently through 65.0 seconds. Three consecutive
+bicycle misses at 65.25, 65.50 and 65.75 terminate the original lifecycle.
+The full detector trace retains the remaining eight events, but metrics mark
+them `events_after_termination_rejected`; a bicycle at 67.0 cannot revive the
+old track.
+
+Agent inspection of 64.75/65.0/65.75/67.0 viewports shows multiple stationary
+bicycles and people crossing or occluding the region. The old Vision box is
+therefore identity-ambiguous. The temporary contact sheet was deleted.
+
+`scripts/run_yolox_refresh_sequence.py` now persists the full detector trace,
+the lifecycle only through its terminal state, and an explicit count of later
+events rejected from that lifecycle. It never advances a terminated track.
+
+Next adapt the terminal lifecycle into candidate-sequence input: the bicycle
+candidate may contribute only while active or in bounded grace and must be
+removed at termination. A later bicycle detection must acquire a new track ID
+rather than reuse `bicycle-yolox-0001`.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

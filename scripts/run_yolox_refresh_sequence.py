@@ -181,11 +181,35 @@ def main() -> int:
         for row in observations
         if row.get("state") == "tracked" and row.get("confidence") is not None
     }
-    lifecycle = build_refresh_lifecycle_trace(
-        refresh,
-        confidences,
-        policy=TrackingPolicy(missing_grace_frames=2, confidence_decay=.75),
+    tracking_policy = TrackingPolicy(
+        missing_grace_frames=2, confidence_decay=.75
     )
+    lifecycle_status = "all_refresh_events_consumed"
+    lifecycle_consumed_events = len(refresh["events"])
+    try:
+        lifecycle = build_refresh_lifecycle_trace(
+            refresh, confidences, policy=tracking_policy,
+        )
+    except ValueError as error:
+        if str(error) != "terminated tracks cannot be advanced":
+            raise
+        lifecycle = None
+        for event_count in range(1, len(refresh["events"]) + 1):
+            prefix = dict(refresh)
+            prefix["events"] = refresh["events"][:event_count]
+            try:
+                candidate = build_refresh_lifecycle_trace(
+                    prefix, confidences, policy=tracking_policy,
+                )
+            except ValueError as prefix_error:
+                if str(prefix_error) != "terminated tracks cannot be advanced":
+                    raise
+                break
+            lifecycle = candidate
+            lifecycle_consumed_events = event_count
+        if lifecycle is None or lifecycle["states"][-1]["phase"] != "terminated":
+            raise RuntimeError("failed to materialize terminated lifecycle")
+        lifecycle_status = "events_after_termination_rejected"
     elapsed_seconds = time.monotonic() - started
     metrics = {
         "schema_version": "aegis360.yolox-refresh-sequence-metrics.v1",
@@ -195,6 +219,13 @@ def main() -> int:
         "preprocessing": "yolox_0.3_current_bgr_0_255",
         "sample_count": len(counts),
         "samples": counts,
+        "lifecycle": {
+            "status": lifecycle_status,
+            "consumed_event_count": lifecycle_consumed_events,
+            "rejected_after_termination_count": (
+                len(refresh["events"]) - lifecycle_consumed_events
+            ),
+        },
         "performance": {
             "model_load_seconds": load_seconds,
             "coreml_inference_seconds": inference_seconds,

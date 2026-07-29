@@ -18,6 +18,8 @@ class YoloXRefreshSequenceContractTests(unittest.TestCase):
         self.assertIn('"rejected_target_geometry"', script)
         self.assertIn('"rejected_max_boundary_overflow_pixels"', script)
         self.assertIn("except ValueError:", script)
+        self.assertIn('"events_after_termination_rejected"', script)
+        self.assertIn('"rejected_after_termination_count"', script)
         self.assertIn('"contains_pixels": False', script)
         self.assertIn('"contains_source_path": False', script)
         self.assertIn("refusing to overwrite output directory", script)

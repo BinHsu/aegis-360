@@ -171,6 +171,21 @@ Core ML inference takes 0.287 seconds for all 16 frames; end-to-end time is
 not yet the production detector schedule. Privacy-safe durable evidence is
 under `outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-4fps-v2/`.
 
+The same seed was extended to 32 Vision observations over eight seconds.
+Vision returns 32/32 boxes, but that does not establish identity. Detector
+refreshes recover intermittently through 65.0 seconds, then three consecutive
+bicycle misses at 65.25, 65.50 and 65.75 terminate the original lifecycle.
+The remaining eight refresh events are retained in the detector trace but
+explicitly rejected by the terminated lifecycle. A bicycle detection at 67.0
+therefore cannot revive the old track.
+
+Agent inspection of 64.75, 65.0, 65.75 and 67.0 viewports shows several
+stationary bicycles and people crossing/occluding the same region. This makes
+the later Vision box identity-ambiguous and supports termination rather than
+silent reassignment. The temporary contact sheet was deleted. Durable
+privacy-safe evidence is under
+`outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-8s-4fps-v3/`.
+
 ## Objective
 
 Determine whether the official YOLOX-Tiny COCO checkpoint can become a
