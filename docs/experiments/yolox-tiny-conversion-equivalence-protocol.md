@@ -186,6 +186,19 @@ silent reassignment. The temporary contact sheet was deleted. Durable
 privacy-safe evidence is under
 `outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-8s-4fps-v3/`.
 
+A second eight-second sequence uses the previously reviewed 105-second,
+yaw=-90 person seed. Vision returns 32/32 boxes but reaches a 23.63-degree
+maximum center step, so continuity is not accepted as identity. YOLOX has 12
+initial misses, two compatible person refreshes at 108.0/108.25, then
+terminates after misses through 109.0. The isolated 109.25 person detection
+does not pass the proposed two-confirmation post-terminal acquisition gate.
+
+Visual inspection of 108.0/108.25/109.0/109.25 shows two people throughout.
+Consecutive semantic detections can therefore bootstrap a fresh nonidentity
+candidate region, but cannot identify which person persists. The temporary
+contact sheet was deleted. Evidence is under
+`outputs/yolox-refresh-sequence/old-ghost-road-t105-yawm90-person-8s-4fps-v4/`.
+
 ## Objective
 
 Determine whether the official YOLOX-Tiny COCO checkpoint can become a

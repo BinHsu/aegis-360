@@ -184,32 +184,53 @@ def main() -> int:
     tracking_policy = TrackingPolicy(
         missing_grace_frames=2, confidence_decay=.75
     )
-    lifecycle_status = "all_refresh_events_consumed"
-    lifecycle_consumed_events = len(refresh["events"])
-    try:
-        lifecycle = build_refresh_lifecycle_trace(
-            refresh, confidences, policy=tracking_policy,
-        )
-    except ValueError as error:
-        if str(error) != "terminated tracks cannot be advanced":
-            raise
-        lifecycle = None
-        for event_count in range(1, len(refresh["events"]) + 1):
-            prefix = dict(refresh)
-            prefix["events"] = refresh["events"][:event_count]
-            try:
-                candidate = build_refresh_lifecycle_trace(
-                    prefix, confidences, policy=tracking_policy,
-                )
-            except ValueError as prefix_error:
-                if str(prefix_error) != "terminated tracks cannot be advanced":
-                    raise
-                break
-            lifecycle = candidate
-            lifecycle_consumed_events = event_count
-        if lifecycle is None or lifecycle["states"][-1]["phase"] != "terminated":
-            raise RuntimeError("failed to materialize terminated lifecycle")
-        lifecycle_status = "events_after_termination_rejected"
+    first_compatible_index = next((
+        index for index, row in enumerate(refresh["events"])
+        if row["outcome"] == "compatible_not_identity_verified"
+    ), None)
+    rejected_before_start = (
+        len(refresh["events"])
+        if first_compatible_index is None else first_compatible_index
+    )
+    lifecycle = None
+    lifecycle_status = "no_compatible_lifecycle_start"
+    lifecycle_consumed_events = 0
+    rejected_after_termination = 0
+    if first_compatible_index is not None:
+        lifecycle_input = dict(refresh)
+        lifecycle_input["events"] = refresh["events"][first_compatible_index:]
+        lifecycle_status = "all_lifecycle_events_consumed"
+        lifecycle_consumed_events = len(lifecycle_input["events"])
+        try:
+            lifecycle = build_refresh_lifecycle_trace(
+                lifecycle_input, confidences, policy=tracking_policy,
+            )
+        except ValueError as error:
+            if str(error) != "terminated tracks cannot be advanced":
+                raise
+            lifecycle = None
+            for event_count in range(1, len(lifecycle_input["events"]) + 1):
+                prefix = dict(lifecycle_input)
+                prefix["events"] = lifecycle_input["events"][:event_count]
+                try:
+                    candidate = build_refresh_lifecycle_trace(
+                        prefix, confidences, policy=tracking_policy,
+                    )
+                except ValueError as prefix_error:
+                    if str(prefix_error) != "terminated tracks cannot be advanced":
+                        raise
+                    break
+                lifecycle = candidate
+                lifecycle_consumed_events = event_count
+            if (
+                lifecycle is None
+                or lifecycle["states"][-1]["phase"] != "terminated"
+            ):
+                raise RuntimeError("failed to materialize terminated lifecycle")
+            lifecycle_status = "events_after_termination_rejected"
+            rejected_after_termination = (
+                len(lifecycle_input["events"]) - lifecycle_consumed_events
+            )
     elapsed_seconds = time.monotonic() - started
     metrics = {
         "schema_version": "aegis360.yolox-refresh-sequence-metrics.v1",
@@ -221,10 +242,9 @@ def main() -> int:
         "samples": counts,
         "lifecycle": {
             "status": lifecycle_status,
+            "rejected_before_start_count": rejected_before_start,
             "consumed_event_count": lifecycle_consumed_events,
-            "rejected_after_termination_count": (
-                len(refresh["events"]) - lifecycle_consumed_events
-            ),
+            "rejected_after_termination_count": rejected_after_termination,
         },
         "performance": {
             "model_load_seconds": load_seconds,
@@ -244,9 +264,10 @@ def main() -> int:
     (args.output_directory / "refresh-trace.json").write_text(
         dumps_refresh_trace(refresh), encoding="utf-8"
     )
-    (args.output_directory / "refresh-lifecycle.json").write_text(
-        dumps_refresh_lifecycle_trace(lifecycle), encoding="utf-8"
-    )
+    if lifecycle is not None:
+        (args.output_directory / "refresh-lifecycle.json").write_text(
+            dumps_refresh_lifecycle_trace(lifecycle), encoding="utf-8"
+        )
     (args.output_directory / "metrics.json").write_text(
         json.dumps(metrics, allow_nan=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",

@@ -874,6 +874,33 @@ No `bicycle-yolox-0002` is acquired. This is a proposed threshold, not an ADR.
 Next exercise the same two-confirmation policy on at least one additional
 person or bicycle sequence before deciding whether to accept or revise it.
 
+The second sequence is complete:
+
+- Vision:
+  `outputs/vision-tracking-gate/old-ghost-road-t105-yawm90-person-8s-v4/`
+- YOLOX refresh/lifecycle/acquisition:
+  `outputs/yolox-refresh-sequence/old-ghost-road-t105-yawm90-person-8s-4fps-v4/`
+
+Vision returns 32/32 boxes but has a 23.63-degree maximum center step. YOLOX
+rejects 12 events before the first compatible lifecycle start, accepts
+108.0/108.25, and terminates after three misses at 109.0. The 109.25 person is
+isolated, so `semantic-person-0002` is not acquired. Fifteen later events are
+rejected from the terminated lifecycle.
+
+Agent inspection of 108.0/108.25/109.0/109.25 shows two people in every frame.
+Thus two confirmations can only establish a fresh semantic candidate region,
+not identity. The contact sheet was deleted. Keep the acquisition policy
+proposed; do not promote it to an ADR from these two sequences.
+
+`scripts/run_yolox_refresh_sequence.py` now always preserves the full detector
+trace. It explicitly rejects events before the first compatible lifecycle
+start, writes no invented lifecycle when none exists, and separately counts
+events rejected after termination.
+
+Next evaluate whether the acquisition count should be measured in detector
+refreshes or elapsed time. The current integer count is deterministic but its
+real-time meaning changes with detector cadence.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

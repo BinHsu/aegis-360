@@ -668,3 +668,11 @@ compatible detections and always issues a fresh ID. On the real artifact,
 `bicycle-yolox-0002` is not acquired and the planner remains on forward
 context. The privacy-safe result is `new-track-acquisition-v1.json` beside the
 eight-second artifact. This threshold remains experimental, not an ADR.
+
+The second real sequence reaches the same conservative result. The
+105-second isolated-person track later drifts by up to 23.63 degrees; YOLOX
+starts a lifecycle only after two compatible detections at 108.0/108.25,
+terminates it at 109.0, and sees only one post-terminal person at 109.25.
+No fresh track is acquired. Visual review shows two people in all four sampled
+frames, confirming that repeated class/geometry evidence remains nonidentity.
+The two-confirmation threshold therefore stays proposed.
