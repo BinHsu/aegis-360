@@ -15,6 +15,10 @@ class BuildYoloXRefreshTraceContractTests(unittest.TestCase):
         self.assertIn('report.get("preprocessing") != "current"', script)
         self.assertIn("no tracker observation", script)
         self.assertIn("refusing to overwrite output", script)
+        self.assertIn('choices=(0.0, 1.0)', script)
+        self.assertIn("boundary_tolerance_pixels=args.boundary_tolerance_pixels", script)
+        self.assertIn('"one-source-pixel-v1"', script)
+        self.assertIn('"strict-v1"', script)
 
 
 if __name__ == "__main__":

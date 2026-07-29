@@ -1,3 +1,4 @@
+import math
 import sys
 from pathlib import Path
 import unittest
@@ -27,6 +28,49 @@ class YoloXSeedAdapterTests(unittest.TestCase):
         ):
             with self.assertRaises(ValueError):
                 vision_seed_box(detection)
+
+    def test_explicit_one_pixel_tolerance_clamps_only_subpixel_overflow(self):
+        detection = {
+            "class_id": 1,
+            "score": .7,
+            "box": [.5, .55, .2, .452],
+        }
+        with self.assertRaises(ValueError):
+            vision_seed_box(detection)
+        bounded = vision_seed_box(
+            detection,
+            viewport_width=416,
+            viewport_height=416,
+            boundary_tolerance_pixels=1,
+        )
+        self.assertEqual(bounded["y"], 0)
+        self.assertAlmostEqual(bounded["height"], .45)
+
+        detection["box"] = [.5, .55, .2, .453]
+        with self.assertRaises(ValueError):
+            vision_seed_box(
+                detection,
+                viewport_width=416,
+                viewport_height=416,
+                boundary_tolerance_pixels=1,
+            )
+
+    def test_boundary_tolerance_requires_bounded_policy_and_dimensions(self):
+        detection = {
+            "class_id": 1,
+            "score": .7,
+            "box": [.4, .4, .2, .2],
+        }
+        for tolerance in (-.1, 1.1, math.nan):
+            with self.assertRaises(ValueError):
+                vision_seed_box(
+                    detection,
+                    viewport_width=416,
+                    viewport_height=416,
+                    boundary_tolerance_pixels=tolerance,
+                )
+        with self.assertRaises(ValueError):
+            vision_seed_box(detection, boundary_tolerance_pixels=1)
 
     def test_refresh_filters_person_before_bicycle_geometry(self):
         event = yolox_refresh_event(

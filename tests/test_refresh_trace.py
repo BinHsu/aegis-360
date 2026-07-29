@@ -37,6 +37,7 @@ class RefreshTraceTests(unittest.TestCase):
             row["editorial_persistence_allowed"]
             for row in document["events"]
         ))
+        self.assertEqual(document["geometry_policy"], "strict-v1")
         serialized = dumps_refresh_trace(document)
         json.loads(serialized)
         self.assertNotIn("/Users/", serialized)
@@ -45,6 +46,23 @@ class RefreshTraceTests(unittest.TestCase):
         event = RefreshEvent(1, "track", "person", 0, 0, ())
         with self.assertRaises(ValueError):
             build_refresh_trace((event, event), source_id="source")
+
+    def test_geometry_policy_is_closed_and_explicit(self):
+        event = RefreshEvent(1, "track", "person", 0, 0, ())
+        document = build_refresh_trace(
+            (event,),
+            source_id="source",
+            geometry_policy="one-source-pixel-v1",
+        )
+        self.assertEqual(
+            document["geometry_policy"], "one-source-pixel-v1"
+        )
+        with self.assertRaises(ValueError):
+            build_refresh_trace(
+                (event,),
+                source_id="source",
+                geometry_policy="clip-whatever",
+            )
 
 
 if __name__ == "__main__":

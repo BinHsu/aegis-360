@@ -41,6 +41,13 @@ def main() -> int:
     parser.add_argument("--horizontal-fov-degrees", type=float, required=True)
     parser.add_argument("--width", type=int, required=True)
     parser.add_argument("--height", type=int, required=True)
+    parser.add_argument(
+        "--boundary-tolerance-pixels",
+        type=float,
+        choices=(0.0, 1.0),
+        default=0.0,
+        help="explicit version-1 edge policy; strict zero remains the default",
+    )
     parser.add_argument("--report", type=report_arg, action="append", required=True)
     args = parser.parse_args()
     if args.output_json.exists():
@@ -71,8 +78,20 @@ def main() -> int:
             viewport_pitch=0,
             horizontal_fov=math.radians(args.horizontal_fov_degrees),
             aspect_ratio=args.width / args.height,
+            viewport_width=args.width,
+            viewport_height=args.height,
+            boundary_tolerance_pixels=args.boundary_tolerance_pixels,
         ))
-    document = build_refresh_trace(tuple(events), source_id=args.source_id)
+    geometry_policy = (
+        "one-source-pixel-v1"
+        if args.boundary_tolerance_pixels == 1
+        else "strict-v1"
+    )
+    document = build_refresh_trace(
+        tuple(events),
+        source_id=args.source_id,
+        geometry_policy=geometry_policy,
+    )
     args.output_json.write_text(dumps_refresh_trace(document), encoding="utf-8")
     print(f"trace={args.output_json}")
     return 0

@@ -60,8 +60,11 @@ def build_refresh_lifecycle_trace(
         raise ValueError("unsupported refresh trace schema")
     source_id = refresh_trace.get("source_id")
     events = refresh_trace.get("events")
+    geometry_policy = refresh_trace.get("geometry_policy", "strict-v1")
     if not isinstance(source_id, str) or not source_id or not isinstance(events, list):
         raise ValueError("refresh trace source and events are required")
+    if geometry_policy not in ("strict-v1", "one-source-pixel-v1"):
+        raise ValueError("refresh trace geometry policy is invalid")
 
     state = None
     rows: list[dict[str, object]] = []
@@ -135,6 +138,7 @@ def build_refresh_lifecycle_trace(
         "schema_version": "aegis360.refresh-lifecycle-trace.v1",
         "source_id": source_id,
         "track_id": track_id,
+        "geometry_policy": geometry_policy,
         "policy": {
             "missing_grace_refreshes": policy.missing_grace_frames,
             "confidence_decay": policy.confidence_decay,

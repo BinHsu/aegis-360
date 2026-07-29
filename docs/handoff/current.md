@@ -761,6 +761,23 @@ actual projection/rounding error. Do not introduce clipping merely to accept
 t62; strict zero tolerance remains current behavior until evidence supports a
 bounded alternative.
 
+ADR 0009 accepts an explicit detector edge-repair policy capped at one source
+pixel per axis while retaining strict zero as the default. Local YOLOX 0.3.0
+source confirms inference postprocessing does not clip boxes. The t62
+overflow is 0.9408 pixels at 416x416; repair shifts its center by about 0.113
+degrees in the square 100-degree viewport. A separate v4 trace now contains
+compatible t61/t62/t63 refreshes, with identity and editorial persistence
+still false:
+
+- `yolox-refresh-trace-one-pixel-v4.json`
+- `yolox-refresh-lifecycle-one-pixel-v4.json`
+
+Both are beside the external tracking artifact. The original strict trace is
+preserved. Both v4 documents explicitly carry
+`geometry_policy: one-source-pixel-v1`; unknown policy identifiers fail
+closed. Next extend the current three-refresh proof into a bounded longer
+sequence before allowing detector refresh evidence into camera planning.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

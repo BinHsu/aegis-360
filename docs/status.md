@@ -618,3 +618,11 @@ denied. This demonstrates detector/tracker class-region continuity through
 partial occlusion while preserving the fail-closed boundary. Next decide by
 evidence whether a versioned subpixel boundary tolerance is justified; until
 then strict zero tolerance remains authoritative.
+
+ADR 0009 now accepts an explicit edge-repair policy capped at one actual
+source pixel per axis; zero remains the default. The t62 overflow measures
+0.9408 pixels at 416x416 and clamping shifts its center by about 0.113 degrees
+in the square 100-degree viewport. With that policy explicitly selected, all
+three t61/t62/t63 bicycle refreshes associate as compatible while identity
+and editorial persistence remain false. Overflow beyond one pixel still
+fails closed.

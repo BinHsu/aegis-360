@@ -144,6 +144,19 @@ persistence remain false. Durable privacy-safe evidence is
 external tracking artifact. The excluded t62 result is not silently
 represented as a valid refresh.
 
+The upstream YOLOX 0.3.0 `postprocess` implementation converts boxes to corner
+coordinates and applies NMS without clipping inference boxes to the image.
+The t62 overflow is 0.9408 pixels at 416x416. Under the explicit one-source-
+pixel policy in ADR 0009, only the bottom edge is clamped; the center shift is
+0.0011308 normalized units, approximately 0.113 degrees in this square
+100-degree viewport. A separate v4 trace then contains compatible refreshes
+at t61, t62 and t63, while identity and editorial persistence remain false.
+
+External evidence:
+`yolox-refresh-trace-one-pixel-v4.json` and
+`yolox-refresh-lifecycle-one-pixel-v4.json` beside the tracking artifact.
+Both explicitly carry `geometry_policy: one-source-pixel-v1`.
+
 ## Objective
 
 Determine whether the official YOLOX-Tiny COCO checkpoint can become a

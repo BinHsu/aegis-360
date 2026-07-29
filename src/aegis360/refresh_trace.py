@@ -24,8 +24,13 @@ def build_refresh_trace(
     *,
     source_id: str,
     maximum_distance: float = math.radians(12.0),
+    geometry_policy: str = "strict-v1",
 ) -> dict[str, object]:
-    if not source_id or not events:
+    if (
+        not source_id
+        or not events
+        or geometry_policy not in ("strict-v1", "one-source-pixel-v1")
+    ):
         raise ValueError("source ID and refresh events are required")
     previous = -math.inf
     rows = []
@@ -58,6 +63,7 @@ def build_refresh_trace(
         "schema_version": "aegis360.detector-refresh-trace.v1",
         "source_id": source_id,
         "maximum_distance_degrees": math.degrees(maximum_distance),
+        "geometry_policy": geometry_policy,
         "events": rows,
         "privacy": {
             "contains_pixels": False,

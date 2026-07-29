@@ -89,6 +89,28 @@ class RefreshLifecycleTests(unittest.TestCase):
             for row in trace["states"]
         ))
         self.assertEqual(trace["privacy"]["contains_source_path"], False)
+        self.assertEqual(trace["geometry_policy"], "strict-v1")
+
+    def test_trace_propagates_closed_geometry_policy(self):
+        refresh = {
+            "schema_version": "aegis360.detector-refresh-trace.v1",
+            "source_id": "fixture",
+            "geometry_policy": "one-source-pixel-v1",
+            "events": [
+                self.row(1, "compatible_not_identity_verified"),
+            ],
+        }
+        trace = build_refresh_lifecycle_trace(
+            refresh, {1.0: .9}, policy=self.policy,
+        )
+        self.assertEqual(
+            trace["geometry_policy"], "one-source-pixel-v1"
+        )
+        refresh["geometry_policy"] = "unbounded"
+        with self.assertRaisesRegex(ValueError, "geometry policy"):
+            build_refresh_lifecycle_trace(
+                refresh, {1.0: .9}, policy=self.policy,
+            )
 
     def test_trace_rejects_missing_start_and_missing_compatible_confidence(self):
         with self.assertRaisesRegex(ValueError, "start"):
