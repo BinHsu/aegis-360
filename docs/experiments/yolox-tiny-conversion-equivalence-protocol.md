@@ -64,6 +64,17 @@ NMS IoU 0.45. The highest pre-threshold candidate is class 14 (`bird`) at
 0.23950, not person or bicycle. YOLOX-Tiny therefore has not yet improved the
 accepted bicycle coverage on this key viewport.
 
+The official COCO evaluation profile (confidence 0.01, NMS 0.65) was then run
+as a diagnostic, not as a replacement acceptance threshold. PyTorch and Core
+ML retain the same ten candidates with decoded parity: seven `bird`, two
+`clock`, one `person` at score 0.01030, and zero `bicycle`. Agent visual
+inspection places the low-score person box plausibly on the central-right
+rider in bright yellow shorts. The bird and clock boxes cover riders/bicycles
+and are class-confusion false positives. The temporary frame was deleted.
+
+Conclusion: conversion and shared decoding are numerically valid, but this
+key 360 viewport provides no bicycle evidence at either profile.
+
 ## Objective
 
 Determine whether the official YOLOX-Tiny COCO checkpoint can become a

@@ -46,6 +46,11 @@ def main() -> int:
     parser.add_argument(
         "--preprocessing", choices=("current", "legacy"), default="current"
     )
+    parser.add_argument(
+        "--threshold-profile",
+        choices=("acceptance", "official-evaluation"),
+        default="acceptance",
+    )
     args = parser.parse_args()
     if args.report.exists():
         parser.error("refusing to overwrite report")
@@ -96,8 +101,19 @@ def main() -> int:
     if len(prediction) != 1:
         raise RuntimeError("Core ML output count is invalid")
     candidate = np.asarray(next(iter(prediction.values())))
-    reference_detections = detection_document(decode_yolox(reference[0]))
-    candidate_detections = detection_document(decode_yolox(candidate[0]))
+    confidence, nms_iou = (
+        (.25, .45) if args.threshold_profile == "acceptance" else (.01, .65)
+    )
+    reference_detections = detection_document(decode_yolox(
+        reference[0],
+        confidence_threshold=confidence,
+        nms_iou_threshold=nms_iou,
+    ))
+    candidate_detections = detection_document(decode_yolox(
+        candidate[0],
+        confidence_threshold=confidence,
+        nms_iou_threshold=nms_iou,
+    ))
     report = compare_detector_outputs(
         document(reference, reference_detections),
         document(candidate, candidate_detections),
@@ -112,10 +128,13 @@ def main() -> int:
         "candidate_class_ids": [
             row["class_id"] for row in candidate_detections
         ],
+        "reference_detection_summaries": reference_detections,
+        "candidate_detection_summaries": candidate_detections,
         "reference_top_candidate_before_threshold": top_candidate(reference),
         "candidate_top_candidate_before_threshold": top_candidate(candidate),
-        "confidence_threshold": .25,
-        "nms_iou_threshold": .45,
+        "threshold_profile": args.threshold_profile,
+        "confidence_threshold": confidence,
+        "nms_iou_threshold": nms_iou,
         "preprocessing": args.preprocessing,
     })
     args.report.write_text(

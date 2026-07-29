@@ -698,6 +698,17 @@ Next run the official YOLOX COCO evaluation profile (confidence 0.01, NMS
 0.65) as an explicitly diagnostic report to list low-score person/bicycle
 proposals. It cannot replace the predeclared acceptance result.
 
+The official-evaluation diagnostic is complete. It returns ten matching
+PyTorch/Core ML candidates: seven bird, two clock, one person at 0.01030, and
+zero bicycle. Visual audit confirms the low-score person box lands on the
+central-right rider in bright yellow shorts; bird/clock are class-confusion
+false positives over riders/bikes. The temporary frame was deleted.
+
+Next implement a load-once Core ML-only fixed-five coverage runner using
+source 0.3 current preprocessing. Emit separate acceptance (0.25/0.45) and
+diagnostic official-evaluation (0.01/0.65) summaries. Never merge the profiles
+or reinterpret diagnostic candidates as accepted detections.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

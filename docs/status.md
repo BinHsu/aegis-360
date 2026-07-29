@@ -580,3 +580,11 @@ Ghost Road 150-second yaw -90 viewport, however, both backends retain zero at
 confidence 0.25; the top candidate is `bird` at 0.2395. Next use the official
 COCO evaluation profile (0.01 confidence, 0.65 NMS) as a diagnostic only to
 inspect whether low-score person/bicycle proposals exist.
+
+That diagnostic finds ten low-score candidates: seven `bird`, two `clock`, one
+plausible `person` at 0.01030, and zero `bicycle`. Visual audit confirms the
+person box is on a rider while bird/clock labels are confusion on riders and
+bikes. PyTorch/Core ML parity remains valid, so conversion is not the cause.
+Next run a bounded fixed-five Core ML-only coverage probe using the validated
+0.3/current preprocessing and report acceptance and diagnostic profiles
+separately.
