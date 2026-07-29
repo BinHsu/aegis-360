@@ -778,6 +778,30 @@ preserved. Both v4 documents explicitly carry
 closed. Next extend the current three-refresh proof into a bounded longer
 sequence before allowing detector refresh evidence into camera planning.
 
+The bounded 4 fps sequence is complete at all 16 existing Vision observation
+timestamps from 60.00 through 63.75 seconds. The durable v2 artifact is under:
+
+`outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-4fps-v2/`
+
+Results: 13/16 compatible. At 61.75 YOLOX decodes one bicycle whose boundary
+overflow is 1.0527 source pixels; the one-pixel policy rejects it, lifecycle
+enters grace, and 62.00 recovers. At 63.50 and 63.75 the detector accepts one
+person and no bicycle. The bicycle lifecycle therefore remains in grace and
+does not change semantic class, claim identity, or gain editorial
+persistence. The two misses equal rather than exceed the configured
+two-refresh grace bound.
+
+Performance: 0.287 seconds Core ML inference for 16 frames, 5.66 seconds
+end-to-end, about 394 MB maximum RSS. `scripts/run_yolox_refresh_sequence.py`
+loads Core ML once, uses temporary projected frames, refuses overwrite, and
+writes privacy-safe refresh/lifecycle/metrics documents. This 4 fps run is a
+validation cadence rather than a production scheduling decision.
+
+Next extend the Vision track and detector sequence beyond 64 seconds to
+observe whether the bicycle legitimately recovers or terminates after the
+grace bound. Use a new external output directory and preserve the existing
+four-second track and v2 refresh sequence.
+
 The 12.5 fps command above has completed and must not overwrite its output.
 The following 25 fps command has also completed and must not overwrite its
 output:

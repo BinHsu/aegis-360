@@ -157,6 +157,20 @@ External evidence:
 `yolox-refresh-lifecycle-one-pixel-v4.json` beside the tracking artifact.
 Both explicitly carry `geometry_policy: one-source-pixel-v1`.
 
+A load-once 4 fps refresh sequence now covers all 16 observations from 60.00
+through 63.75 seconds. Thirteen refreshes are class/geometry compatible. At
+61.75 the detector still decodes one bicycle, but its maximum boundary
+overflow is 1.0527 source pixels, so the one-pixel policy rejects it and the
+lifecycle enters grace; the 62.00 refresh recovers. At 63.50 and 63.75 the
+detector accepts a person but no bicycle, so the bicycle lifecycle remains in
+grace rather than changing class or claiming identity. The two consecutive
+terminal misses do not exceed the configured two-refresh grace bound.
+
+Core ML inference takes 0.287 seconds for all 16 frames; end-to-end time is
+5.66 seconds and maximum RSS is about 394 MB. This is a validation cadence,
+not yet the production detector schedule. Privacy-safe durable evidence is
+under `outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-4fps-v2/`.
+
 ## Objective
 
 Determine whether the official YOLOX-Tiny COCO checkpoint can become a

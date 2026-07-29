@@ -626,3 +626,13 @@ in the square 100-degree viewport. With that policy explicitly selected, all
 three t61/t62/t63 bicycle refreshes associate as compatible while identity
 and editorial persistence remain false. Overflow beyond one pixel still
 fails closed.
+
+The first load-once detector/tracker sequence covers all 16 Vision
+observations from 60.00–63.75 seconds at 4 fps. Thirteen refreshes are
+compatible. A 61.75 bicycle box exceeds the explicit policy by only 0.0527
+pixel but is correctly rejected at 1.0527 pixels total overflow; the
+lifecycle enters grace and recovers at 62.00. At 63.50 and 63.75 YOLOX
+accepts a person but no bicycle, so class separation holds and the bicycle
+track remains in bounded grace without identity or persistence promotion.
+Core ML inference for all 16 frames is 0.287 seconds, total runtime 5.66
+seconds, and maximum RSS about 394 MB.
