@@ -704,3 +704,11 @@ with the same 46 person-positive and 15 bicycle-positive frames. NumPy remains
 optional in the isolated Core ML environment; the dependency-free reference
 is unchanged. The next performance gate is 180 or 300 seconds with
 host-visible thermal, swap and power-state sampling.
+
+The 180-second source workload completes all 720 frames in 15.680 seconds
+(45.92 fps) with 383,926,272-byte peak RSS. Swap stays exactly 5910.81 MB used
+before and after, battery falls from 100% to 99%, and `pmset` records no
+thermal or performance warning. This proves bounded source-workload
+completion, not 180 seconds of thermal stability: optimized processing lasts
+only 15.7 wall seconds. A true thermal gate must loop a fixed workload for
+three to five wall-clock minutes and compare early/late windows.

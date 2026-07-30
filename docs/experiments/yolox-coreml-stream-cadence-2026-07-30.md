@@ -103,6 +103,28 @@ improves 59.3× on this interval. The external artifact is:
 `outputs/yolox-stream-benchmark/old-ghost-road-t60-90-yaw0-4fps-numpy-v1/metrics.json`
 
 The candidate is suitable for the isolated Core ML analysis environment, but
-is not yet the dependency-free reference implementation. Separately run a
-180- or 300-second workload with host-visible thermal, swap and power-state
-sampling before making a sustained thermal claim.
+is not yet the dependency-free reference implementation.
+
+## 180-second source-workload follow-up
+
+The full 0–180-second interval was analyzed at 4 fps on battery power. All 720
+expected frames completed in 15.680 stream seconds at 45.92 fps. Core ML used
+9.971 seconds, vectorized decode/NMS 0.502 seconds and residual work 5.207
+seconds. Peak RSS was 383,926,272 bytes.
+
+Before and after the run, swap remained exactly 5910.81 MB used of 7168 MB.
+Battery state changed from 100% to 99%. `pmset` reported that no thermal or
+performance warning level had been recorded both before and after. The
+privacy-safe artifact is:
+
+`outputs/yolox-stream-benchmark/old-ghost-road-t0-180-yaw0-4fps-numpy-v1/metrics.json`
+
+This establishes bounded completion of a 180-second source workload, not 180
+seconds of continuous thermal load: the optimized pipeline finishes it in
+15.7 seconds. Throughput is 16.9% below the different-content 30-second run,
+but the experiment cannot distinguish content-dependent projection/inference
+cost, ordinary run variability, battery power effects, or thermal behavior.
+Do not label the difference thermal throttling. A real thermal gate must loop
+a fixed workload long enough to keep computation active for at least three to
+five wall-clock minutes, sample state throughout, and compare early and late
+windows.

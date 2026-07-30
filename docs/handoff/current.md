@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-30T08:08:00+08:00
+Updated: 2026-07-30T08:12:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: aea5e79
-Remote status: commit and push the vectorized decoder checkpoint
-Working tree at checkpoint: vectorized decoder and evidence docs pending commit
+Baseline commit: 2e19e3a
+Remote status: commit and push the 180-second source-workload checkpoint
+Working tree at checkpoint: 180-second evidence docs pending commit
 
 ## Objective
 
@@ -50,9 +50,16 @@ Person-positive and bicycle-positive counts remain 46 and 15. NumPy is
 optional in the isolated Core ML environment; the dependency-free reference
 remains unchanged.
 
-The exact next performance milestone is a 180- or 300-second single-stream
-run with host-visible thermal, swap and power-state sampling. Do not claim
-fanless sustained stability from the current 30-second result.
+The 180-second source workload is also complete: 720 frames in 15.680 seconds
+(45.92 fps), 383,926,272-byte peak RSS, unchanged 5910.81 MB swap usage,
+battery 100% to 99%, and no recorded thermal/performance warning. Because the
+optimized workload lasts only 15.7 wall seconds, it is bounded-completion
+evidence rather than a fanless thermal-duration result.
+
+The exact next performance milestone is a fixed workload loop kept active for
+three to five wall-clock minutes, with periodic host-visible thermal, swap and
+power-state samples and early/late throughput windows. Do not infer thermal
+throttling from the 45.92 versus 55.25 fps cross-content comparison.
 
 The bounded six-viewport synthetic ERP runner was implemented at commit
 `4b76cb6`. It converts Apple Vision registrations into world-ray
