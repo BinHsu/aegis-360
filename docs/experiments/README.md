@@ -39,6 +39,9 @@ privacy-safe summaries when results exist.
   short-sequence box continuity and identity limitation.
 - `native-detector-refresh-trace-2026-07-29.md`: viewport-aspect correction,
   exact-timestamp detector refresh and fail-closed visual audit.
+- `yolox-coreml-stream-cadence-2026-07-30.md`: one FFmpeg raw-video stream,
+  one Core ML model load, cadence decomposition and comparison with
+  exact-timestamp process-per-frame refreshes.
 - `vision-spherical-dedup-wiring-2026-07-23.md`: fixed-five Vision JSON
   ingestion, spherical dedup report, and neutral perception-to-planner wiring.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.

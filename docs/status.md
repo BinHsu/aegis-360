@@ -683,3 +683,15 @@ This prevents high-cadence instantaneous acquisition and low-cadence stale
 evidence from sharing the same count semantics. Time-bounded v2 traces for
 both real sequences still acquire no fresh track; each has only one isolated
 post-terminal compatible event.
+
+A single-stream detector cadence runner now keeps one FFmpeg rawvideo pipe and
+one loaded Core ML model while preserving the 416×416 BGR and formal YOLOX
+confidence/NMS contract. On the same Old Ghost Road 60–68-second, 32-frame
+workload it reduces stream processing wall time from 10.551 to 2.249 seconds
+(about 4.69×). A 120-frame, 30-second run sustains 16.14 fps with about 365 MB
+peak RSS, versus the required 4 fps analysis cadence. Pure-Python YOLOX
+decode/NMS is now the measured dominant component at 4.528 of 7.433 seconds;
+Core ML uses 2.575 seconds and all remaining stream work 0.330 seconds.
+Thirty seconds does not establish fanless thermal stability, and host thermal
+and swap values were unavailable in this run. Next freeze decoder outputs and
+test vectorized decode/NMS equivalence before optimizing projection or Core ML.

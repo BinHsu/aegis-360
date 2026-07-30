@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-29T12:00:00+08:00
+Updated: 2026-07-30T08:01:18+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5b0ccfd
-Remote status: push the pre-review gate checkpoint described below
-Working tree at checkpoint: v8 rejected; renderer-aware pre-review gate active
+Baseline commit: 0a28ec9
+Remote status: commit and push the single-stream cadence checkpoint
+Working tree at checkpoint: single-stream runner and evidence docs pending commit
 
 ## Objective
 
@@ -14,6 +14,38 @@ technical objective is gyro-free spherical source-motion estimation before
 another real-media stabilization or viewer-review candidate.
 
 ## Last completed milestone
+
+The load-once detector has been moved into a bounded one-process cadence
+benchmark. `scripts/benchmark_yolox_coreml_stream.py` launches one FFmpeg
+rawvideo stream, loads Core ML once, uses the existing formal YOLOX
+confidence/NMS decoder, persists no pixels or source paths, and separates
+model load, inference, decode/NMS, and residual wall time.
+
+Final v3 external evidence covers Old Ghost Road at yaw 0°, 100° horizontal
+FOV and 4 fps. The 60–68-second run handles 32 frames in 2.249 stream seconds
+(14.23 fps, 381,026,304-byte peak RSS), versus 10.551 seconds for the prior
+process-per-timestamp runner. The 60–90-second run handles 120 frames in 7.433
+seconds (16.14 fps, 364,625,920-byte peak RSS). In the longer run, pure-Python
+YOLOX decode/NMS consumes 4.528 seconds, Core ML inference 2.575 seconds, and
+the residual 0.330 seconds. Decoder/NMS, not FFmpeg projection or Core ML, is
+now the measured optimization target.
+
+The experiment is recorded in
+`docs/experiments/yolox-coreml-stream-cadence-2026-07-30.md`. Thirty seconds
+does not establish fanless thermal stability. `pmset` returned no thermal
+warning data and sandboxed swap inspection was unavailable, so neither is
+claimed.
+
+Verification at this checkpoint:
+
+- `python3 -m unittest discover -s tests -v`: 226 tests passed.
+- `python3 scripts/check_handoff.py`: passed.
+- `git diff --check`: passed.
+
+The exact next implementation milestone is to freeze representative
+`decode_yolox` outputs, add a vectorized decoder/NMS candidate behind an
+equivalence gate, and compare its timing without changing confidence, NMS,
+tie-break, or box semantics. Do not optimize Core ML or FFmpeg first.
 
 The bounded six-viewport synthetic ERP runner was implemented at commit
 `4b76cb6`. It converts Apple Vision registrations into world-ray
