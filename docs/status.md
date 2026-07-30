@@ -695,3 +695,12 @@ Core ML uses 2.575 seconds and all remaining stream work 0.330 seconds.
 Thirty seconds does not establish fanless thermal stability, and host thermal
 and swap values were unavailable in this run. Next freeze decoder outputs and
 test vectorized decode/NMS equivalence before optimizing projection or Core ML.
+
+That equivalence gate now passes on all 32 real Core ML frames: detection
+count, class, source index, score and box remain within the frozen `1e-6`
+contract. The NumPy candidate reduces 120-frame decode/NMS from 4.528 to 0.076
+seconds and total stream wall from 7.433 to 2.172 seconds, reaching 55.25 fps
+with the same 46 person-positive and 15 bicycle-positive frames. NumPy remains
+optional in the isolated Core ML environment; the dependency-free reference
+is unchanged. The next performance gate is 180 or 300 seconds with
+host-visible thermal, swap and power-state sampling.

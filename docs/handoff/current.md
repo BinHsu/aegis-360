@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-07-30T08:01:18+08:00
+Updated: 2026-07-30T08:08:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 0a28ec9
-Remote status: commit and push the single-stream cadence checkpoint
-Working tree at checkpoint: single-stream runner and evidence docs pending commit
+Baseline commit: aea5e79
+Remote status: commit and push the vectorized decoder checkpoint
+Working tree at checkpoint: vectorized decoder and evidence docs pending commit
 
 ## Objective
 
@@ -38,14 +38,21 @@ claimed.
 
 Verification at this checkpoint:
 
-- `python3 -m unittest discover -s tests -v`: 226 tests passed.
+- `python3 -m unittest discover -s tests -v`: 227 tests passed.
 - `python3 scripts/check_handoff.py`: passed.
 - `git diff --check`: passed.
 
-The exact next implementation milestone is to freeze representative
-`decode_yolox` outputs, add a vectorized decoder/NMS candidate behind an
-equivalence gate, and compare its timing without changing confidence, NMS,
-tie-break, or box semantics. Do not optimize Core ML or FFmpeg first.
+The planned vectorized follow-up is complete. All 32 real Core ML frames pass
+reference equivalence for count, class, source index, score and box at `1e-6`.
+On the 120-frame interval, NumPy decode/NMS takes 0.076 seconds instead of
+4.528 seconds, and stream wall falls from 7.433 to 2.172 seconds (55.25 fps).
+Person-positive and bicycle-positive counts remain 46 and 15. NumPy is
+optional in the isolated Core ML environment; the dependency-free reference
+remains unchanged.
+
+The exact next performance milestone is a 180- or 300-second single-stream
+run with host-visible thermal, swap and power-state sampling. Do not claim
+fanless sustained stability from the current 30-second result.
 
 The bounded six-viewport synthetic ERP runner was implemented at commit
 `4b76cb6`. It converts Apple Vision registrations into world-ray

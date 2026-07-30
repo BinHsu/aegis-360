@@ -72,10 +72,37 @@ reported result.
 ## Conclusion and follow-up
 
 Adopt one FFmpeg stream plus one model load for sequential detector analysis.
-Do not optimize Core ML or projection first: the measured next bottleneck is
-the dependency-free Python YOLOX decoder/NMS. Before changing that decoder,
-add an equivalence gate and compare a vectorized implementation against its
-frozen output. Separately run a 180- or 300-second workload with host-visible
-thermal, swap and power-state sampling before making a sustained thermal
-claim.
+Do not optimize Core ML or projection first: the measured next bottleneck was
+the dependency-free Python YOLOX decoder/NMS.
 
+## Vectorized decoder follow-up
+
+A NumPy candidate now vectorizes grid construction, class selection, score
+thresholding and box decode while preserving the reference's deterministic
+class-aware NMS order. It is optional and does not add NumPy to the normal
+dependency-free runtime.
+
+The candidate was compared against the reference on all 32 real Core ML
+outputs from the 60–68-second interval. Detection count, class, source index,
+score and box values passed the frozen `1e-6` equivalence bound on every
+frame. The corrected verification artifact is:
+
+`outputs/yolox-stream-benchmark/old-ghost-road-t60-68-yaw0-4fps-numpy-verify-v2/metrics.json`
+
+under `AEGIS_DATA_DIR`. Its wall time intentionally contains both decoders and
+is not a throughput result.
+
+The candidate-only 60–90-second run retains exactly the reference result of 46
+person-positive and 15 bicycle-positive frames. It processes 120 frames in
+2.172 stream seconds (55.25 fps), including 1.641 seconds Core ML inference,
+0.076 seconds vectorized decode/NMS and 0.455 seconds residual work, with
+400,506,880 bytes peak RSS. Against the reference v3's 7.433 seconds and 4.528
+seconds decode/NMS, total stream throughput improves 3.42× and decode/NMS
+improves 59.3× on this interval. The external artifact is:
+
+`outputs/yolox-stream-benchmark/old-ghost-road-t60-90-yaw0-4fps-numpy-v1/metrics.json`
+
+The candidate is suitable for the isolated Core ML analysis environment, but
+is not yet the dependency-free reference implementation. Separately run a
+180- or 300-second workload with host-visible thermal, swap and power-state
+sampling before making a sustained thermal claim.

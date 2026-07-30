@@ -15,6 +15,7 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from aegis360.yolox_decode import decode_yolox  # noqa: E402
+from aegis360.yolox_decode_numpy import decode_yolox_numpy  # noqa: E402
 
 
 WIDTH = 416
@@ -55,6 +56,10 @@ def main() -> int:
     parser.add_argument("--viewport-yaw-degrees", type=float, required=True)
     parser.add_argument("--viewport-pitch-degrees", type=float, default=0.0)
     parser.add_argument("--horizontal-fov-degrees", type=float, default=100.0)
+    parser.add_argument(
+        "--decoder", choices=("reference", "numpy"), default="reference"
+    )
+    parser.add_argument("--verify-first-frames", type=int, default=0)
     args = parser.parse_args()
 
     if args.output_directory.exists():
@@ -63,6 +68,10 @@ def main() -> int:
         parser.error("required external input is missing")
     if args.duration_seconds <= 0 or args.sample_fps <= 0:
         parser.error("duration and sample cadence must be positive")
+    if args.verify_first_frames < 0:
+        parser.error("verification frame count must be nonnegative")
+    if args.verify_first_frames and args.decoder != "numpy":
+        parser.error("equivalence verification requires the numpy decoder")
 
     import coremltools as ct
     import numpy as np
@@ -88,6 +97,8 @@ def main() -> int:
     ]
     inference_seconds = 0.0
     postprocess_seconds = 0.0
+    equivalence_reference_seconds = 0.0
+    equivalence_verified_frames = 0
     decoded_frames = 0
     person_frames = 0
     bicycle_frames = 0
@@ -120,10 +131,33 @@ def main() -> int:
             raw = np.asarray(next(iter(prediction.values())))[0]
 
             before = time.monotonic()
-            detections = decode_yolox(
+            decoder = (
+                decode_yolox_numpy if args.decoder == "numpy" else decode_yolox
+            )
+            detections = decoder(
                 raw, confidence_threshold=.25, nms_iou_threshold=.45
             )
             postprocess_seconds += time.monotonic() - before
+            if equivalence_verified_frames < args.verify_first_frames:
+                before = time.monotonic()
+                reference = decode_yolox(
+                    raw, confidence_threshold=.25, nms_iou_threshold=.45
+                )
+                equivalence_reference_seconds += time.monotonic() - before
+                if len(reference) != len(detections):
+                    raise RuntimeError("decoder equivalence count mismatch")
+                for expected, actual in zip(reference, detections):
+                    if (
+                        expected.class_id != actual.class_id
+                        or expected.source_index != actual.source_index
+                        or abs(expected.score - actual.score) > 1e-6
+                        or any(
+                            abs(left - right) > 1e-6
+                            for left, right in zip(expected.box, actual.box)
+                        )
+                    ):
+                        raise RuntimeError("decoder equivalence value mismatch")
+                equivalence_verified_frames += 1
             person_frames += int(any(row.class_id == 0 for row in detections))
             bicycle_frames += int(any(row.class_id == 1 for row in detections))
             decoded_frames += 1
@@ -140,7 +174,10 @@ def main() -> int:
     elapsed_seconds = time.monotonic() - benchmark_started
     residual_wall_seconds = max(
         0.0,
-        stream_wall_seconds - inference_seconds - postprocess_seconds,
+        stream_wall_seconds
+        - inference_seconds
+        - postprocess_seconds
+        - equivalence_reference_seconds,
     )
     expected_frames = round(args.duration_seconds * args.sample_fps)
     metrics = {
@@ -159,6 +196,8 @@ def main() -> int:
             "ffmpeg_process_count": 1,
             "model_load_count": 1,
             "stream_format": "rawvideo_bgr24",
+            "decoder": args.decoder,
+            "equivalence_verified_frame_count": equivalence_verified_frames,
         },
         "result": {
             "expected_frame_count": expected_frames,
@@ -170,6 +209,7 @@ def main() -> int:
             "model_load_seconds": model_load_seconds,
             "coreml_inference_seconds": inference_seconds,
             "yolox_decode_nms_seconds": postprocess_seconds,
+            "equivalence_reference_seconds": equivalence_reference_seconds,
             "stream_wall_seconds": stream_wall_seconds,
             "stream_residual_wall_seconds": residual_wall_seconds,
             "elapsed_seconds": elapsed_seconds,
@@ -181,7 +221,8 @@ def main() -> int:
                 resource.RUSAGE_SELF
             ).ru_maxrss,
             "residual_interpretation": (
-                "stream wall minus synchronous inference and YOLOX decode/NMS; "
+                "stream wall minus synchronous inference, selected YOLOX "
+                "decode/NMS, and optional equivalence-reference decode; "
                 "includes FFmpeg decode/reprojection, pipe transfer, preprocessing, and "
                 "process startup, and is not an exact CPU-time decomposition"
             ),
