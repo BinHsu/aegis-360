@@ -221,6 +221,22 @@ result explicitly denies identity and editorial persistence. Temporal nearest-
 geometry continuity is diagnostic only and must not bypass ambiguity-aware
 refresh/lifecycle policy.
 
+`src/aegis360/semantic_quality.py` provides a tunable subject-framing gate.
+The v1 proposal quarantines boxes whose normalized width or height is at least
+0.9. This means unsuitable for isolated subject framing, not detector false
+positive; context shots may still use the scene. The threshold is versioned
+and must not be retuned from one benchmark excerpt without held-out review.
+
+`src/aegis360/semantic_tracklets.py` is a detector-only diagnostic. A proposal
+requires two confirmations spanning 0.25 seconds, within 12 spherical degrees.
+Continuation requires mutual uniqueness: one hypothesis to one observation and
+one observation to one hypothesis. One-to-many or many-to-one evidence is
+ambiguous, never resolved by nearest distance. Missing/ambiguous evidence gets
+two grace samples before termination, and reacquisition always receives a new
+ID. These tracklets explicitly grant neither identity nor editorial
+persistence. Their fragmentation is evidence for seeding a tracker after
+unique acquisition, not a reason to weaken ambiguity rules.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,

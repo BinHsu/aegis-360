@@ -105,14 +105,38 @@ person at approximately yaw 60.7 degrees and pitch -24.3 degrees from 67.75 to
 jump, demonstrating why generic greedy continuity cannot be promoted directly
 to a lifecycle.
 
-Next, feed spherical clusters to conservative, ambiguity-aware fresh-candidate
-acquisition/lifecycle logic. Fail closed on pole/boundary artifacts and never
-reuse a terminated ID. Only after a sustained, visually
+## Framing-quality and fail-closed tracklet result
+
+A versioned, tunable subject-framing proposal quarantines any box whose
+normalized width or height is at least 0.9. On this run it accepts 223 of 255
+observations and quarantines 32: all 19 `up` person observations, seven down,
+three right, two front and one left. Quarantine means unsuitable for isolated
+subject framing, not detector false positive. The threshold was introduced
+after inspecting this run and therefore requires held-out validation before it
+can become an accepted product default.
+
+Detector-only tracklets then require mutual-unique compatibility within 12
+degrees, two confirmations spanning 0.25 seconds and two missing/ambiguous
+grace samples. The run acquires 18 fresh IDs and terminates 15; 24 of 120
+samples contain at least one ambiguity. The longest outdoor person tracklet is
+about four seconds and the longest ending indoor tracklet 3.25 seconds. The
+apparent 11-second nearest-geometry person chain is deliberately fragmented
+rather than risking a subject swap.
+
+This passes the fail-closed acquisition behavior but not useful identity
+continuity. It motivates starting the existing Vision tracker after a unique
+semantic acquisition and using detector refresh to recover it. It does not
+justify widening the geometry radius or selecting the nearest ambiguous person.
+
+Next, seed a bounded Vision tracker after mutual-unique acquisition and feed
+detector refreshes into the existing lifecycle. Fail closed on ambiguous
+refreshes and never reuse a terminated ID. Only after a sustained, visually
 credible non-ego lifecycle survives the existing hold/margin may the planner
 or renderer be invoked.
 
 External evidence is under
 `outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v2/` and
 `outputs/semantic-spherical/old-ghost-road-t60-90-six-view-yolox-v2-dedup-v1/`
+and `outputs/semantic-tracklets/old-ghost-road-t60-90-yolox-v2-quality90-mutual12-v1/`
 relative to `AEGIS_DATA_DIR`. They contain no source pixels and must not be
 committed.

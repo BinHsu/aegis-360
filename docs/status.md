@@ -1,6 +1,6 @@
 # Project status
 
-Status: Multi-view spherical merge passed; ambiguity-aware lifecycle is next
+Status: Detector-only tracklets fragment safely; seeded tracking is next
 
 ## Current conclusion
 
@@ -19,8 +19,8 @@ The blocking risk was semantic coverage rather than rendering. A new six-view
 30-second Old Ghost Road run now shows that load-once YOLOX/Core ML acquisition
 can expose sustained people around the camera while remaining fast and bounded
 on the M4/16 GB reference machine. These are detector events, not identities or
-editorial candidates. Same-timestamp spherical merging now works; conservative
-temporal lifecycle association is next.
+editorial candidates. Same-timestamp spherical merging and conservative
+detector-only tracklets now work; a seeded tracker is needed for continuity.
 
 ## What is verified
 
@@ -46,6 +46,14 @@ temporal lifecycle association is next.
 - A nonidentity geometric diagnostic finds a stable right-view person from
   67.75 through 78.75 seconds. An earlier down-to-right chain contains a jump,
   so it is not accepted as identity continuity.
+- A tunable 0.9 normalized width/height framing gate quarantines 32/255 boxes
+  as unsuitable for isolated subject framing, including all 19 suspect `up`
+  boxes. It does not label them detector false positives.
+- Mutual-unique 12-degree tracklets require two confirmations over 0.25
+  seconds and two-sample grace. The real run creates 18 fresh IDs and 15
+  terminations; 24/120 samples contain ambiguity. The longest outdoor person
+  segment is about 4.0 seconds and the longest ending indoor segment 3.25
+  seconds. Ambiguity fragments rather than nearest-neighbor swapping.
 - Tracking grace, termination, fresh-ID acquisition proposal, lifecycle-to-
   planner fallback and semantic planning have bounded unit/real evidence.
 
@@ -55,8 +63,8 @@ temporal lifecycle association is next.
   large person boxes are suspect boundary/projection artifacts.
 - No real benchmark result proves identity through occlusion, view handoff or
   ERP seam crossing. Detector geometry must not manufacture identity.
-- No sustained candidate from the new continuous run has entered lifecycle,
-  passed hysteresis or been rendered.
+- Detector-only lifecycles are operational geometry, not verified identity or
+  editorial persistence. None has entered planning or rendering.
 - Interest signals still omit motion change, novelty, event importance and
   audio; the global planner is not implemented.
 - This bounded 12.6-second execution is not evidence of sustained thermal
@@ -64,11 +72,10 @@ temporal lifecycle association is next.
 
 ## Active acceptance gate
 
-Feed spherical clusters into ambiguity-aware fresh-candidate acquisition and
-lifecycle logic. It must not use nearest-neighbor assignment when multiple
-same-class clusters are compatible, must reject or quarantine pole/boundary
-artifacts, never reuse a terminated ID, and retain forward context through
-gaps.
+After a mutual-unique acquisition, seed a bounded Vision tracker on the
+corresponding rectilinear view. Use detector refresh plus existing lifecycle
+rules to survive detector gaps while failing closed on multiple compatible
+detections. A view exit is a handoff request, not proof of identity.
 
 Do not render until at least one candidate:
 

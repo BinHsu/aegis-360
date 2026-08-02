@@ -1,21 +1,21 @@
 # Current handoff
 
-Updated: 2026-08-02T18:25:00+08:00
+Updated: 2026-08-02T18:45:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 7a49894
+Baseline commit: 52ab8c3
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: framing-quality and tracklet milestone pending commit
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The immediate objective is to turn continuous multi-view detector
-clusters into ambiguity-aware candidate lifecycles without inventing identity.
+viewer. The immediate objective is to turn mutual-unique semantic acquisitions
+into seeded Vision tracking without inventing identity.
 
 ## Last completed milestone
 
-Added the privacy-safe `aegis360.semantic-detector-events.v1` artifact and a
+Added the privacy-safe `aegis360.semantic-detector-events.v2` artifact and a
 load-once Core ML runner for configured serial rectilinear views. Synthetic
 tests fix deterministic ordering, bounded geometry, person/bicycle-only
 content, path-free provenance, privacy declarations and a six-view 416x416
@@ -42,9 +42,21 @@ A diagnostic geometric association finds a stable real person from 67.75 to
 down-to-right association contains a visible geometry jump, so nearest geometry
 is not accepted as identity. No plan or render was produced.
 
+A tunable subject-framing gate now quarantines boxes at or above 0.9 normalized
+width/height as unsuitable for isolated subject framing, not as detector false
+positives. It quarantines 32/255 observations, including all 19 suspect `up`
+boxes. This threshold was derived after inspecting the run and remains a
+proposal pending held-out validation.
+
+A detector-only tracklet diagnostic requires mutual-unique compatibility
+within 12 degrees, two confirmations over 0.25 seconds and two grace samples.
+It acquires 18 fresh IDs, terminates 15 and reports ambiguity in 24/120 samples.
+The longest outdoor person segment is about four seconds; the apparent longer
+nearest-neighbor chain fragments safely. Seeded tracking is therefore next.
+
 ## Repository state
 
-- Expected branch: `main`; baseline `7a49894` is present on `origin/main`.
+- Expected branch: `main`; baseline `52ab8c3` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
@@ -54,14 +66,16 @@ is not accepted as identity. No plan or render was produced.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -v`: 241 tests passed.
-- `python3 scripts/check_handoff.py`: passed.
+- `python3 -m unittest discover -s tests -v`: 248 tests passed.
+- Re-run the handoff validator before committing this milestone.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
 - The external artifact contains only `events.json` and `metrics.json`.
 - Source IDs and durable artifacts contain no absolute input path.
 - V2 dimensions make viewport projection self-contained; old v1 fails closed.
 - Seam and adjacent-view synthetic duplicates merge with provenance retained.
+- Ambiguous one-to-many matches do not choose a nearest winner; terminated IDs
+  are never reused.
 
 ## Rejected
 
@@ -70,19 +84,24 @@ is not accepted as identity. No plan or render was produced.
   is one identity.
 - Do not consume semantic-event v1 for spherical geometry; use v2.
 - Do not promote the suspect `up`-view detections to candidates unchanged.
+- Do not call quarantined oversized boxes detector false positives; context may
+  still use the scene.
+- Do not promote the 0.9 framing threshold to an accepted default without
+  held-out evidence.
 - Do not lower confidence, challenger hold or switch margin from this excerpt.
 - Do not render until a sustained non-ego lifecycle survives semantic review.
 - Do not return to stabilization-threshold or wider-FOV tuning for this POC.
 
 ## Pending
 
-- Define a fail-closed pole/boundary policy from geometry, not from one
-  clip-specific score threshold.
-- Feed merged observations into ambiguity-aware fresh-candidate acquisition
-  and lifecycle logic. Multiple compatible same-class clusters must be
-  ambiguous, and terminated IDs must never be reused.
-- Inspect sustained candidates before planner integration; render only if one
-  is visibly credible and clears unchanged hysteresis.
+- Seed the existing bounded Vision tracker after mutual-unique semantic
+  acquisition on the correct rectilinear frame and box.
+- Refresh the track with spherical detector clusters; multiple compatible
+  same-class clusters remain ambiguous and cannot reset lifecycle grace.
+- Treat viewport exit as a handoff request, not identity proof. Reacquisition
+  after termination must use a fresh ID.
+- Inspect the tracked candidate before planner integration; render only if it
+  is credible and clears unchanged hysteresis.
 - Global planning, richer interest signals and verified identity remain later.
 
 ## Next commands
@@ -96,17 +115,18 @@ git diff --check
 git status --short
 ```
 
-Then inspect the refresh and acquisition contracts before temporal wiring:
+Then inspect the native tracker and refresh contracts before temporal wiring:
 
 ```sh
 sed -n '1,220p' src/aegis360/detector_refresh.py
-sed -n '1,260p' src/aegis360/new_track_acquisition.py
 sed -n '1,300p' src/aegis360/refresh_lifecycle.py
+sed -n '1,280p' scripts/run_yolox_refresh_sequence.py
+sed -n '1,280p' tools/vision_tracking_gate.swift
 ```
 
-Do not feed the generic nearest-geometry candidate association directly into
-lifecycle. Its diagnostic 14-second chain includes an early jump; the clean
-67.75–78.75 second region is evidence for the next fail-closed gate.
+Do not feed generic nearest geometry into lifecycle. Use the mutual-unique
+acquisition as the seed boundary, let Vision track within a viewport, and use
+semantic refresh only through the existing fail-closed association contract.
 
 ## External artifacts
 
@@ -114,6 +134,7 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 
 - `outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v2/`
 - `outputs/semantic-spherical/old-ghost-road-t60-90-six-view-yolox-v2-dedup-v1/`
+- `outputs/semantic-tracklets/old-ghost-road-t60-90-yolox-v2-quality90-mutual12-v1/`
 
 Relevant prior evidence:
 
