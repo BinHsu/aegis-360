@@ -3,7 +3,7 @@
 Updated: 2026-08-02T17:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 4831c10
+Baseline commit: 5cd92fa
 Remote status: `origin/main` contains the baseline commit
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
@@ -42,8 +42,8 @@ An all-forward plan now correctly fails differentiation.
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline commit `4831c10` is present on `origin/main`.
-- Commit `4831c10` is intentionally unsigned because the host SSH signing key
+- Baseline commit `5cd92fa` is present on `origin/main`.
+- Commit `5cd92fa` is intentionally unsigned because the host SSH signing key
   required an unavailable interactive passphrase; global Git settings were not
   changed.
 - Benchmark media, model weights and generated artifacts are external and
