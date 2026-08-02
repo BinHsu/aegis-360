@@ -23,6 +23,7 @@ class StaticShot:
     yaw: float
     pitch: float
     h_fov: float
+    candidate_type: str | None = None
 
 
 def _finite_number(value: object) -> bool:
@@ -59,7 +60,7 @@ def greedy_trace_to_static_shots(
     if not isinstance(decisions, (list, tuple)) or not decisions:
         raise ValueError("greedy trace requires at least one decision")
 
-    rows: list[tuple[float, str, float, float, float]] = []
+    rows: list[tuple[float, str, float, float, float, str | None]] = []
     previous = -math.inf
     for decision in decisions:
         if not isinstance(decision, Mapping):
@@ -98,11 +99,21 @@ def greedy_trace_to_static_shots(
             raise ValueError("static-shot pitch is outside [-pi/2, pi/2]")
         if h_fov <= 0 or h_fov >= math.pi:
             raise ValueError("static-shot horizontal FOV must be in (0, pi)")
-        rows.append((float(timestamp), selected_id, yaw, pitch, h_fov))
+        candidate_type = selected.get("candidate_type")
+        if candidate_type is not None and (
+            not isinstance(candidate_type, str) or not candidate_type
+        ):
+            raise ValueError("static-shot candidate type is invalid")
+        rows.append((
+            float(timestamp), selected_id, yaw, pitch, h_fov, candidate_type,
+        ))
         previous = float(timestamp)
 
     origin = rows[0][0]
-    relative = [(time - origin, candidate, yaw, pitch, fov) for time, candidate, yaw, pitch, fov in rows]
+    relative = [
+        (time - origin, candidate, yaw, pitch, fov, candidate_type)
+        for time, candidate, yaw, pitch, fov, candidate_type in rows
+    ]
     if relative[-1][0] >= duration:
         raise ValueError("greedy decisions do not fit the requested duration")
 
@@ -125,13 +136,22 @@ def greedy_trace_to_static_shots(
                 yaw=_circular_median([row[2] for row in group]),
                 pitch=statistics.median(row[3] for row in group),
                 h_fov=statistics.median(row[4] for row in group),
+                candidate_type=group[0][5],
             )
         )
     if framing_safety is None:
         return tuple(shots)
-    guarded_fovs = safe_horizontal_fovs(
-        (shot.h_fov for shot in shots), framing_safety
+    # Forward context already describes the fixed camera viewport, not a
+    # subject extent that needs padding. Padding it made an all-forward plan
+    # appear different from the fixed-forward peer by FOV alone.
+    framing_extents = (
+        framing_safety.minimum_h_fov
+        - 2.0 * framing_safety.candidate_extent_padding
+        if shot.candidate_type == "context"
+        else shot.h_fov
+        for shot in shots
     )
+    guarded_fovs = safe_horizontal_fovs(framing_extents, framing_safety)
     return tuple(
         StaticShot(
             shot.start,
@@ -140,6 +160,7 @@ def greedy_trace_to_static_shots(
             shot.yaw,
             shot.pitch,
             guarded_fov,
+            shot.candidate_type,
         )
         for shot, guarded_fov in zip(shots, guarded_fovs)
     )

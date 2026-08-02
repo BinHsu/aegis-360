@@ -1,6 +1,6 @@
 # Project status
 
-Status: Perception and planning integration is the active POC gate
+Status: Semantic render rejected; continuous multi-view acquisition is next
 
 ## Current conclusion
 
@@ -34,10 +34,21 @@ another milestone tuning stabilization thresholds.
   verified identity or editorial persistence.
 - The planner removes a terminated subject and deterministically falls back
   to forward context.
+- A planning-only semantic integration now merges bounded lifecycles without
+  manufacturing identity. On the existing Old Ghost Road bicycle sequence,
+  the unchanged semantic config selects the bicycle for 23/32 decisions and
+  forward context for 9/32, then falls back exactly at termination. Its actual
+  static-shot representation clears the 8-degree/two-second perceptibility
+  floor; no video-quality or directing claim follows yet.
+- Its equal-encoder eight-second render passed the mechanical gate but failed
+  agent visual review: the selected bicycle region largely represents the
+  first-person camera wearer's lower/near-field bicycle area rather than a
+  compelling subject. A separate person lifecycle scored well but lasted only
+  0.25 seconds, correctly failing the unchanged challenger-hold rule.
 - Group/context candidates and a bounded `group_coverage` signal exist, but
   their prior 30-second render did not produce a perceptible directing
   difference and is rejected.
-- The current repository baseline passes 228 unit tests and the handoff
+- The current repository baseline passes 233 unit tests and the handoff
   contract on the reference machine.
 
 ## Current limitations
@@ -56,9 +67,12 @@ another milestone tuning stabilization thresholds.
 
 ## Active acceptance gate
 
-Build the smallest planning-only semantic sequence that connects the existing
-load-once YOLOX stream, detector refresh, Vision lifecycle and lifecycle-to-
-candidate boundary over a longer bounded Old Ghost Road interval.
+Build a continuous 30-second multi-view semantic acquisition diagnostic. It
+must distinguish candidate provenance and lifecycle duration, retain existing
+hysteresis, and reveal whether non-ego people or bicycles remain available
+long enough to direct. Do not splice unrelated clips or render until that
+analysis produces a sustained candidate that is not obviously near-field ego
+equipment.
 
 Before rendering, require all of the following:
 
@@ -66,9 +80,8 @@ Before rendering, require all of the following:
 2. Terminated tracks disappear no later than their terminal sample and cannot
    be revived under the old ID.
 3. Forward or group context remains available through gaps.
-4. The renderer-aware pose replay predicts a sustained, perceptible
-   difference from fixed-forward without lowering the accepted switch margin
-   merely to manufacture cuts.
+4. A candidate survives the existing switch hold/margin and is not selected
+   solely because it is persistent near-field ego equipment.
 5. The artifact remains path-free, bounded-memory and analysis-only.
 
 If the gate cannot create meaningful viewpoint differentiation, investigate
@@ -85,4 +98,5 @@ the blocking product risk.
 - Source-motion evidence: `docs/experiments/real-erp-multiview-motion-2026-07-26.md`
 - Detector conversion: `docs/experiments/yolox-tiny-conversion-equivalence-protocol.md`
 - Detector cadence/performance: `docs/experiments/yolox-coreml-stream-cadence-2026-07-30.md`
+- Semantic planning gate: `docs/experiments/semantic-lifecycle-planning-gate-2026-08-02.md`
 - Operational checkpoint: `docs/handoff/current.md`

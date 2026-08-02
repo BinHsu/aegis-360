@@ -42,6 +42,9 @@ privacy-safe summaries when results exist.
 - `yolox-coreml-stream-cadence-2026-07-30.md`: one FFmpeg raw-video stream,
   one Core ML model load, cadence decomposition and comparison with
   exact-timestamp process-per-frame refreshes.
+- `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
+  timeline, termination/fallback contract, renderer-aware planning-only pose
+  differentiation and the forward-context FOV false-positive correction.
 - `vision-spherical-dedup-wiring-2026-07-23.md`: fixed-five Vision JSON
   ingestion, spherical dedup report, and neutral perception-to-planner wiring.
 - `planner-baselines.md`: fixed, greedy and global directing comparison.

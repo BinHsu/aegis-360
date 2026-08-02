@@ -59,3 +59,23 @@ class StaticShotTest(unittest.TestCase):
             [round(math.degrees(shot.h_fov)) for shot in shots],
             [140, 125, 110],
         )
+
+    def test_forward_context_matches_fixed_fov_instead_of_receiving_padding(self):
+        trace = {"decisions": [{
+            "timestamp": 0,
+            "selected_candidate_id": "context:forward",
+            "candidates": [{
+                "candidate_id": "context:forward",
+                "candidate_type": "context",
+                "yaw_radians": 0,
+                "pitch_radians": 0,
+                "h_fov_radians": math.radians(110),
+            }],
+        }]}
+        config = FramingSafetyConfig(
+            minimum_h_fov=math.radians(110),
+            candidate_extent_padding=math.radians(10),
+        )
+        shots = greedy_trace_to_static_shots(trace, 2, config)
+        self.assertAlmostEqual(math.degrees(shots[0].h_fov), 110)
+        self.assertEqual(shots[0].candidate_type, "context")

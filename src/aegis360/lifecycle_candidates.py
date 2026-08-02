@@ -93,8 +93,9 @@ def lifecycle_candidate_frames(
             raise ValueError("tracking timestamps must increase")
         timestamp = float(timestamp)
         state = state_by_timestamp.get(timestamp)
-        if timestamp < first_timestamp or (
-            state is None
+        if (
+            timestamp >= first_timestamp
+            and state is None
             and (terminal_timestamp is None or timestamp <= terminal_timestamp)
         ):
             raise ValueError("tracking and lifecycle timestamps must align")

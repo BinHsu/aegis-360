@@ -108,6 +108,27 @@ class LifecycleCandidateTests(unittest.TestCase):
                 candidate_type="bicycle",
             )
 
+    def test_tracking_before_lifecycle_start_receives_context_only(self):
+        self.lifecycle["states"] = [
+            state(2, "active", 0),
+            state(3, "terminated", 1),
+        ]
+        frames = lifecycle_candidate_frames(
+            self.lifecycle,
+            self.tracking,
+            horizontal_fov=math.radians(100),
+            candidate_type="bicycle",
+        )
+        self.assertEqual(
+            [[item.candidate_id for item in frame.candidates] for frame in frames],
+            [
+                ["context:forward"],
+                ["context:forward", "lifecycle:bike-1"],
+                ["context:forward"],
+                ["context:forward"],
+            ],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
