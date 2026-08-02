@@ -1,6 +1,6 @@
 # YOLOX multi-view semantic-event gate
 
-Status: Bounded acquisition gate passed; identity/lifecycle integration pending
+Status: Bounded acquisition and spherical-dedup gates passed; lifecycle pending
 
 ## Question and decision unlocked
 
@@ -27,9 +27,13 @@ identity, or real-time claim.
   embeddings, source paths, or identities are persisted.
 - Output directories are atomic and refuse overwrite.
 
-The schema is `aegis360.semantic-detector-events.v1`. Synthetic tests fixed
+The current schema is `aegis360.semantic-detector-events.v2`. Synthetic tests fixed
 ordering, geometry bounds, path-free identifiers, viewport references,
 privacy declarations, and person/bicycle-only behavior before this media run.
+V2 adds viewport pixel dimensions so the rectilinear aspect ratio is explicit.
+The already-produced v1 event artifact is rejected for spherical conversion;
+it omitted those dimensions and is retained externally only as historical run
+evidence.
 
 ## Environment and procedure
 
@@ -56,7 +60,7 @@ Run from the repository root after setting `AEGIS_DATA_DIR`:
 
 ## Results
 
-- Elapsed wall time: 12.614 seconds, including projection, model load,
+- Elapsed wall time: 12.848 seconds for the v2 rerun, including projection, model load,
   inference, decode/NMS, validation and artifact serialization.
 - Model load: 0.289 seconds; Core ML inference: 7.997 seconds; decode/NMS:
   0.520 seconds.
@@ -87,16 +91,28 @@ candidate count and cannot be used as editorial utility.
 The bounded acquisition gate passes. Six serial views at 4 fps are comfortably
 fast and memory-bounded on the reference machine, and they expose sustained
 non-ego people across headings. The event layer is deliberately pre-identity:
-it neither merges spherical duplicates nor associates observations over time.
+it does not associate observations over time.
 
-Next, convert accepted viewport boxes to spherical observations, merge
-same-timestamp duplicates with provenance retained, and feed conservative
-fresh-candidate acquisition/lifecycle logic. Fail closed on pole/boundary
-artifacts and never reuse a terminated ID. Only after a sustained, visually
+The established viewport-ray conversion and spherical-dedup policy were then
+applied without detector-confidence ordering. The 255 raw observations became
+240 same-timestamp clusters. Fifteen clusters contain two cross-view members;
+the largest cluster contains two. All source observation provenance remains,
+and every cluster explicitly denies identity and editorial persistence.
+
+A separate nearest-geometry diagnostic (not an identity result) found a stable
+person at approximately yaw 60.7 degrees and pitch -24.3 degrees from 67.75 to
+78.75 seconds. An earlier down-to-right chain contains a conspicuous geometric
+jump, demonstrating why generic greedy continuity cannot be promoted directly
+to a lifecycle.
+
+Next, feed spherical clusters to conservative, ambiguity-aware fresh-candidate
+acquisition/lifecycle logic. Fail closed on pole/boundary artifacts and never
+reuse a terminated ID. Only after a sustained, visually
 credible non-ego lifecycle survives the existing hold/margin may the planner
 or renderer be invoked.
 
 External evidence is under
-`outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v1/` relative to
-`AEGIS_DATA_DIR`. It contains only `events.json` and `metrics.json` and must not
-be committed.
+`outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v2/` and
+`outputs/semantic-spherical/old-ghost-road-t60-90-six-view-yolox-v2-dedup-v1/`
+relative to `AEGIS_DATA_DIR`. They contain no source pixels and must not be
+committed.

@@ -256,6 +256,8 @@ def main() -> int:
                 "horizontal_fov_radians": math.radians(
                     row["horizontal_fov_degrees"]
                 ),
+                "width_pixels": width,
+                "height_pixels": height,
             }
             for row in config["viewports"]
         ),

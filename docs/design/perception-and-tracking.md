@@ -195,11 +195,15 @@ remains an experiment rather than an accepted ADR.
 ## Continuous multi-view detector events
 
 `src/aegis360/semantic_events.py` defines the pre-identity, privacy-safe
-`aegis360.semantic-detector-events.v1` boundary. It retains accepted
+`aegis360.semantic-detector-events.v2` boundary. It retains accepted
 person/bicycle boxes, timestamps, viewport poses and detector provenance, but
 contains no pixels, paths, embeddings, tracker IDs or editorial scores.
 Detector scores are explicitly perception evidence only. Cross-viewport
 duplicates and temporal identity remain unresolved by contract.
+
+V2 also retains each viewport's pixel dimensions so normalized boxes can be
+converted to rectilinear rays without an unstated external aspect ratio. V1 is
+rejected for spherical conversion because it omitted those dimensions.
 
 `scripts/run_yolox_multiview_events.py` loads the validated Core ML model once
 and processes configured FFmpeg viewport streams serially. This makes memory
@@ -208,6 +212,14 @@ overwrite; malformed or out-of-frame boxes fail closed. The first bounded
 six-view run demonstrates broad person coverage but also suspect pole-view
 boxes, so downstream spherical conversion and duplicate merging must precede
 candidate acquisition. See the 2026-08-02 multi-view semantic-event experiment.
+
+`src/aegis360/semantic_spherical.py` uses the established `viewport_rays`
+convention to convert box centers and horizontal extents into spherical
+evidence. It then delegates same-timestamp, same-class clustering to
+`spherical_dedup`; every original observation remains in provenance. The
+result explicitly denies identity and editorial persistence. Temporal nearest-
+geometry continuity is diagnostic only and must not bypass ambiguity-aware
+refresh/lifecycle policy.
 
 ## Acceptance criteria
 

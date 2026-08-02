@@ -7,7 +7,7 @@ import math
 from typing import Iterable, Mapping
 
 
-SCHEMA_VERSION = "aegis360.semantic-detector-events.v1"
+SCHEMA_VERSION = "aegis360.semantic-detector-events.v2"
 ALLOWED_CLASSES = frozenset(("person", "bicycle"))
 
 
@@ -53,18 +53,27 @@ def build_semantic_event_artifact(
         yaw = _number(row.get("yaw_radians"), "viewport yaw")
         pitch = _number(row.get("pitch_radians"), "viewport pitch")
         h_fov = _number(row.get("horizontal_fov_radians"), "viewport FOV")
+        width = row.get("width_pixels")
+        height = row.get("height_pixels")
         if not -math.pi <= yaw < math.pi:
             raise ValueError("viewport yaw must be in [-pi, pi)")
         if not -math.pi / 2 <= pitch <= math.pi / 2:
             raise ValueError("viewport pitch must remain between the poles")
         if not 0 < h_fov < math.pi:
             raise ValueError("viewport FOV must be in (0, pi)")
+        if (
+            not isinstance(width, int) or isinstance(width, bool) or width <= 0
+            or not isinstance(height, int) or isinstance(height, bool) or height <= 0
+        ):
+            raise ValueError("viewport pixel dimensions must be positive integers")
         viewport_ids.add(viewport_id)
         viewport_rows.append({
             "viewport_id": viewport_id,
             "yaw_radians": yaw,
             "pitch_radians": pitch,
             "horizontal_fov_radians": h_fov,
+            "width_pixels": width,
+            "height_pixels": height,
         })
     if not viewport_rows:
         raise ValueError("at least one viewport is required")

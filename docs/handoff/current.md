@@ -1,18 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-02T18:00:00+08:00
+Updated: 2026-08-02T18:25:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: fb4d6e8
+Baseline commit: 021fcaa
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: semantic v2 and spherical-dedup milestone pending commit
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer. The immediate objective is to turn continuous multi-view detector
-events into conservative spherical candidate lifecycles without inventing
-identity.
+clusters into ambiguity-aware candidate lifecycles without inventing identity.
 
 ## Last completed milestone
 
@@ -29,14 +28,23 @@ out-of-frame boxes. Agent inspection confirmed real people outside and inside
 the hut across multiple headings. Coverage is materially broader than the
 earlier isolated bicycle lifecycle.
 
-The result is pre-identity. Cross-view duplicates remain, and all 19 `up`-view
-person boxes are unusually large (mean normalized area about 0.739), so pole or
-projection-boundary artifacts must be handled before candidate acquisition.
-No plan or render was produced from these raw counts.
+The event contract is now v2 because v1 omitted viewport pixel dimensions and
+therefore could not reproduce normalized-box ray geometry independently. V2
+was rerun in a new external directory; v1 is rejected for spherical conversion.
+
+The established viewport-ray convention converts v2 boxes to spherical
+centers/extents. Same-time, same-class spherical dedup reduces 255 observations
+to 240 clusters: 15 contain two source views and none exceeds two. All original
+provenance remains, while identity and editorial persistence remain false.
+
+A diagnostic geometric association finds a stable real person from 67.75 to
+78.75 seconds around yaw 60.7 degrees, pitch -24.3 degrees. A preceding
+down-to-right association contains a visible geometry jump, so nearest geometry
+is not accepted as identity. No plan or render was produced.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `fb4d6e8` is present on `origin/main`.
+- Expected branch: `main`; baseline `021fcaa` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
@@ -46,18 +54,21 @@ No plan or render was produced from these raw counts.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -v`: 238 tests passed.
-- `python3 scripts/check_handoff.py`: passed.
+- `python3 -m unittest discover -s tests -v`: 241 tests passed.
+- Re-run the handoff validator before committing this milestone.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
 - The external artifact contains only `events.json` and `metrics.json`.
 - Source IDs and durable artifacts contain no absolute input path.
+- V2 dimensions make viewport projection self-contained; old v1 fails closed.
+- Seam and adjacent-view synthetic duplicates merge with provenance retained.
 
 ## Rejected
 
 - Do not interpret raw detector count or score as editorial utility.
 - Do not claim cross-view duplicates are separate people or a temporal series
   is one identity.
+- Do not consume semantic-event v1 for spherical geometry; use v2.
 - Do not promote the suspect `up`-view detections to candidates unchanged.
 - Do not lower confidence, challenger hold or switch margin from this excerpt.
 - Do not render until a sustained non-ego lifecycle survives semantic review.
@@ -65,14 +76,11 @@ No plan or render was produced from these raw counts.
 
 ## Pending
 
-- Convert event box centers/extents to spherical geometry using viewport pose
-  and FOV, with synthetic seam/pole tests.
-- Merge same-timestamp, same-class cross-view duplicates through the existing
-  spherical-dedup boundary while preserving every observation's provenance.
 - Define a fail-closed pole/boundary policy from geometry, not from one
   clip-specific score threshold.
-- Feed merged observations into conservative fresh-candidate acquisition and
-  lifecycle logic with unique new IDs after termination.
+- Feed merged observations into ambiguity-aware fresh-candidate acquisition
+  and lifecycle logic. Multiple compatible same-class clusters must be
+  ambiguous, and terminated IDs must never be reused.
 - Inspect sustained candidates before planner integration; render only if one
   is visibly credible and clears unchanged hysteresis.
 - Global planning, richer interest signals and verified identity remain later.
@@ -88,23 +96,24 @@ git diff --check
 git status --short
 ```
 
-Then inspect the existing spherical merge and viewport geometry contracts:
+Then inspect the refresh and acquisition contracts before temporal wiring:
 
 ```sh
-sed -n '1,300p' src/aegis360/spherical_dedup.py
+sed -n '1,220p' src/aegis360/detector_refresh.py
 sed -n '1,260p' src/aegis360/new_track_acquisition.py
-sed -n '1,260p' src/aegis360/viewport_geometry.py
+sed -n '1,300p' src/aegis360/refresh_lifecycle.py
 ```
 
-If `viewport_geometry.py` does not exist, locate the established pixel/ray
-conversion with `rg -n "pixel.*yaw|viewport.*ray|spherical" src tests` before
-adding another geometry implementation.
+Do not feed the generic nearest-geometry candidate association directly into
+lifecycle. Its diagnostic 14-second chain includes an early jump; the clean
+67.75–78.75 second region is evidence for the next fail-closed gate.
 
 ## External artifacts
 
 The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 
-- `outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v1/`
+- `outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v2/`
+- `outputs/semantic-spherical/old-ghost-road-t60-90-six-view-yolox-v2-dedup-v1/`
 
 Relevant prior evidence:
 

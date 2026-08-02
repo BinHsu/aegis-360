@@ -20,12 +20,16 @@ class SemanticEventArtifactTests(unittest.TestCase):
                 "yaw_radians": 0,
                 "pitch_radians": 0,
                 "horizontal_fov_radians": math.radians(100),
+                "width_pixels": 416,
+                "height_pixels": 416,
             },
             {
                 "viewport_id": "left",
                 "yaw_radians": -math.pi / 2,
                 "pitch_radians": 0,
                 "horizontal_fov_radians": math.radians(100),
+                "width_pixels": 416,
+                "height_pixels": 416,
             },
         )
         self.events = (
@@ -54,6 +58,7 @@ class SemanticEventArtifactTests(unittest.TestCase):
             ["front", "left"],
         )
         self.assertEqual(document["events"][0]["timestamp_seconds"], 0)
+        self.assertEqual(document["viewports"][0]["width_pixels"], 416)
         detection = document["events"][0]["detections"][0]
         self.assertEqual(detection["score_role"], "perception_evidence_only")
         serialized = dumps_semantic_event_artifact(document)
