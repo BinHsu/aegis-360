@@ -3,9 +3,9 @@
 Updated: 2026-08-02T18:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 3b2843f
+Baseline commit: fb4d6e8
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: multi-view semantic-event milestone pending commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -36,8 +36,7 @@ No plan or render was produced from these raw counts.
 
 ## Repository state
 
-- Expected branch: `main`; remote baseline is `3b2843f` until this milestone
-  is committed and pushed.
+- Expected branch: `main`; baseline `fb4d6e8` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
