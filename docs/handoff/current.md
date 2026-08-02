@@ -1,145 +1,119 @@
 # Current handoff
 
-Updated: 2026-08-02T17:05:00+08:00
+Updated: 2026-08-02T18:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5cd92fa
+Baseline commit: 3b2843f
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: multi-view semantic-event milestone pending commit
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The current objective is continuous multi-view semantic acquisition
-that can prefer sustained non-ego people/riders over near-field equipment.
+viewer. The immediate objective is to turn continuous multi-view detector
+events into conservative spherical candidate lifecycles without inventing
+identity.
 
 ## Last completed milestone
 
-The new planning-only orchestrator merges independent semantic lifecycles,
-keeps forward context unique, rejects duplicate IDs, removes terminated tracks
-and emits path-free atomic artifacts without invoking a renderer. It also
-evaluates decisions in the actual static-shot representation.
+Added the privacy-safe `aegis360.semantic-detector-events.v1` artifact and a
+load-once Core ML runner for configured serial rectilinear views. Synthetic
+tests fix deterministic ordering, bounded geometry, person/bicycle-only
+content, path-free provenance, privacy declarations and a six-view 416x416
+configuration. The runner refuses overwrite and persists no pixels.
 
-The bounded Old Ghost Road 60–68 second bicycle replay uses the unchanged
-`greedy-first-slice-v1.toml`. It selects the lifecycle bicycle for 23/32
-decisions and forward context for 9/32, falling back exactly at termination.
-The bicycle shot lasts 5.75 seconds at about yaw 15.89 degrees and pitch
--34.03 degrees, with a 37.14-degree maximum effective difference from fixed.
-This passes the pose floor. Its v4 fixed/auto/debug render also passes equal-
-encoder and mechanical checks, but paired-frame inspection rejects it: the
-selected lower bicycle region is likely the wearer's own bicycle/near-field
-equipment and is not a compelling ordinary-viewer subject.
+The bounded Old Ghost Road 60–90 second run sampled six views at 4 fps. It
+produced all 720 expected timestamp/view rows in 12.614 seconds with
+365,527,040-byte peak RSS, 238 person boxes, 17 bicycle boxes and 25 rejected
+out-of-frame boxes. Agent inspection confirmed real people outside and inside
+the hut across multiple headings. Coverage is materially broader than the
+earlier isolated bicycle lifecycle.
 
-An independent 105–113 second person diagnostic stays forward for all 32
-decisions. The person utility exceeds forward, but its active lifecycle lasts
-only 0.25 seconds and correctly cannot satisfy the unchanged 0.5-second
-challenger hold before grace/termination.
-
-The milestone also fixed a renderer-contract false positive: forward context
-is already a viewport, so framing safety no longer adds subject padding to it.
-An all-forward plan now correctly fails differentiation.
+The result is pre-identity. Cross-view duplicates remain, and all 19 `up`-view
+person boxes are unusually large (mean normalized area about 0.739), so pole or
+projection-boundary artifacts must be handled before candidate acquisition.
+No plan or render was produced from these raw counts.
 
 ## Repository state
 
-- Expected branch: `main`.
-- Baseline commit `5cd92fa` is present on `origin/main`.
-- Commit `5cd92fa` is intentionally unsigned because the host SSH signing key
-  required an unavailable interactive passphrase; global Git settings were not
-  changed.
-- Benchmark media, model weights and generated artifacts are external and
-  gitignored.
-- Current documentation edits intentionally replace superseded status and
-  handoff timelines; Git history remains their only archive.
+- Expected branch: `main`; remote baseline is `3b2843f` until this milestone
+  is committed and pushed.
+- Benchmark media, model weights, contact sheets and generated artifacts are
+  external and gitignored.
+- Signing may require an unavailable interactive SSH-key passphrase. Prior
+  milestone commits intentionally used `git -c commit.gpgsign=false commit`
+  without changing global Git settings.
+- Current docs replace superseded state; Git history is the archive.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -v`: 233 tests passed.
-- `python3 scripts/check_handoff.py`: passed with current-only size/history
-  enforcement active.
-- FFmpeg geometry and renderer convention gates have synthetic evidence.
-- YOLOX-Tiny FLOAT32 Core ML conversion and decoded outputs pass the frozen
-  equivalence protocol.
-- The load-once detector stream exceeds the required 4 fps cadence with ample
-  memory headroom on the reference machine.
-- Detector refresh, grace, termination, post-terminal rejection, fresh-ID
-  acquisition proposal and lifecycle-to-planner fallback have unit and bounded
-  real-sequence evidence.
-- Multi-lifecycle merge, atomic/path-free planning output, overwrite refusal
-  and renderer-aware pose differentiation have synthetic contracts.
-- The corrected group-policy comparison selects forward 32/32 and fails the
-  pose gate. The unchanged semantic policy selects bicycle 23/32 and passes.
-- Equal-contract v4 rendering passes mechanically and is rejected visually
-  before owner review. The person diagnostic correctly fails differentiation.
+- `python3 -m unittest discover -s tests -v`: 238 tests passed.
+- `python3 scripts/check_handoff.py`: passed.
+- Real input produced exactly 120 frames for each of six serial streams.
+- Core ML model load count is one; no extracted frame is persisted.
+- The external artifact contains only `events.json` and `metrics.json`.
+- Source IDs and durable artifacts contain no absolute input path.
 
 ## Rejected
 
-- Do not claim that any rendered auto-directed candidate has passed owner
-  review.
-- Do not widen rectilinear FOV again as the primary shake remedy.
-- Do not tune gyro-free stabilization thresholds again for this POC. The
-  causal, masked and tiled variants did not beat fixed-forward on the bounded
-  render proxy; raw/fixed treatment is retained.
-- Do not use generic saliency geometry as identity or editorial persistence.
-- Do not lower the accepted greedy switch margin merely to manufacture visual
-  differences.
-- Do not ask the owner to review media until the renderer-aware pre-review gate
-  and representative paired-frame inspection both pass.
-- Do not use the rejected semantic-planning `v1` artifact; its pose result
-  predates the forward-context FOV correction.
-- Do not send the bicycle v4 render to the owner; visible differentiation is
-  real but the chosen lower/near-field subject is not useful.
-- Do not lower challenger hold to force the short person lifecycle to switch.
+- Do not interpret raw detector count or score as editorial utility.
+- Do not claim cross-view duplicates are separate people or a temporal series
+  is one identity.
+- Do not promote the suspect `up`-view detections to candidates unchanged.
+- Do not lower confidence, challenger hold or switch margin from this excerpt.
+- Do not render until a sustained non-ego lifecycle survives semantic review.
+- Do not return to stabilization-threshold or wider-FOV tuning for this POC.
 
 ## Pending
 
-- Define a privacy-safe, versioned multi-view detector-event artifact that
-  preserves accepted person/bicycle boxes, viewport poses and timestamps but
-  no pixels or paths.
-- Add a synthetic contract for continuous acquisition/lifecycle orchestration
-  across several fresh candidates without reusing terminated IDs.
-- Run a bounded 30-second Old Ghost Road analysis across overlapping
-  viewports. Preserve the existing hold/margin settings and do not render
-  unless a sustained candidate survives agent semantic inspection.
-- The explainable global planner, richer event/novelty/audio interest signals,
-  seam handoff and verified identity remain later work.
+- Convert event box centers/extents to spherical geometry using viewport pose
+  and FOV, with synthetic seam/pole tests.
+- Merge same-timestamp, same-class cross-view duplicates through the existing
+  spherical-dedup boundary while preserving every observation's provenance.
+- Define a fail-closed pole/boundary policy from geometry, not from one
+  clip-specific score threshold.
+- Feed merged observations into conservative fresh-candidate acquisition and
+  lifecycle logic with unique new IDs after termination.
+- Inspect sustained candidates before planner integration; render only if one
+  is visibly credible and clears unchanged hysteresis.
+- Global planning, richer interest signals and verified identity remain later.
 
 ## Next commands
 
-Run from the repository root. Confirm the checkpoint, then inspect the
-existing detector stream and acquisition contracts before defining the
-multi-view event artifact:
+Run from the repository root. First validate and deliver this milestone:
 
 ```sh
-git status --short --branch
-git log -1 --oneline
-python3 scripts/check_handoff.py
 python3 -m unittest discover -s tests -v
-sed -n '1,260p' scripts/benchmark_yolox_coreml_stream.py
-sed -n '1,260p' src/aegis360/new_track_acquisition.py
-sed -n '1,260p' src/aegis360/refresh_lifecycle.py
+python3 scripts/check_handoff.py
+git diff --check
+git status --short
 ```
 
-The next artifact contract must be fake/synthetic-tested before benchmark use,
-must be path-free and must refuse overwrite. Do not tune scoring from the two
-diagnostic clips.
+Then inspect the existing spherical merge and viewport geometry contracts:
+
+```sh
+sed -n '1,300p' src/aegis360/spherical_dedup.py
+sed -n '1,260p' src/aegis360/new_track_acquisition.py
+sed -n '1,260p' src/aegis360/viewport_geometry.py
+```
+
+If `viewport_geometry.py` does not exist, locate the established pixel/ray
+conversion with `rg -n "pixel.*yaw|viewport.*ray|spherical" src tests` before
+adding another geometry implementation.
 
 ## External artifacts
 
-The artifact root is configured by `AEGIS_DATA_DIR`. Relevant immutable
-evidence beneath it includes:
+The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 
-- `outputs/yolox-stream-benchmark/old-ghost-road-t0-180-yaw0-4fps-numpy-v1/`
+- `outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v1/`
+
+Relevant prior evidence:
+
 - `outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-8s-4fps-v3/`
 - `outputs/yolox-refresh-sequence/old-ghost-road-t105-yawm90-person-8s-4fps-v4/`
-- `outputs/semantic-planning/old-ghost-road-t60-bicycle-8s-v2/`
-- `outputs/semantic-planning/old-ghost-road-t60-bicycle-8s-v3/`
 - `outputs/semantic-planning/old-ghost-road-t60-bicycle-8s-v4-render-ready/`
-- `outputs/semantic-planning/old-ghost-road-t105-person-8s-v1/`
-- `outputs/auto-directed/old-ghost-road-30s-v1/bundle-v8-group-coverage-render/`
-- `outputs/source-motion/old-ghost-road-40-45-causal-comparison-v1/`
-- `outputs/source-motion/old-ghost-road-45-50-causal-heldout-v1/`
 
-Do not overwrite these directories. Do not commit their contents.
+Do not overwrite or commit these directories.
 
 ## Active agents
 
@@ -147,12 +121,12 @@ No delegated work is active or required to resume this checkpoint.
 
 ## Safety and claims
 
-- Do not commit source media, generated video, extracted frames, model weights,
+- Do not commit media, generated video, extracted frames, model weights,
   faces, audio, absolute paths or identity data.
-- Setup and acquisition require explicit network action; analysis and rendering
-  remain offline.
+- Analysis and rendering remain offline; setup/acquisition requires explicit
+  network action.
 - Preserve bounded queues and the 16 GB unified-memory constraint.
 - Treat semantic/geometry continuity as nonidentity unless a stronger adapter
-  explicitly proves otherwise.
-- Do not claim stabilization, comfort, directing quality, real-time execution
-  or thermal stability beyond the recorded experiment boundaries.
+  proves otherwise.
+- Do not claim directing quality, real-time output, thermal stability or
+  identity continuity beyond the recorded experiment.

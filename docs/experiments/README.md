@@ -42,6 +42,9 @@ privacy-safe summaries when results exist.
 - `yolox-coreml-stream-cadence-2026-07-30.md`: one FFmpeg raw-video stream,
   one Core ML model load, cadence decomposition and comparison with
   exact-timestamp process-per-frame refreshes.
+- `yolox-multiview-semantic-events-2026-08-02.md`: privacy-safe six-view
+  person/bicycle event schema and bounded 30-second Old Ghost Road acquisition
+  evidence.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

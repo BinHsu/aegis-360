@@ -1,0 +1,15 @@
+{
+  "schema_version": "aegis360.semantic-multiview-config.v1",
+  "sample_fps": 4.0,
+  "viewport_width": 416,
+  "viewport_height": 416,
+  "boundary_tolerance_pixels": 1.0,
+  "viewports": [
+    {"viewport_id": "front", "yaw_degrees": 0.0, "pitch_degrees": 0.0, "horizontal_fov_degrees": 100.0},
+    {"viewport_id": "right", "yaw_degrees": 90.0, "pitch_degrees": 0.0, "horizontal_fov_degrees": 100.0},
+    {"viewport_id": "back", "yaw_degrees": -180.0, "pitch_degrees": 0.0, "horizontal_fov_degrees": 100.0},
+    {"viewport_id": "left", "yaw_degrees": -90.0, "pitch_degrees": 0.0, "horizontal_fov_degrees": 100.0},
+    {"viewport_id": "up", "yaw_degrees": 0.0, "pitch_degrees": 60.0, "horizontal_fov_degrees": 100.0},
+    {"viewport_id": "down", "yaw_degrees": 0.0, "pitch_degrees": -60.0, "horizontal_fov_degrees": 100.0}
+  ]
+}

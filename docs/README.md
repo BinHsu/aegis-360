@@ -37,6 +37,7 @@ not invent a resolution.
 | Change proxy, caching, or memory behavior | ADR 0005 |
 | Change interest scoring, candidate shots, or planning | ADR 0006 |
 | Change semantic detection, detector refresh, tracking grace, or lifecycle traces | `docs/design/perception-and-tracking.md`, `docs/experiments/native-detector-refresh-trace-2026-07-29.md` |
+| Resume continuous multi-view semantic acquisition | `docs/experiments/yolox-multiview-semantic-events-2026-08-02.md`, then `docs/design/perception-and-tracking.md` |
 | Change stabilization, motion-character, or segment treatment | `docs/design/spherical-stabilization-and-segment-policy.md`, ADR 0002, ADR 0005, ADR 0006 |
 | Add media or change evaluation | ADR 0007 and `benchmarks/README.md` when present |
 | Choose or replace a model backend | ADR 0008 |

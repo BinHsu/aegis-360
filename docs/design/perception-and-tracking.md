@@ -192,6 +192,23 @@ count. The fresh ID never implies identity continuity with the terminated
 track and receives neither verified identity nor editorial persistence. This
 remains an experiment rather than an accepted ADR.
 
+## Continuous multi-view detector events
+
+`src/aegis360/semantic_events.py` defines the pre-identity, privacy-safe
+`aegis360.semantic-detector-events.v1` boundary. It retains accepted
+person/bicycle boxes, timestamps, viewport poses and detector provenance, but
+contains no pixels, paths, embeddings, tracker IDs or editorial scores.
+Detector scores are explicitly perception evidence only. Cross-viewport
+duplicates and temporal identity remain unresolved by contract.
+
+`scripts/run_yolox_multiview_events.py` loads the validated Core ML model once
+and processes configured FFmpeg viewport streams serially. This makes memory
+use bounded on the 16 GB reference machine. Its output is atomic and refuses
+overwrite; malformed or out-of-frame boxes fail closed. The first bounded
+six-view run demonstrates broad person coverage but also suspect pole-view
+boxes, so downstream spherical conversion and duplicate merging must precede
+candidate acquisition. See the 2026-08-02 multi-view semantic-event experiment.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,
