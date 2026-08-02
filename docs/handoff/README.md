@@ -19,10 +19,10 @@ Update `current.md`:
 The main agent normally owns `current.md`. Subagents return structured
 completion packets instead of editing it concurrently.
 
-Archive a meaningful completed checkpoint under `archive/` before replacing
-it when historical operational detail would otherwise be lost. Accepted
-architecture decisions still belong in ADRs, reproducible evidence in
-`docs/experiments/`, and durable phase status in `docs/status.md`.
+Replace superseded checkpoint text; do not append a chronological log and do
+not create handoff archives. Git history preserves prior checkpoints.
+Accepted architecture decisions belong in ADRs, reproducible evidence in
+`docs/experiments/`, and only the current phase status in `docs/status.md`.
 
 ## Required content
 

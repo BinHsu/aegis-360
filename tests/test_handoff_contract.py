@@ -6,9 +6,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from check_handoff import (
+    MAX_HANDOFF_LINES,
+    MAX_STATUS_LINES,
     REQUIRED_HEADINGS,
     parse_handoff,
     requires_handoff_update,
+    validate_status,
 )
 
 
@@ -61,6 +64,25 @@ class HandoffContractTests(unittest.TestCase):
             "docs/handoff/current.md",
         ]))
         self.assertFalse(requires_handoff_update(["LICENSE"]))
+
+    def test_current_documents_reject_embedded_history_and_unbounded_growth(self):
+        handoff = valid_document().replace(
+            "## Pending\n", "## History\n\nOld checkpoint.\n\n## Pending\n"
+        )
+        _, handoff_errors = parse_handoff(handoff)
+        self.assertTrue(any("history or timeline" in error for error in handoff_errors))
+
+        oversized_handoff = valid_document() + ("filler\n" * MAX_HANDOFF_LINES)
+        _, oversized_errors = parse_handoff(oversized_handoff)
+        self.assertTrue(any("exceeds" in error for error in oversized_errors))
+
+        status_errors = validate_status(
+            "# Project status\n\n## Timeline\n\nOld checkpoint.\n"
+        )
+        self.assertTrue(any("history or timeline" in error for error in status_errors))
+
+        oversized_status = "# Project status\n" + ("filler\n" * MAX_STATUS_LINES)
+        self.assertTrue(any("exceeds" in error for error in validate_status(oversized_status)))
 
 
 if __name__ == "__main__":

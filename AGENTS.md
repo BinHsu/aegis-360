@@ -166,6 +166,10 @@ data.
 - Update `docs/handoff/current.md` at every milestone boundary and before
   starting another large task or delegating new work. Do not wait for a usage,
   context, time, or service-limit warning to prepare a handoff.
+- `docs/handoff/current.md` and `docs/status.md` describe only the latest
+  repository state. Replace superseded checkpoint text instead of appending a
+  chronological log, and do not create handoff/status archives. Git history
+  is the archive; reproducible evidence belongs in `docs/experiments/`.
 - If a usage warning appears, `/usage` is reported near its limit, or any tool
   returns a credit/quota/rate-limit error, enter handoff mode immediately:
   stop expanding scope, request bounded completion packets from active

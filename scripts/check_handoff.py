@@ -13,6 +13,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HANDOFF = ROOT / "docs/handoff/current.md"
+STATUS = ROOT / "docs/status.md"
+MAX_HANDOFF_LINES = 250
+MAX_STATUS_LINES = 200
 REQUIRED_HEADINGS = (
     "## Objective",
     "## Last completed milestone",
@@ -41,6 +44,9 @@ FORBIDDEN_PATTERNS = (
      "prior-chat dependency"),
     (r"(?i)\b(open|switch to) agent [0-9a-f-]{8,}\b",
      "opaque agent-session dependency"),
+)
+FORBIDDEN_HISTORY_HEADINGS = re.compile(
+    r"(?im)^##\s+(history|timeline|previous checkpoints?|checkpoint history)\s*$"
 )
 SIGNIFICANT_PREFIXES = (
     "AGENTS.md",
@@ -92,7 +98,28 @@ def parse_handoff(text: str) -> tuple[dict[str, str], list[str]]:
             errors.append(f"handoff contains forbidden {label}")
     if "```sh" not in section(text, "## Next commands"):
         errors.append("Next commands must contain a sh code fence")
+    if len(text.splitlines()) > MAX_HANDOFF_LINES:
+        errors.append(
+            f"current handoff exceeds {MAX_HANDOFF_LINES} lines; replace "
+            "superseded content instead of appending history"
+        )
+    if FORBIDDEN_HISTORY_HEADINGS.search(text):
+        errors.append("current handoff must not contain a history or timeline section")
     return metadata, errors
+
+
+def validate_status(text: str) -> list[str]:
+    errors: list[str] = []
+    if not text.startswith("# Project status\n"):
+        errors.append("status document must start with '# Project status'")
+    if len(text.splitlines()) > MAX_STATUS_LINES:
+        errors.append(
+            f"status document exceeds {MAX_STATUS_LINES} lines; replace "
+            "superseded content instead of appending history"
+        )
+    if FORBIDDEN_HISTORY_HEADINGS.search(text):
+        errors.append("status document must not contain a history or timeline section")
+    return errors
 
 
 def section(text: str, heading: str) -> str:
@@ -172,7 +199,13 @@ def main() -> int:
     except OSError as error:
         print(f"handoff validation failed: {error}", file=sys.stderr)
         return 1
+    try:
+        status_text = STATUS.read_text(encoding="utf-8")
+    except OSError as error:
+        print(f"handoff validation failed: {error}", file=sys.stderr)
+        return 1
     metadata, errors = parse_handoff(text)
+    errors.extend(validate_status(status_text))
     errors.extend(validate_repository(metadata, arguments.base_ref))
     if errors:
         for error in errors:
