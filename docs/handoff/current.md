@@ -3,9 +3,9 @@
 Updated: 2026-08-02T18:25:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 021fcaa
+Baseline commit: 7a49894
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: semantic v2 and spherical-dedup milestone pending commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -44,7 +44,7 @@ is not accepted as identity. No plan or render was produced.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `021fcaa` is present on `origin/main`.
+- Expected branch: `main`; baseline `7a49894` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
@@ -55,7 +55,7 @@ is not accepted as identity. No plan or render was produced.
 ## Verified
 
 - `python3 -m unittest discover -s tests -v`: 241 tests passed.
-- Re-run the handoff validator before committing this milestone.
+- `python3 scripts/check_handoff.py`: passed.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
 - The external artifact contains only `events.json` and `metrics.json`.
