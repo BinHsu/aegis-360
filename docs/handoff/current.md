@@ -3,9 +3,9 @@
 Updated: 2026-08-02T16:20:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 972e666
-Remote status: `main` matches `origin/main` at the baseline commit
-Working tree at checkpoint: documentation cleanup in progress
+Baseline commit: 4831c10
+Remote status: `origin/main` contains the baseline commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -34,8 +34,10 @@ claims verified identity or editorial persistence.
 ## Repository state
 
 - Expected branch: `main`.
-- Baseline and remote head: `972e666`.
-- Baseline working tree was clean and synchronized with `origin/main`.
+- Baseline commit `4831c10` is present on `origin/main`.
+- Commit `4831c10` is intentionally unsigned because the host SSH signing key
+  required an unavailable interactive passphrase; global Git settings were not
+  changed.
 - Benchmark media, model weights and generated artifacts are external and
   gitignored.
 - Current documentation edits intentionally replace superseded status and
