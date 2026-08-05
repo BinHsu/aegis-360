@@ -3,9 +3,9 @@
 Updated: 2026-08-06T05:35:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 2c5cae3
+Baseline commit: b3503ce
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: semantic-seeded Vision milestone pending commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -71,7 +71,7 @@ false. No planner or render was produced.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `2c5cae3` is present on `origin/main`.
+- Expected branch: `main`; baseline `b3503ce` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
