@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-08-06T06:05:00+08:00
+Updated: 2026-08-06T06:20:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 1155a80
+Baseline commit: 6a6d4fb
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: corrected person planner/render milestone pending commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -85,7 +85,7 @@ finds zero median/p95 motion for both, but does not prove comfort or roll.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `1155a80` is present on `origin/main`.
+- Expected branch: `main`; baseline `6a6d4fb` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
