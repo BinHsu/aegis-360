@@ -6,7 +6,9 @@ import json
 import math
 from typing import Mapping
 
+from .geometry import spherical_distance, wrap_yaw
 from .semantic_events import SCHEMA_VERSION
+from .viewport_rays import viewport_normalized_to_world_ray
 
 
 def _finite(value: object, label: str) -> float:
@@ -110,6 +112,23 @@ def build_vision_seed_manifest(
         or pixel_height <= 0
     ):
         raise ValueError("selected viewport dimensions are invalid")
+    aspect_ratio = pixel_width / pixel_height
+    center_y = top + height / 2.0
+    left_ray = viewport_normalized_to_world_ray(
+        x, center_y, yaw, pitch, h_fov, aspect_ratio,
+    )
+    right_ray = viewport_normalized_to_world_ray(
+        x + width, center_y, yaw, pitch, h_fov, aspect_ratio,
+    )
+    left_angles = (
+        wrap_yaw(math.atan2(left_ray[0], left_ray[2])),
+        math.asin(max(-1.0, min(1.0, left_ray[1]))),
+    )
+    right_angles = (
+        wrap_yaw(math.atan2(right_ray[0], right_ray[2])),
+        math.asin(max(-1.0, min(1.0, right_ray[1]))),
+    )
+    horizontal_extent = spherical_distance(left_angles, right_angles)
     source_id = events_document.get("source_id")
     if not isinstance(source_id, str) or not source_id:
         raise ValueError("source ID is required")
@@ -135,6 +154,7 @@ def build_vision_seed_manifest(
             "width": width,
             "height": height,
         },
+        "initial_horizontal_extent_degrees": math.degrees(horizontal_extent),
         "selection": {
             "policy": "smallest_max_box_dimension_then_viewport_and_source_index",
             "eligible_observation_count": len(observations),

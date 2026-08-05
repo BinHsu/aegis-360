@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-06T05:35:00+08:00
+Updated: 2026-08-06T06:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: b3503ce
+Baseline commit: 1155a80
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: corrected person planner/render milestone pending commit
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The immediate objective is to convert the accepted semantic-seeded
-Vision lifecycle into planner candidates without inventing identity.
+viewer. The immediate objective is owner review of the corrected four-second
+semantic person render, followed by reusable bundle automation if accepted.
 
 ## Last completed milestone
 
@@ -69,9 +69,23 @@ Core ML refreshes contain exactly one compatible person, so the lifecycle stays
 active and consumes every event. Identity and editorial persistence remain
 false. No planner or render was produced.
 
+Planner integration now separates the tracked person's 19.664-degree spherical
+extent from the 110-degree forward/output viewport. The unchanged greedy config
+selects the person for all 16 decisions; the shot stays near yaw 60.07 degrees,
+pitch -28.27 degrees and passes the pose gate for all four seconds.
+
+The first render is rejected because the old conflated extent contract added
+framing padding to 110 degrees and produced a 130-degree view. The corrected
+render uses 110 degrees. Its fixed/auto peers are 1920x1080 H.264 High yuv420p
+at 25 fps with the same renderer contract. Mechanical pre-review passes, and
+paired-frame inspection at 0.5/2.0/3.5 seconds finds the same blue-jacketed
+person centered in auto without obvious blur, blocking, seam failure or subject
+loss. Fixed clips that person at the right edge. A translation-only shake proxy
+finds zero median/p95 motion for both, but does not prove comfort or roll.
+
 ## Repository state
 
-- Expected branch: `main`; baseline `b3503ce` is present on `origin/main`.
+- Expected branch: `main`; baseline `1155a80` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
@@ -81,8 +95,8 @@ false. No planner or render was produced.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -v`: 253 tests passed.
-- `python3 scripts/check_handoff.py`: passed.
+- The full repository suite passes: 255 tests. The handoff validator and
+  repository diff checks also pass for this milestone.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
 - The external artifact contains only `events.json` and `metrics.json`.
@@ -95,6 +109,7 @@ false. No planner or render was produced.
   final decimal representation of the initial y coordinate.
 - Temporary tracking frames/contact sheet were removed or remain under system
   temporary storage; no pixels entered Git or durable evidence.
+- Corrected fixed/auto peers pass equal-encoder, pose and agent visual gates.
 
 ## Rejected
 
@@ -109,17 +124,17 @@ false. No planner or render was produced.
   held-out evidence.
 - Do not generalize one isolated 16-frame Vision success to crowded identity,
   occlusion, seam or cross-viewport handoff.
+- Do not send the `v2-render` output to the owner; its 130-degree FOV came from
+  conflating subject extent with output FOV.
 - Do not lower confidence, challenger hold or switch margin from this excerpt.
 - Do not render until a sustained non-ego lifecycle survives semantic review.
 - Do not return to stabilization-threshold or wider-FOV tuning for this POC.
 
 ## Pending
 
-- Convert the accepted tracker observations plus refresh lifecycle into
-  lifecycle-candidate input with explicit geometric-only provenance.
-- Run the unchanged greedy config with forward context over 68.5–72.5 seconds.
-- Require renderer-visible pose differentiation before rendering; visually
-  inspect fixed/auto peers before asking the owner.
+- Ask the owner to compare corrected `v4-extent-render` fixed and auto outputs.
+- If accepted, automate render-bundle assembly so trace/config/camera-path are
+  included before pre-review without manual copies.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
   request, not identity proof; post-termination acquisition uses a fresh ID.
 - Global planning, richer interest signals and verified identity remain later.
@@ -135,17 +150,18 @@ git diff --check
 git status --short
 ```
 
-Then inspect the lifecycle candidate and semantic planning contracts:
+Owner-review paths are external and listed below. After acceptance, inspect the
+bundle and renderer orchestration contracts:
 
 ```sh
-sed -n '1,280p' src/aegis360/lifecycle_candidates.py
-sed -n '1,320p' src/aegis360/semantic_sequence.py
-sed -n '1,300p' scripts/plan_semantic_lifecycle_sequence.py
+sed -n '190,280p' src/aegis360/slice_orchestrator.py
+sed -n '210,330p' scripts/render_slice_adapter.py
+sed -n '1,150p' scripts/check_render_pre_review.py
 ```
 
-Use tracker spherical centers and lifecycle state, not raw detector confidence,
-as candidate input. Preserve `GEOMETRIC_ONLY`, existing hold/margin and forward
-fallback. Do not render an all-forward or visually rejected plan.
+Do not treat owner approval of a four-second composition as identity, handoff,
+comfort or full-story approval. Preserve `GEOMETRIC_ONLY` and existing planner
+settings.
 
 ## External artifacts
 
@@ -157,6 +173,9 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 - `outputs/semantic-vision-seeds/old-ghost-road-track000007-4s-v1.json`
 - `outputs/vision-tracking-gate/old-ghost-road-t68p5-yaw90-semantic-person-track000007-v2-manifest/`
 - `outputs/yolox-refresh-sequence/old-ghost-road-t68p5-yaw90-person-track000007-4s-v2-manifest/`
+- `outputs/semantic-vision-seeds/old-ghost-road-track000007-4s-v2-extent.json`
+- `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v3-extent-corrected/`
+- `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
 
 Relevant prior evidence:
 

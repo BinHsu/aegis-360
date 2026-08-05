@@ -129,6 +129,19 @@ class LifecycleCandidateTests(unittest.TestCase):
             ],
         )
 
+    def test_subject_extent_is_separate_from_forward_viewport_fov(self):
+        frames = lifecycle_candidate_frames(
+            self.lifecycle,
+            self.tracking,
+            horizontal_fov=math.radians(110),
+            candidate_horizontal_fov=math.radians(20),
+            candidate_type="bicycle",
+        )
+        subject = next(item for item in frames[0].candidates if item.track_id)
+        forward = next(item for item in frames[0].candidates if not item.track_id)
+        self.assertAlmostEqual(math.degrees(subject.h_fov), 20)
+        self.assertAlmostEqual(math.degrees(forward.h_fov), 110)
+
 
 if __name__ == "__main__":
     unittest.main()

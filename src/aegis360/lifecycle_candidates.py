@@ -16,6 +16,7 @@ def lifecycle_candidate_frames(
     tracking: Mapping[str, object],
     *,
     horizontal_fov: float,
+    candidate_horizontal_fov: float | None = None,
     candidate_type: str,
     forward_yaw: float = 0,
     forward_pitch: float = 0,
@@ -30,9 +31,16 @@ def lifecycle_candidate_frames(
 
     if lifecycle.get("schema_version") != "aegis360.refresh-lifecycle-trace.v1":
         raise ValueError("unsupported lifecycle schema")
+    candidate_horizontal_fov = (
+        horizontal_fov
+        if candidate_horizontal_fov is None
+        else candidate_horizontal_fov
+    )
     if (
         not math.isfinite(horizontal_fov)
         or not 0 < horizontal_fov < math.pi
+        or not math.isfinite(candidate_horizontal_fov)
+        or not 0 < candidate_horizontal_fov < math.pi
         or not isinstance(candidate_type, str)
         or not candidate_type.strip()
         or not math.isfinite(forward_yaw)
@@ -119,7 +127,7 @@ def lifecycle_candidate_frames(
                 track_id=track_id,
                 yaw=wrap_yaw(float(yaw)),
                 pitch=float(pitch),
-                h_fov=horizontal_fov,
+                h_fov=candidate_horizontal_fov,
                 candidate_type=candidate_type,
                 observed=observed,
                 observed_frames=observed_frames,

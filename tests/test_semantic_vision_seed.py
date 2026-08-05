@@ -44,6 +44,8 @@ class SemanticVisionSeedTests(unittest.TestCase):
         )
         self.assertFalse(result["selection"]["identity_verified"])
         self.assertFalse(result["privacy"]["contains_source_path"])
+        self.assertGreater(result["initial_horizontal_extent_degrees"], 0)
+        self.assertLess(result["initial_horizontal_extent_degrees"], 100)
 
     def test_duplicate_views_choose_smallest_box_deterministically(self):
         acquisition = self.tracklets["tracklets"]["acquisitions"][0]

@@ -252,6 +252,13 @@ sample. This is accepted operational continuity for the bounded single view,
 not verified identity. See the 2026-08-06 semantic-seeded Vision lifecycle
 experiment.
 
+Lifecycle candidate adaptation keeps subject angular extent separate from the
+forward/output viewport FOV. Framing safety consumes the subject extent and
+applies its minimum output FOV; it must not add padding to an already-selected
+output viewport. The first real person render caught this distinction: a
+19.664-degree person extent correctly produces the 110-degree minimum, while
+the rejected conflated contract produced 130 degrees.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,

@@ -1,6 +1,6 @@
 # Project status
 
-Status: Semantic-seeded Vision lifecycle passed; planner wiring is next
+Status: First semantic person render passed agent review; owner review is next
 
 ## Current conclusion
 
@@ -64,6 +64,14 @@ visually verified native track with compatible detector refresh throughout.
 - All 16 Core ML refreshes contain exactly one compatible person. The lifecycle
   remains active, consumes every event and still denies identity/editorial
   persistence.
+- The unchanged greedy config selects this person 16/16 times. Correct
+  separation of 19.664-degree subject extent from output FOV fixes a discovered
+  130-degree over-wide render; the accepted render uses 110 degrees.
+- Corrected fixed/auto 1080p peers pass the mechanical gate. Agent paired-frame
+  review finds the blue-jacketed person consistently centered in auto, no
+  obvious quality defect and meaningful differentiation from fixed.
+- A translation-only shake proxy reports zero median/p95 motion for both peers;
+  it does not establish comfort, roll stability or viewer preference.
 - Tracking grace, termination, fresh-ID acquisition proposal, lifecycle-to-
   planner fallback and semantic planning have bounded unit/real evidence.
 
@@ -73,8 +81,8 @@ visually verified native track with compatible detector refresh throughout.
   large person boxes are suspect boundary/projection artifacts.
 - No real benchmark result proves identity through occlusion, view handoff or
   ERP seam crossing. Detector geometry must not manufacture identity.
-- The accepted lifecycle remains one isolated, single-viewport example. It has
-  not entered planning/rendering and proves no exit, seam, occlusion or handoff.
+- The accepted lifecycle/render remains one isolated, single-viewport example
+  and proves no exit, seam, occlusion or handoff.
 - Interest signals still omit motion change, novelty, event importance and
   audio; the global planner is not implemented.
 - This bounded 12.6-second execution is not evidence of sustained thermal
@@ -82,10 +90,9 @@ visually verified native track with compatible detector refresh throughout.
 
 ## Active acceptance gate
 
-Convert the accepted 16-sample lifecycle and tracked spherical geometry into
-planner candidates. Preserve unchanged greedy hysteresis and forward context,
-then require renderer-visible pose differentiation and agent visual review.
-A view exit remains a later handoff request, not proof of identity.
+Obtain owner review of the corrected four-second fixed/auto comparison. If
+accepted, automate render-bundle assembly and then select a real view-exit or
+ambiguity segment. A view exit remains a handoff request, not proof of identity.
 
 Do not render until at least one candidate:
 

@@ -1,6 +1,6 @@
 # Semantic-seeded Vision lifecycle — 2026-08-06
 
-Status: Bounded isolated-person integration passed; handoff remains unproven
+Status: Bounded lifecycle and 110-degree render passed agent pre-review
 
 ## Question and decision
 
@@ -74,11 +74,48 @@ The isolated-person integration gate passes. A semantic tracklet can now seed
 the native tracker reproducibly, with exact viewport aspect, yaw, pitch, FOV
 and coordinate-origin conversion. This removes the manual-box dependency.
 
+## Planner and render follow-up
+
+The unchanged `greedy-first-slice-v1.toml` selects the person for all 16
+decisions. The static renderer representation holds approximately yaw 60.07
+degrees and pitch -28.27 degrees for four seconds, producing a 63.94-degree
+maximum effective difference from fixed and passing the existing 8-degree,
+two-second pose floor.
+
+The first render exposed an integration bug: lifecycle adaptation used the
+110-degree forward/output viewport FOV as though it were the person's angular
+extent. Framing safety then added subject padding and rendered 130 degrees.
+That version is rejected. The seed manifest now computes the selected box's
+actual 19.664-degree spherical horizontal extent, lifecycle candidates carry
+that separately from forward FOV, and the corrected render remains at the
+110-degree minimum.
+
+Corrected fixed and auto peers are both 1920x1080 H.264 High, yuv420p, 25 fps,
+libx264 fast/CRF 18. Mechanical pre-review passes. Paired frames at relative
+0.5, 2.0 and 3.5 seconds show the fixed view clipping the blue-jacketed person
+at the right edge while auto centers that person and retains nearby people and
+environment. No visible blur, blocking, seam break or subject loss was found.
+
+The existing 160x90, 6 fps translation-only shake proxy reports zero median
+and p95 translation/vector change for both renders across 23 pairs. This is
+only a statement that the proxy detects no additional translational jitter;
+it does not assess roll, perspective, comfort or viewer preference.
+
+Corrected external artifacts:
+
+- `outputs/semantic-vision-seeds/old-ghost-road-track000007-4s-v2-extent.json`
+- `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v3-extent-corrected/`
+- `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
+
+The prior `v2-render` directory is rejected because it used 130-degree FOV and
+required manual bundle assembly before pre-review. Do not send that version to
+the owner.
+
+## Remaining limits
+
 The run is intentionally easy: one visible person and one compatible detector
 result at every sample. It does not exercise missing grace, ambiguity during a
 live track, leaving the viewport, seam handoff or occlusion. Next convert this
-accepted lifecycle into planner candidates and verify unchanged hysteresis and
-renderer-visible differentiation on the four-second segment. Only after that
-bounded integration, select a real view-exit/ambiguity segment to test
-fail-closed handoff behavior. Do not infer persistent identity from this
-single-view success.
+owner-reviewed result into a reusable bundle builder, then select a real
+view-exit/ambiguity segment to test fail-closed handoff behavior. Do not infer
+persistent identity from this single-view success.

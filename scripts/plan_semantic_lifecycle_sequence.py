@@ -68,21 +68,35 @@ def main() -> int:
         lifecycle_path = Path(row.get("lifecycle_json", ""))
         tracking_path = Path(row.get("tracking_json", ""))
         candidate_type = row.get("candidate_type")
+        extent_degrees = row.get("candidate_horizontal_extent_degrees")
         if (
             not lifecycle_path.is_file()
             or not tracking_path.is_file()
             or not isinstance(candidate_type, str)
             or not candidate_type
+            or (
+                extent_degrees is not None
+                and (
+                    not isinstance(extent_degrees, (int, float))
+                    or isinstance(extent_degrees, bool)
+                    or not math.isfinite(extent_degrees)
+                    or not 0 < extent_degrees < 180
+                )
+            )
         ):
             raise ValueError("track input is incomplete")
         lifecycle = json.loads(lifecycle_path.read_text(encoding="utf-8"))
         tracking = json.loads(tracking_path.read_text(encoding="utf-8"))
-        sequences.append((lifecycle, tracking, candidate_type))
+        sequences.append((
+            lifecycle, tracking, candidate_type,
+            math.radians(extent_degrees) if extent_degrees is not None else None,
+        ))
         track_contracts.append({
             "track_id": lifecycle.get("track_id"),
             "candidate_type": candidate_type,
             "lifecycle_schema": lifecycle.get("schema_version"),
             "tracking_schema": tracking.get("schemaVersion"),
+            "candidate_horizontal_extent_degrees": extent_degrees,
         })
 
     horizontal_fov = math.radians(args.horizontal_fov_degrees)

@@ -73,6 +73,19 @@ class SemanticSequenceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "at least one"):
             merge_lifecycle_candidate_sequences((), horizontal_fov=1)
 
+    def test_per_track_extent_is_preserved(self):
+        frames = merge_lifecycle_candidate_sequences((
+            (
+                lifecycle("person-1", ((0, "active", 0),)),
+                tracking("person-1", (0,), 0),
+                "person", math.radians(18),
+            ),
+        ), horizontal_fov=math.radians(110))
+        subject = next(item for item in frames[0].candidates if item.track_id)
+        forward = next(item for item in frames[0].candidates if not item.track_id)
+        self.assertAlmostEqual(math.degrees(subject.h_fov), 18)
+        self.assertAlmostEqual(math.degrees(forward.h_fov), 110)
+
 
 if __name__ == "__main__":
     unittest.main()

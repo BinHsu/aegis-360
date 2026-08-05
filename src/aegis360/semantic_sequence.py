@@ -16,7 +16,7 @@ from .lifecycle_candidates import lifecycle_candidate_frames
 
 
 def merge_lifecycle_candidate_sequences(
-    sequences: Iterable[tuple[Mapping[str, object], Mapping[str, object], str]],
+    sequences: Iterable[tuple],
     *,
     horizontal_fov: float,
     forward_yaw: float = 0.0,
@@ -42,7 +42,11 @@ def merge_lifecycle_candidate_sequences(
     by_timestamp: dict[float, list[TemporalCandidate]] = defaultdict(list)
     seen_ids: set[str] = set()
     sequence_count = 0
-    for lifecycle, tracking, candidate_type in sequences:
+    for sequence in sequences:
+        if len(sequence) not in (3, 4):
+            raise ValueError("lifecycle sequence must contain three or four fields")
+        lifecycle, tracking, candidate_type = sequence[:3]
+        candidate_horizontal_fov = sequence[3] if len(sequence) == 4 else None
         if not isinstance(candidate_type, str) or not candidate_type.strip():
             raise ValueError("candidate type is required")
         track_id = lifecycle.get("track_id")
@@ -54,6 +58,7 @@ def merge_lifecycle_candidate_sequences(
             lifecycle,
             tracking,
             horizontal_fov=horizontal_fov,
+            candidate_horizontal_fov=candidate_horizontal_fov,
             candidate_type=candidate_type,
             forward_yaw=forward_yaw,
             forward_pitch=forward_pitch,
