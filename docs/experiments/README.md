@@ -45,6 +45,9 @@ privacy-safe summaries when results exist.
 - `yolox-multiview-semantic-events-2026-08-02.md`: privacy-safe six-view
   person/bicycle event schema and bounded 30-second Old Ghost Road acquisition
   evidence.
+- `semantic-seeded-vision-lifecycle-2026-08-06.md`: automatic semantic
+  acquisition-to-Vision seed, visual continuity audit, Core ML refresh and
+  lifecycle integration on one bounded isolated person.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

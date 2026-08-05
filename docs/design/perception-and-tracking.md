@@ -237,6 +237,21 @@ ID. These tracklets explicitly grant neither identity nor editorial
 persistence. Their fragmentation is evidence for seeding a tracker after
 unique acquisition, not a reason to weaken ambiguity rules.
 
+`src/aegis360/semantic_vision_seed.py` turns one acquired tracklet into a
+path-free `aegis360.semantic-vision-seed.v1` manifest. It selects among
+duplicate-view observations by smallest maximum box dimension, then stable
+viewport/source ordering, converts top-left detector coordinates to Vision's
+bottom-left convention and carries the exact viewport yaw, pitch, FOV and
+dimensions. The native runner now accepts nonzero pitch and arbitrary valid
+HFOV instead of silently assuming pitch zero. The source video path remains a
+separate explicit runtime input.
+
+The first manifest-driven Old Ghost Road run tracked one visually confirmed
+person for 16/16 frames and received one compatible person refresh at every
+sample. This is accepted operational continuity for the bounded single view,
+not verified identity. See the 2026-08-06 semantic-seeded Vision lifecycle
+experiment.
+
 ## Acceptance criteria
 
 On annotated benchmark excerpts, compare candidate recall, duplicate rate,

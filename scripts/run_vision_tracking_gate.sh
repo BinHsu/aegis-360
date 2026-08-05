@@ -1,8 +1,8 @@
 #!/bin/sh
 set -eu
 
-if [ "$#" -ne 12 ] && [ "$#" -ne 14 ]; then
-    echo "usage: $0 INPUT_VIDEO OUTPUT_DIR SOURCE_ID TRACK_ID START DURATION FPS VIEWPORT_YAW BOX_X BOX_Y BOX_W BOX_H [WIDTH HEIGHT]" >&2
+if [ "$#" -ne 12 ] && [ "$#" -ne 14 ] && [ "$#" -ne 16 ]; then
+    echo "usage: $0 INPUT_VIDEO OUTPUT_DIR SOURCE_ID TRACK_ID START DURATION FPS VIEWPORT_YAW BOX_X BOX_Y BOX_W BOX_H [WIDTH HEIGHT [VIEWPORT_PITCH HFOV]]" >&2
     exit 2
 fi
 
@@ -20,6 +20,8 @@ box_w=${11}
 box_h=${12}
 width=${13:-640}
 height=${14:-360}
+viewport_pitch=${15:-0}
+horizontal_fov=${16:-100}
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 
 [ -f "$input_video" ] || { echo "input video not found" >&2; exit 1; }
@@ -41,15 +43,15 @@ trap 'rm -rf "$work_dir"' EXIT HUP INT TERM
 
 ffmpeg -hide_banner -loglevel error -y \
     -ss "$start" -t "$duration" -i "$input_video" \
-    -vf "v360=input=equirect:output=flat:w=$width:h=$height:yaw=$viewport_yaw:pitch=0:h_fov=100:interp=linear,fps=$fps" \
+    -vf "v360=input=equirect:output=flat:w=$width:h=$height:yaw=$viewport_yaw:pitch=$viewport_pitch:h_fov=$horizontal_fov:interp=linear,fps=$fps" \
     "$work_dir/frame-%04d.png"
 
 set -- "$work_dir"/frame-*.png
 [ -f "$1" ] || { echo "no frames extracted" >&2; exit 1; }
 input_json="$work_dir/input.json"
 {
-    printf '{"sourceId":"%s","trackId":"%s","viewportYawDegrees":%s,"viewportPitchDegrees":0,"horizontalFovDegrees":100,"viewportWidth":%s,"viewportHeight":%s,' \
-        "$source_id" "$track_id" "$viewport_yaw" "$width" "$height"
+    printf '{"sourceId":"%s","trackId":"%s","viewportYawDegrees":%s,"viewportPitchDegrees":%s,"horizontalFovDegrees":%s,"viewportWidth":%s,"viewportHeight":%s,' \
+        "$source_id" "$track_id" "$viewport_yaw" "$viewport_pitch" "$horizontal_fov" "$width" "$height"
     printf '"initialBox":{"x":%s,"y":%s,"width":%s,"height":%s},"frames":[' \
         "$box_x" "$box_y" "$box_w" "$box_h"
     separator=

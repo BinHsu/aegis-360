@@ -37,6 +37,10 @@ class SemanticTrackletTests(unittest.TestCase):
         self.assertEqual(len(report["acquisitions"]), 1)
         self.assertEqual(report["acquisitions"][0]["acquired_at"], .25)
         self.assertFalse(report["acquisitions"][0]["identity_verified"])
+        self.assertEqual(
+            report["acquisitions"][0]["acquisition_observation_provenance"],
+            ["fixture:b"],
+        )
         self.assertFalse(report["policy"]["uses_detector_confidence"])
 
     def test_multiple_compatible_observations_are_ambiguous_not_nearest(self):

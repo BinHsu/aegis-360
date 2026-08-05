@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-02T18:45:00+08:00
+Updated: 2026-08-06T05:35:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 48372a6
+Baseline commit: 2c5cae3
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: semantic-seeded Vision milestone pending commit
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The immediate objective is to turn mutual-unique semantic acquisitions
-into seeded Vision tracking without inventing identity.
+viewer. The immediate objective is to convert the accepted semantic-seeded
+Vision lifecycle into planner candidates without inventing identity.
 
 ## Last completed milestone
 
@@ -52,11 +52,26 @@ A detector-only tracklet diagnostic requires mutual-unique compatibility
 within 12 degrees, two confirmations over 0.25 seconds and two grace samples.
 It acquires 18 fresh IDs, terminates 15 and reports ambiguity in 24/120 samples.
 The longest outdoor person segment is about four seconds; the apparent longer
-nearest-neighbor chain fragments safely. Seeded tracking is therefore next.
+nearest-neighbor chain fragments safely.
+
+Tracklet acquisitions now retain their path-free source observation
+provenance. `semantic_vision_seed` deterministically selects a viewport box,
+converts detector top-left coordinates to Vision bottom-left coordinates and
+retains exact width, height, yaw, pitch and HFOV. The native runner now accepts
+nonzero pitch/HFOV, and a wrapper consumes the seed manifest without manual box
+transcription.
+
+The manifest-driven `semantic-track:000007` run covers Old Ghost Road
+68.5–72.5 seconds in the right 416x416 viewport. Vision tracked 16/16 frames,
+zero lost/error, with 1.500729-degree maximum center step. Agent inspection of
+five box overlays confirms the same blue-jacketed person throughout. All 16
+Core ML refreshes contain exactly one compatible person, so the lifecycle stays
+active and consumes every event. Identity and editorial persistence remain
+false. No planner or render was produced.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `48372a6` is present on `origin/main`.
+- Expected branch: `main`; baseline `2c5cae3` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
@@ -66,7 +81,7 @@ nearest-neighbor chain fragments safely. Seeded tracking is therefore next.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -v`: 248 tests passed.
+- `python3 -m unittest discover -s tests -v`: 253 tests passed.
 - `python3 scripts/check_handoff.py`: passed.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
@@ -76,6 +91,10 @@ nearest-neighbor chain fragments safely. Seeded tracking is therefore next.
 - Seam and adjacent-view synthetic duplicates merge with provenance retained.
 - Ambiguous one-to-many matches do not choose a nearest winner; terminated IDs
   are never reused.
+- Manifest-driven tracking reproduces the manual trace except source ID and the
+  final decimal representation of the initial y coordinate.
+- Temporary tracking frames/contact sheet were removed or remain under system
+  temporary storage; no pixels entered Git or durable evidence.
 
 ## Rejected
 
@@ -88,20 +107,21 @@ nearest-neighbor chain fragments safely. Seeded tracking is therefore next.
   still use the scene.
 - Do not promote the 0.9 framing threshold to an accepted default without
   held-out evidence.
+- Do not generalize one isolated 16-frame Vision success to crowded identity,
+  occlusion, seam or cross-viewport handoff.
 - Do not lower confidence, challenger hold or switch margin from this excerpt.
 - Do not render until a sustained non-ego lifecycle survives semantic review.
 - Do not return to stabilization-threshold or wider-FOV tuning for this POC.
 
 ## Pending
 
-- Seed the existing bounded Vision tracker after mutual-unique semantic
-  acquisition on the correct rectilinear frame and box.
-- Refresh the track with spherical detector clusters; multiple compatible
-  same-class clusters remain ambiguous and cannot reset lifecycle grace.
-- Treat viewport exit as a handoff request, not identity proof. Reacquisition
-  after termination must use a fresh ID.
-- Inspect the tracked candidate before planner integration; render only if it
-  is credible and clears unchanged hysteresis.
+- Convert the accepted tracker observations plus refresh lifecycle into
+  lifecycle-candidate input with explicit geometric-only provenance.
+- Run the unchanged greedy config with forward context over 68.5–72.5 seconds.
+- Require renderer-visible pose differentiation before rendering; visually
+  inspect fixed/auto peers before asking the owner.
+- Later select a real view-exit/ambiguity segment. Treat exit as a handoff
+  request, not identity proof; post-termination acquisition uses a fresh ID.
 - Global planning, richer interest signals and verified identity remain later.
 
 ## Next commands
@@ -115,18 +135,17 @@ git diff --check
 git status --short
 ```
 
-Then inspect the native tracker and refresh contracts before temporal wiring:
+Then inspect the lifecycle candidate and semantic planning contracts:
 
 ```sh
-sed -n '1,220p' src/aegis360/detector_refresh.py
-sed -n '1,300p' src/aegis360/refresh_lifecycle.py
-sed -n '1,280p' scripts/run_yolox_refresh_sequence.py
-sed -n '1,280p' tools/vision_tracking_gate.swift
+sed -n '1,280p' src/aegis360/lifecycle_candidates.py
+sed -n '1,320p' src/aegis360/semantic_sequence.py
+sed -n '1,300p' scripts/plan_semantic_lifecycle_sequence.py
 ```
 
-Do not feed generic nearest geometry into lifecycle. Use the mutual-unique
-acquisition as the seed boundary, let Vision track within a viewport, and use
-semantic refresh only through the existing fail-closed association contract.
+Use tracker spherical centers and lifecycle state, not raw detector confidence,
+as candidate input. Preserve `GEOMETRIC_ONLY`, existing hold/margin and forward
+fallback. Do not render an all-forward or visually rejected plan.
 
 ## External artifacts
 
@@ -134,7 +153,10 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 
 - `outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v2/`
 - `outputs/semantic-spherical/old-ghost-road-t60-90-six-view-yolox-v2-dedup-v1/`
-- `outputs/semantic-tracklets/old-ghost-road-t60-90-yolox-v2-quality90-mutual12-v1/`
+- `outputs/semantic-tracklets/old-ghost-road-t60-90-yolox-v2-quality90-mutual12-v2/`
+- `outputs/semantic-vision-seeds/old-ghost-road-track000007-4s-v1.json`
+- `outputs/vision-tracking-gate/old-ghost-road-t68p5-yaw90-semantic-person-track000007-v2-manifest/`
+- `outputs/yolox-refresh-sequence/old-ghost-road-t68p5-yaw90-person-track000007-4s-v2-manifest/`
 
 Relevant prior evidence:
 

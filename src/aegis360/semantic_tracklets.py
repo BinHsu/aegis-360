@@ -44,6 +44,7 @@ class _Hypothesis:
     track_id: str | None = None
     observed_samples: int = 0
     missing_samples: int = 0
+    observation_provenance: tuple[str, ...] = ()
 
 
 def build_semantic_tracklet_diagnostic(
@@ -123,6 +124,7 @@ def build_semantic_tracklet_diagnostic(
             hypothesis.missing_samples = 0
             hypothesis.confirmations += 1
             hypothesis.observed_samples += 1
+            hypothesis.observation_provenance = observation.observation_provenance
             if (
                 hypothesis.track_id is None
                 and hypothesis.confirmations >= policy.confirmations_required
@@ -137,6 +139,9 @@ def build_semantic_tracklet_diagnostic(
                     "class_name": hypothesis.class_name,
                     "identity_verified": False,
                     "editorial_persistence_allowed": False,
+                    "acquisition_observation_provenance": list(
+                        hypothesis.observation_provenance
+                    ),
                 })
 
         for index, observation in enumerate(observations):
@@ -148,6 +153,7 @@ def build_semantic_tracklet_diagnostic(
                 hypothesis_id, observation.candidate_type,
                 observation.yaw, observation.pitch, timestamp,
                 observed_samples=1,
+                observation_provenance=observation.observation_provenance,
             )
 
         active_tracks = sorted(

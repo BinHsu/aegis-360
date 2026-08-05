@@ -1,6 +1,6 @@
 # Project status
 
-Status: Detector-only tracklets fragment safely; seeded tracking is next
+Status: Semantic-seeded Vision lifecycle passed; planner wiring is next
 
 ## Current conclusion
 
@@ -20,7 +20,8 @@ The blocking risk was semantic coverage rather than rendering. A new six-view
 can expose sustained people around the camera while remaining fast and bounded
 on the M4/16 GB reference machine. These are detector events, not identities or
 editorial candidates. Same-timestamp spherical merging and conservative
-detector-only tracklets now work; a seeded tracker is needed for continuity.
+detector-only tracklets work, and one mutual-unique acquisition now seeds a
+visually verified native track with compatible detector refresh throughout.
 
 ## What is verified
 
@@ -54,6 +55,15 @@ detector-only tracklets now work; a seeded tracker is needed for continuity.
   terminations; 24/120 samples contain ambiguity. The longest outdoor person
   segment is about 4.0 seconds and the longest ending indoor segment 3.25
   seconds. Ambiguity fragments rather than nearest-neighbor swapping.
+- A path-free seed manifest automatically carries the selected viewport,
+  top-left-to-bottom-left box conversion, dimensions, yaw, pitch and FOV into
+  the Vision runner. Nonzero-pitch views are supported by the runner contract.
+- On Old Ghost Road 68.5–72.5 seconds, the manifest-seeded right-view person
+  tracked 16/16 frames with zero loss/error and 1.500729-degree maximum center
+  step. Five representative overlays retain the same blue-jacketed person.
+- All 16 Core ML refreshes contain exactly one compatible person. The lifecycle
+  remains active, consumes every event and still denies identity/editorial
+  persistence.
 - Tracking grace, termination, fresh-ID acquisition proposal, lifecycle-to-
   planner fallback and semantic planning have bounded unit/real evidence.
 
@@ -63,8 +73,8 @@ detector-only tracklets now work; a seeded tracker is needed for continuity.
   large person boxes are suspect boundary/projection artifacts.
 - No real benchmark result proves identity through occlusion, view handoff or
   ERP seam crossing. Detector geometry must not manufacture identity.
-- Detector-only lifecycles are operational geometry, not verified identity or
-  editorial persistence. None has entered planning or rendering.
+- The accepted lifecycle remains one isolated, single-viewport example. It has
+  not entered planning/rendering and proves no exit, seam, occlusion or handoff.
 - Interest signals still omit motion change, novelty, event importance and
   audio; the global planner is not implemented.
 - This bounded 12.6-second execution is not evidence of sustained thermal
@@ -72,10 +82,10 @@ detector-only tracklets now work; a seeded tracker is needed for continuity.
 
 ## Active acceptance gate
 
-After a mutual-unique acquisition, seed a bounded Vision tracker on the
-corresponding rectilinear view. Use detector refresh plus existing lifecycle
-rules to survive detector gaps while failing closed on multiple compatible
-detections. A view exit is a handoff request, not proof of identity.
+Convert the accepted 16-sample lifecycle and tracked spherical geometry into
+planner candidates. Preserve unchanged greedy hysteresis and forward context,
+then require renderer-visible pose differentiation and agent visual review.
+A view exit remains a later handoff request, not proof of identity.
 
 Do not render until at least one candidate:
 
@@ -91,6 +101,7 @@ Do not render until at least one candidate:
 - Current architecture: `docs/design/system-overview.md`
 - Perception and lifecycle rules: `docs/design/perception-and-tracking.md`
 - Multi-view acquisition: `docs/experiments/yolox-multiview-semantic-events-2026-08-02.md`
+- Seeded tracking/lifecycle: `docs/experiments/semantic-seeded-vision-lifecycle-2026-08-06.md`
 - Semantic planning gate: `docs/experiments/semantic-lifecycle-planning-gate-2026-08-02.md`
 - Detector equivalence: `docs/experiments/yolox-tiny-conversion-equivalence-protocol.md`
 - Detector cadence: `docs/experiments/yolox-coreml-stream-cadence-2026-07-30.md`
