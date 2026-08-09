@@ -52,6 +52,13 @@ Gaze, detailed action recognition, face identity, personalization and trained
 end-to-end ranking remain deferred unless later benchmark failures demonstrate
 their necessity.
 
+`aegis360.scene-context.v1` is the bounded interface for a human review or
+local VLM. It accepts only closed context/scope labels, selected IDs from an
+already-declared candidate set, and present/absent/unknown evidence flags. It
+contains no free text, identity, image, embedding or renderer geometry. A VLM
+may request `group`, `single`, `context` or `uncertain`; deterministic spherical
+geometry remains responsible for the actual shot.
+
 ## Acceptance criteria
 
 - Every chosen view can be explained from stored evidence and planner costs.

@@ -101,6 +101,11 @@ Form a conversation/group candidate from person coverage, using face evidence
 only to correct its visual center upward. Define a bounded short-window VLM
 contract for scene context; keep camera geometry and planning deterministic.
 Stereo audio availability does not prove direction or active-speaker identity.
+
+The closed `aegis360.scene-context.v1` contract now exists. Human or local-VLM
+evidence can select only declared candidates and a bounded subject scope; it
+cannot emit camera geometry, free text, identity or unchecksummed model
+provenance. The next gate is deterministic group geometry from that evidence.
 A later view exit remains a handoff request, not proof of identity.
 
 Do not render until at least one candidate:

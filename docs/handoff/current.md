@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-08-09T01:05:00+08:00
+Updated: 2026-08-09T01:25:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: f213efd
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: scene-context contract pending commit
 
 ## Objective
 
@@ -103,6 +103,12 @@ one right-view face at all 16 timestamps near yaw 61.0–61.5 degrees and pitch
 degrees, validating the owner's upward correction. Another visible group
 member is not detected as a face, so single-face framing is rejected.
 
+The closed `aegis360.scene-context.v1` contract lets a human or local VLM
+classify a bounded event window as conversation, direct address, coordinated
+activity, ambient people or uncertain and request group/single/context scope.
+It may select only declared candidate IDs. It has no free text, camera geometry
+or identity field; local model provenance requires an exact SHA-256.
+
 ## Repository state
 
 - Expected branch: `main`; baseline `f213efd` is present on `origin/main`.
@@ -118,6 +124,8 @@ member is not detected as a face, so single-face framing is rejected.
 - The full repository suite passes: 257 tests. The handoff validator and diff
   checks pass for this milestone.
 - Vision frame and sequence shell gates pass with the added face request.
+- The full repository suite passes: 261 tests. Scene-context validation,
+  handoff and diff checks pass for the contract milestone.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
 - The external artifact contains only `events.json` and `metrics.json`.
@@ -164,8 +172,8 @@ member is not detected as a face, so single-face framing is rejected.
 
 - Build a stable group direction from simultaneous person coverage and use the
   face only as an upward composition anchor.
-- Define a path-free VLM response contract for bounded event-window context;
-  it must not supply renderer coordinates or assert speaker identity.
+- Connect a validated group-scope decision to deterministic spherical group
+  geometry, with face evidence affecting vertical composition only.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
