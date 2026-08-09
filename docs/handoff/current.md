@@ -4,7 +4,7 @@ Updated: 2026-08-09T04:35:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 54e7f1f
-Remote status: content commit is ready to push; verify after checkpoint push
+Remote status: `origin/main` contains the content baseline and checkpoint
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
