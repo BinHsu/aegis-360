@@ -3,9 +3,9 @@
 Updated: 2026-08-09T01:25:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f213efd
+Baseline commit: b24ee09
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: scene-context contract pending commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -111,7 +111,7 @@ or identity field; local model provenance requires an exact SHA-256.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `f213efd` is present on `origin/main`.
+- Expected branch: `main`; baseline `b24ee09` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
