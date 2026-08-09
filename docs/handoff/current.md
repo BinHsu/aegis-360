@@ -3,9 +3,9 @@
 Updated: 2026-08-09T01:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 82de794
+Baseline commit: f213efd
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: face-composition probe pending commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -105,7 +105,7 @@ member is not detected as a face, so single-face framing is rejected.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `82de794` is present on `origin/main`.
+- Expected branch: `main`; baseline `f213efd` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
