@@ -3,9 +3,9 @@
 Updated: 2026-08-09T00:20:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 6a6d4fb
+Baseline commit: 82de794
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: speaking-person review and bundle automation pending commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -98,7 +98,7 @@ passes mechanical pre-review and a durable path scan without manual copying.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `6a6d4fb` is present on `origin/main`.
+- Expected branch: `main`; baseline `82de794` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
