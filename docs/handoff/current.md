@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-08-09T01:45:00+08:00
+Updated: 2026-08-09T02:05:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: b24ee09
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: bounded face-anchored group geometry pending commit
+Working tree at checkpoint: window-level group persistence pending commit
 
 ## Objective
 
@@ -114,6 +114,11 @@ degrees after a bounded compatible-face correction. Membership, yaw and FOV
 are unchanged. The other eight samples miss the second person, so per-frame
 group presence is not render-ready and needs window-level bounded persistence.
 
+The new window aggregator requires explicit group context and accepts the real
+8/16 observation ratio at an inclusive 0.5 floor. It yields yaw 54.083 degrees,
+pitch -6.124 degrees and 51.474 degrees required horizontal coverage. It stores
+no cross-time member IDs and labels the association geometric/nonidentity.
+
 ## Repository state
 
 - Expected branch: `main`; baseline `b24ee09` is present on `origin/main`.
@@ -127,10 +132,12 @@ group presence is not render-ready and needs window-level bounded persistence.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 263 tests. Scene-context, group geometry,
+- The full repository suite passes: 267 tests. Scene-context, group geometry,
   handoff and diff checks pass for the current milestone.
 - Targeted group geometry tests prove compatible faces change only pitch,
   unrelated faces are ignored and correction magnitude is bounded.
+- Window-group tests cover the 0.5 floor, insufficient evidence, non-group
+  rejection, nonidentity output and seam-safe aggregation.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
 - The external artifact contains only `events.json` and `metrics.json`.
@@ -161,8 +168,6 @@ group presence is not render-ready and needs window-level bounded persistence.
   held-out evidence.
 - Do not generalize one isolated 16-frame Vision success to crowded identity,
   occlusion, seam or cross-viewport handoff.
-- Do not send the `v2-render` output to the owner; its 130-degree FOV came from
-  conflating subject extent with output FOV.
 - Do not call `v4-extent-render` or `v5-automated-bundle` an editorial pass;
   owner review rejects their speaking-person composition.
 - Do not infer active speaker from a person box, mouth motion or uncalibrated
@@ -179,8 +184,8 @@ group presence is not render-ready and needs window-level bounded persistence.
 
 - Build a stable group direction from simultaneous person coverage and use the
   face only as an upward composition anchor.
-- Connect a validated group-scope decision to deterministic spherical group
-  geometry and hold it across bounded detector misses at window scope.
+- Connect the validated window-group shot to planner candidates and require the
+  existing minimum-FOV and pre-review gates before a new owner comparison.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff

@@ -66,3 +66,9 @@ would flicker. Do not render that directly. A window-level conversation/group
 decision must hold the candidate across bounded detector misses; the eight
 observed group geometries can provide its robust static pose without claiming
 member identity.
+
+The bounded window aggregator accepts the 8/16 ratio at its inclusive 0.5
+floor. It produces yaw 54.083 degrees, pitch -6.124 degrees and 51.474 degrees
+required horizontal coverage. The result carries no cross-time member IDs and
+uses `simultaneous_group_geometry_nonidentity` provenance. The renderer's
+existing minimum FOV remains a separate comfort/framing guard.
