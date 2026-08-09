@@ -3,9 +3,9 @@
 Updated: 2026-08-09T02:55:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 04c03a1
+Baseline commit: 66baa5d
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: planner proposal adapter pending commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -127,7 +127,7 @@ the unchanged primary greedy config chooses it 16/16 over forward context.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `04c03a1` is present on `origin/main`.
+- Expected branch: `main`; baseline `66baa5d` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
