@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-06T06:20:00+08:00
+Updated: 2026-08-09T00:20:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 6a6d4fb
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: speaking-person review and bundle automation pending commit
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The immediate objective is owner review of the corrected four-second
-semantic person render, followed by reusable bundle automation if accepted.
+viewer. The immediate objective is a bounded face/upper-body or mouth-motion
+evidence gate that can compose the visible speaking-person group.
 
 ## Last completed milestone
 
@@ -83,6 +83,19 @@ person centered in auto without obvious blur, blocking, seam failure or subject
 loss. Fixed clips that person at the right edge. A translation-only shake proxy
 finds zero median/p95 motion for both, but does not prove comfort or roll.
 
+Owner review rejects the directing result: fixed needs to move right/down and
+auto needs to move up to frame the visible people whose mouths move. Centering
+one whole-body person box is not an acceptable proxy for a speaking subject.
+The lifecycle integration remains valid, but editorial success does not. The
+source contains stereo audio; its spatial convention and utility for speaker
+localization are unverified.
+
+Semantic planning now has an atomic render-bundle bridge. It copies the four
+path-free planning artifacts into staging, passes source paths only through a
+temporary render request, requires the pose gate, refuses overwrite, cleans up
+failure and publishes only after all three videos exist. A fresh real bundle
+passes mechanical pre-review and a durable path scan without manual copying.
+
 ## Repository state
 
 - Expected branch: `main`; baseline `6a6d4fb` is present on `origin/main`.
@@ -95,8 +108,8 @@ finds zero median/p95 motion for both, but does not prove comfort or roll.
 
 ## Verified
 
-- The full repository suite passes: 255 tests. The handoff validator and
-  repository diff checks also pass for this milestone.
+- The full repository suite passes: 257 tests. The handoff validator and diff
+  checks pass for this milestone.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
 - The external artifact contains only `events.json` and `metrics.json`.
@@ -109,7 +122,8 @@ finds zero median/p95 motion for both, but does not prove comfort or roll.
   final decimal representation of the initial y coordinate.
 - Temporary tracking frames/contact sheet were removed or remain under system
   temporary storage; no pixels entered Git or durable evidence.
-- Corrected fixed/auto peers pass equal-encoder, pose and agent visual gates.
+- The automated bundle passes equal-encoder and pose gates and retains no
+  absolute source path in its durable JSON.
 
 ## Rejected
 
@@ -126,15 +140,20 @@ finds zero median/p95 motion for both, but does not prove comfort or roll.
   occlusion, seam or cross-viewport handoff.
 - Do not send the `v2-render` output to the owner; its 130-degree FOV came from
   conflating subject extent with output FOV.
+- Do not call `v4-extent-render` or `v5-automated-bundle` an editorial pass;
+  owner review rejects their speaking-person composition.
+- Do not infer active speaker from a person box, mouth motion or uncalibrated
+  stereo audio alone.
 - Do not lower confidence, challenger hold or switch margin from this excerpt.
 - Do not render until a sustained non-ego lifecycle survives semantic review.
 - Do not return to stabilization-threshold or wider-FOV tuning for this POC.
 
 ## Pending
 
-- Ask the owner to compare corrected `v4-extent-render` fixed and auto outputs.
-- If accepted, automate render-bundle assembly so trace/config/camera-path are
-  included before pre-review without manual copies.
+- Probe face/upper-body visibility over the rejected four-second excerpt and
+  determine whether two visible speakers can form one stable group direction.
+- Establish whether audio is merely stereo playback or has a usable, verified
+  direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
   request, not identity proof; post-termination acquisition uses a fresh ID.
 - Global planning, richer interest signals and verified identity remain later.
@@ -150,18 +169,16 @@ git diff --check
 git status --short
 ```
 
-Owner-review paths are external and listed below. After acceptance, inspect the
-bundle and renderer orchestration contracts:
+After validation, inspect the existing Apple Vision runner patterns before a
+bounded face-evidence probe:
 
 ```sh
-sed -n '190,280p' src/aegis360/slice_orchestrator.py
-sed -n '210,330p' scripts/render_slice_adapter.py
-sed -n '1,150p' scripts/check_render_pre_review.py
+rg -n 'VNDetectFace|VNDetectHuman|Vision' scripts native src tests
+sed -n '1,180p' docs/design/interest-model.md
 ```
 
-Do not treat owner approval of a four-second composition as identity, handoff,
-comfort or full-story approval. Preserve `GEOMETRIC_ONLY` and existing planner
-settings.
+Keep face evidence path-free and temporary-pixel-only. Preserve
+`GEOMETRIC_ONLY`; a face or moving mouth is not identity or proven speech.
 
 ## External artifacts
 
@@ -176,6 +193,7 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 - `outputs/semantic-vision-seeds/old-ghost-road-track000007-4s-v2-extent.json`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v3-extent-corrected/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
+- `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
 
 Relevant prior evidence:
 

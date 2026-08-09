@@ -39,11 +39,18 @@ near-identical spherical directions. Candidate intervals may begin at regular
 analysis timestamps or detected events; the choice is tested rather than
 assumed.
 
-## Deferred signals
+## Deferred and newly required signals
 
-Active speaker, gaze, detailed action recognition, face identity,
-personalization and trained end-to-end ranking are deferred unless benchmark
-failures demonstrate their necessity.
+Owner rejection of the first person-centered semantic render demonstrates that
+a whole-body person box is insufficient when visible people are speaking. A
+bounded next experiment may use face/upper-body location and mouth motion to
+form a group composition. Mouth motion alone is not active-speaker identity;
+audio/video agreement and the audio channel convention must be established
+before granting an active-speaker signal.
+
+Gaze, detailed action recognition, face identity, personalization and trained
+end-to-end ranking remain deferred unless later benchmark failures demonstrate
+their necessity.
 
 ## Acceptance criteria
 

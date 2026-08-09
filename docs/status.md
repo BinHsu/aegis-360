@@ -1,6 +1,6 @@
 # Project status
 
-Status: First semantic person render passed agent review; owner review is next
+Status: Person tracking integrates; speaking-person composition is rejected
 
 ## Current conclusion
 
@@ -67,9 +67,12 @@ visually verified native track with compatible detector refresh throughout.
 - The unchanged greedy config selects this person 16/16 times. Correct
   separation of 19.664-degree subject extent from output FOV fixes a discovered
   130-degree over-wide render; the accepted render uses 110 degrees.
-- Corrected fixed/auto 1080p peers pass the mechanical gate. Agent paired-frame
-  review finds the blue-jacketed person consistently centered in auto, no
-  obvious quality defect and meaningful differentiation from fixed.
+- Corrected fixed/auto 1080p peers pass the mechanical gate, but owner review
+  rejects the directing result. For speaking-person framing, fixed needs to
+  move right/down and auto needs to move up; centering one whole-body person
+  box is not the correct composition.
+- Semantic planning can now be rendered into one atomic, refuse-overwrite
+  bundle without manually copying trace, config or camera-path artifacts.
 - A translation-only shake proxy reports zero median/p95 motion for both peers;
   it does not establish comfort, roll stability or viewer preference.
 - Tracking grace, termination, fresh-ID acquisition proposal, lifecycle-to-
@@ -90,9 +93,10 @@ visually verified native track with compatible detector refresh throughout.
 
 ## Active acceptance gate
 
-Obtain owner review of the corrected four-second fixed/auto comparison. If
-accepted, automate render-bundle assembly and then select a real view-exit or
-ambiguity segment. A view exit remains a handoff request, not proof of identity.
+Establish a bounded face/upper-body or mouth-motion evidence gate for the same
+four-second scene, then form a speaking-person group composition. Stereo audio
+availability does not yet prove usable direction or active-speaker identity.
+A later view exit remains a handoff request, not proof of identity.
 
 Do not render until at least one candidate:
 

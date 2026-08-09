@@ -1,6 +1,6 @@
 # Semantic-seeded Vision lifecycle — 2026-08-06
 
-Status: Bounded lifecycle and 110-degree render passed agent pre-review
+Status: Bounded lifecycle passed; person-centered editorial render rejected
 
 ## Question and decision
 
@@ -101,11 +101,25 @@ and p95 translation/vector change for both renders across 23 pairs. This is
 only a statement that the proxy detects no additional translational jitter;
 it does not assess roll, perspective, comfort or viewer preference.
 
+Owner review rejected the editorial result. If the intended subject is the
+people who are speaking, fixed must move right/down and auto must move up. Both
+people are already visible and their mouths move. The current plan instead
+centers one whole-body person box at pitch -28.27 degrees. Therefore its
+mechanical pose pass and person continuity are not evidence of correct subject
+choice or composition. This result is retained as a successful integration
+gate and a failed directing gate.
+
+The next bounded perception question is whether face/upper-body or mouth-motion
+evidence can locate a useful speaking-person group. Stereo audio exists, but no
+spatial-audio convention or speaker localization is verified. Mouth motion
+must not be treated as speaker identity without audio/visual agreement.
+
 Corrected external artifacts:
 
 - `outputs/semantic-vision-seeds/old-ghost-road-track000007-4s-v2-extent.json`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v3-extent-corrected/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
+- `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
 
 The prior `v2-render` directory is rejected because it used 130-degree FOV and
 required manual bundle assembly before pre-review. Do not send that version to
@@ -116,6 +130,6 @@ the owner.
 The run is intentionally easy: one visible person and one compatible detector
 result at every sample. It does not exercise missing grace, ambiguity during a
 live track, leaving the viewport, seam handoff or occlusion. Next convert this
-owner-reviewed result into a reusable bundle builder, then select a real
-view-exit/ambiguity segment to test fail-closed handoff behavior. Do not infer
-persistent identity from this single-view success.
+editorial failure into a face/group evidence gate before selecting a real
+view-exit/ambiguity segment. Do not infer active speaker or persistent identity
+from this single-view success.
