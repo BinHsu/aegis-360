@@ -1,6 +1,6 @@
 # Project status
 
-Status: Face anchor verified; conversation-group candidate is next
+Status: Conversation-group render awaits owner review
 
 ## Current conclusion
 
@@ -118,8 +118,15 @@ retains the renderer's independent minimum-FOV guard.
 
 Window geometry now declares two proposal-local member slots plus one group
 proposal. Slots carry no cross-time identity. A real unchanged-config replay
-selects the group 16/16 times; the next step is an atomic proposal artifact and
-context-selection handoff before rendering.
+selects the group 16/16 times.
+
+The geometry proposal, human/local-VLM selection handoff and planner adapter
+are now separate atomic, path-free artifacts. A face-centered proposal at
+pitch -6.124 degrees passed mechanical checks but failed agent review because
+one detected face pulled the group too high. A conservative proposal limits
+face correction to 5 degrees and renders at yaw 54.083, pitch -20.278 and HFOV
+110 degrees. It passes the mechanical gate and agent contact-sheet review; the
+remaining gate is the owner's qualitative comparison against fixed-forward.
 A later view exit remains a handoff request, not proof of identity.
 
 Do not render until at least one candidate:

@@ -1,58 +1,26 @@
 # Current handoff
 
-Updated: 2026-08-09T02:55:00+08:00
+Updated: 2026-08-09T04:35:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 66baa5d
+Baseline commit: 487b52d
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: group proposal/render milestone pending commit
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The immediate objective is window-level persistence for a conversation
-group using person coverage plus face-based vertical composition.
+viewer. The immediate objective is owner review of a bounded conversation-group
+render using person coverage plus conservative face-based composition.
 
 ## Last completed milestone
 
-Added the privacy-safe `aegis360.semantic-detector-events.v2` artifact and a
-load-once Core ML runner for configured serial rectilinear views. Synthetic
-tests fix deterministic ordering, bounded geometry, person/bicycle-only
-content, path-free provenance, privacy declarations and a six-view 416x416
-configuration. The runner refuses overwrite and persists no pixels.
-
-The bounded Old Ghost Road 60–90 second run sampled six views at 4 fps. It
-produced all 720 expected timestamp/view rows in 12.614 seconds with
-365,527,040-byte peak RSS, 238 person boxes, 17 bicycle boxes and 25 rejected
-out-of-frame boxes. Agent inspection confirmed real people outside and inside
-the hut across multiple headings. Coverage is materially broader than the
-earlier isolated bicycle lifecycle.
-
-The event contract is now v2 because v1 omitted viewport pixel dimensions and
-therefore could not reproduce normalized-box ray geometry independently. V2
-was rerun in a new external directory; v1 is rejected for spherical conversion.
-
-The established viewport-ray convention converts v2 boxes to spherical
-centers/extents. Same-time, same-class spherical dedup reduces 255 observations
-to 240 clusters: 15 contain two source views and none exceeds two. All original
-provenance remains, while identity and editorial persistence remain false.
-
-A diagnostic geometric association finds a stable real person from 67.75 to
-78.75 seconds around yaw 60.7 degrees, pitch -24.3 degrees. A preceding
-down-to-right association contains a visible geometry jump, so nearest geometry
-is not accepted as identity. No plan or render was produced.
-
-A tunable subject-framing gate now quarantines boxes at or above 0.9 normalized
-width/height as unsuitable for isolated subject framing, not as detector false
-positives. It quarantines 32/255 observations, including all 19 suspect `up`
-boxes. This threshold was derived after inspecting the run and remains a
-proposal pending held-out validation.
-
-A detector-only tracklet diagnostic requires mutual-unique compatibility
-within 12 degrees, two confirmations over 0.25 seconds and two grace samples.
-It acquires 18 fresh IDs, terminates 15 and reports ambiguity in 24/120 samples.
-The longest outdoor person segment is about four seconds; the apparent longer
-nearest-neighbor chain fragments safely.
+The privacy-safe semantic-event v2 pipeline, load-once Core ML runner,
+spherical dedup and detector-only tracklet diagnostics remain the perception
+foundation. V1 is rejected because it lacked viewport dimensions. The real
+30-second run is recorded in the experiment docs; all continuity remains
+geometric/nonidentity, and the tunable oversized-box quarantine remains
+unvalidated on held-out footage.
 
 Tracklet acquisitions now retain their path-free source observation
 provenance. `semantic_vision_seed` deterministically selects a viewport box,
@@ -125,9 +93,25 @@ minimum simultaneously observed group size and one group proposal referencing
 them. Slots are coverage provenance, not identities. With that selected group,
 the unchanged primary greedy config chooses it 16/16 over forward context.
 
+Geometry generation no longer consumes scene context. The new atomic,
+refuse-overwrite `aegis360.window-group-proposal.v1` artifact is created first;
+a separate human/local-VLM adapter selects one proposal through scene-context
+v2; a planner adapter verifies that context reproduces the proposal candidates
+before producing the existing semantic planning/render contract.
+
+The first real artifact used the only detected face as the group pitch
+(-6.124 degrees). Although its 1080p render passed mechanical checks, agent
+contact-sheet review rejected it because the group was pulled too high and a
+second visible member was crowded against the lower edge. It was not sent to
+the owner. The replacement limits face correction to a tunable 5 degrees and
+renders yaw 54.083, pitch -20.278 and HFOV 110 degrees. It selects the group
+16/16, reaches 56.615 degrees fixed/auto pose difference, passes the mechanical
+gate, and retains all three visible heads without obvious codec or seam damage.
+The nearby cap-wearing person remains partially cropped below the torso.
+
 ## Repository state
 
-- Expected branch: `main`; baseline `66baa5d` is present on `origin/main`.
+- Expected branch: `main`; baseline `487b52d` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
@@ -138,8 +122,8 @@ the unchanged primary greedy config chooses it 16/16 over forward context.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 270 tests. Window proposal, planner adapter,
-  handoff and diff checks pass.
+- The full repository suite passes: 274 tests, including proposal/selection/
+  planner contracts.
 - Targeted group geometry tests prove compatible faces change only pitch,
   unrelated faces are ignored and correction magnitude is bounded.
 - Window-group tests cover the 0.5 floor, insufficient evidence, non-group
@@ -170,6 +154,10 @@ the unchanged primary greedy config chooses it 16/16 over forward context.
   face recall missed another owner-observed member of the interaction group.
 - Do not render raw per-frame group availability; it flickers on half the
   samples in this excerpt.
+- Do not use the only detected face as the group camera center; the rejected
+  pitch -6.124 render visibly miscomposes another group member.
+- Do not promote the 5-degree face correction to a universal default; it is a
+  tunable POC guard pending held-out evidence.
 - Do not consume scene-context v1 or ask review/VLM to compose person IDs;
   geometry owns group proposals and membership provenance.
 - Do not lower confidence, challenger hold or switch margin from this excerpt.
@@ -178,8 +166,11 @@ the unchanged primary greedy config chooses it 16/16 over forward context.
 
 ## Pending
 
-- Materialize an atomic geometry proposal artifact, then apply a separate
-  validated human/local-VLM context selection before planning.
+- Obtain owner review of the conservative group render. If vertical framing is
+  accepted, use this bounded gate while adding group/upper-body vertical
+  extents; if rejected, revise geometry rather than score weights.
+- Replace the human selection with a checksummed local-VLM adapter only after
+  the proposal/render composition contract is accepted.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
@@ -197,11 +188,11 @@ git diff --check
 git status --short
 ```
 
-After validation, inspect the planner adapters before proposal integration:
+After validation and commit/push, compare the fixed and auto render peers:
 
 ```sh
-sed -n '1,230p' src/aegis360/group_shot.py
-sed -n '1,280p' src/aegis360/scene_context.py
+open "$AEGIS_DATA_DIR/outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v4-pitch-guard5-render/fixed-forward.mp4"
+open "$AEGIS_DATA_DIR/outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v4-pitch-guard5-render/auto-directed.mp4"
 ```
 
 Keep face evidence path-free and temporary-pixel-only. Preserve
@@ -222,6 +213,9 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
 - `outputs/vision-face-sequence/old-ghost-road-t68p5-4s-4fps-four-view-v1/evidence.json`
+- `outputs/window-group-proposals/old-ghost-road-t68p5-4s-v2-pitch-guard5/`
+- `outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v3-pitch-guard5-plan/`
+- `outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v4-pitch-guard5-render/`
 
 Do not overwrite or commit these directories.
 

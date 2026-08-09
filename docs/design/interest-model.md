@@ -67,6 +67,13 @@ minimum simultaneously observed group size. Slots express coverage only; they
 are not tracks or identities. A group proposal references those slots, and the
 context reviewer selects the proposal as a unit.
 
+Face evidence is a composition hint, not a camera target. In the first real
+group window, replacing the body-group pitch with the only detected face pitch
+pulled the view upward enough to crowd a second visible member against the
+lower frame edge. The POC therefore limits face-derived vertical correction to
+5 degrees. This is a tunable guard, not a validated product default; future
+group extents or upper-body evidence should replace it when available.
+
 ## Acceptance criteria
 
 - Every chosen view can be explained from stored evidence and planner costs.

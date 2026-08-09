@@ -1,6 +1,6 @@
 # Vision face composition probe — 2026-08-09
 
-Status: Face anchor is stable; single-face framing is rejected
+Status: Group proposal rendered; conservative face correction awaits owner review
 
 ## Question
 
@@ -68,7 +68,32 @@ observed group geometries can provide its robust static pose without claiming
 member identity.
 
 The bounded window aggregator accepts the 8/16 ratio at its inclusive 0.5
-floor. It produces yaw 54.083 degrees, pitch -6.124 degrees and 51.474 degrees
-required horizontal coverage. The result carries no cross-time member IDs and
-uses `simultaneous_group_geometry_nonidentity` provenance. The renderer's
-existing minimum FOV remains a separate comfort/framing guard.
+floor. Its body geometry is yaw 54.083 degrees and pitch -25.278 degrees, with
+51.474 degrees required horizontal coverage. The result carries no cross-time
+member IDs and uses `simultaneous_group_geometry_nonidentity` provenance. The
+renderer independently retains its 110-degree minimum FOV.
+
+## Proposal/render follow-up
+
+An atomic, path-free proposal artifact now separates geometry generation from
+human/local-VLM selection. The selected `group:window:1` proposal is then
+adapted into the unchanged greedy planner and atomic render bundle.
+
+The first proposal copied the only detected face pitch (-6.124 degrees) into
+the group camera pose. Its render passed mechanical checks but agent contact-
+sheet review rejected it: the single face pulled the whole group too high and
+crowded another visible member against the lower edge. It was not sent to the
+owner.
+
+A second immutable proposal limits face-derived pitch correction to 5 degrees.
+It renders at yaw 54.083 degrees, pitch -20.278 degrees and HFOV 110 degrees.
+Both peers are H.264 High, yuv420p, 1920x1080 at 25 fps; the group is selected
+16/16 times and the maximum fixed/auto pose difference is 56.615 degrees.
+Agent inspection finds a clear directing difference, all three visible heads
+retained, and no obvious blur, blocking or seam defect. The nearby cap-wearing
+person is partially cropped below the torso, so owner review is still required.
+
+The 5-degree limit has status `tunable_poc_guard_not_validated_default`. This
+four-second human-selected context test does not validate automated scene
+classification, active-speaker identity, longer tracking or a universal
+composition threshold.

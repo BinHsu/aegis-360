@@ -34,7 +34,7 @@ def shot(yaw, pitch=-6, fov=90):
 class WindowGroupTests(unittest.TestCase):
     def test_half_observed_window_builds_nonidentity_stable_pose(self):
         result = build_window_group_shot(
-            context(), [shot(53.9), shot(54.1), shot(54.4), shot(54.0)],
+            [shot(53.9), shot(54.1), shot(54.4), shot(54.0)],
             total_sample_count=8,
         )
         self.assertEqual(result.observed_sample_count, 4)
@@ -46,7 +46,7 @@ class WindowGroupTests(unittest.TestCase):
 
     def test_geometry_declares_nonidentity_group_member_slots(self):
         aggregate = build_window_group_shot(
-            context(), [shot(54), shot(54.2)], total_sample_count=4,
+            [shot(54), shot(54.2)], total_sample_count=4,
         )
         candidates = window_group_scene_candidates(aggregate)
         self.assertEqual(
@@ -60,25 +60,23 @@ class WindowGroupTests(unittest.TestCase):
 
     def test_insufficient_coverage_returns_none(self):
         self.assertIsNone(build_window_group_shot(
-            context(), [shot(54)], total_sample_count=3,
+            [shot(54)], total_sample_count=3,
         ))
 
-    def test_non_group_context_and_invalid_observation_fail_closed(self):
-        with self.assertRaisesRegex(ValueError, "group subject scope"):
-            build_window_group_shot(context("single"), [shot(54)], total_sample_count=1)
+    def test_invalid_observation_fails_closed(self):
         bad = GroupShot(("only",), 0, 0, 1, 1, True)
         with self.assertRaisesRegex(ValueError, "group shot"):
-            build_window_group_shot(context(), [bad], total_sample_count=1)
+            build_window_group_shot([bad], total_sample_count=1)
 
     def test_seam_aggregation_uses_short_direction(self):
         result = build_window_group_shot(
-            context(), [shot(179), shot(-179)], total_sample_count=2,
+            [shot(179), shot(-179)], total_sample_count=2,
         )
         self.assertAlmostEqual(abs(math.degrees(result.yaw)), 180, places=6)
 
     def test_selected_group_proposal_becomes_nonidentity_window_candidate(self):
         aggregate = build_window_group_shot(
-            context(), [shot(54), shot(54.2)], total_sample_count=4,
+            [shot(54), shot(54.2)], total_sample_count=4,
         )
         frames = window_group_candidate_frames(
             context(), aggregate, [0.0, 0.25, 0.5, 0.75],

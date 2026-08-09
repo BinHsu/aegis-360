@@ -123,7 +123,6 @@ def window_group_candidate_frames(
 
 
 def build_window_group_shot(
-    context: SceneContextDecision,
     observed_shots: list[GroupShot],
     *,
     total_sample_count: int,
@@ -132,20 +131,6 @@ def build_window_group_shot(
 ) -> WindowGroupShot | None:
     """Hold a group pose across bounded misses without merging identities."""
 
-    selected = next(
-        (
-            candidate for candidate in context.candidates
-            if candidate.candidate_id == context.selected_candidate_id
-        ),
-        None,
-    )
-    if (
-        context.subject_scope != "group"
-        or selected is None
-        or selected.candidate_type != "group"
-        or len(selected.member_candidate_ids) < 2
-    ):
-        raise ValueError("window group geometry requires group subject scope")
     if not isinstance(total_sample_count, int) or isinstance(total_sample_count, bool) or total_sample_count < 1:
         raise ValueError("total sample count must be a positive integer")
     if len(observed_shots) > total_sample_count:
