@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+import statistics
 
 from .geometry import spherical_distance, wrap_yaw
 
@@ -47,6 +48,48 @@ class GroupShotConfig:
             <= self.maximum_horizontal_fov < math.pi
         ):
             raise ValueError("group FOV bounds must be ordered in (0, pi)")
+
+
+@dataclass(frozen=True)
+class CompositionAnchor:
+    yaw: float
+    pitch: float
+
+
+def apply_vertical_composition_anchors(
+    shot: GroupShot,
+    anchors: list[CompositionAnchor],
+    *,
+    maximum_pitch_correction: float = math.radians(25.0),
+) -> GroupShot:
+    """Shift group pitch toward compatible faces without changing coverage."""
+
+    if not math.isfinite(maximum_pitch_correction) or maximum_pitch_correction < 0:
+        raise ValueError("maximum pitch correction must be finite and nonnegative")
+    for anchor in anchors:
+        if not math.isfinite(anchor.yaw) or not math.isfinite(anchor.pitch):
+            raise ValueError("composition anchor geometry must be finite")
+        if not -math.pi / 2 <= anchor.pitch <= math.pi / 2:
+            raise ValueError("composition anchor pitch must remain between poles")
+    compatible = [
+        anchor for anchor in anchors
+        if abs(wrap_yaw(anchor.yaw - shot.yaw)) <= shot.horizontal_fov / 2
+    ]
+    if not compatible:
+        return shot
+    target = statistics.median(anchor.pitch for anchor in compatible)
+    correction = max(
+        -maximum_pitch_correction,
+        min(maximum_pitch_correction, target - shot.pitch),
+    )
+    return GroupShot(
+        member_ids=shot.member_ids,
+        yaw=shot.yaw,
+        pitch=max(-math.pi / 2, min(math.pi / 2, shot.pitch + correction)),
+        horizontal_fov=shot.horizontal_fov,
+        required_horizontal_fov=shot.required_horizontal_fov,
+        fully_contains_members=shot.fully_contains_members,
+    )
 
 
 def build_group_shot(

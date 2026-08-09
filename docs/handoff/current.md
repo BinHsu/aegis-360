@@ -1,18 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-09T01:25:00+08:00
+Updated: 2026-08-09T01:45:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: b24ee09
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: bounded face-anchored group geometry pending commit
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The immediate objective is a conversation/group candidate using person
-coverage plus face-based vertical composition, followed by a bounded VLM
-context contract.
+viewer. The immediate objective is window-level persistence for a conversation
+group using person coverage plus face-based vertical composition.
 
 ## Last completed milestone
 
@@ -109,6 +108,12 @@ activity, ambient people or uncertain and request group/single/context scope.
 It may select only declared candidate IDs. It has no free text, camera geometry
 or identity field; local model provenance requires an exact SHA-256.
 
+Two-person spherical groups exist at 8/16 samples. They are stable near yaw
+53.9–54.4 degrees; the body-based pitch near -25 degrees becomes -5.4 to -6.4
+degrees after a bounded compatible-face correction. Membership, yaw and FOV
+are unchanged. The other eight samples miss the second person, so per-frame
+group presence is not render-ready and needs window-level bounded persistence.
+
 ## Repository state
 
 - Expected branch: `main`; baseline `b24ee09` is present on `origin/main`.
@@ -121,11 +126,11 @@ or identity field; local model provenance requires an exact SHA-256.
 
 ## Verified
 
-- The full repository suite passes: 257 tests. The handoff validator and diff
-  checks pass for this milestone.
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 261 tests. Scene-context validation,
-  handoff and diff checks pass for the contract milestone.
+- The full repository suite passes: 263 tests. Scene-context, group geometry,
+  handoff and diff checks pass for the current milestone.
+- Targeted group geometry tests prove compatible faces change only pitch,
+  unrelated faces are ignored and correction magnitude is bounded.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
 - The external artifact contains only `events.json` and `metrics.json`.
@@ -164,6 +169,8 @@ or identity field; local model provenance requires an exact SHA-256.
   stereo audio alone.
 - Do not center or crop a conversation candidate from the only detected face;
   face recall missed another owner-observed member of the interaction group.
+- Do not render raw per-frame group availability; it flickers on half the
+  samples in this excerpt.
 - Do not lower confidence, challenger hold or switch margin from this excerpt.
 - Do not render until a sustained non-ego lifecycle survives semantic review.
 - Do not return to stabilization-threshold or wider-FOV tuning for this POC.
@@ -173,7 +180,7 @@ or identity field; local model provenance requires an exact SHA-256.
 - Build a stable group direction from simultaneous person coverage and use the
   face only as an upward composition anchor.
 - Connect a validated group-scope decision to deterministic spherical group
-  geometry, with face evidence affecting vertical composition only.
+  geometry and hold it across bounded detector misses at window scope.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
@@ -191,12 +198,12 @@ git diff --check
 git status --short
 ```
 
-After validation, inspect the existing Apple Vision runner patterns before a
-bounded face-evidence probe:
+After validation, inspect the group and scene-context contracts before adding
+window-level persistence:
 
 ```sh
-rg -n 'VNDetectFace|VNDetectHuman|Vision' scripts native src tests
-sed -n '1,180p' docs/design/interest-model.md
+sed -n '1,230p' src/aegis360/group_shot.py
+sed -n '1,280p' src/aegis360/scene_context.py
 ```
 
 Keep face evidence path-free and temporary-pixel-only. Preserve
@@ -217,12 +224,6 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
 - `outputs/vision-face-sequence/old-ghost-road-t68p5-4s-4fps-four-view-v1/evidence.json`
-
-Relevant prior evidence:
-
-- `outputs/yolox-refresh-sequence/old-ghost-road-t60-yaw0-bicycle-8s-4fps-v3/`
-- `outputs/yolox-refresh-sequence/old-ghost-road-t105-yawm90-person-8s-4fps-v4/`
-- `outputs/semantic-planning/old-ghost-road-t60-bicycle-8s-v4-render-ready/`
 
 Do not overwrite or commit these directories.
 

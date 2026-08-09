@@ -6,8 +6,10 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from aegis360.group_shot import (
+    CompositionAnchor,
     GroupMember,
     GroupShotConfig,
+    apply_vertical_composition_anchors,
     build_group_shot,
     build_group_shots,
 )
@@ -23,6 +25,33 @@ def member(identifier, yaw, pitch=0.0, extent=10.0):
 
 
 class GroupShotTests(unittest.TestCase):
+    def test_face_anchor_shifts_pitch_without_changing_group_coverage(self):
+        shot = build_group_shot([
+            member("left", 48, -27), member("right", 61, -24),
+        ])
+        corrected = apply_vertical_composition_anchors(
+            shot, [CompositionAnchor(math.radians(61), math.radians(-6))],
+        )
+        self.assertAlmostEqual(math.degrees(corrected.pitch), -6)
+        self.assertEqual(corrected.member_ids, shot.member_ids)
+        self.assertEqual(corrected.yaw, shot.yaw)
+        self.assertEqual(corrected.horizontal_fov, shot.horizontal_fov)
+        self.assertEqual(corrected.fully_contains_members, shot.fully_contains_members)
+
+    def test_unrelated_face_is_ignored_and_correction_is_bounded(self):
+        shot = build_group_shot([member("a", 0, -30), member("b", 10, -30)])
+        unrelated = apply_vertical_composition_anchors(
+            shot, [CompositionAnchor(math.radians(150), 0)],
+        )
+        self.assertEqual(unrelated, shot)
+        bounded = apply_vertical_composition_anchors(
+            shot, [CompositionAnchor(math.radians(5), math.radians(30))],
+            maximum_pitch_correction=math.radians(20),
+        )
+        self.assertAlmostEqual(
+            bounded.pitch, shot.pitch + math.radians(20), places=12,
+        )
+
     def test_seam_neighbors_center_at_seam_not_forward(self):
         result = build_group_shot([
             member("left", -179.0),

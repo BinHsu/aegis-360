@@ -51,3 +51,18 @@ External evidence:
 The JSON is path-free and contains no pixels, embeddings, names or identity
 claims. The four-second result does not establish recall on other poses,
 scenes, cameras or benchmarks.
+
+## Group-geometry follow-up
+
+Simultaneous spherical person detections form a containable two-person group
+at 8/16 timestamps. Those observations are stable near yaw 53.9–54.4 degrees
+and whole-body pitch -25.1 to -25.4 degrees. Applying the compatible face only
+as a bounded vertical anchor moves pitch to -5.4 to -6.4 degrees while leaving
+member coverage, yaw and FOV unchanged. This converges the owner's two framing
+instructions on one group direction.
+
+Half the samples lack the second person detection, so per-frame group presence
+would flicker. Do not render that directly. A window-level conversation/group
+decision must hold the candidate across bounded detector misses; the eight
+observed group geometries can provide its robust static pose without claiming
+member identity.

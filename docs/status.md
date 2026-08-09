@@ -106,6 +106,11 @@ The closed `aegis360.scene-context.v1` contract now exists. Human or local-VLM
 evidence can select only declared candidates and a bounded subject scope; it
 cannot emit camera geometry, free text, identity or unchecksummed model
 provenance. The next gate is deterministic group geometry from that evidence.
+
+At 8/16 samples, two simultaneous person detections form a stable group near
+yaw 54 degrees. Face anchoring shifts its pitch from about -25 to -6 degrees
+without changing membership or FOV. The missing second-person detections in
+the other eight samples require bounded window-level persistence before render.
 A later view exit remains a handoff request, not proof of identity.
 
 Do not render until at least one candidate:
