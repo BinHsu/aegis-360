@@ -24,8 +24,12 @@ assert result["schemaVersion"] == 1
 assert result["provenance"]["adapterId"] == "apple-vision-frame-gate"
 assert result["frames"][0]["sourceId"] == "synthetic-fixture"
 assert result["frames"][0]["timestampSeconds"] == 1.25
-assert len(result["frames"][0]["requests"]) == 3
+assert len(result["frames"][0]["requests"]) == 4
 assert all("candidateCount" in request for request in result["frames"][0]["requests"])
+assert any(
+    request["request"] == "VNDetectFaceRectanglesRequest"
+    for request in result["frames"][0]["requests"]
+)
 assert "/Users/" not in json.dumps(result)
 PY
 

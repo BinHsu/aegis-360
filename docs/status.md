@@ -1,6 +1,6 @@
 # Project status
 
-Status: Person tracking integrates; speaking-person composition is rejected
+Status: Face anchor verified; conversation-group candidate is next
 
 ## Current conclusion
 
@@ -75,6 +75,10 @@ visually verified native track with compatible detector refresh throughout.
   bundle without manually copying trace, config or camera-path artifacts.
 - A translation-only shake proxy reports zero median/p95 motion for both peers;
   it does not establish comfort, roll stability or viewer preference.
+- The bounded face probe finds one stable right-view face in all 16 samples at
+  about pitch -6 degrees, versus -28 degrees for the whole-body track. This
+  validates the owner's upward correction but misses another visible group
+  member, so single-face framing is rejected.
 - Tracking grace, termination, fresh-ID acquisition proposal, lifecycle-to-
   planner fallback and semantic planning have bounded unit/real evidence.
 
@@ -93,9 +97,10 @@ visually verified native track with compatible detector refresh throughout.
 
 ## Active acceptance gate
 
-Establish a bounded face/upper-body or mouth-motion evidence gate for the same
-four-second scene, then form a speaking-person group composition. Stereo audio
-availability does not yet prove usable direction or active-speaker identity.
+Form a conversation/group candidate from person coverage, using face evidence
+only to correct its visual center upward. Define a bounded short-window VLM
+contract for scene context; keep camera geometry and planning deterministic.
+Stereo audio availability does not prove direction or active-speaker identity.
 A later view exit remains a handoff request, not proof of identity.
 
 Do not render until at least one candidate:

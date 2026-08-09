@@ -1,17 +1,18 @@
 # Current handoff
 
-Updated: 2026-08-09T00:20:00+08:00
+Updated: 2026-08-09T01:05:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 82de794
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: face-composition probe pending commit
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The immediate objective is a bounded face/upper-body or mouth-motion
-evidence gate that can compose the visible speaking-person group.
+viewer. The immediate objective is a conversation/group candidate using person
+coverage plus face-based vertical composition, followed by a bounded VLM
+context contract.
 
 ## Last completed milestone
 
@@ -96,6 +97,12 @@ temporary render request, requires the pose gate, refuses overwrite, cleans up
 failure and publishes only after all three videos exist. A fresh real bundle
 passes mechanical pre-review and a durable path scan without manual copying.
 
+The bounded four-view face probe succeeds on all 64 requests. It finds exactly
+one right-view face at all 16 timestamps near yaw 61.0–61.5 degrees and pitch
+-5.4 to -6.4 degrees. The selected whole-body track's pitch was about -28.3
+degrees, validating the owner's upward correction. Another visible group
+member is not detected as a face, so single-face framing is rejected.
+
 ## Repository state
 
 - Expected branch: `main`; baseline `82de794` is present on `origin/main`.
@@ -110,6 +117,7 @@ passes mechanical pre-review and a durable path scan without manual copying.
 
 - The full repository suite passes: 257 tests. The handoff validator and diff
   checks pass for this milestone.
+- Vision frame and sequence shell gates pass with the added face request.
 - Real input produced exactly 120 frames for each of six serial streams.
 - Core ML model load count is one; no extracted frame is persisted.
 - The external artifact contains only `events.json` and `metrics.json`.
@@ -124,6 +132,8 @@ passes mechanical pre-review and a durable path scan without manual copying.
   temporary storage; no pixels entered Git or durable evidence.
 - The automated bundle passes equal-encoder and pose gates and retains no
   absolute source path in its durable JSON.
+- The face sequence is 16/16 stable for one face, deletes temporary pixels and
+  retains no source path, face image, embedding, name or identity claim.
 
 ## Rejected
 
@@ -144,14 +154,18 @@ passes mechanical pre-review and a durable path scan without manual copying.
   owner review rejects their speaking-person composition.
 - Do not infer active speaker from a person box, mouth motion or uncalibrated
   stereo audio alone.
+- Do not center or crop a conversation candidate from the only detected face;
+  face recall missed another owner-observed member of the interaction group.
 - Do not lower confidence, challenger hold or switch margin from this excerpt.
 - Do not render until a sustained non-ego lifecycle survives semantic review.
 - Do not return to stabilization-threshold or wider-FOV tuning for this POC.
 
 ## Pending
 
-- Probe face/upper-body visibility over the rejected four-second excerpt and
-  determine whether two visible speakers can form one stable group direction.
+- Build a stable group direction from simultaneous person coverage and use the
+  face only as an upward composition anchor.
+- Define a path-free VLM response contract for bounded event-window context;
+  it must not supply renderer coordinates or assert speaker identity.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
@@ -194,6 +208,7 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v3-extent-corrected/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
+- `outputs/vision-face-sequence/old-ghost-road-t68p5-4s-4fps-four-view-v1/evidence.json`
 
 Relevant prior evidence:
 

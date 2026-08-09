@@ -48,6 +48,8 @@ privacy-safe summaries when results exist.
 - `semantic-seeded-vision-lifecycle-2026-08-06.md`: automatic semantic
   acquisition-to-Vision seed, visual continuity audit, Core ML refresh and
   lifecycle integration on one bounded isolated person.
+- `vision-face-composition-probe-2026-08-09.md`: stable face-based vertical
+  composition evidence and the real-scene rejection of single-face framing.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

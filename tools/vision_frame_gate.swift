@@ -157,6 +157,7 @@ func analyze(_ input: GateInput) throws -> GateOutput {
         let attention = VNGenerateAttentionBasedSaliencyImageRequest()
         let objectness = VNGenerateObjectnessBasedSaliencyImageRequest()
         let humans = VNDetectHumanRectanglesRequest()
+        let faces = VNDetectFaceRectanglesRequest()
         var requestResults: [RequestResult] = []
         var candidates: [Candidate] = []
 
@@ -222,6 +223,30 @@ func analyze(_ input: GateInput) throws -> GateOutput {
             ))
         }
 
+        do {
+            try VNImageRequestHandler(url: imageURL, options: [:]).perform([faces])
+            let observations = faces.results ?? []
+            let found = observations.enumerated().map {
+                sphericalCandidate(
+                    boundingBox: $0.element.boundingBox,
+                    confidence: $0.element.confidence,
+                    kind: "face_rectangle",
+                    viewport: viewport,
+                    index: $0.offset
+                )
+            }
+            candidates.append(contentsOf: found)
+            requestResults.append(RequestResult(
+                request: "VNDetectFaceRectanglesRequest",
+                supported: true, error: nil, candidateCount: found.count
+            ))
+        } catch {
+            requestResults.append(RequestResult(
+                request: "VNDetectFaceRectanglesRequest",
+                supported: false, error: privacySafeError(error), candidateCount: 0
+            ))
+        }
+
         frames.append(FrameResult(
             sourceId: input.sourceId,
             frameIndex: input.frameIndex,
@@ -246,6 +271,7 @@ func analyze(_ input: GateInput) throws -> GateOutput {
             "Single-frame bootstrap evidence only; no tracking or cross-viewport deduplication.",
             "Candidate quality and benchmark recall are not established.",
             "Bounding-box extent is an approximation, not a spherical mask.",
+            "A face rectangle is neither identity nor evidence that the person is speaking.",
             "Framework availability does not establish CPU/GPU/ANE placement.",
         ]
     )
