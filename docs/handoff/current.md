@@ -3,9 +3,9 @@
 Updated: 2026-08-09T04:35:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 487b52d
-Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: group proposal/render milestone pending commit
+Baseline commit: 54e7f1f
+Remote status: content commit is ready to push; verify after checkpoint push
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -111,7 +111,7 @@ The nearby cap-wearing person remains partially cropped below the torso.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `487b52d` is present on `origin/main`.
+- Expected branch: `main`; content baseline is `54e7f1f`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
