@@ -3,9 +3,9 @@
 Updated: 2026-08-09T02:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: b24ee09
+Baseline commit: 87bcdc3
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: window-level group persistence pending commit
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -121,7 +121,7 @@ no cross-time member IDs and labels the association geometric/nonidentity.
 
 ## Repository state
 
-- Expected branch: `main`; baseline `b24ee09` is present on `origin/main`.
+- Expected branch: `main`; baseline `87bcdc3` is present on `origin/main`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
