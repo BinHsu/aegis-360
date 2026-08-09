@@ -115,6 +115,11 @@ without changing membership or FOV. The missing second-person detections in
 the other eight samples are now bridged only when explicit group context and a
 0.5 observation floor are both present. The window result is nonidentity and
 retains the renderer's independent minimum-FOV guard.
+
+Window geometry now declares two proposal-local member slots plus one group
+proposal. Slots carry no cross-time identity. A real unchanged-config replay
+selects the group 16/16 times; the next step is an atomic proposal artifact and
+context-selection handoff before rendering.
 A later view exit remains a handoff request, not proof of identity.
 
 Do not render until at least one candidate:

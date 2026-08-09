@@ -62,6 +62,11 @@ geometry remains responsible for the actual shot. V1 is rejected because it
 required review to compose cross-time person IDs instead of selecting a
 geometry-owned group proposal.
 
+Window aggregation declares proposal-local `person-slot` members from the
+minimum simultaneously observed group size. Slots express coverage only; they
+are not tracks or identities. A group proposal references those slots, and the
+context reviewer selects the proposal as a unit.
+
 ## Acceptance criteria
 
 - Every chosen view can be explained from stored evidence and planner costs.

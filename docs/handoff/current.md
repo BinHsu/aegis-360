@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-08-09T02:30:00+08:00
+Updated: 2026-08-09T02:55:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 04c03a1
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: planner proposal adapter pending commit
 
 ## Objective
 
@@ -120,6 +120,11 @@ The new window aggregator requires explicit group context and accepts the real
 pitch -6.124 degrees and 51.474 degrees required horizontal coverage. It stores
 no cross-time member IDs and labels the association geometric/nonidentity.
 
+Window geometry now declares proposal-local `person-slot` members from the
+minimum simultaneously observed group size and one group proposal referencing
+them. Slots are coverage provenance, not identities. With that selected group,
+the unchanged primary greedy config chooses it 16/16 over forward context.
+
 ## Repository state
 
 - Expected branch: `main`; baseline `04c03a1` is present on `origin/main`.
@@ -133,24 +138,12 @@ no cross-time member IDs and labels the association geometric/nonidentity.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 268 tests. Scene-context v2, window-group,
+- The full repository suite passes: 270 tests. Window proposal, planner adapter,
   handoff and diff checks pass.
 - Targeted group geometry tests prove compatible faces change only pitch,
   unrelated faces are ignored and correction magnitude is bounded.
 - Window-group tests cover the 0.5 floor, insufficient evidence, non-group
   rejection, nonidentity output and seam-safe aggregation.
-- Real input produced exactly 120 frames for each of six serial streams.
-- Core ML model load count is one; no extracted frame is persisted.
-- The external artifact contains only `events.json` and `metrics.json`.
-- Source IDs and durable artifacts contain no absolute input path.
-- V2 dimensions make viewport projection self-contained; old v1 fails closed.
-- Seam and adjacent-view synthetic duplicates merge with provenance retained.
-- Ambiguous one-to-many matches do not choose a nearest winner; terminated IDs
-  are never reused.
-- Manifest-driven tracking reproduces the manual trace except source ID and the
-  final decimal representation of the initial y coordinate.
-- Temporary tracking frames/contact sheet were removed or remain under system
-  temporary storage; no pixels entered Git or durable evidence.
 - The automated bundle passes equal-encoder and pose gates and retains no
   absolute source path in its durable JSON.
 - The face sequence is 16/16 stable for one face, deletes temporary pixels and
@@ -185,8 +178,8 @@ no cross-time member IDs and labels the association geometric/nonidentity.
 
 ## Pending
 
-- Connect the validated window-group shot to planner candidates and require the
-  existing minimum-FOV and pre-review gates before a new owner comparison.
+- Materialize an atomic geometry proposal artifact, then apply a separate
+  validated human/local-VLM context selection before planning.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
