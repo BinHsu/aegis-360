@@ -102,10 +102,12 @@ only to correct its visual center upward. Define a bounded short-window VLM
 contract for scene context; keep camera geometry and planning deterministic.
 Stereo audio availability does not prove direction or active-speaker identity.
 
-The closed `aegis360.scene-context.v1` contract now exists. Human or local-VLM
-evidence can select only declared candidates and a bounded subject scope; it
-cannot emit camera geometry, free text, identity or unchecksummed model
-provenance. The next gate is deterministic group geometry from that evidence.
+The closed `aegis360.scene-context.v2` contract lets human or local-VLM evidence
+select a geometry-declared person/group/context proposal with matching scope.
+Group membership is declared before review and remains nonidentity. V1 is
+rejected because it let review compose fragmented cross-time person IDs. The
+contract cannot emit camera geometry, free text, identity or unchecksummed
+model provenance.
 
 At 8/16 samples, two simultaneous person detections form a stable group near
 yaw 54 degrees. Face anchoring shifts its pitch from about -25 to -6 degrees

@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-08-09T02:05:00+08:00
+Updated: 2026-08-09T02:30:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 87bcdc3
 Remote status: `origin/main` contains the baseline commit
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: scene-context v2 proposal selection pending commit
 
 ## Objective
 
@@ -102,11 +102,12 @@ one right-view face at all 16 timestamps near yaw 61.0–61.5 degrees and pitch
 degrees, validating the owner's upward correction. Another visible group
 member is not detected as a face, so single-face framing is rejected.
 
-The closed `aegis360.scene-context.v1` contract lets a human or local VLM
-classify a bounded event window as conversation, direct address, coordinated
-activity, ambient people or uncertain and request group/single/context scope.
-It may select only declared candidate IDs. It has no free text, camera geometry
-or identity field; local model provenance requires an exact SHA-256.
+The closed `aegis360.scene-context.v2` contract makes geometry declare person,
+group and context proposals before human/local-VLM review. A group references
+2+ declared person proposals but asserts no identity; review selects exactly
+one proposal matching its requested scope. It has no free text, camera geometry
+or identity field, and local model provenance requires an exact SHA-256. V1 is
+rejected because it made review compose fragmented cross-time person IDs.
 
 Two-person spherical groups exist at 8/16 samples. They are stable near yaw
 53.9–54.4 degrees; the body-based pitch near -25 degrees becomes -5.4 to -6.4
@@ -132,8 +133,8 @@ no cross-time member IDs and labels the association geometric/nonidentity.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 267 tests. Scene-context, group geometry,
-  handoff and diff checks pass for the current milestone.
+- The full repository suite passes: 268 tests. Scene-context v2, window-group,
+  handoff and diff checks pass.
 - Targeted group geometry tests prove compatible faces change only pitch,
   unrelated faces are ignored and correction magnitude is bounded.
 - Window-group tests cover the 0.5 floor, insufficient evidence, non-group
@@ -176,14 +177,14 @@ no cross-time member IDs and labels the association geometric/nonidentity.
   face recall missed another owner-observed member of the interaction group.
 - Do not render raw per-frame group availability; it flickers on half the
   samples in this excerpt.
+- Do not consume scene-context v1 or ask review/VLM to compose person IDs;
+  geometry owns group proposals and membership provenance.
 - Do not lower confidence, challenger hold or switch margin from this excerpt.
 - Do not render until a sustained non-ego lifecycle survives semantic review.
 - Do not return to stabilization-threshold or wider-FOV tuning for this POC.
 
 ## Pending
 
-- Build a stable group direction from simultaneous person coverage and use the
-  face only as an upward composition anchor.
 - Connect the validated window-group shot to planner candidates and require the
   existing minimum-FOV and pre-review gates before a new owner comparison.
 - Establish whether audio is merely stereo playback or has a usable, verified
@@ -203,8 +204,7 @@ git diff --check
 git status --short
 ```
 
-After validation, inspect the group and scene-context contracts before adding
-window-level persistence:
+After validation, inspect the planner adapters before proposal integration:
 
 ```sh
 sed -n '1,230p' src/aegis360/group_shot.py

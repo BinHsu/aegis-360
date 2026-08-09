@@ -6,13 +6,18 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from aegis360.group_shot import GroupShot
-from aegis360.scene_context import SceneContextDecision
+from aegis360.scene_context import SceneContextCandidate, SceneContextDecision
 from aegis360.window_group import build_window_group_shot
 
 
 def context(scope="group"):
     return SceneContextDecision(
-        "conversation", scope, ("person:1", "person:2"), {},
+        "conversation", scope, "group:1" if scope == "group" else "person:1",
+        (
+            SceneContextCandidate("person:1", "person", ()),
+            SceneContextCandidate("person:2", "person", ()),
+            SceneContextCandidate("group:1", "group", ("person:1", "person:2")),
+        ), {},
     )
 
 
