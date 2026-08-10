@@ -117,7 +117,9 @@ The generic local-model importer accepts only the four closed decision fields,
 verifies the exact model asset SHA-256, binds the result to proposal-owned
 candidates, validates scene-context v2, writes atomically and refuses overwrite.
 It permits uncertain/no-selection and rejects free text, geometry and invented
-candidate IDs. It does not run inference; no VLM backend or model is selected.
+candidate IDs. It does not run inference. SmolVLM2 500M Video MLX BF16 is the
+leading unacquired candidate, based on video support, Apache-2.0 claims and
+published size; none of those feasibility claims has been measured locally.
 
 ## Repository state
 
@@ -178,8 +180,8 @@ candidate IDs. It does not run inference; no VLM backend or model is selected.
 
 ## Pending
 
-- Select a small local VLM only after license, weights, memory and measured M4
-  feasibility review; add a backend runner that emits the closed importer input.
+- Before any download, pin the SmolVLM2 upstream/conversion revisions, finish
+  conversion/license review, estimate bytes and obtain explicit authorization.
 - Retain the accepted 5-degree POC guard while adding group/upper-body vertical
   extents and testing held-out footage; do not promote it to a product default.
 - Establish whether audio is merely stereo playback or has a usable, verified

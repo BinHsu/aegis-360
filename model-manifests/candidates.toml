@@ -2,5 +2,21 @@ candidate_manifest_version = 1
 updated_date = "2026-07-29"
 implicit_downloads_allowed = false
 
-# No proposed candidates. YOLOX-Tiny moved to the installed manifest after
-# explicit acquisition and checksum measurement.
+[[candidate]]
+candidate_id = "smolvlm2-500m-video-instruct-mlx-bf16"
+purpose = "bounded offline short-window scene-context classification"
+status = "proposed_not_acquired"
+acquisition_authorized = false
+upstream_model_id = "HuggingFaceTB/SmolVLM2-500M-Video-Instruct"
+conversion_model_id = "mlx-community/SmolVLM2-500M-Video-Instruct-mlx"
+runtime = "MLX via mlx-vlm on Apple Silicon"
+license_claim = "Apache-2.0 on upstream and conversion model cards"
+upstream_model_card_url = "https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct"
+conversion_model_card_url = "https://huggingface.co/mlx-community/SmolVLM2-500M-Video-Instruct-mlx"
+runtime_url = "https://github.com/Blaizzy/mlx-vlm"
+proposed_relative_path = "models/smolvlm2-500m-video-instruct-mlx-bf16"
+sha256_status = "must_be_measured_after_explicit_acquisition"
+byte_size_status = "must_be_measured_after_explicit_acquisition"
+revision_status = "must_pin_exact_revision_before_explicit_acquisition"
+fit_hypothesis = "0.5B BF16 conversion is listed as 1.02 GB; upstream claims 1.8 GB GPU RAM for video inference"
+unresolved = "conversion provenance, structured-output reliability, exact peak RSS, swap, latency, thermal behavior, and benchmark accuracy"

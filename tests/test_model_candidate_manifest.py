@@ -28,11 +28,19 @@ class ModelCandidateManifestTests(unittest.TestCase):
             path = Path(candidate["proposed_relative_path"])
             self.assertFalse(path.is_absolute())
             self.assertNotIn("..", path.parts)
-            self.assertTrue(
-                candidate["release_asset_url"].startswith(
-                    "https://github.com/Megvii-BaseDetection/YOLOX/releases/"
-                )
+            self.assertEqual(
+                candidate["revision_status"],
+                "must_pin_exact_revision_before_explicit_acquisition",
             )
+            self.assertTrue(candidate["upstream_model_card_url"].startswith(
+                "https://huggingface.co/"
+            ))
+            self.assertTrue(candidate["conversion_model_card_url"].startswith(
+                "https://huggingface.co/"
+            ))
+            self.assertTrue(candidate["runtime_url"].startswith(
+                "https://github.com/"
+            ))
 
 
 if __name__ == "__main__":
