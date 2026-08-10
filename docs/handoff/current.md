@@ -3,9 +3,9 @@
 Updated: 2026-08-11T05:15:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: a26dc8c
-Remote status: `origin/main` contains the content baseline and checkpoint
-Working tree at checkpoint: local context importer milestone pending commit
+Baseline commit: 6b048f5
+Remote status: content commit and checkpoint are ready to push
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -121,7 +121,7 @@ candidate IDs. It does not run inference; no VLM backend or model is selected.
 
 ## Repository state
 
-- Expected branch: `main`; checkpoint baseline is `a26dc8c`.
+- Expected branch: `main`; content baseline is `6b048f5`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
