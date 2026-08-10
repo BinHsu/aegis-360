@@ -180,8 +180,8 @@ published size; none of those feasibility claims has been measured locally.
 
 ## Pending
 
-- Before any download, pin the SmolVLM2 upstream/conversion revisions, finish
-  conversion/license review, estimate bytes and obtain explicit authorization.
+- Before any download, finish conversion/license review and obtain explicit
+  authorization for the pinned roughly 1.02 GB MLX candidate plus runtime.
 - Retain the accepted 5-degree POC guard while adding group/upper-body vertical
   extents and testing held-out footage; do not promote it to a product default.
 - Establish whether audio is merely stereo playback or has a usable, verified

@@ -38,10 +38,21 @@ video understanding, and the weights use the Apple AMLR license rather than
 Apache-2.0. It remains a possible per-frame fallback, not the first short-window
 candidate: <https://huggingface.co/apple/FastVLM-0.5B-fp16>.
 
+## Pinned metadata
+
+Read-only Hugging Face API metadata on 2026-08-11 reports:
+
+- upstream revision `7b375e1b73b11138ff12fe22c8f2822d8fe03467`;
+- MLX conversion revision `fa57db46815177fbdfd65cc85a2b3416a8332268`;
+- MLX repository storage of 1,015,023,993 bytes (about 968 MiB).
+
+This is a download estimate, not locally measured acquired bytes. Individual
+file checksums still must be measured after explicit acquisition.
+
 ## Required before acquisition
 
-Pin an exact upstream/conversion revision; review conversion provenance and all
-license texts; estimate total download size; then obtain explicit authorization.
+Review conversion provenance and all license texts, then obtain explicit
+authorization for roughly 1.02 GB of model assets plus the runtime dependency.
 After acquisition, measure checksum, byte size, cold/sustained latency, peak
 RSS, swap and output stability. Compare a deterministic multi-image sample
 against video decoding so the model never needs the full source path or an

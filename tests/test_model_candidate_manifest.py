@@ -30,8 +30,11 @@ class ModelCandidateManifestTests(unittest.TestCase):
             self.assertNotIn("..", path.parts)
             self.assertEqual(
                 candidate["revision_status"],
-                "must_pin_exact_revision_before_explicit_acquisition",
+                "pinned_from_hugging_face_metadata_2026-08-11",
             )
+            self.assertRegex(candidate["upstream_revision"], r"^[0-9a-f]{40}$")
+            self.assertRegex(candidate["conversion_revision"], r"^[0-9a-f]{40}$")
+            self.assertGreater(candidate["listed_conversion_repository_bytes"], 0)
             self.assertTrue(candidate["upstream_model_card_url"].startswith(
                 "https://huggingface.co/"
             ))
