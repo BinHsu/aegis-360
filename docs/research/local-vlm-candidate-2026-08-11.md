@@ -57,3 +57,17 @@ The owner authorized acquisition on 2026-08-11. The primary safetensors file is
 The runtime executed on the M4 with zero swap, but all three attempted closed
 output protocols failed validation. The model is therefore rejected for
 planner integration; details are in the linked experiment.
+
+## Next candidate
+
+The recommended next gate is `SmolVLM2-2.2B-Instruct-mlx` at conversion
+revision `844516024a1c4400d34489b89ee067d794e432ed`. Its primary BF16 weight is
+listed as 4,493,651,795 bytes with upstream LFS SHA-256
+`ed6c59250704f09f921dce1a25e0d4eff611b6c9c53e382a7eb04ce9113f2773`.
+The upstream model card claims Apache-2.0, 5.2 GB GPU RAM for video inference,
+and higher video benchmark scores than 500M. It reuses the verified runtime and
+llguidance schema path, isolating model capacity as the main changed variable.
+
+Qwen2.5-VL 3B 4-bit has a smaller roughly 3.07 GB primary weight and may offer
+stronger instruction following, but its model card points to the Qwen Research
+License. It is not the first follow-up for this public POC.

@@ -143,6 +143,11 @@ failed, while two grammar-constrained runs produced valid syntax but wrong
 semantics or an invalid scope/candidate pair. Do not weaken the importer or
 continue tuning this 500M model.
 
+The next proposed model is SmolVLM2 2.2B MLX BF16, pinned but not acquired. It
+reuses the verified Apache-2.0 family/runtime and changes model capacity rather
+than the interface. Its primary weight is about 4.49 GB; acquisition requires
+explicit approval and the first gate must remain four frames with swap checks.
+
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;

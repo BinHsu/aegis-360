@@ -182,8 +182,8 @@ cross-field validation. It is rejected for planner integration; stop tuning.
 
 ## Pending
 
-- Research a larger model; constrained decoding is already verified and is
-  insufficient here. Additional weights require explicit acquisition.
+- Obtain explicit approval before acquiring pinned SmolVLM2 2.2B MLX BF16
+  (4,493,651,795-byte primary weight); first gate is four frames plus swap.
 - Retain the accepted 5-degree POC guard while adding group/upper-body vertical
   extents and testing held-out footage; do not promote it to a product default.
 - Establish whether audio is merely stereo playback or has a usable, verified

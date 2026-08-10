@@ -34,7 +34,8 @@ class ModelCandidateManifestTests(unittest.TestCase):
             )
             self.assertRegex(candidate["upstream_revision"], r"^[0-9a-f]{40}$")
             self.assertRegex(candidate["conversion_revision"], r"^[0-9a-f]{40}$")
-            self.assertGreater(candidate["listed_conversion_repository_bytes"], 0)
+            self.assertGreater(candidate["listed_primary_weight_bytes"], 0)
+            self.assertRegex(candidate["listed_primary_weight_sha256"], r"^[0-9a-f]{64}$")
             self.assertTrue(candidate["upstream_model_card_url"].startswith(
                 "https://huggingface.co/"
             ))
