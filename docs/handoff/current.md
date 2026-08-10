@@ -117,9 +117,9 @@ The generic local-model importer accepts only the four closed decision fields,
 verifies the exact model asset SHA-256, binds the result to proposal-owned
 candidates, validates scene-context v2, writes atomically and refuses overwrite.
 It permits uncertain/no-selection and rejects free text, geometry and invented
-candidate IDs. It does not run inference. SmolVLM2 500M Video MLX BF16 is the
-leading unacquired candidate, based on video support, Apache-2.0 claims and
-published size; none of those feasibility claims has been measured locally.
+candidate IDs. SmolVLM2 500M Video MLX BF16 was acquired and ran without swap,
+but JSON, exact-template and closed-code outputs all failed validation. It is
+hardware-feasible and rejected for planner integration; stop prompt tuning.
 
 ## Repository state
 
@@ -138,6 +138,8 @@ published size; none of those feasibility claims has been measured locally.
   planner contracts.
 - Targeted local-context adapter tests pass for checksum provenance, group and
   uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
+- The acquired 500M model's four-frame run takes 8.39 seconds, uses about 2.44
+  GB maximum RSS and zero swap; instruction compliance fails three protocols.
 - Targeted group geometry tests prove compatible faces change only pitch,
   unrelated faces are ignored and correction magnitude is bounded.
 - Window-group tests cover the 0.5 floor, insufficient evidence, non-group
@@ -180,8 +182,8 @@ published size; none of those feasibility claims has been measured locally.
 
 ## Pending
 
-- Before any download, finish conversion/license review and obtain explicit
-  authorization for the pinned roughly 1.02 GB MLX candidate plus runtime.
+- Decide whether to research a larger model or constrained-decoding backend;
+  any additional weights require a separate explicit acquisition decision.
 - Retain the accepted 5-degree POC guard while adding group/upper-body vertical
   extents and testing held-out footage; do not promote it to a product default.
 - Establish whether audio is merely stereo playback or has a usable, verified
@@ -218,10 +220,8 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 - `outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v2/`
 - `outputs/semantic-spherical/old-ghost-road-t60-90-six-view-yolox-v2-dedup-v1/`
 - `outputs/semantic-tracklets/old-ghost-road-t60-90-yolox-v2-quality90-mutual12-v2/`
-- `outputs/semantic-vision-seeds/old-ghost-road-track000007-4s-v1.json`
 - `outputs/vision-tracking-gate/old-ghost-road-t68p5-yaw90-semantic-person-track000007-v2-manifest/`
 - `outputs/yolox-refresh-sequence/old-ghost-road-t68p5-yaw90-person-track000007-4s-v2-manifest/`
-- `outputs/semantic-vision-seeds/old-ghost-road-track000007-4s-v2-extent.json`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v3-extent-corrected/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`

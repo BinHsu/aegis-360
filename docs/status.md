@@ -136,11 +136,11 @@ asset SHA-256 and atomically emits scene-context v2; uncertain-with-no-selection
 is valid. No backend/model has been selected or run, so this is an integration
 boundary rather than automatic context-classification evidence.
 
-SmolVLM2 500M Video via its MLX BF16 conversion is the leading unacquired
-candidate: upstream explicitly supports video/multi-image input, both model
-cards claim Apache-2.0, and its published size is plausible for 16 GB unified
-memory. These are external claims, not local measurements. Exact revision,
-conversion provenance and download authorization remain open.
+SmolVLM2 500M Video MLX BF16 was explicitly acquired and is hardware-feasible
+for the bounded four-frame run: 8.39 seconds, about 2.44 GB maximum RSS and zero
+swap. It is rejected for planner integration because JSON, exact-template and
+closed-code prompts all failed the scene-context contract. Do not weaken the
+importer or continue tuning this 500M prompt.
 
 Do not render until at least one candidate:
 

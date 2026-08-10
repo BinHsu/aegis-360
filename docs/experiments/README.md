@@ -50,6 +50,8 @@ privacy-safe summaries when results exist.
   lifecycle integration on one bounded isolated person.
 - `vision-face-composition-probe-2026-08-09.md`: stable face-based vertical
   composition evidence and the real-scene rejection of single-face framing.
+- `smolvlm2-500m-context-gate-2026-08-11.md`: acquired MLX model, M4/16 GB
+  feasibility and rejection after three closed-output protocols failed.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

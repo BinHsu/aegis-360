@@ -1,6 +1,6 @@
 # Local VLM candidate — 2026-08-11
 
-Status: Proposed only; acquisition is not authorized
+Status: Acquired and rejected by the bounded context-output gate
 
 ## Need
 
@@ -49,12 +49,11 @@ Read-only Hugging Face API metadata on 2026-08-11 reports:
 This is a download estimate, not locally measured acquired bytes. Individual
 file checksums still must be measured after explicit acquisition.
 
-## Required before acquisition
+## Acquisition and result
 
-Review conversion provenance and all license texts, then obtain explicit
-authorization for roughly 1.02 GB of model assets plus the runtime dependency.
-After acquisition, measure checksum, byte size, cold/sustained latency, peak
-RSS, swap and output stability. Compare a deterministic multi-image sample
-against video decoding so the model never needs the full source path or an
-unbounded clip. Treat prompt-only JSON as untrusted and pass it through the
-closed importer.
+The owner authorized acquisition on 2026-08-11. The primary safetensors file is
+1,015,023,993 bytes with SHA-256
+`a9839c8f79ecc93e54a00dc73cc0e68ba477debcd065d50c1c289fbb1075f981`.
+The runtime executed on the M4 with zero swap, but all three attempted closed
+output protocols failed validation. The model is therefore rejected for
+planner integration; details are in the linked experiment.
