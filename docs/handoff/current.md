@@ -3,8 +3,8 @@
 Updated: 2026-08-11T05:15:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 753e2c5
-Remote status: rejected-model evidence commit and checkpoint are ready to push
+Baseline commit: 596bc9c
+Remote status: constrained-model evidence commit and checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -123,7 +123,7 @@ cross-field validation. It is rejected for planner integration; stop tuning.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `753e2c5`.
+- Expected branch: `main`; content baseline is `596bc9c`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
