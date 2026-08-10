@@ -1,6 +1,6 @@
 # Vision face composition probe — 2026-08-09
 
-Status: Group proposal rendered; conservative face correction awaits owner review
+Status: Conservative group composition accepted by owner
 
 ## Question
 
@@ -91,7 +91,13 @@ Both peers are H.264 High, yuv420p, 1920x1080 at 25 fps; the group is selected
 16/16 times and the maximum fixed/auto pose difference is 56.615 degrees.
 Agent inspection finds a clear directing difference, all three visible heads
 retained, and no obvious blur, blocking or seam defect. The nearby cap-wearing
-person is partially cropped below the torso, so owner review is still required.
+person is partially cropped below the torso.
+
+On 2026-08-11 the owner accepted this result for the stated gate: the output
+successfully captures the two people in conversation. This acceptance is for
+group framing only. It does not establish active-speaker recognition, speaker
+identity, automatic context classification, subject switching or longer-window
+tracking.
 
 The 5-degree limit has status `tunable_poc_guard_not_validated_default`. This
 four-second human-selected context test does not validate automated scene

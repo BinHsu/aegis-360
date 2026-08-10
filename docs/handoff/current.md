@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-09T04:35:00+08:00
+Updated: 2026-08-11T05:15:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 54e7f1f
+Baseline commit: a26dc8c
 Remote status: `origin/main` contains the content baseline and checkpoint
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The immediate objective is owner review of a bounded conversation-group
-render using person coverage plus conservative face-based composition.
+viewer. The conversation-group composition gate is accepted; the immediate
+objective is a checksummed offline context adapter selecting fixed proposals.
 
 ## Last completed milestone
 
@@ -108,10 +108,14 @@ renders yaw 54.083, pitch -20.278 and HFOV 110 degrees. It selects the group
 16/16, reaches 56.615 degrees fixed/auto pose difference, passes the mechanical
 gate, and retains all three visible heads without obvious codec or seam damage.
 The nearby cap-wearing person remains partially cropped below the torso.
+On 2026-08-11 the owner accepted the auto render as successfully capturing the
+two people in conversation. This accepts group framing only; it does not prove
+speaker identity, active-speaker inference, automatic context classification,
+subject switching or longer-window tracking.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `54e7f1f`.
+- Expected branch: `main`; checkpoint baseline is `a26dc8c`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
@@ -166,11 +170,10 @@ The nearby cap-wearing person remains partially cropped below the torso.
 
 ## Pending
 
-- Obtain owner review of the conservative group render. If vertical framing is
-  accepted, use this bounded gate while adding group/upper-body vertical
-  extents; if rejected, revise geometry rather than score weights.
-- Replace the human selection with a checksummed local-VLM adapter only after
-  the proposal/render composition contract is accepted.
+- Add a checksummed offline context adapter that can only select a proposal or
+  return uncertain; it must not emit geometry, identity or free text.
+- Retain the accepted 5-degree POC guard while adding group/upper-body vertical
+  extents and testing held-out footage; do not promote it to a product default.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
@@ -188,11 +191,12 @@ git diff --check
 git status --short
 ```
 
-After validation and commit/push, compare the fixed and auto render peers:
+After validation, inspect the fixed context contract before implementing the
+local adapter:
 
 ```sh
-open "$AEGIS_DATA_DIR/outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v4-pitch-guard5-render/fixed-forward.mp4"
-open "$AEGIS_DATA_DIR/outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v4-pitch-guard5-render/auto-directed.mp4"
+sed -n '1,280p' src/aegis360/scene_context.py
+sed -n '1,240p' model-manifests/README.md
 ```
 
 Keep face evidence path-free and temporary-pixel-only. Preserve

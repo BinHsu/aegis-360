@@ -1,6 +1,6 @@
 # Project status
 
-Status: Conversation-group render awaits owner review
+Status: Conversation-group composition accepted; local context adapter next
 
 ## Current conclusion
 
@@ -126,7 +126,8 @@ pitch -6.124 degrees passed mechanical checks but failed agent review because
 one detected face pulled the group too high. A conservative proposal limits
 face correction to 5 degrees and renders at yaw 54.083, pitch -20.278 and HFOV
 110 degrees. It passes the mechanical gate and agent contact-sheet review; the
-remaining gate is the owner's qualitative comparison against fixed-forward.
+owner accepts it as successfully capturing the two people in conversation.
+This is a bounded group-framing pass, not active-speaker or identity evidence.
 A later view exit remains a handoff request, not proof of identity.
 
 Do not render until at least one candidate:
