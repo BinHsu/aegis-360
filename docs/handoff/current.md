@@ -5,7 +5,7 @@ Repository: aegis-360
 Branch: main
 Baseline commit: a26dc8c
 Remote status: `origin/main` contains the content baseline and checkpoint
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: local context importer milestone pending commit
 
 ## Objective
 
@@ -113,6 +113,12 @@ two people in conversation. This accepts group framing only; it does not prove
 speaker identity, active-speaker inference, automatic context classification,
 subject switching or longer-window tracking.
 
+The generic local-model importer accepts only the four closed decision fields,
+verifies the exact model asset SHA-256, binds the result to proposal-owned
+candidates, validates scene-context v2, writes atomically and refuses overwrite.
+It permits uncertain/no-selection and rejects free text, geometry and invented
+candidate IDs. It does not run inference; no VLM backend or model is selected.
+
 ## Repository state
 
 - Expected branch: `main`; checkpoint baseline is `a26dc8c`.
@@ -126,8 +132,10 @@ subject switching or longer-window tracking.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 274 tests, including proposal/selection/
+- The full repository suite passes: 278 tests, including proposal/selection/
   planner contracts.
+- Targeted local-context adapter tests pass for checksum provenance, group and
+  uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
 - Targeted group geometry tests prove compatible faces change only pitch,
   unrelated faces are ignored and correction magnitude is bounded.
 - Window-group tests cover the 0.5 floor, insufficient evidence, non-group
@@ -170,8 +178,8 @@ subject switching or longer-window tracking.
 
 ## Pending
 
-- Add a checksummed offline context adapter that can only select a proposal or
-  return uncertain; it must not emit geometry, identity or free text.
+- Select a small local VLM only after license, weights, memory and measured M4
+  feasibility review; add a backend runner that emits the closed importer input.
 - Retain the accepted 5-degree POC guard while adding group/upper-body vertical
   extents and testing held-out footage; do not promote it to a product default.
 - Establish whether audio is merely stereo playback or has a usable, verified
@@ -191,12 +199,11 @@ git diff --check
 git status --short
 ```
 
-After validation, inspect the fixed context contract before implementing the
-local adapter:
+After validation, inspect candidate models without downloading them:
 
 ```sh
-sed -n '1,280p' src/aegis360/scene_context.py
-sed -n '1,240p' model-manifests/README.md
+sed -n '1,240p' model-manifests/candidates.toml
+sed -n '1,260p' scripts/import_local_vlm_scene_context.py
 ```
 
 Keep face evidence path-free and temporary-pixel-only. Preserve

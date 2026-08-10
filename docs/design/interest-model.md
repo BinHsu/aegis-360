@@ -74,6 +74,12 @@ lower frame edge. The POC therefore limits face-derived vertical correction to
 5 degrees. This is a tunable guard, not a validated product default; future
 group extents or upper-body evidence should replace it when available.
 
+Local-model integration has two boundaries. A backend-specific offline runner
+produces only the closed decision fields; the generic importer independently
+hashes the exact model asset, binds the decision to geometry-owned proposals,
+validates scene-context v2 and writes atomically. The importer is not inference
+evidence and does not make an unselected model operational.
+
 ## Acceptance criteria
 
 - Every chosen view can be explained from stored evidence and planner costs.

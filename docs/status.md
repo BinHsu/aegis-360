@@ -130,6 +130,12 @@ owner accepts it as successfully capturing the two people in conversation.
 This is a bounded group-framing pass, not active-speaker or identity evidence.
 A later view exit remains a handoff request, not proof of identity.
 
+A generic local-VLM importer now fail-closes on any model output containing
+extra fields, invented candidate IDs or geometry. It verifies the exact model
+asset SHA-256 and atomically emits scene-context v2; uncertain-with-no-selection
+is valid. No backend/model has been selected or run, so this is an integration
+boundary rather than automatic context-classification evidence.
+
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;
