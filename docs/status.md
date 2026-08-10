@@ -138,9 +138,10 @@ boundary rather than automatic context-classification evidence.
 
 SmolVLM2 500M Video MLX BF16 was explicitly acquired and is hardware-feasible
 for the bounded four-frame run: 8.39 seconds, about 2.44 GB maximum RSS and zero
-swap. It is rejected for planner integration because JSON, exact-template and
-closed-code prompts all failed the scene-context contract. Do not weaken the
-importer or continue tuning this 500M prompt.
+swap. It is rejected for planner integration: three prompt-only protocols
+failed, while two grammar-constrained runs produced valid syntax but wrong
+semantics or an invalid scope/candidate pair. Do not weaken the importer or
+continue tuning this 500M model.
 
 Do not render until at least one candidate:
 

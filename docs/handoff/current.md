@@ -118,8 +118,8 @@ verifies the exact model asset SHA-256, binds the result to proposal-owned
 candidates, validates scene-context v2, writes atomically and refuses overwrite.
 It permits uncertain/no-selection and rejects free text, geometry and invented
 candidate IDs. SmolVLM2 500M Video MLX BF16 was acquired and ran without swap,
-but JSON, exact-template and closed-code outputs all failed validation. It is
-hardware-feasible and rejected for planner integration; stop prompt tuning.
+but three prompt-only and two grammar-constrained runs failed semantic or
+cross-field validation. It is rejected for planner integration; stop tuning.
 
 ## Repository state
 
@@ -138,8 +138,8 @@ hardware-feasible and rejected for planner integration; stop prompt tuning.
   planner contracts.
 - Targeted local-context adapter tests pass for checksum provenance, group and
   uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
-- The acquired 500M model's four-frame run takes 8.39 seconds, uses about 2.44
-  GB maximum RSS and zero swap; instruction compliance fails three protocols.
+- The acquired 500M model runs without swap. Grammar fixes syntax but still
+  selects wrong semantics or an invalid scope/candidate pair.
 - Targeted group geometry tests prove compatible faces change only pitch,
   unrelated faces are ignored and correction magnitude is bounded.
 - Window-group tests cover the 0.5 floor, insufficient evidence, non-group
@@ -182,8 +182,8 @@ hardware-feasible and rejected for planner integration; stop prompt tuning.
 
 ## Pending
 
-- Decide whether to research a larger model or constrained-decoding backend;
-  any additional weights require a separate explicit acquisition decision.
+- Research a larger model; constrained decoding is already verified and is
+  insufficient here. Additional weights require explicit acquisition.
 - Retain the accepted 5-degree POC guard while adding group/upper-body vertical
   extents and testing held-out footage; do not promote it to a product default.
 - Establish whether audio is merely stereo playback or has a usable, verified
