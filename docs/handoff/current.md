@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-08-11T05:15:00+08:00
+Updated: 2026-08-13T03:30:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 0d83619
-Remote status: 2.2B candidate commit and checkpoint are ready to push
-Working tree at checkpoint: 2.2B runner and evidence milestone pending commit
+Baseline commit: 43e682a
+Remote status: 2.2B selector commit and checkpoint are ready to push
+Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
 
@@ -123,7 +123,7 @@ so only group proposal selection passes.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `0d83619`.
+- Expected branch: `main`; content baseline is `43e682a`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
