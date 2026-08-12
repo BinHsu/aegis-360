@@ -52,6 +52,8 @@ privacy-safe summaries when results exist.
   composition evidence and the real-scene rejection of single-face framing.
 - `smolvlm2-500m-context-gate-2026-08-11.md`: acquired MLX model, M4/16 GB
   feasibility and rejection after three closed-output protocols failed.
+- `smolvlm2-2.2b-context-gate-2026-08-13.md`: constrained four-frame group
+  proposal selection pass and unresolved fine-class repeatability.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

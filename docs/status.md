@@ -143,10 +143,11 @@ failed, while two grammar-constrained runs produced valid syntax but wrong
 semantics or an invalid scope/candidate pair. Do not weaken the importer or
 continue tuning this 500M model.
 
-The next proposed model is SmolVLM2 2.2B MLX BF16, pinned but not acquired. It
-reuses the verified Apache-2.0 family/runtime and changes model capacity rather
-than the interface. Its primary weight is about 4.49 GB; acquisition requires
-explicit approval and the first gate must remain four frames with swap checks.
+SmolVLM2 2.2B MLX BF16 is acquired and passes the bounded group-proposal gate.
+The formal four-frame run selects `group:window:1`, takes 25.05 seconds model
+elapsed, uses 6.97 GB MLX peak memory and no swap. Fine context class is not
+accepted: repeated runs differed between `conversation` and `ambient_people`.
+Use it as a proposal selector only, with the closed validator retained.
 
 Do not render until at least one candidate:
 

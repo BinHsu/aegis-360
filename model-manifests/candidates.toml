@@ -2,25 +2,5 @@ candidate_manifest_version = 1
 updated_date = "2026-07-29"
 implicit_downloads_allowed = false
 
-[[candidate]]
-candidate_id = "smolvlm2-2.2b-instruct-mlx-bf16"
-purpose = "bounded offline scene-context classification after 500M rejection"
-status = "proposed_not_acquired"
-acquisition_authorized = false
-upstream_model_id = "HuggingFaceTB/SmolVLM2-2.2B-Instruct"
-conversion_model_id = "mlx-community/SmolVLM2-2.2B-Instruct-mlx"
-runtime = "existing MLX-VLM 0.6.12 with llguidance constrained decoding"
-license_claim = "Apache-2.0 on upstream and conversion model cards"
-upstream_model_card_url = "https://huggingface.co/HuggingFaceTB/SmolVLM2-2.2B-Instruct"
-conversion_model_card_url = "https://huggingface.co/mlx-community/SmolVLM2-2.2B-Instruct-mlx"
-runtime_url = "https://github.com/Blaizzy/mlx-vlm"
-proposed_relative_path = "models/smolvlm2-2.2b-instruct-mlx-bf16"
-sha256_status = "must_be_measured_after_explicit_acquisition"
-byte_size_status = "must_be_measured_after_explicit_acquisition"
-revision_status = "pinned_from_hugging_face_metadata_2026-08-11"
-upstream_revision = "482adb537c021c86670beed01cd58990d01e72e4"
-conversion_revision = "844516024a1c4400d34489b89ee067d794e432ed"
-listed_primary_weight_bytes = 4493651795
-listed_primary_weight_sha256 = "ed6c59250704f09f921dce1a25e0d4eff611b6c9c53e382a7eb04ce9113f2773"
-fit_hypothesis = "upstream claims 5.2 GB GPU RAM for video inference; start with four ordered frames on 16 GB unified memory"
-unresolved = "exact acquired checksum, peak RSS, swap, latency, thermal behavior, constrained semantic accuracy, and held-out accuracy"
+# No proposed candidates. SmolVLM2 2.2B moved to the installed manifest after
+# explicit acquisition and the bounded group-selection gate.

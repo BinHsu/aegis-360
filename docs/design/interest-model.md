@@ -80,6 +80,13 @@ hashes the exact model asset, binds the decision to geometry-owned proposals,
 validates scene-context v2 and writes atomically. The importer is not inference
 evidence and does not make an unselected model operational.
 
+The MLX runner constrains scope and candidate together inside mutually
+exclusive JSON-schema `anyOf` branches; grammar-valid independent enums are
+insufficient. With no audio input, the grammar permits only `unknown` for
+speech-audio evidence. The validated 2.2B result may select a proposal, but its
+fine context-class label carries no accepted scoring weight until repeatability
+and held-out accuracy are established.
+
 ## Acceptance criteria
 
 - Every chosen view can be explained from stored evidence and planner costs.

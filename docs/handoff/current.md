@@ -5,7 +5,7 @@ Repository: aegis-360
 Branch: main
 Baseline commit: 0d83619
 Remote status: 2.2B candidate commit and checkpoint are ready to push
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Working tree at checkpoint: 2.2B runner and evidence milestone pending commit
 
 ## Objective
 
@@ -29,18 +29,9 @@ retains exact width, height, yaw, pitch and HFOV. The native runner now accepts
 nonzero pitch/HFOV, and a wrapper consumes the seed manifest without manual box
 transcription.
 
-The manifest-driven `semantic-track:000007` run covers Old Ghost Road
-68.5–72.5 seconds in the right 416x416 viewport. Vision tracked 16/16 frames,
-zero lost/error, with 1.500729-degree maximum center step. Agent inspection of
-five box overlays confirms the same blue-jacketed person throughout. All 16
-Core ML refreshes contain exactly one compatible person, so the lifecycle stays
-active and consumes every event. Identity and editorial persistence remain
-false. No planner or render was produced.
-
-Planner integration now separates the tracked person's 19.664-degree spherical
-extent from the 110-degree forward/output viewport. The unchanged greedy config
-selects the person for all 16 decisions; the shot stays near yaw 60.07 degrees,
-pitch -28.27 degrees and passes the pose gate for all four seconds.
+The manifest-driven isolated-person run tracked 16/16 frames and separated
+subject extent from output FOV, but its person-centered render was later
+rejected for speaking-group composition. Identity remains unverified.
 
 The first render is rejected because the old conflated extent contract added
 framing padding to 110 degrees and produced a 130-degree view. The corrected
@@ -121,6 +112,15 @@ candidate IDs. SmolVLM2 500M Video MLX BF16 was acquired and ran without swap,
 but three prompt-only and two grammar-constrained runs failed semantic or
 cross-field validation. It is rejected for planner integration; stop tuning.
 
+The explicitly acquired SmolVLM2 2.2B MLX BF16 weight matches the pinned
+4,493,651,795-byte SHA-256. A bounded runner builds scope/candidate-coupled
+llguidance schema, forces silent-input audio evidence to unknown, verifies the
+weight, accepts at most four frames by default, validates scene-context v2 and
+writes atomically without durable paths. The formal real run selects
+`group:window:1` with zero swap, 25.05 seconds model elapsed and 6.97 GB MLX
+peak memory. Repeated fine class differs (`conversation` vs `ambient_people`),
+so only group proposal selection passes.
+
 ## Repository state
 
 - Expected branch: `main`; content baseline is `0d83619`.
@@ -140,6 +140,8 @@ cross-field validation. It is rejected for planner integration; stop tuning.
   uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
 - The acquired 500M model runs without swap. Grammar fixes syntax but still
   selects wrong semantics or an invalid scope/candidate pair.
+- The acquired 2.2B formal runner emits valid path-free scene-context v2,
+  selects the accepted group and runs without swap; fine class is unstable.
 - Targeted group geometry tests prove compatible faces change only pitch,
   unrelated faces are ignored and correction magnitude is bounded.
 - Window-group tests cover the 0.5 floor, insufficient evidence, non-group
@@ -182,8 +184,8 @@ cross-field validation. It is rejected for planner integration; stop tuning.
 
 ## Pending
 
-- Obtain explicit approval before acquiring pinned SmolVLM2 2.2B MLX BF16
-  (4,493,651,795-byte primary weight); first gate is four frames plus swap.
+- Test the 2.2B selector on held-out group/context windows before granting its
+  fine class any score. Keep source frames temporary and bounded.
 - Retain the accepted 5-degree POC guard while adding group/upper-body vertical
   extents and testing held-out footage; do not promote it to a product default.
 - Establish whether audio is merely stereo playback or has a usable, verified
@@ -222,7 +224,6 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 - `outputs/semantic-tracklets/old-ghost-road-t60-90-yolox-v2-quality90-mutual12-v2/`
 - `outputs/vision-tracking-gate/old-ghost-road-t68p5-yaw90-semantic-person-track000007-v2-manifest/`
 - `outputs/yolox-refresh-sequence/old-ghost-road-t68p5-yaw90-person-track000007-4s-v2-manifest/`
-- `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v3-extent-corrected/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
 - `outputs/vision-face-sequence/old-ghost-road-t68p5-4s-4fps-four-view-v1/evidence.json`
