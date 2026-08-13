@@ -58,7 +58,7 @@ def window_group_candidate_frames(
     forward_pitch: float = 0.0,
     forward_horizontal_fov: float = math.radians(110),
 ) -> tuple[CandidateFrame, ...]:
-    """Expose one selected group proposal plus forward fallback for its window."""
+    """Expose a selected group plus fallback, or fallback alone on abstention."""
 
     selected = next(
         (
@@ -67,11 +67,13 @@ def window_group_candidate_frames(
         ),
         None,
     )
-    if (
-        context.subject_scope != "group" or selected is None
-        or selected.candidate_type != "group"
-        or len(selected.member_candidate_ids) < 2
-    ):
+    abstained = context.subject_scope == "uncertain" and selected is None
+    selected_group = (
+        context.subject_scope == "group" and selected is not None
+        and selected.candidate_type == "group"
+        and len(selected.member_candidate_ids) >= 2
+    )
+    if not abstained and not selected_group:
         raise ValueError("window candidate requires a selected group proposal")
     if len(timestamps) != shot.total_sample_count:
         raise ValueError("timestamps must cover the complete context window")
@@ -87,8 +89,9 @@ def window_group_candidate_frames(
     for index, timestamp in enumerate(timestamps):
         if not math.isfinite(timestamp) or timestamp <= previous:
             raise ValueError("timestamps must be finite and strictly increasing")
-        frames.append(CandidateFrame(timestamp, index, (
-            TemporalCandidate(
+        candidates = []
+        if selected_group:
+            candidates.append(TemporalCandidate(
                 candidate_id=selected.candidate_id,
                 track_id=None,
                 yaw=shot.yaw,
@@ -102,8 +105,8 @@ def window_group_candidate_frames(
                 source_candidate_id=None,
                 association_provenance=AssociationProvenance.GEOMETRIC_ONLY,
                 covered_candidate_ids=selected.member_candidate_ids,
-            ),
-            TemporalCandidate(
+            ))
+        candidates.append(TemporalCandidate(
                 candidate_id="context:forward",
                 track_id=None,
                 yaw=wrap_yaw(forward_yaw),
@@ -116,8 +119,8 @@ def window_group_candidate_frames(
                 missing_frames=0,
                 source_candidate_id=None,
                 association_provenance=AssociationProvenance.SYNTHETIC_CONTEXT,
-            ),
-        )))
+            ))
+        frames.append(CandidateFrame(timestamp, index, tuple(candidates)))
         previous = timestamp
     return tuple(frames)
 

@@ -15,7 +15,8 @@ from aegis360.window_group import (
 
 def context(scope="group"):
     return SceneContextDecision(
-        "conversation", scope, "group:1" if scope == "group" else "person:1",
+        "conversation", scope,
+        "group:1" if scope == "group" else (None if scope == "uncertain" else "person:1"),
         (
             SceneContextCandidate("person:1", "person", ()),
             SceneContextCandidate("person:2", "person", ()),
@@ -89,6 +90,30 @@ class WindowGroupTests(unittest.TestCase):
             self.assertIsNone(group.track_id)
             self.assertFalse(group.editorial_persistence_valid)
             self.assertLess(group.h_fov, math.radians(110))
+
+    def test_uncertain_abstention_exposes_only_forward_context(self):
+        aggregate = build_window_group_shot(
+            [shot(54), shot(54.2)], total_sample_count=4,
+        )
+        frames = window_group_candidate_frames(
+            context("uncertain"), aggregate, [0.0, 0.25, 0.5, 0.75],
+        )
+        self.assertEqual(len(frames), 4)
+        for frame in frames:
+            self.assertEqual(
+                [candidate.candidate_id for candidate in frame.candidates],
+                ["context:forward"],
+            )
+            self.assertEqual(frame.candidates[0].candidate_type, "context")
+
+    def test_non_group_selection_still_fails_closed(self):
+        aggregate = build_window_group_shot(
+            [shot(54), shot(54.2)], total_sample_count=4,
+        )
+        with self.assertRaisesRegex(ValueError, "selected group"):
+            window_group_candidate_frames(
+                context("single"), aggregate, [0.0, 0.25, 0.5, 0.75],
+            )
 
 
 if __name__ == "__main__":

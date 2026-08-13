@@ -90,6 +90,11 @@ def main() -> int:
         "source_id": proposal_window["source_id"],
         "window_id": proposal_window["window_id"],
         "selected_candidate_id": context.selected_candidate_id,
+        "selection_resolution": (
+            "deterministic_context_fallback"
+            if context.selected_candidate_id is None
+            else "review_selected_group"
+        ),
         "association": shot.association_provenance,
         "identity_verified": False,
         "editorial_persistence_allowed": False,

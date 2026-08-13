@@ -171,6 +171,11 @@ no selection in 24.91 seconds. This is safe refusal but fails the context gate.
 The 2.2B model is not a generic proposal selector: accept only its bounded
 group-vs-not-group behavior when geometry already supplies a group proposal.
 
+Planner integration treats valid `uncertain`/null output as abstention. It
+exposes only deterministic `context:forward`, records that resolution in the
+trace, and keeps pose differentiation false when output matches fixed-forward.
+Other non-group scope/candidate combinations still fail closed.
+
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;

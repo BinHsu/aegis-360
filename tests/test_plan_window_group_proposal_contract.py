@@ -14,6 +14,8 @@ class PlanWindowGroupProposalContractTests(unittest.TestCase):
         self.assertIn('"identity_verified": False', text)
         self.assertIn('"editorial_persistence_allowed": False', text)
         self.assertIn('"render_contract": "shot_static_v360_only"', text)
+        self.assertIn('"deterministic_context_fallback"', text)
+        self.assertIn('"review_selected_group"', text)
         self.assertNotIn("source_media", text)
 
 

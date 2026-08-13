@@ -87,6 +87,12 @@ speech-audio evidence. The validated 2.2B result may select a proposal, but its
 fine context-class label carries no accepted scoring weight until repeatability
 and held-out accuracy are established.
 
+An uncertain decision with no selected candidate is an explicit abstention,
+not permission to expose an unselected group. The window planner emits only
+deterministic `context:forward` for that interval and records
+`deterministic_context_fallback`. A fixed-forward result cannot pass the
+pose-differentiation gate or support an auto-directing quality claim.
+
 ## Acceptance criteria
 
 - Every chosen view can be explained from stored evidence and planner costs.

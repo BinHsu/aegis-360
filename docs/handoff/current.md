@@ -117,11 +117,11 @@ peak memory. Two identical-input repeats reproduce the decision in 24.75/25.15
 seconds. A non-group window returns uncertain/no-selection in 25.77 seconds.
 A Bellpuig window with 4+ racing riders selects `group:window:1` in 25.80
 seconds. Fine class varies and Bellpuig falsely marks mouth motion/reciprocal
-orientation, so only bounded group selection passes across the two sources.
-A Skiing landscape with only `context:forward` returns uncertain/no-selection
-in 24.91 seconds, failing context selection. The accepted capability is only a
-group-vs-not-group gate when geometry already supplies a group proposal.
-
+orientation, so only bounded group selection passes across the two sources. A
+Skiing landscape with only `context:forward` returns uncertain/no-selection
+in 24.91 seconds, failing context selection. Planner integration maps this
+abstention to context-only frames and records `deterministic_context_fallback`;
+the accepted capability remains a group gate and other decisions still fail.
 ## Repository state
 
 - Expected branch: `main`; content baseline is `92785c4`.
@@ -135,7 +135,7 @@ group-vs-not-group gate when geometry already supplies a group proposal.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 281 tests, including proposal/selection/
+- The full repository suite passes: 283 tests, including proposal/selection/
   planner contracts.
 - Targeted local-context adapter tests pass for checksum provenance, group and
   uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
