@@ -3,8 +3,8 @@
 Updated: 2026-08-14T03:30:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 6fd295b
-Remote status: held-out selector commit and checkpoint are ready to push
+Baseline commit: 488890f
+Remote status: repeatability evidence and checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
