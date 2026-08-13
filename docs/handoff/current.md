@@ -3,8 +3,8 @@
 Updated: 2026-08-14T03:30:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 63a349e
-Remote status: cross-video group evidence and checkpoint are ready to push
+Baseline commit: 92785c4
+Remote status: bounded group-gate evidence and checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -124,7 +124,7 @@ group-vs-not-group gate when geometry already supplies a group proposal.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `63a349e`.
+- Expected branch: `main`; content baseline is `92785c4`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
