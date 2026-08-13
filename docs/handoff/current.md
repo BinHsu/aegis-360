@@ -1,10 +1,10 @@
 # Current handoff
 
-Updated: 2026-08-13T03:30:00+08:00
+Updated: 2026-08-14T03:30:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 43e682a
-Remote status: 2.2B selector commit and checkpoint are ready to push
+Baseline commit: 6fd295b
+Remote status: held-out selector commit and checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -124,7 +124,7 @@ one negative window only; fine class remains unaccepted.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `43e682a`.
+- Expected branch: `main`; content baseline is `6fd295b`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
@@ -135,7 +135,7 @@ one negative window only; fine class remains unaccepted.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 278 tests, including proposal/selection/
+- The full repository suite passes: 281 tests, including proposal/selection/
   planner contracts.
 - Targeted local-context adapter tests pass for checksum provenance, group and
   uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
