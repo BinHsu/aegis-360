@@ -33,14 +33,9 @@ The manifest-driven isolated-person run tracked 16/16 frames and separated
 subject extent from output FOV, but its person-centered render was later
 rejected for speaking-group composition. Identity remains unverified.
 
-The first render is rejected because the old conflated extent contract added
-framing padding to 110 degrees and produced a 130-degree view. The corrected
-render uses 110 degrees. Its fixed/auto peers are 1920x1080 H.264 High yuv420p
-at 25 fps with the same renderer contract. Mechanical pre-review passes, and
-paired-frame inspection at 0.5/2.0/3.5 seconds finds the same blue-jacketed
-person centered in auto without obvious blur, blocking, seam failure or subject
-loss. Fixed clips that person at the right edge. A translation-only shake proxy
-finds zero median/p95 motion for both, but does not prove comfort or roll.
+The corrected isolated-person render uses a 110-degree minimum FOV and equal
+1920x1080 H.264 peers. Mechanical review passes, but owner review rejects its
+speaking-group composition; translation-only shake metrics prove no comfort.
 
 Owner review rejects the directing result: fixed needs to move right/down and
 auto needs to move up to frame the visible people whose mouths move. Centering
@@ -121,6 +116,12 @@ writes atomically without durable paths. The formal real run selects
 peak memory. Repeated fine class differs (`conversation` vs `ambient_people`),
 so only group proposal selection passes.
 
+One manually screened held-out non-group window contains environment plus one
+partial cyclist and declares no group proposal. The same runner returns
+uncertain/no-selection with all visual flags unknown, 25.77 seconds model
+elapsed, 6.97 GB MLX peak and zero swap. This rejects always-group behavior on
+one negative window only; fine class remains unaccepted.
+
 ## Repository state
 
 - Expected branch: `main`; content baseline is `43e682a`.
@@ -184,8 +185,8 @@ so only group proposal selection passes.
 
 ## Pending
 
-- Test the 2.2B selector on held-out group/context windows before granting its
-  fine class any score. Keep source frames temporary and bounded.
+- Add more held-out group/context windows before any accuracy claim; fine class
+  remains scoreless. Keep source frames temporary and bounded.
 - Retain the accepted 5-degree POC guard while adding group/upper-body vertical
   extents and testing held-out footage; do not promote it to a product default.
 - Establish whether audio is merely stereo playback or has a usable, verified
@@ -224,7 +225,6 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 - `outputs/semantic-tracklets/old-ghost-road-t60-90-yolox-v2-quality90-mutual12-v2/`
 - `outputs/vision-tracking-gate/old-ghost-road-t68p5-yaw90-semantic-person-track000007-v2-manifest/`
 - `outputs/yolox-refresh-sequence/old-ghost-road-t68p5-yaw90-person-track000007-4s-v2-manifest/`
-- `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v4-extent-render/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
 - `outputs/vision-face-sequence/old-ghost-road-t68p5-4s-4fps-four-view-v1/evidence.json`
 - `outputs/window-group-proposals/old-ghost-road-t68p5-4s-v2-pitch-guard5/`

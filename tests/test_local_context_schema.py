@@ -29,6 +29,22 @@ class LocalContextSchemaTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             local_context_json_schema(value, audio_provided=False)
 
+    def test_absent_group_proposal_removes_group_branch(self):
+        value = proposal()
+        value["candidates"] = [
+            candidate for candidate in value["candidates"]
+            if candidate["candidate_type"] != "group"
+        ]
+        schema = local_context_json_schema(value, audio_provided=False)
+        scopes = {
+            branch["properties"]["subject_scope"]["const"]
+            for branch in schema["anyOf"]
+        }
+        self.assertNotIn("group", scopes)
+        self.assertNotIn(
+            "group:window:1", schema["properties"]["selected_candidate_id"]["enum"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

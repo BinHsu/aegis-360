@@ -149,6 +149,11 @@ elapsed, uses 6.97 GB MLX peak memory and no swap. Fine context class is not
 accepted: repeated runs differed between `conversation` and `ambient_people`.
 Use it as a proposal selector only, with the closed validator retained.
 
+A separate manually screened non-group window declares no group proposal. The
+2.2B runner returns uncertain/no-selection with all visual flags unknown rather
+than inventing a group. This disproves an always-group behavior on one negative
+window; it is not a general accuracy claim.
+
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;

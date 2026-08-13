@@ -24,6 +24,23 @@ while retaining group selection and the same present visual flags. Therefore
 the directing gate passes only for choosing the group proposal. Fine context
 classification and deterministic repeatability are not established.
 
+## Held-out non-group gate
+
+The first three seconds of the separate Old Ghost Road t60 bicycle render were
+manually screened before inference. Three samples contain only environment and
+bicycle-related background; the fourth contains one partial cyclist entering
+the frame. No multi-person interaction is visible. The proposal declared only
+one person slot and forward context, so the grammar contained no group branch.
+
+The formal runner returned `uncertain` scope with no selected candidate and all
+visual flags unknown. It did not promote the partial cyclist or environment to
+a group. Model elapsed time was 25.77 seconds, MLX peak memory 6.97 GB, maximum
+RSS 897,695,744 bytes and swap zero. The fine class remained `ambient_people`,
+reinforcing that only proposal-selection behavior is accepted.
+
+This one positive and one negative window establish a bounded proof against an
+always-group selector, not held-out accuracy. More scenes are still required.
+
 External artifact:
 `outputs/window-group-proposals/old-ghost-road-t68p5-4s-v2-pitch-guard5/local-vlm-context-2.2b.json`
 
