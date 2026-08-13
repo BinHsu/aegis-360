@@ -1,6 +1,6 @@
 # Project status
 
-Status: Conversation-group composition accepted; local context adapter next
+Status: Conversation-group composition accepted; bounded group gate under test
 
 ## Current conclusion
 
@@ -147,7 +147,8 @@ SmolVLM2 2.2B MLX BF16 is acquired and passes the bounded group-proposal gate.
 The formal four-frame run selects `group:window:1`, takes 25.05 seconds model
 elapsed, uses 6.97 GB MLX peak memory and no swap. Fine context class is not
 accepted: repeated runs differed between `conversation` and `ambient_people`.
-Use it as a proposal selector only, with the closed validator retained.
+Use it only for bounded group-vs-not-group decisions, with the closed validator
+retained; it has not passed context or person selection.
 
 Two further formal runs on the identical four frame bytes reproduced the full
 retained decision, including `group:window:1`, in 24.75 and 25.15 seconds at a
@@ -164,6 +165,11 @@ across all four samples. The runner selects the group proposal in 25.80 seconds
 at the same 6.97 GB peak, extending the bounded group result across sources and
 activity types. Its mouth-motion, reciprocal-orientation and fine-class output
 are visibly wrong, so evidence flags and context class remain unusable.
+
+A Skiing landscape window with only `context:forward` returns uncertain with
+no selection in 24.91 seconds. This is safe refusal but fails the context gate.
+The 2.2B model is not a generic proposal selector: accept only its bounded
+group-vs-not-group behavior when geometry already supplies a group proposal.
 
 Do not render until at least one candidate:
 

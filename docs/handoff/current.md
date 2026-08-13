@@ -10,8 +10,8 @@ Working tree at checkpoint: only this checkpoint metadata differs from baseline
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. The conversation-group composition gate is accepted; the immediate
-objective is a checksummed offline context adapter selecting fixed proposals.
+viewer. Conversation-group composition is accepted; the immediate objective is
+to bound a checksummed group gate without claiming generic proposal selection.
 
 ## Last completed milestone
 
@@ -118,6 +118,9 @@ seconds. A non-group window returns uncertain/no-selection in 25.77 seconds.
 A Bellpuig window with 4+ racing riders selects `group:window:1` in 25.80
 seconds. Fine class varies and Bellpuig falsely marks mouth motion/reciprocal
 orientation, so only bounded group selection passes across the two sources.
+A Skiing landscape with only `context:forward` returns uncertain/no-selection
+in 24.91 seconds, failing context selection. The accepted capability is only a
+group-vs-not-group gate when geometry already supplies a group proposal.
 
 ## Repository state
 

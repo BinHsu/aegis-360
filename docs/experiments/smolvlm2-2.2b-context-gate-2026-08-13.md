@@ -71,4 +71,22 @@ External artifact:
 Held-out Bellpuig artifacts:
 `outputs/window-group-proposals/bellpuig-t18-4s-heldout-v1/`
 
+## Cross-video landscape context failure
+
+Four 360-degree-screened samples from Skiing at 389.0–393.0 seconds show an
+open snow landscape. Tiny distant dark pixels may be people, so the annotation
+does not claim complete human absence; it only declares that the samples do
+not support a director-worthy person candidate. The proposal intentionally
+contains only `context:forward`.
+
+The formal runner returned uncertain scope with no selection in 24.91 seconds
+at a 6.97 GB MLX peak. It also called the scene `ambient_people`, while leaving
+all visual evidence unknown. This is a valid refusal but a failed context
+selection. The accepted capability must therefore be narrowed from generic
+proposal selection to a bounded group-vs-not-group gate when geometry supplies
+a group proposal. Do not prompt-tune this single negative into a pass.
+
+Held-out Skiing artifacts:
+`outputs/window-group-proposals/skiing-t389-4s-heldout-v1/`
+
 No source path, frame path, pixels, embeddings or identity claim is stored.
