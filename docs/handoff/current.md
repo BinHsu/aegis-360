@@ -3,7 +3,7 @@
 Updated: 2026-08-14T03:30:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 49b4fd6
+Baseline commit: 63a349e
 Remote status: cross-video group evidence and checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
@@ -121,7 +121,7 @@ orientation, so only bounded group selection passes across the two sources.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `49b4fd6`.
+- Expected branch: `main`; content baseline is `63a349e`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
