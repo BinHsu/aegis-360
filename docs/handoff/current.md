@@ -113,9 +113,9 @@ llguidance schema, forces silent-input audio evidence to unknown, verifies the
 weight, accepts at most four frames by default, validates scene-context v2 and
 writes atomically without durable paths. The formal real run selects
 `group:window:1` with zero swap, 25.05 seconds model elapsed and 6.97 GB MLX
-peak memory. Repeated fine class differs (`conversation` vs `ambient_people`),
-so only group proposal selection passes.
-
+peak memory. Fine class varied (`conversation` vs `ambient_people`), so only
+group selection passes. Two identical-input repeats reproduced the full decision
+in 24.75/25.15 seconds; this is repeatability, not accuracy.
 One manually screened held-out non-group window contains environment plus one
 partial cyclist and declares no group proposal. The same runner returns
 uncertain/no-selection with all visual flags unknown, 25.77 seconds model

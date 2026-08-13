@@ -149,6 +149,11 @@ elapsed, uses 6.97 GB MLX peak memory and no swap. Fine context class is not
 accepted: repeated runs differed between `conversation` and `ambient_people`.
 Use it as a proposal selector only, with the closed validator retained.
 
+Two further formal runs on the identical four frame bytes reproduced the full
+retained decision, including `group:window:1`, in 24.75 and 25.15 seconds at a
+6.97 GB MLX peak. This supports fixed-input repeatability only; it does not
+raise the evidence to cross-scene accuracy or make the fine class acceptable.
+
 A separate manually screened non-group window declares no group proposal. The
 2.2B runner returns uncertain/no-selection with all visual flags unknown rather
 than inventing a group. This disproves an always-group behavior on one negative

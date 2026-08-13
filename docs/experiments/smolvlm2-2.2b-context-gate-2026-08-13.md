@@ -22,7 +22,17 @@ MLX peak memory 6.97 GB, maximum RSS 1,961,394,176 bytes and swap zero. It
 classified the same frames as `ambient_people` rather than `conversation`,
 while retaining group selection and the same present visual flags. Therefore
 the directing gate passes only for choosing the group proposal. Fine context
-classification and deterministic repeatability are not established.
+classification and cross-scene accuracy are not established.
+
+## Fixed-input repeatability
+
+Two additional formal runs used the same four rendered frame bytes, proposal,
+model checksum, prompt, grammar and runtime. Both returned the same complete
+decision as the retained formal artifact: `ambient_people`, `group`,
+`group:window:1`, the same evidence flags, and silent-input audio marked
+unknown. Model elapsed times were 24.75 and 25.15 seconds; both reported a
+6.97 GB MLX peak. This establishes bounded repeatability for this fixed input
+and runtime only. It is not an accuracy or cross-scene determinism claim.
 
 ## Held-out non-group gate
 
