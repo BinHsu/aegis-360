@@ -159,6 +159,12 @@ A separate manually screened non-group window declares no group proposal. The
 than inventing a group. This disproves an always-group behavior on one negative
 window; it is not a general accuracy claim.
 
+A second positive from Bellpuig contains four or more motocross riders racing
+across all four samples. The runner selects the group proposal in 25.80 seconds
+at the same 6.97 GB peak, extending the bounded group result across sources and
+activity types. Its mouth-motion, reciprocal-orientation and fine-class output
+are visibly wrong, so evidence flags and context class remain unusable.
+
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;

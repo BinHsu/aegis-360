@@ -3,8 +3,8 @@
 Updated: 2026-08-14T03:30:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 488890f
-Remote status: repeatability evidence and checkpoint are ready to push
+Baseline commit: 49b4fd6
+Remote status: cross-video group evidence and checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -113,18 +113,15 @@ llguidance schema, forces silent-input audio evidence to unknown, verifies the
 weight, accepts at most four frames by default, validates scene-context v2 and
 writes atomically without durable paths. The formal real run selects
 `group:window:1` with zero swap, 25.05 seconds model elapsed and 6.97 GB MLX
-peak memory. Fine class varied (`conversation` vs `ambient_people`), so only
-group selection passes. Two identical-input repeats reproduced the full decision
-in 24.75/25.15 seconds; this is repeatability, not accuracy.
-One manually screened held-out non-group window contains environment plus one
-partial cyclist and declares no group proposal. The same runner returns
-uncertain/no-selection with all visual flags unknown, 25.77 seconds model
-elapsed, 6.97 GB MLX peak and zero swap. This rejects always-group behavior on
-one negative window only; fine class remains unaccepted.
+peak memory. Two identical-input repeats reproduce the decision in 24.75/25.15
+seconds. A non-group window returns uncertain/no-selection in 25.77 seconds.
+A Bellpuig window with 4+ racing riders selects `group:window:1` in 25.80
+seconds. Fine class varies and Bellpuig falsely marks mouth motion/reciprocal
+orientation, so only bounded group selection passes across the two sources.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `6fd295b`.
+- Expected branch: `main`; content baseline is `49b4fd6`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior

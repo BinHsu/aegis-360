@@ -51,7 +51,24 @@ reinforcing that only proposal-selection behavior is accepted.
 This one positive and one negative window establish a bounded proof against an
 always-group selector, not held-out accuracy. More scenes are still required.
 
+## Cross-video coordinated group gate
+
+A Bellpuig 18.0–22.0 second window provides a distinct held-out positive. Four
+manually screened `yaw=90`, 110-degree frames contain at least four motocross
+riders jointly racing in every sample. The group remains inside the viewport;
+this is neither the Old Ghost Road source nor a conversation scene.
+
+The formal runner selected `group:window:1` with group scope in 25.80 seconds,
+at a 6.97 GB MLX peak. This supports group selection across two sources and two
+types of activity. It does not establish accuracy: the model called the scene
+`ambient_people` and falsely marked mouth motion and reciprocal orientation as
+present despite full-face helmets and forward racing. Treat every fine class
+and evidence flag as scoreless; only the closed proposal selection passed.
+
 External artifact:
 `outputs/window-group-proposals/old-ghost-road-t68p5-4s-v2-pitch-guard5/local-vlm-context-2.2b.json`
+
+Held-out Bellpuig artifacts:
+`outputs/window-group-proposals/bellpuig-t18-4s-heldout-v1/`
 
 No source path, frame path, pixels, embeddings or identity claim is stored.
