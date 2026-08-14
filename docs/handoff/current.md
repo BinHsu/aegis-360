@@ -135,7 +135,7 @@ the accepted capability remains a group gate and other decisions still fail.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 285 tests, including proposal/selection/
+- The full repository suite passes: 288 tests, including proposal/selection/
   planner contracts.
 - Targeted local-context adapter tests pass for checksum provenance, group and
   uncertain decisions, and fail-closed extra geometry/text/candidate IDs.

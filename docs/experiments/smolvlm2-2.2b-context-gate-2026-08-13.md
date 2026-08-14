@@ -89,4 +89,14 @@ a group proposal. Do not prompt-tune this single negative into a pass.
 Held-out Skiing artifacts:
 `outputs/window-group-proposals/skiing-t389-4s-heldout-v1/`
 
+## Mechanical gate summary
+
+`scripts/summarize_local_context_gate.py` matches path-free results to an
+independently screened expectation manifest by source/window ID. It scores
+only closed selection outcomes and deliberately excludes context class and
+evidence flags. The three durable real artifacts produce two passing group
+cases and one explicit failure: Skiing expected context selection but observed
+abstention. The command exits nonzero because not all expectations are met.
+No percentage or accuracy estimate is reported from this tiny bounded set.
+
 No source path, frame path, pixels, embeddings or identity claim is stored.

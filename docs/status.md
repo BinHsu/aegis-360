@@ -166,17 +166,16 @@ at the same 6.97 GB peak, extending the bounded group result across sources and
 activity types. Its mouth-motion, reciprocal-orientation and fine-class output
 are visibly wrong, so evidence flags and context class remain unusable.
 
-A Skiing landscape window with only `context:forward` returns uncertain with
-no selection in 24.91 seconds. This is safe refusal but fails the context gate.
-The 2.2B model is not a generic proposal selector: accept only its bounded
-group-vs-not-group behavior when geometry already supplies a group proposal.
-
-Planner integration treats valid `uncertain`/null output as abstention. It
-exposes only deterministic `context:forward`, records that resolution in the
-trace, and keeps pose differentiation false when output matches fixed-forward.
+A Skiing landscape returns uncertain/no-selection in 24.91 seconds, safely
+failing context selection. The 2.2B model is only a bounded group gate. Planner
+maps valid abstention to deterministic `context:forward`, records the resolution
+and keeps pose differentiation false when output matches fixed-forward.
 Other non-group scope/candidate combinations still fail closed. A subprocess
 contract test needs no external assets; symmetric cases assert 4/4 fallback
 with a false pose gate and 4/4 selected group with a true pose gate.
+A path-free gate summarizer reports two passing group cases and the Skiing
+context-selection failure, exits nonzero on the set, and excludes fine class
+and evidence flags. It intentionally emits no accuracy percentage.
 
 Do not render until at least one candidate:
 
