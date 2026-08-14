@@ -3,8 +3,8 @@
 Updated: 2026-08-15T06:50:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: ad62693
-Remote status: symmetric planner integration tests and checkpoint are ready to push
+Baseline commit: 0a705d0
+Remote status: bounded selector summary and checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -124,7 +124,7 @@ abstention to context-only frames and records `deterministic_context_fallback`;
 the accepted capability remains a group gate and other decisions still fail.
 ## Repository state
 
-- Expected branch: `main`; content baseline is `ad62693`.
+- Expected branch: `main`; content baseline is `0a705d0`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
@@ -220,8 +220,8 @@ Keep face evidence path-free and temporary-pixel-only. Preserve
 
 The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 
-- `outputs/semantic-events/old-ghost-road-t60-90-six-view-yolox-v2/`
-- `outputs/semantic-spherical/old-ghost-road-t60-90-six-view-yolox-v2-dedup-v1/`
+- `outputs/window-group-proposals/bellpuig-t18-4s-heldout-v1/`
+- `outputs/window-group-proposals/skiing-t389-4s-heldout-v1/`
 - `outputs/semantic-tracklets/old-ghost-road-t60-90-yolox-v2-quality90-mutual12-v2/`
 - `outputs/vision-tracking-gate/old-ghost-road-t68p5-yaw90-semantic-person-track000007-v2-manifest/`
 - `outputs/yolox-refresh-sequence/old-ghost-road-t68p5-yaw90-person-track000007-4s-v2-manifest/`
