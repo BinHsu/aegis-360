@@ -68,6 +68,29 @@ class WindowGroupArtifactTests(unittest.TestCase):
                 start_seconds=0, duration_seconds=2,
             )
 
+    def test_v2_complete_vertical_bounds_replace_face_guard(self):
+        spherical = {
+            "schema_version": "aegis360.semantic-spherical-dedup.v2",
+            "samples": [{"timestamp_seconds": i * .25, "clusters": [
+                {**person(f"a:{i}", 0), "pitch_min_radians": math.radians(-45), "pitch_max_radians": math.radians(5)},
+                {**person(f"b:{i}", 10), "pitch_min_radians": math.radians(-40), "pitch_max_radians": math.radians(10)},
+            ]} for i in range(4)],
+        }
+        faces = {"schemaVersion": 1, "frames": [{
+            "timestampSeconds": i * .25,
+            "candidates": [{"kind": "face_rectangle", "yawRadians": 0, "pitchRadians": math.radians(30)}],
+        } for i in range(4)]}
+        result = build_window_group_proposal_artifact(
+            spherical, faces, source_id="fixture", window_id="v2",
+            start_seconds=0, duration_seconds=1,
+            use_vertical_bounds_midpoint=True,
+        )
+        self.assertAlmostEqual(math.degrees(result["geometry"]["pitch"]), -17.5)
+        self.assertEqual(
+            result["composition_policy"]["status"],
+            "experimental_complete_vertical_bounds_union_midpoint",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -27,6 +27,7 @@ def build_window_group_proposal_artifact(
     duration_seconds: float,
     minimum_observation_ratio: float = 0.5,
     maximum_face_pitch_correction_degrees: float = 5.0,
+    use_vertical_bounds_midpoint: bool = False,
 ) -> dict[str, object]:
     """Aggregate simultaneous groups before any human/VLM context selection."""
 
@@ -100,6 +101,8 @@ def build_window_group_proposal_artifact(
             yaw = cluster.get("yaw_radians")
             pitch = cluster.get("pitch_radians")
             extent = cluster.get("horizontal_extent_radians")
+            pitch_min = cluster.get("pitch_min_radians")
+            pitch_max = cluster.get("pitch_max_radians")
             if (
                 not isinstance(candidate_id, str) or not candidate_id
                 or not all(isinstance(value, (int, float)) and math.isfinite(value) for value in (yaw, pitch, extent))
@@ -107,15 +110,21 @@ def build_window_group_proposal_artifact(
                 raise ValueError("person cluster geometry is invalid")
             members.append(GroupMember(
                 candidate_id, float(yaw), float(pitch), float(extent),
+                None if pitch_min is None else float(pitch_min),
+                None if pitch_max is None else float(pitch_max),
             ))
         groups = build_group_shots(members)
         if groups:
-            observed_shots.append(apply_vertical_composition_anchors(
-                groups[0], face_by_timestamp.get(round(timestamp, 9), []),
-                maximum_pitch_correction=math.radians(
-                    maximum_face_pitch_correction_degrees
-                ),
-            ))
+            group = groups[0]
+            observed_shots.append(
+                group if use_vertical_bounds_midpoint and group.pitch_min is not None else
+                apply_vertical_composition_anchors(
+                    group, face_by_timestamp.get(round(timestamp, 9), []),
+                    maximum_pitch_correction=math.radians(
+                        maximum_face_pitch_correction_degrees
+                    ),
+                )
+            )
     if not timestamps:
         raise ValueError("window contains no spherical samples")
     if len(timestamps) != len(set(timestamps)) or timestamps != sorted(timestamps):
@@ -140,7 +149,11 @@ def build_window_group_proposal_artifact(
         "geometry": asdict(shot),
         "composition_policy": {
             "maximum_face_pitch_correction_degrees": maximum_face_pitch_correction_degrees,
-            "status": "tunable_poc_guard_not_validated_default",
+            "status": (
+                "experimental_complete_vertical_bounds_union_midpoint"
+                if use_vertical_bounds_midpoint and all(item.pitch_min is not None for item in observed_shots)
+                else "tunable_poc_guard_not_validated_default"
+            ),
         },
         "candidates": [asdict(candidate) for candidate in candidates],
         "selection": {"context_required": True, "selected_candidate_id": None},

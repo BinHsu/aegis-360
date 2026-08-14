@@ -135,7 +135,7 @@ the accepted capability remains a group gate and other decisions still fail.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 291 tests, including proposal/selection/
+- The full repository suite passes: 293 tests, including proposal/selection/
   planner contracts.
 - Targeted local-context adapter tests pass for checksum provenance, group and
   uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
@@ -187,8 +187,8 @@ the accepted capability remains a group gate and other decisions still fail.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Rebuild held-out spherical evidence with v2 pitch bounds before consuming
-  them; v1 stays missing and the 5-degree guard remains active.
+- Test opt-in v2 union midpoint on held-out footage before promotion; v1 stays
+  missing and the 5-degree guard remains default.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
@@ -222,9 +222,9 @@ The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 
 - `outputs/window-group-proposals/bellpuig-t18-4s-heldout-v1/`
 - `outputs/window-group-proposals/skiing-t389-4s-heldout-v1/`
-- `outputs/semantic-tracklets/old-ghost-road-t60-90-yolox-v2-quality90-mutual12-v2/`
+- `outputs/semantic-spherical/old-ghost-road-t60-90-six-view-yolox-v2-dedup-v2/`
 - `outputs/vision-tracking-gate/old-ghost-road-t68p5-yaw90-semantic-person-track000007-v2-manifest/`
-- `outputs/yolox-refresh-sequence/old-ghost-road-t68p5-yaw90-person-track000007-4s-v2-manifest/`
+- `outputs/window-group-proposals/old-ghost-road-t68p5-4s-v4-vertical-bounds-experimental/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
 - `outputs/vision-face-sequence/old-ghost-road-t68p5-4s-4fps-four-view-v1/evidence.json`
 - `outputs/window-group-proposals/old-ghost-road-t68p5-4s-v2-pitch-guard5/`

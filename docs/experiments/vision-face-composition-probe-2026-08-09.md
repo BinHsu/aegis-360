@@ -86,6 +86,21 @@ crowded another visible member against the lower edge. It was not sent to the
 owner.
 
 A second immutable proposal limits face-derived pitch correction to 5 degrees.
+
+## Experimental spherical vertical bounds
+
+Spherical-dedup v2 rebuilt the real 120-timestamp event artifact with complete,
+ordered top/bottom pitch bounds for all 240 clusters. Its SHA-256 is
+`291172f4dbd1c32d8f001b2c6616537ed19fb7832e9cad5f69e6b248c21f121f`.
+For the accepted 68.5–72.5 second group window, the complete-member vertical
+union midpoint produces pitch -19.056 degrees versus -20.278 degrees for the
+accepted 5-degree guard, with unchanged yaw and 110-degree output FOV.
+
+The new 1080p bundle passes encoder and pose gates. Four paired frames show no
+new blur, seam or coverage defect, but the 1.22-degree difference is too small
+to claim a visual improvement. Vertical-bounds composition is therefore an
+explicit `--use-vertical-bounds-midpoint` experiment; default behavior retains
+the guard until held-out footage supports promotion.
 It renders at yaw 54.083 degrees, pitch -20.278 degrees and HFOV 110 degrees.
 Both peers are H.264 High, yuv420p, 1920x1080 at 25 fps; the group is selected
 16/16 times and the maximum fixed/auto pose difference is 56.615 degrees.

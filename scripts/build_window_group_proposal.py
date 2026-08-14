@@ -25,6 +25,7 @@ def main() -> int:
     parser.add_argument("--start", required=True, type=float)
     parser.add_argument("--duration", required=True, type=float)
     parser.add_argument("--maximum-face-pitch-correction-degrees", type=float, default=5.0)
+    parser.add_argument("--use-vertical-bounds-midpoint", action="store_true")
     args = parser.parse_args()
     if not args.spherical_json.is_file() or not args.face_json.is_file():
         parser.error("required evidence is missing")
@@ -36,6 +37,7 @@ def main() -> int:
         source_id=args.source_id, window_id=args.window_id,
         start_seconds=args.start, duration_seconds=args.duration,
         maximum_face_pitch_correction_degrees=args.maximum_face_pitch_correction_degrees,
+        use_vertical_bounds_midpoint=args.use_vertical_bounds_midpoint,
     )
     args.output_json.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(artifact, allow_nan=False, indent=2, sort_keys=True) + "\n"

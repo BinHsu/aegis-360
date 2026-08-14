@@ -38,6 +38,15 @@ class GroupShotTests(unittest.TestCase):
         self.assertEqual(corrected.horizontal_fov, shot.horizontal_fov)
         self.assertEqual(corrected.fully_contains_members, shot.fully_contains_members)
 
+    def test_complete_vertical_bounds_center_group_without_face_anchor(self):
+        result = build_group_shot([
+            GroupMember("a", 0, math.radians(-25), math.radians(10), math.radians(-45), math.radians(5)),
+            GroupMember("b", math.radians(10), math.radians(-24), math.radians(10), math.radians(-40), math.radians(10)),
+        ])
+        self.assertAlmostEqual(math.degrees(result.pitch), -17.5)
+        self.assertAlmostEqual(math.degrees(result.pitch_min), -45)
+        self.assertAlmostEqual(math.degrees(result.pitch_max), 10)
+
     def test_unrelated_face_is_ignored_and_correction_is_bounded(self):
         shot = build_group_shot([member("a", 0, -30), member("b", 10, -30)])
         unrelated = apply_vertical_composition_anchors(

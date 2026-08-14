@@ -15,6 +15,8 @@ class GroupMember:
     yaw: float
     pitch: float
     horizontal_extent: float
+    pitch_min: float | None = None
+    pitch_max: float | None = None
 
 
 @dataclass(frozen=True)
@@ -25,6 +27,8 @@ class GroupShot:
     horizontal_fov: float
     required_horizontal_fov: float
     fully_contains_members: bool
+    pitch_min: float | None = None
+    pitch_max: float | None = None
 
 
 @dataclass(frozen=True)
@@ -89,6 +93,8 @@ def apply_vertical_composition_anchors(
         horizontal_fov=shot.horizontal_fov,
         required_horizontal_fov=shot.required_horizontal_fov,
         fully_contains_members=shot.fully_contains_members,
+        pitch_min=shot.pitch_min,
+        pitch_max=shot.pitch_max,
     )
 
 
@@ -115,6 +121,12 @@ def build_group_shot(
             raise ValueError("group member pitch must remain between poles")
         if not 0.0 <= member.horizontal_extent < math.pi:
             raise ValueError("group member extent must be in [0, pi)")
+        if (member.pitch_min is None) != (member.pitch_max is None):
+            raise ValueError("group member pitch bounds must both be present or absent")
+        if member.pitch_min is not None and not (
+            -math.pi / 2 <= member.pitch_min <= member.pitch <= member.pitch_max <= math.pi / 2
+        ):
+            raise ValueError("group member pitch bounds must contain its center")
 
     vectors = [_unit_vector(member.yaw, member.pitch) for member in ordered]
     summed = tuple(sum(vector[axis] for vector in vectors) for axis in range(3))
@@ -124,6 +136,11 @@ def build_group_shot(
     center = tuple(value / norm for value in summed)
     yaw = wrap_yaw(math.atan2(center[0], center[2]))
     pitch = math.asin(max(-1.0, min(1.0, center[1])))
+    complete_vertical = all(member.pitch_min is not None for member in ordered)
+    pitch_min = min(member.pitch_min for member in ordered) if complete_vertical else None
+    pitch_max = max(member.pitch_max for member in ordered) if complete_vertical else None
+    if complete_vertical:
+        pitch = (pitch_min + pitch_max) / 2
     radius = max(
         spherical_distance((yaw, pitch), (member.yaw, member.pitch))
         + member.horizontal_extent / 2.0
@@ -141,6 +158,8 @@ def build_group_shot(
         horizontal_fov=horizontal_fov,
         required_horizontal_fov=required,
         fully_contains_members=required <= config.maximum_horizontal_fov,
+        pitch_min=pitch_min,
+        pitch_max=pitch_max,
     )
 
 
