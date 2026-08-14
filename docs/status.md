@@ -175,8 +175,8 @@ Planner integration treats valid `uncertain`/null output as abstention. It
 exposes only deterministic `context:forward`, records that resolution in the
 trace, and keeps pose differentiation false when output matches fixed-forward.
 Other non-group scope/candidate combinations still fail closed. A subprocess
-contract test exercises the complete artifact-to-plan path without media,
-models, network access or external storage.
+contract test needs no external assets; symmetric cases assert 4/4 fallback
+with a false pose gate and 4/4 selected group with a true pose gate.
 
 Do not render until at least one candidate:
 

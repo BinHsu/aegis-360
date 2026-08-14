@@ -15,9 +15,9 @@ def proposal():
     return {
         "schema_version": "aegis360.window-group-proposal.v1",
         "window": {
-            "source_id": "fixture", "window_id": "t0-1s",
-            "start_seconds": 0.0, "duration_seconds": 1.0,
-            "sample_timestamps_seconds": [0.0, 0.25, 0.5, 0.75],
+            "source_id": "fixture", "window_id": "t0-4s",
+            "start_seconds": 0.0, "duration_seconds": 4.0,
+            "sample_timestamps_seconds": [0.0, 1.0, 2.0, 3.0],
         },
         "candidates": [
             {"candidate_id": "person-slot:1", "candidate_type": "person", "member_candidate_ids": []},
@@ -68,6 +68,16 @@ def abstention_context(value):
     }
 
 
+def group_context(value):
+    document = abstention_context(value)
+    document["decision"].update({
+        "context_class": "coordinated_activity",
+        "subject_scope": "group",
+        "selected_candidate_id": "group:window:1",
+    })
+    return document
+
+
 class PlanWindowGroupProposalContractTests(unittest.TestCase):
     def test_context_must_reproduce_proposal_and_plan_stays_nonidentity(self):
         text = SCRIPT.read_text(encoding="utf-8")
@@ -110,6 +120,36 @@ class PlanWindowGroupProposalContractTests(unittest.TestCase):
         )
         self.assertEqual(gate["selected_candidate_counts"], {"context:forward": 4})
         self.assertFalse(gate["passed_pose_differentiation"])
+
+    def test_selected_group_plans_group_and_records_resolution(self):
+        value = proposal()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            proposal_path = root / "proposal.json"
+            context_path = root / "context.json"
+            output = root / "plan"
+            proposal_path.write_text(json.dumps(value), encoding="utf-8")
+            context_path.write_text(
+                json.dumps(group_context(value)), encoding="utf-8",
+            )
+            subprocess.run(
+                [sys.executable, str(SCRIPT), str(proposal_path),
+                 str(context_path), str(CONFIG), str(output)],
+                cwd=ROOT, check=True, capture_output=True, text=True,
+            )
+            trace = json.loads((output / "trace.json").read_text(encoding="utf-8"))
+            gate = json.loads((output / "planning-gate.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            trace["input_contract"]["selection_resolution"],
+            "review_selected_group",
+        )
+        self.assertEqual(
+            {row["selected_candidate_id"] for row in trace["decisions"]},
+            {"group:window:1"},
+        )
+        self.assertEqual(gate["selected_candidate_counts"], {"group:window:1": 4})
+        self.assertTrue(gate["passed_pose_differentiation"])
 
 
 if __name__ == "__main__":
