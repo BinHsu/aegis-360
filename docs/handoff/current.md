@@ -3,8 +3,8 @@
 Updated: 2026-08-15T06:50:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 18bd7d1
-Remote status: spherical vertical-bounds v2 and checkpoint are ready to push
+Baseline commit: c50bd75
+Remote status: opt-in vertical-bounds composition and checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -124,7 +124,7 @@ abstention to context-only frames and records `deterministic_context_fallback`;
 the accepted capability remains a group gate and other decisions still fail.
 ## Repository state
 
-- Expected branch: `main`; content baseline is `18bd7d1`.
+- Expected branch: `main`; content baseline is `c50bd75`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
