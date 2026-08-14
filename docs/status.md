@@ -174,7 +174,9 @@ group-vs-not-group behavior when geometry already supplies a group proposal.
 Planner integration treats valid `uncertain`/null output as abstention. It
 exposes only deterministic `context:forward`, records that resolution in the
 trace, and keeps pose differentiation false when output matches fixed-forward.
-Other non-group scope/candidate combinations still fail closed.
+Other non-group scope/candidate combinations still fail closed. A subprocess
+contract test exercises the complete artifact-to-plan path without media,
+models, network access or external storage.
 
 Do not render until at least one candidate:
 
