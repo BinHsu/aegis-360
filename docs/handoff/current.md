@@ -1,10 +1,10 @@
 # Current handoff
 
-Updated: 2026-08-14T03:30:00+08:00
+Updated: 2026-08-15T06:50:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 3b2ee20
-Remote status: abstention fallback and checkpoint are ready to push
+Baseline commit: 0faad93
+Remote status: planner fallback integration test and checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -124,7 +124,7 @@ abstention to context-only frames and records `deterministic_context_fallback`;
 the accepted capability remains a group gate and other decisions still fail.
 ## Repository state
 
-- Expected branch: `main`; content baseline is `3b2ee20`.
+- Expected branch: `main`; content baseline is `0faad93`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
