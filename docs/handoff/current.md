@@ -187,8 +187,8 @@ the accepted capability remains a group gate and other decisions still fail.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Retain the accepted 5-degree POC guard while adding group/upper-body vertical
-  extents and testing held-out footage; do not promote it to a product default.
+- Add spherical-dedup v2 top/bottom pitch bounds before replacing the 5-degree
+  guard; v1 has no vertical extent and must not synthesize one.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
