@@ -174,8 +174,9 @@ Other non-group scope/candidate combinations still fail closed. A subprocess
 contract test needs no external assets; symmetric cases assert 4/4 fallback
 with a false pose gate and 4/4 selected group with a true pose gate.
 A path-free gate summarizer reports two passing group cases and the Skiing
-context-selection failure, exits nonzero on the set, and excludes fine class
-and evidence flags. It intentionally emits no accuracy percentage.
+failure without scoring fine class, evidence flags or an accuracy percentage.
+Spherical-dedup v2 validates complete-member pitch-bound unions; v1 remains
+missing, and no real v2 artifact or composition gain is accepted yet.
 
 Do not render until at least one candidate:
 

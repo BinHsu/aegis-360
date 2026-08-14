@@ -135,7 +135,7 @@ the accepted capability remains a group gate and other decisions still fail.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 288 tests, including proposal/selection/
+- The full repository suite passes: 291 tests, including proposal/selection/
   planner contracts.
 - Targeted local-context adapter tests pass for checksum provenance, group and
   uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
@@ -187,8 +187,8 @@ the accepted capability remains a group gate and other decisions still fail.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Add spherical-dedup v2 top/bottom pitch bounds before replacing the 5-degree
-  guard; v1 has no vertical extent and must not synthesize one.
+- Rebuild held-out spherical evidence with v2 pitch bounds before consuming
+  them; v1 stays missing and the 5-degree guard remains active.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff

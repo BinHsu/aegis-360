@@ -51,10 +51,32 @@ class SemanticSphericalTests(unittest.TestCase):
         self.assertEqual(len(deduped.clusters[0].members), 2)
         self.assertEqual(deduped.clusters[0].candidate.signals, ())
         artifact = build_semantic_spherical_artifact(document)
+        self.assertEqual(
+            artifact["schema_version"], "aegis360.semantic-spherical-dedup.v2",
+        )
         self.assertEqual(artifact["summary"]["raw_observation_count"], 2)
         self.assertEqual(artifact["summary"]["merged_cluster_count"], 1)
         self.assertEqual(artifact["summary"]["largest_cluster_size"], 2)
         self.assertFalse(artifact["samples"][0]["clusters"][0]["identity_verified"])
+        cluster = artifact["samples"][0]["clusters"][0]
+        self.assertLess(cluster["pitch_min_radians"], cluster["pitch_radians"])
+        self.assertGreater(cluster["pitch_max_radians"], cluster["pitch_radians"])
+
+    def test_vertical_bounds_follow_box_top_and_bottom(self):
+        document = build_semantic_event_artifact(
+            source_id="fixture", model_id="model",
+            viewports=(viewport("front", 0),),
+            events=({"timestamp_seconds": 0, "viewport_id": "front",
+                     "detections": [{
+                         "class_name": "person", "score": .7,
+                         "source_index": 0,
+                         "box_top_left_normalized": [.45, .2, .1, .6],
+                     }]},),
+        )
+        candidate = semantic_events_to_spherical_results(document)[0].candidates[0]
+        self.assertLess(candidate.pitch_min, candidate.pitch)
+        self.assertGreater(candidate.pitch_max, candidate.pitch)
+        self.assertAlmostEqual(candidate.pitch_min, -candidate.pitch_max, places=12)
 
     def test_seam_views_merge_and_provenance_is_path_free(self):
         document = build_semantic_event_artifact(

@@ -104,6 +104,16 @@ class PerceptionContractTests(unittest.TestCase):
             FrameSample("/private/video.mp4", 0, 0, 10, 10)
         with self.assertRaises(ValueError):
             candidate(181)
+        with self.assertRaisesRegex(ValueError, "both be present"):
+            SphericalCandidateEvidence(
+                "bad-bounds", None, 0, 0, 1, "person", (), ("fixture",),
+                pitch_min=-.1,
+            )
+        with self.assertRaisesRegex(ValueError, "contain center"):
+            SphericalCandidateEvidence(
+                "bad-order", None, 0, 0, 1, "person", (), ("fixture",),
+                pitch_min=.1, pitch_max=.2,
+            )
         duplicate = candidate(0)
         with self.assertRaises(ValueError):
             PerceptionResult(

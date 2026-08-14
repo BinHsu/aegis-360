@@ -82,6 +82,13 @@ def _merge_members(members) -> SphericalCandidateEvidence:
     for member in ordered:
         provenance.append(f"duplicate-source:{member.candidate_id}")
         provenance.extend(member.observation_provenance)
+    bounds = [
+        (member.pitch_min, member.pitch_max) for member in ordered
+        if member.pitch_min is not None
+    ]
+    complete_bounds = len(bounds) == len(ordered)
+    pitch_min = min(value[0] for value in bounds) if complete_bounds else None
+    pitch_max = max(value[1] for value in bounds) if complete_bounds else None
     return SphericalCandidateEvidence(
         candidate_id="dedup:" + "+".join(item.candidate_id for item in ordered),
         track_id=None,
@@ -91,6 +98,8 @@ def _merge_members(members) -> SphericalCandidateEvidence:
         candidate_type=ordered[0].candidate_type,
         signals=(),
         observation_provenance=tuple(provenance),
+        pitch_min=pitch_min,
+        pitch_max=pitch_max,
     )
 
 

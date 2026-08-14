@@ -22,6 +22,7 @@ from .viewport_rays import viewport_normalized_to_world_ray
 ADAPTER = AdapterProvenance(
     "aegis360.semantic-events", "2", "yolox-coreml", "overlapping-viewports"
 )
+SPHERICAL_SCHEMA_VERSION = "aegis360.semantic-spherical-dedup.v2"
 
 
 def _mapping(value: object, label: str) -> Mapping[str, object]:
@@ -140,10 +141,13 @@ def semantic_events_to_spherical_results(
             center = viewport_normalized_to_world_ray(center_x, center_y, *arguments)
             left = viewport_normalized_to_world_ray(x, center_y, *arguments)
             right = viewport_normalized_to_world_ray(x + width, center_y, *arguments)
+            top_ray = viewport_normalized_to_world_ray(center_x, top, *arguments)
+            bottom_ray = viewport_normalized_to_world_ray(center_x, top + height, *arguments)
             yaw, pitch = _angles(center)
             left_angles = _angles(left)
             right_angles = _angles(right)
             extent = spherical_distance(left_angles, right_angles)
+            vertical_pitches = sorted((_angles(top_ray)[1], _angles(bottom_ray)[1]))
             if not 0 < extent < math.pi:
                 raise ValueError("detection spherical extent is invalid")
             candidate_id = f"{viewport_id}:{kind}:{source_index}"
@@ -167,6 +171,8 @@ def semantic_events_to_spherical_results(
                     f"{ADAPTER.label};viewport:{viewport_id}",
                 ),),
                 observation_provenance=(provenance,),
+                pitch_min=vertical_pitches[0],
+                pitch_max=vertical_pitches[1],
             ))
 
     return tuple(
@@ -211,6 +217,8 @@ def build_semantic_spherical_artifact(
                 "yaw_radians": cluster.candidate.yaw,
                 "pitch_radians": cluster.candidate.pitch,
                 "horizontal_extent_radians": cluster.candidate.h_fov,
+                "pitch_min_radians": cluster.candidate.pitch_min,
+                "pitch_max_radians": cluster.candidate.pitch_max,
                 "member_ids": [member.candidate_id for member in cluster.members],
                 "observation_provenance": list(
                     cluster.candidate.observation_provenance
@@ -223,7 +231,7 @@ def build_semantic_spherical_artifact(
             "clusters": clusters,
         })
     return {
-        "schema_version": "aegis360.semantic-spherical-dedup.v1",
+        "schema_version": SPHERICAL_SCHEMA_VERSION,
         "source_id": document["source_id"],
         "model_id": document["model_id"],
         "dedup_policy": {

@@ -221,19 +221,17 @@ result explicitly denies identity and editorial persistence. Temporal nearest-
 geometry continuity is diagnostic only and must not bypass ambiguity-aware
 refresh/lifecycle policy.
 
-The current spherical-dedup v1 artifact retains only center pitch and
-horizontal extent. Although detector-event v2 still has each normalized box,
-conversion discards its top and bottom rays before deduplication. Consequently
-v1 cannot support group vertical composition or justify replacing the bounded
-face-pitch guard.
+Legacy spherical-dedup v1 retains only center pitch and horizontal extent, so
+it cannot support group vertical composition. V2 projects normalized box
+top-center and bottom-center points with the declared viewport geometry and
+stores ordered pitch bounds around the center. Duplicate clusters publish the
+union only when every member has bounds; mixed legacy evidence remains missing.
 
-The next schema must be a versioned spherical-dedup v2, not an in-place v1
-reinterpretation. Each viewport observation should project the top-center and
-bottom-center box points with the same declared pose, HFOV and aspect ratio,
-then store finite ordered spherical pitch bounds. Duplicate clusters should
-retain the union of member bounds and all source provenance. V1 remains
+This is a versioned v2 rather than an in-place v1 reinterpretation. V1 remains
 readable for existing horizontal/group evidence, but consumers must treat its
-vertical extent as missing rather than synthesize a default body height.
+vertical extent as missing rather than synthesize a default body height. The
+synthetic contract is implemented; real benchmark evidence is still required
+before any composition policy consumes the bounds.
 
 `src/aegis360/semantic_quality.py` provides a tunable subject-framing gate.
 The v1 proposal quarantines boxes whose normalized width or height is at least

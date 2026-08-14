@@ -19,11 +19,12 @@ ADAPTER = AdapterProvenance("fixture", "1", "none", "viewports")
 SAMPLE = FrameSample("fixture:frame", 1.0, 3, 1024, 512)
 
 
-def candidate(candidate_id, kind, yaw, extent=10, confidence=0.5):
+def candidate(candidate_id, kind, yaw, extent=10, confidence=0.5, pitch_bounds=None):
     return SphericalCandidateEvidence(
         candidate_id, None, math.radians(yaw), 0.0, math.radians(extent), kind,
         (SignalEvidence("detector_confidence", confidence, confidence, candidate_id),),
         (f"viewport:{candidate_id}",),
+        *(pitch_bounds or (None, None)),
     )
 
 
@@ -41,6 +42,26 @@ class SphericalDedupTests(unittest.TestCase):
         self.assertIn("duplicate-source:east", cluster.candidate.observation_provenance)
         self.assertIn("viewport:west", cluster.candidate.observation_provenance)
         self.assertEqual(cluster.candidate.signals, ())
+
+    def test_duplicate_merge_unions_available_vertical_bounds(self):
+        result = PerceptionResult(
+            SAMPLE, ADAPTER, (
+                candidate("a", "human", 0, pitch_bounds=(-.3, .2)),
+                candidate("b", "human", 1, pitch_bounds=(-.1, .4)),
+            ),
+        )
+        merged = deduplicate_spherical_candidates(result).clusters[0].candidate
+        self.assertEqual((merged.pitch_min, merged.pitch_max), (-.3, .4))
+
+    def test_duplicate_merge_drops_incomplete_vertical_bounds(self):
+        result = PerceptionResult(
+            SAMPLE, ADAPTER, (
+                candidate("bounded", "human", 0, pitch_bounds=(-.3, .2)),
+                candidate("legacy", "human", 1),
+            ),
+        )
+        merged = deduplicate_spherical_candidates(result).clusters[0].candidate
+        self.assertEqual((merged.pitch_min, merged.pitch_max), (None, None))
 
     def test_different_kinds_never_merge(self):
         result = PerceptionResult(

@@ -42,7 +42,10 @@ def build_window_group_proposal_artifact(
         or not 0 <= maximum_face_pitch_correction_degrees <= 25
     ):
         raise ValueError("face pitch correction must be within [0, 25] degrees")
-    if spherical.get("schema_version") != "aegis360.semantic-spherical-dedup.v1":
+    if spherical.get("schema_version") not in {
+        "aegis360.semantic-spherical-dedup.v1",
+        "aegis360.semantic-spherical-dedup.v2",
+    }:
         raise ValueError("unsupported spherical evidence schema")
     if faces.get("schemaVersion") != 1:
         raise ValueError("unsupported face evidence schema")

@@ -119,6 +119,8 @@ class SphericalCandidateEvidence:
     candidate_type: str
     signals: tuple[SignalEvidence, ...]
     observation_provenance: tuple[str, ...]
+    pitch_min: float | None = None
+    pitch_max: float | None = None
 
     def __post_init__(self) -> None:
         _require_text(self.candidate_id, "candidate_id")
@@ -132,6 +134,13 @@ class SphericalCandidateEvidence:
             raise ValueError("pitch must remain between the poles")
         if not 0 < self.h_fov < math.pi:
             raise ValueError("horizontal FOV must be between zero and pi")
+        if (self.pitch_min is None) != (self.pitch_max is None):
+            raise ValueError("vertical pitch bounds must both be present or absent")
+        if self.pitch_min is not None:
+            if not all(math.isfinite(value) for value in (self.pitch_min, self.pitch_max)):
+                raise ValueError("vertical pitch bounds must be finite")
+            if not -math.pi / 2 <= self.pitch_min <= self.pitch <= self.pitch_max <= math.pi / 2:
+                raise ValueError("vertical pitch bounds must contain center pitch")
         _require_text(self.candidate_type, "candidate_type")
         names = [signal.name for signal in self.signals]
         if len(names) != len(set(names)):
