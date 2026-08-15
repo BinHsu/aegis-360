@@ -175,10 +175,10 @@ contract test needs no external assets; symmetric cases assert 4/4 fallback
 with a false pose gate and 4/4 selected group with a true pose gate.
 A path-free gate summarizer reports two passing group cases and the Skiing
 failure without scoring fine class, evidence flags or an accuracy percentage.
-Gaudeamus vertical policies differ by only 1.287 degrees, so no render is
-justified. Its Apple audio gate instead finds reaction candidates at 9–15 and
-109.5–124.5 seconds. They have no cut authority pending declared view roles
-and live-scene availability; the 5-degree guard remains default.
+Gaudeamus now has checksum-bound performer/audience roles and live-scene
+availability. The five-segment reaction plan yields equal-contract 1,905-frame
+peers and passes agent pre-review. Owner review of editorial cut timing is the
+next gate; no generic applause accuracy or autonomous-directing claim follows.
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;

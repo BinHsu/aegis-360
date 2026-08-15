@@ -50,8 +50,30 @@ context-view geometry, bind human/model roles only to declared candidates, and
 intersect reaction timing with live-scene availability. Do not add these scores
 to the current greedy weights or render a reaction edit yet.
 
+## Role-bound directing follow-up
+
+A deterministic four-cardinal grid owns all camera geometry. The owner's rule
+binds `context:cardinal:3` (-90 degrees) to primary performance and
+`context:cardinal:1` (+90 degrees) to audience reaction through the exact grid
+SHA-256; the role artifact contains no camera geometry. Any-view person evidence
+forms one broad live-scene interval at 11.5–119.0 seconds. Intersecting it with
+sound candidates produces the closed five-segment timeline: primary 0–11.5,
+reaction 11.5–15, primary 15–109.5, reaction 109.5–119, primary 119–127.
+
+Primary-only and planned v3 proxies use the same VideoToolbox/AAC contract.
+Both are 960x540 yuv420p at constant 15 fps, 1,905 frames and 127.000 seconds;
+both audio streams are 127.002 seconds. Agent contact-sheet review confirms the
+declared directions, visible hard cuts, return to the primary view and no
+obvious projection/codec defect. Opening and closing titles remain source
+content. Editorial timing now requires owner review.
+
 External evidence:
 
 - `outputs/sound-events/gaudeamus-full-apple-v1/events.json`
 - `outputs/reaction-intervals/gaudeamus-full-apple-v1-threshold-p5/intervals.json`
 - `outputs/semantic-events/gaudeamus-full-six-view-yolox-v2/`
+- `outputs/context-view-grids/gaudeamus-full-four-cardinal-v1/grid.json`
+- `outputs/editorial-view-roles/gaudeamus-full-owner-v1/roles.json`
+- `outputs/live-scene-intervals/gaudeamus-full-person-gap1p5-v1/intervals.json`
+- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v1/plan.json`
+- `outputs/reaction-preview/gaudeamus-full-{primary-only,planned}-540p-v3/`

@@ -119,10 +119,10 @@ robust trimming keeps 4/8 observations after one spatial outlier, but its
 3.247-degree paired render is rejected because ego content dominates. The
 opt-in policy remains experimental and the 5-degree guard remains default.
 
-Apple SoundAnalysis emits closed music/applause/clapping/cheering evidence.
-Gaudeamus yields reaction candidates at 9–15 and 109.5–124.5 seconds; they do
-not authorize cuts. People vanish at the title cards, while the distant
-audience remains below the current detector's useful scale.
+Apple sound, deterministic cardinal views, checksum-bound owner roles and
+live-scene availability now form a five-segment Gaudeamus reaction plan. Equal
+v3 peers are CFR 15 fps/1,905 frames and pass agent pre-review. Owner review of
+cut timing is the next gate; no generic directing claim is justified.
 ## Repository state
 
 - Expected branch: `main`; content baseline is `e8befaf`.
@@ -188,8 +188,8 @@ audience remains below the current detector's useful scale.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Bind performer/audience roles only to deterministic declared context views;
-  intersect reaction candidates with live-scene availability before planning.
+- Obtain owner preference between primary-only and planned v3 peers; assess
+  reaction timing, not detector accuracy or active-speaker behavior.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
@@ -207,11 +207,11 @@ git diff --check
 git status --short
 ```
 
-After validation, inspect candidate models without downloading them:
+For owner review, compare equal-contract v3 peers:
 
 ```sh
-sed -n '1,240p' model-manifests/candidates.toml
-sed -n '1,260p' scripts/import_local_vlm_scene_context.py
+open "$AEGIS_DATA_DIR/outputs/reaction-preview/gaudeamus-full-primary-only-540p-v3/video.mp4"
+open "$AEGIS_DATA_DIR/outputs/reaction-preview/gaudeamus-full-planned-540p-v3/video.mp4"
 ```
 
 Keep face evidence path-free and temporary-pixel-only. Preserve

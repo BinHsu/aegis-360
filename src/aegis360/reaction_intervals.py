@@ -75,3 +75,36 @@ def build_reaction_intervals(
             "candidate intervals do not identify an audience view or authorize a camera cut",
         ],
     }
+
+
+def validate_reaction_intervals(document: Mapping[str, object]) -> None:
+    if not isinstance(document, Mapping) or set(document) != {
+        "schema_version", "source_id", "source_sound_event_schema", "policy",
+        "intervals", "privacy", "limitations",
+    }:
+        raise ValueError("reaction-interval fields must match the closed schema")
+    if document["schema_version"] != "aegis360.reaction-intervals.v1":
+        raise ValueError("unsupported reaction-interval schema")
+    policy = document["policy"]
+    if not isinstance(policy, Mapping) or set(policy) != {
+        "applause_threshold", "clapping_threshold", "minimum_supporting_windows", "status",
+    } or policy["status"] != "poc_hypothesis_not_editorial_ground_truth":
+        raise ValueError("reaction policy is invalid")
+    previous_end = -1.0
+    intervals = document["intervals"]
+    if not isinstance(intervals, list):
+        raise ValueError("reaction intervals must be an array")
+    for item in intervals:
+        if not isinstance(item, Mapping) or set(item) != {
+            "start_seconds", "end_seconds", "supporting_window_count",
+            "peak_applause_confidence", "peak_clapping_confidence",
+        }:
+            raise ValueError("reaction interval fields are invalid")
+        start, end = item["start_seconds"], item["end_seconds"]
+        if not all(isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) for value in (start, end)) or start < previous_end or end <= start:
+            raise ValueError("reaction intervals must be finite, ordered and disjoint")
+        previous_end = end
+        if not isinstance(item["supporting_window_count"], int) or item["supporting_window_count"] < policy["minimum_supporting_windows"]:
+            raise ValueError("reaction interval support is insufficient")
+        if any(not 0 <= item[key] <= 1 for key in ("peak_applause_confidence", "peak_clapping_confidence")):
+            raise ValueError("reaction peaks must be in [0, 1]")
