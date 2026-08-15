@@ -195,4 +195,6 @@ abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. The next gate is global planning;
 a sparse DP now applies dwell, advantage, switch and repetition costs across
 events, with grid-derived spherical entry/return cost. Real semantic evidence
-and continuous path integration remain the next gates.
+is mapped back to full-window camera segments and clipped to exact candidate
+availability. Real semantic labels and model evaluation are now the next gate;
+continuous transitions remain a later planner limitation.

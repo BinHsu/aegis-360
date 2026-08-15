@@ -93,6 +93,14 @@ path optimizer: continuous transitions between events and
 inter-event non-event utility are not modeled. The limitation is explicit in
 the plan and must be closed before claiming the production global planner.
 
+`aegis360.global-camera-segments.v1` resolves selected event IDs back through
+the exact event timeline and context grid. It covers the complete declared
+window with primary geometry, overlays a selected proposed view only over its
+exact availability intersections, and merges adjacent identical segments.
+Thus a semantic sample inside an event can never extend a proposed shot beyond
+the low-cost availability evidence. V1 uses explicit hard cuts at availability
+boundaries; continuous transition planning remains open.
+
 ## Acceptance criteria
 
 Compare fixed, greedy and global plans using identical candidates. Report
