@@ -1,18 +1,18 @@
 # Current handoff
 
-Updated: 2026-08-15T21:20:00+08:00
+Updated: 2026-08-15T21:36:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5d3b940
-Remote status: `origin/main` is 2fadd62; reaction pre-review is committed locally
+Baseline commit: e3cafe2
+Remote status: `origin/main` is 4126aa1; gain-v2/model rejection is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is a bounded automatic pairwise-gain adapter after completing the
-reaction-preview mechanical pre-review contract.
+gate requires an owner decision: keep owner-authored relative gain for the POC,
+or authorize evaluation/acquisition of a different local VLM.
 
 ## Accepted evidence
 
@@ -53,6 +53,16 @@ produce a distinct video with at least 8 degrees and 2 seconds of declared
 difference; abstain must decode identically. Both real cases pass. The report
 explicitly retains the need for visual editorial review.
 
+Gain schema v2 now requires model ID/SHA for `local_vlm` and explicit nulls for
+human review. V1 is rejected for new plans because its model provenance was
+incomplete. Owner v2 artifacts reproduce Gaudeamus promote and Hundra abstain;
+their new plan/render/pre-review lineages pass.
+
+The installed SmolVLM2 2.2B pairwise adapter is rejected. Under one four-frame,
+temperature-zero, decision-only protocol it returned abstain for both cases.
+Gaudeamus should promote, so the result cannot reject always-abstain. Runs used
+6.21 GB MLX peak and zero swap. Do not prompt-tune these two labels.
+
 ## Held-out benchmark
 
 The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
@@ -83,14 +93,14 @@ gate after the owner decision unless a defect is found first.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `5d3b940` and remote is `2fadd62`.
+- Expected branch: `main`; content baseline is `e3cafe2` and remote is `4126aa1`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -v`: 328 tests pass.
+- `python3 -m unittest discover -s tests -v`: 331 tests pass.
 - Candidate availability targeted tests: 3 pass.
 - Relative-gain/plan/renderer targeted tests: 10 pass.
 - Hundra source SHA-256 and metadata match the manifest.
@@ -112,12 +122,15 @@ gate after the owner decision unless a defect is found first.
 - Do not claim the legacy fixed/auto pre-review gate passed reaction bundles.
 - Do not equate reduced occlusion or a different composition with improved
   reaction evidence; the proposed view must beat the current view editorially.
+- Do not integrate the SmolVLM2 2.2B pairwise adapter or count its Hundra
+  abstention as a pass; it failed the Gaudeamus positive.
+- Do not consume reaction-view-gain v1 for new plans; use provenance-complete v2.
 
 ## Pending
 
-- Push the reaction pre-review milestone after its metadata commit.
-- Define a bounded pairwise local-VLM gate; require both owner-labeled cases to
-  pass without weakening the closed gain importer.
+- Push the gain-v2/model-rejection milestone after its metadata commit.
+- Owner decision: retain human comparative review for POC speed, or authorize a
+  different local VLM evaluation/acquisition. Do not tune the rejected model.
 
 ## Next commands
 
@@ -156,12 +169,12 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/candidate-availability/hundra-audience-v1/availability.json`
 - `outputs/reaction-shot-plans/hundra-210-226p5-v1/plan.json`
 - `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v1/`
-- `outputs/reaction-view-gain/{gaudeamus,hundra}-owner-v1/gain.json`
-- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v6-relative-gain/plan.json`
-- `outputs/reaction-shot-plans/hundra-210-226p5-v2-relative-gain-abstain/plan.json`
-- `outputs/reaction-preview/gaudeamus-full-planned-540p-v7-relative-gain/`
-- `outputs/reaction-preview/hundra-210-226p5-planned-v2-relative-gain-abstain/`
-- `outputs/reaction-pre-review/{gaudeamus-v7-relative-gain,hundra-v2-relative-gain-abstain}/report.json`
+- `outputs/reaction-view-gain/{gaudeamus,hundra}-owner-v2/gain.json`
+- `outputs/reaction-shot-plans/{gaudeamus-full-owner-rule-v7-gain-v2,hundra-210-226p5-v3-gain-v2-abstain}/plan.json`
+- `outputs/reaction-preview/gaudeamus-full-{primary,planned}-540p-v8-gain-v2/`
+- `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v3-gain-v2/`
+- `outputs/reaction-pre-review/{gaudeamus-v8-gain-v2,hundra-v3-gain-v2}/report.json`
+- `outputs/reaction-view-gain/{gaudeamus,hundra}-smolvlm2-2p2b-pairwise-v1/gain.json`
 
 ## Milestone repository files
 
@@ -175,13 +188,17 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `tests/test_candidate_availability.py`
 - `tests/test_reaction_plan.py`
 - `tests/test_reaction_renderer_contract.py`
-- `benchmarks/reaction-view-gain/{gaudeamus,hundra}-owner-v1.json`
+- `benchmarks/reaction-view-gain/{gaudeamus,hundra}-owner-v2.json`
 - `src/aegis360/reaction_view_gain.py`
 - `scripts/bind_reaction_view_gain.py`
 - `tests/test_reaction_view_gain.py`
 - `src/aegis360/reaction_pre_review.py`
 - `scripts/check_reaction_pre_review.py`
 - `tests/test_reaction_pre_review.py`
+- `src/aegis360/local_reaction_gain_schema.py`
+- `scripts/run_mlx_vlm_reaction_gain.py`
+- `tests/test_local_reaction_gain_contract.py`
+- `docs/experiments/smolvlm2-2.2b-reaction-gain-gate-2026-08-15.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
