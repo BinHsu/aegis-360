@@ -181,7 +181,8 @@ role-bound reaction gate; generic applause thresholds, role inference and
 cross-scene directing remain unvalidated.
 Plan v4 now also requires closed relative editorial gain. Gaudeamus `promote`
 reproduces its accepted edit; Hundra `abstain` is decoded-identical to primary.
-The boundary is verified, but gain is still owner-authored rather than inferred.
+The reaction pre-review gate passes both modes mechanically. Gain remains
+owner-authored rather than inferred; automatic pairwise review is the next gate.
 ## Evidence map
 
 - Current architecture: `docs/design/system-overview.md`

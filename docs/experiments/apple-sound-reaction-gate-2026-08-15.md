@@ -202,3 +202,21 @@ relative-gain classifier. External evidence:
 - `outputs/reaction-view-gain/hundra-owner-v1/gain.json`
 - `outputs/reaction-shot-plans/hundra-210-226p5-v2-relative-gain-abstain/plan.json`
 - `outputs/reaction-preview/hundra-210-226p5-planned-v2-relative-gain-abstain/`
+
+## Reaction-preview mechanical gate
+
+`scripts/check_reaction_pre_review.py` now validates v4 evidence and reconstructs
+the plan before comparing equal-lineage primary/planned bundles. It checks trace
+bindings, encoder metadata, decoded stream probes and decoded audio identity.
+For `promote`, video must differ and declared pose/duration must exceed explicit
+8-degree/2-second floors. For `abstain`, decoded video must be identical. These
+are differentiation checks, not editorial scoring; paired visual review remains
+mandatory before any new owner request.
+
+Both real gates pass. Hundra has zero promoted segments and decoded identity.
+Gaudeamus has one 9.5-second promoted segment with a 160-degree maximum declared
+pose difference, identical decoded audio and distinct decoded video. Reports are
+atomic, refuse overwrite and contain no paths or pixels:
+
+- `outputs/reaction-pre-review/hundra-v2-relative-gain-abstain/report.json`
+- `outputs/reaction-pre-review/gaudeamus-v7-relative-gain/report.json`
