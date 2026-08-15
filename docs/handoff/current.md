@@ -1,18 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-15T21:36:00+08:00
+Updated: 2026-08-16T00:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: e3cafe2
-Remote status: `origin/main` is 4126aa1; gain-v2/model rejection is committed locally
+Baseline commit: e4f1da0
+Remote status: `origin/main` is ace12f1; ADR 0010 is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate requires an owner decision: keep owner-authored relative gain for the POC,
-or authorize evaluation/acquisition of a different local VLM.
+gate is implementation of `aegis360.event-timeline.v1` under accepted ADR 0010.
 
 ## Accepted evidence
 
@@ -63,6 +62,12 @@ temperature-zero, decision-only protocol it returned abstain for both cases.
 Gaudeamus should promote, so the result cannot reject always-abstain. Runs used
 6.21 GB MLX peak and zero swap. Do not prompt-tune these two labels.
 
+ADR 0010 restores the original automatic goal. Human gain decisions are
+benchmark labels only. Product flow is cheap full-video signals, a sparse
+checksummed event timeline, bounded before/during/after semantic packets, then
+an explainable global planner with final authority. Per-frame VLM review and
+user approval of every event are rejected.
+
 ## Held-out benchmark
 
 The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
@@ -93,7 +98,7 @@ gate after the owner decision unless a defect is found first.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `e3cafe2` and remote is `4126aa1`.
+- Expected branch: `main`; content baseline is `e4f1da0` and remote is `ace12f1`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
@@ -128,9 +133,9 @@ gate after the owner decision unless a defect is found first.
 
 ## Pending
 
-- Push the gain-v2/model-rejection milestone after its metadata commit.
-- Owner decision: retain human comparative review for POC speed, or authorize a
-  different local VLM evaluation/acquisition. Do not tune the rejected model.
+- Push ADR 0010 after its metadata commit.
+- Implement event-timeline v1 from existing reaction evidence; do not select a
+  new model before the timeline/review-packet contracts and more labels exist.
 
 ## Next commands
 
@@ -199,6 +204,7 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `scripts/run_mlx_vlm_reaction_gain.py`
 - `tests/test_local_reaction_gain_contract.py`
 - `docs/experiments/smolvlm2-2.2b-reaction-gain-gate-2026-08-15.md`
+- `docs/adr/0010-sparse-event-semantic-planning.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
