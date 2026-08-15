@@ -1,0 +1,14 @@
+{
+  "schema_version": "aegis360.candidate-availability-config.v1",
+  "config_id": "hundra-audience-v1",
+  "reviewer_kind": "human",
+  "adapter_id": "agent-contact-sheet-review-v1",
+  "candidates": [
+    {
+      "candidate_id": "context:declared:1",
+      "intervals": [
+        {"start_seconds": 210.0, "end_seconds": 226.5}
+      ]
+    }
+  ]
+}

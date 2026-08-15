@@ -114,3 +114,50 @@ External evidence:
 - `outputs/reaction-preview/gaudeamus-full-{primary-only,planned}-540p-v4-wide/`
 - `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v3-live-onset/plan.json`
 - `outputs/reaction-preview/gaudeamus-full-planned-540p-v5-live-onset/`
+
+## Candidate-scoped hardening
+
+The accepted Gaudeamus result exposed a contract defect: an any-view live-scene
+interval could authorize an audience candidate that was not itself visible.
+Plan v3 replaces that broad proxy with a checksummed candidate-availability
+artifact. Unlisted candidates have no implicit availability. The plan and
+renderer now rehash and validate the exact grid, roles, reaction intervals and
+candidate availability; a stale or substituted input fails closed. The
+renderer also trims audio at the grid's absolute source window, not at zero.
+
+The corrected Gaudeamus replay retains the accepted three segments and reasons,
+so the hardening changes evidence authority without changing the owner-approved
+edit. Its immutable external outputs are:
+
+- `outputs/candidate-availability/gaudeamus-audience-v1/availability.json`
+- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v5-candidate-availability-trace/plan.json`
+- `outputs/reaction-preview/gaudeamus-full-planned-540p-v6-p0-rebind/`
+
+## Held-out moving-procession result
+
+`Hundra knektars marsch på Forum Vulgaris` is an independent 227.232-second,
+1920x960 ERP source licensed CC BY-SA 4.0. The full Apple run yields one strong
+candidate at 217.5–226.5 seconds: five supporting windows, peak applause
+0.782600 and peak clapping 0.801312. Human contact-sheet review establishes the
+camera as part of the procession: yaw 0/110 is the forward primary view, while
+yaw -45/110 centers the left-side audience without the flag occlusion at +90.
+Incidental minors remain background and are not eligible subjects.
+
+A nonzero 210–226.5-second grid produces two segments: primary until 217.5,
+then candidate-scoped audience until the window ends. Equal-contract baseline
+and planned outputs both contain 248 video frames (16.533 seconds) and 516 AAC
+frames (16.512 seconds). Paired decoded-frame review shows the planned cut
+removes the near-field flag that dominates the baseline and centers the
+applauding roadside crowd. This is pre-review evidence, not owner acceptance or
+generic cross-scene accuracy. The legacy fixed/auto pre-review script does not
+consume reaction bundles; a reaction-specific mechanical gate is still needed.
+
+External evidence:
+
+- `outputs/sound-events/hundra-full-apple-v1/events.json`
+- `outputs/reaction-intervals/hundra-full-apple-v1-threshold-p5/intervals.json`
+- `outputs/context-view-grids/hundra-210-226p5-declared-v1/grid.json`
+- `outputs/editorial-view-roles/hundra-210-226p5-v1/roles.json`
+- `outputs/candidate-availability/hundra-audience-v1/availability.json`
+- `outputs/reaction-shot-plans/hundra-210-226p5-v1/plan.json`
+- `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v1/`

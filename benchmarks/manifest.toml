@@ -89,3 +89,26 @@ projection_validation = "verified-manual — exact 2:1 monoscopic equirectangula
 audio_rights_review = "pending — preserve for local analysis but remove or separately review before public derivative publication"
 content_rights_review = "public choir performance; Commons license verified, but public release still requires ordinary face, performance and venue review"
 derivative_obligation = "Distribute adapted media under CC BY-SA 4.0 or a compatible license; credit creator, link license, identify changes and impose no effective legal or technical restrictions."
+
+[[asset]]
+id = "hundra_knektars_forum_vulgaris_360"
+title = "Hundra knektars marsch på Forum Vulgaris"
+source_page = "https://commons.wikimedia.org/wiki/File:Hundra_knektars_marsch_p%C3%A5_Forum_Vulgaris.webm"
+creator = "Jan Ainali"
+license_spdx = "CC-BY-SA-4.0"
+license_url = "https://creativecommons.org/licenses/by-sa/4.0/"
+attribution = "Excerpt/derivative from ‘Hundra knektars marsch på Forum Vulgaris’ by Jan Ainali, via Wikimedia Commons, licensed CC BY-SA 4.0; cropped/reprojected from 360-degree equirectangular video and algorithmically edited."
+verified_date = "2026-08-15"
+reported_duration_seconds = 227.232
+reported_width = 1920
+reported_height = 960
+benchmark_role = "Supplemental cross-scene reaction evidence; moving adult procession and stationary spectators; strongest candidate window [217.5,226.5) seconds."
+duration_ladder_eligible = false
+direct_url = "https://upload.wikimedia.org/wikipedia/commons/f/fb/Hundra_knektars_marsch_p%C3%A5_Forum_Vulgaris.webm"
+sha256 = "63746e59215f72f1d94003b1b7921ac01b87f02048037d2e606fb07bbff1c61c"
+byte_size = 110751744
+media_probe = "WebM; VP8 1920x960; Vorbis audio; duration 227.232 s"
+projection_validation = "verified-manual — exact 2:1 equirectangular source; Commons 360 classification plus successful v360 projection and seam/zenith inspection"
+audio_rights_review = "pending — preserve for local analysis but separately review before public derivative publication"
+content_rights_review = "adult procession is the intended subject; incidental minors occur in the public crowd and must not become selected subjects"
+derivative_obligation = "Distribute adapted media under CC BY-SA 4.0 or a compatible license; credit Jan Ainali, link source and license, identify changes and impose no effective legal or technical restrictions."

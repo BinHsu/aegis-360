@@ -4,12 +4,24 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from typing import Mapping
 
+from .candidate_availability import validate_candidate_availability
 from .context_views import validate_context_view_grid
 from .editorial_roles import validate_editorial_roles
-from .live_scene import validate_live_scene_intervals
 from .reaction_intervals import validate_reaction_intervals
+
+
+LEGACY_INPUT_KEYS = {
+    "context_view_grid_sha256", "editorial_roles_sha256",
+    "reaction_intervals_sha256", "live_scene_intervals_sha256",
+}
+INPUT_KEYS = {
+    "context_view_grid_sha256", "editorial_roles_sha256",
+    "reaction_intervals_sha256", "candidate_availability_sha256",
+}
+SHA256 = re.compile(r"[0-9a-f]{64}")
 
 
 def canonical_sha256(document: Mapping[str, object]) -> str:
@@ -25,7 +37,7 @@ def build_reaction_plan(
     validate_context_view_grid(grid)
     validate_editorial_roles(roles, grid, grid_sha256=grid_sha256)
     validate_reaction_intervals(reactions)
-    validate_live_scene_intervals(availability)
+    validate_candidate_availability(availability, grid, grid_sha256=grid_sha256)
     source_id = grid["source_id"]
     if any(item["source_id"] != source_id for item in (roles, reactions, availability)):
         raise ValueError("reaction-plan sources must match")
@@ -34,9 +46,11 @@ def build_reaction_plan(
     reaction = assignments["audience_reaction"]
     start = grid["window"]["start_seconds"]
     end = start + grid["window"]["duration_seconds"]
+    visible_ranges = next((item["intervals"] for item in availability["candidates"]
+                           if item["candidate_id"] == reaction), [])
     reaction_ranges = []
     for event in reactions["intervals"]:
-        for visible in availability["intervals"]:
+        for visible in visible_ranges:
             if not visible["start_seconds"] <= event["start_seconds"] < visible["end_seconds"]:
                 continue
             overlap_start = max(start, event["start_seconds"], visible["start_seconds"])
@@ -50,23 +64,24 @@ def build_reaction_plan(
             segments.append({"start_seconds": cursor, "end_seconds": overlap_start,
                              "candidate_id": primary, "reason": "primary_performance_default"})
         segments.append({"start_seconds": overlap_start, "end_seconds": overlap_end,
-                         "candidate_id": reaction, "reason": "reaction_event_and_live_scene"})
+                         "candidate_id": reaction,
+                         "reason": "reaction_event_and_candidate_available"})
         cursor = overlap_end
     if cursor < end:
         segments.append({"start_seconds": cursor, "end_seconds": end,
                          "candidate_id": primary, "reason": "primary_performance_default"})
     return {
-        "schema_version": "aegis360.reaction-shot-plan.v2",
+        "schema_version": "aegis360.reaction-shot-plan.v3",
         "source_id": source_id,
         "window": dict(grid["window"]),
         "inputs": {
             "context_view_grid_sha256": grid_sha256,
             "editorial_roles_sha256": canonical_sha256(roles),
             "reaction_intervals_sha256": canonical_sha256(reactions),
-            "live_scene_intervals_sha256": canonical_sha256(availability),
+            "candidate_availability_sha256": canonical_sha256(availability),
         },
         "segments": segments,
-        "transition_policy": "hard_cut_only_when_reaction_onset_is_live_v2",
+        "transition_policy": "hard_cut_only_when_reaction_candidate_is_available_v3",
         "limitations": [
             "the plan tests an owner-stated directing rule on one performance",
             "audio thresholds and role assignments are not generic accuracy evidence",
@@ -74,13 +89,19 @@ def build_reaction_plan(
     }
 
 
-def validate_reaction_plan(document: Mapping[str, object], grid: Mapping[str, object], *, grid_sha256: str) -> None:
+def validate_reaction_plan(
+    document: Mapping[str, object], grid: Mapping[str, object], *, grid_sha256: str,
+    roles: Mapping[str, object] | None = None,
+    reactions: Mapping[str, object] | None = None,
+    availability: Mapping[str, object] | None = None,
+) -> None:
     validate_context_view_grid(grid)
     if not isinstance(document, Mapping) or set(document) != {
         "schema_version", "source_id", "window", "inputs", "segments",
         "transition_policy", "limitations",
     } or document["schema_version"] not in {
         "aegis360.reaction-shot-plan.v1", "aegis360.reaction-shot-plan.v2",
+        "aegis360.reaction-shot-plan.v3",
     }:
         raise ValueError("reaction-shot plan fields or schema are invalid")
     if document["source_id"] != grid["source_id"] or document["window"] != grid["window"]:
@@ -88,11 +109,39 @@ def validate_reaction_plan(document: Mapping[str, object], grid: Mapping[str, ob
     expected_transition = {
         "aegis360.reaction-shot-plan.v1": "hard_cut_between_role_changes_v1",
         "aegis360.reaction-shot-plan.v2": "hard_cut_only_when_reaction_onset_is_live_v2",
+        "aegis360.reaction-shot-plan.v3": "hard_cut_only_when_reaction_candidate_is_available_v3",
     }[document["schema_version"]]
     if document["transition_policy"] != expected_transition:
         raise ValueError("reaction-shot transition policy conflicts with schema")
-    if document["inputs"].get("context_view_grid_sha256") != grid_sha256:
+    inputs = document["inputs"]
+    expected_input_keys = (INPUT_KEYS if document["schema_version"].endswith(".v3")
+                           else LEGACY_INPUT_KEYS)
+    if not isinstance(inputs, Mapping) or set(inputs) != expected_input_keys or any(
+        not isinstance(value, str) or SHA256.fullmatch(value) is None
+        for value in inputs.values()
+    ):
+        raise ValueError("reaction-shot plan inputs must be closed SHA-256 bindings")
+    if inputs["context_view_grid_sha256"] != grid_sha256:
         raise ValueError("reaction-shot plan grid checksum mismatch")
+    supplied = (roles, reactions, availability)
+    if any(item is not None for item in supplied) and not all(item is not None for item in supplied):
+        raise ValueError("all reaction-shot evidence artifacts must be supplied together")
+    if all(item is not None for item in supplied):
+        if document["schema_version"] != "aegis360.reaction-shot-plan.v3":
+            raise ValueError("raw evidence verification requires reaction-shot plan v3")
+        assert roles is not None and reactions is not None and availability is not None
+        validate_editorial_roles(roles, grid, grid_sha256=grid_sha256)
+        validate_reaction_intervals(reactions)
+        validate_candidate_availability(availability, grid, grid_sha256=grid_sha256)
+        if any(item["source_id"] != grid["source_id"] for item in supplied):
+            raise ValueError("reaction-plan sources must match")
+        expected = {
+            "editorial_roles_sha256": canonical_sha256(roles),
+            "reaction_intervals_sha256": canonical_sha256(reactions),
+            "candidate_availability_sha256": canonical_sha256(availability),
+        }
+        if any(inputs[key] != value for key, value in expected.items()):
+            raise ValueError("reaction-shot plan evidence checksum mismatch")
     candidates = {item["candidate_id"] for item in grid["candidates"]}
     cursor = grid["window"]["start_seconds"]
     end = cursor + grid["window"]["duration_seconds"]

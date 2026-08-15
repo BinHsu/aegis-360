@@ -32,6 +32,10 @@ download these files automatically.
 - 360 Skiing May 2019 — CC BY 3.0. Long 5K 2:1 moving-sports footage.
 - Gaudeamus Igitur — CC BY-SA 4.0. Supplemental non-ego, vertically layered
   group-composition evidence; selected window `[30,38)` seconds.
+- Hundra knektars marsch på Forum Vulgaris — CC BY-SA 4.0. Supplemental
+  cross-scene reaction evidence with a moving adult procession and stationary
+  spectators; candidate window `[217.5,226.5)` seconds. Incidental minors in
+  the crowd are not eligible subjects.
 
 The reference-machine acquisition was verified on 2026-07-23. The manifest
 records the original download URLs, exact byte sizes, SHA-256 values, and

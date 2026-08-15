@@ -10,17 +10,25 @@ from aegis360.reaction_plan import canonical_sha256, validate_reaction_plan  # n
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input_video", type=Path); parser.add_argument("grid_json", type=Path)
-    parser.add_argument("plan_json", type=Path); parser.add_argument("output_directory", type=Path)
+    parser.add_argument("roles_json", type=Path); parser.add_argument("reactions_json", type=Path)
+    parser.add_argument("availability_json", type=Path); parser.add_argument("plan_json", type=Path)
+    parser.add_argument("output_directory", type=Path)
     parser.add_argument("--mode", choices=("planned", "primary-only"), required=True)
     parser.add_argument("--width", type=int, default=960); parser.add_argument("--height", type=int, default=540)
     args = parser.parse_args()
-    if not all(path.is_file() for path in (args.input_video, args.grid_json, args.plan_json)): parser.error("required input is missing")
+    evidence_paths = (args.grid_json, args.roles_json, args.reactions_json, args.availability_json, args.plan_json)
+    if not args.input_video.is_file() or not all(path.is_file() for path in evidence_paths): parser.error("required input is missing")
     if args.output_directory.exists(): parser.error("refusing to overwrite output directory")
     if args.width <= 0 or args.height <= 0 or args.width % 2 or args.height % 2: parser.error("output dimensions must be positive and even")
     grid_bytes = args.grid_json.read_bytes(); grid = json.loads(grid_bytes); plan = json.loads(args.plan_json.read_text())
-    grid_sha = hashlib.sha256(grid_bytes).hexdigest(); validate_reaction_plan(plan, grid, grid_sha256=grid_sha)
+    roles = json.loads(args.roles_json.read_text()); reactions = json.loads(args.reactions_json.read_text())
+    availability = json.loads(args.availability_json.read_text())
+    grid_sha = hashlib.sha256(grid_bytes).hexdigest()
+    validate_reaction_plan(plan, grid, grid_sha256=grid_sha, roles=roles,
+                           reactions=reactions, availability=availability)
     candidate_by_id = {item["candidate_id"]: item for item in grid["candidates"]}
-    primary = next(item["candidate_id"] for item in plan["segments"] if item["reason"] == "primary_performance_default")
+    primary = next(item["candidate_id"] for item in roles["assignments"]
+                   if item["role"] == "primary_performance")
     segments = plan["segments"] if args.mode == "planned" else [{
         "start_seconds": grid["window"]["start_seconds"],
         "end_seconds": grid["window"]["start_seconds"] + grid["window"]["duration_seconds"],
@@ -35,10 +43,13 @@ def main() -> int:
             f"yaw={view['yaw_degrees']}:pitch={view['pitch_degrees']}:h_fov={view['horizontal_fov_degrees']}:interp=linear[{label}]"
         )
     duration = grid["window"]["duration_seconds"]
+    window_start = grid["window"]["start_seconds"]
+    window_end = window_start + duration
     filter_complex = ";".join(chains + [
         "".join(labels) + f"concat=n={len(labels)}:v=1:a=0[joined]",
         f"[joined]tpad=stop_mode=clone:stop_duration=0.1,fps=15,trim=duration={duration},"
         "setpts=PTS-STARTPTS[video]",
+        f"[0:a:0]atrim=start={window_start}:end={window_end},asetpts=PTS-STARTPTS[audio]",
     ])
     args.output_directory.parent.mkdir(parents=True, exist_ok=True)
     staging = Path(tempfile.mkdtemp(prefix=f".{args.output_directory.name}.", dir=args.output_directory.parent))
@@ -46,7 +57,7 @@ def main() -> int:
         output = staging / "video.mp4"
         subprocess.run([
             "ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(args.input_video),
-            "-filter_complex", filter_complex, "-map", "[video]", "-map", "0:a:0", "-t", str(grid["window"]["duration_seconds"]),
+            "-filter_complex", filter_complex, "-map", "[video]", "-map", "[audio]", "-t", str(grid["window"]["duration_seconds"]),
             "-c:v", "h264_videotoolbox", "-b:v", "6000k", "-pix_fmt", "yuv420p",
             "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(output),
         ], check=True)

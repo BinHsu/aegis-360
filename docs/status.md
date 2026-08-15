@@ -1,6 +1,6 @@
 # Project status
 
-Status: Conversation-group composition accepted; bounded group gate under test
+Status: Conversation-group and one reaction edit accepted; held-out reaction candidate ready
 
 ## Current conclusion
 
@@ -179,15 +179,10 @@ Owner accepts planned v5: corrected choir framing, no opening mid-event cut,
 109.5–119 audience reaction and return to titles. This closes one bounded
 role-bound reaction gate; generic applause thresholds, role inference and
 cross-scene directing remain unvalidated.
-Do not render until at least one candidate:
-
-1. has explicit detector, spherical-merge and lifecycle provenance;
-2. remains active long enough to survive the existing switch hold/margin;
-3. is visually credible non-ego content rather than near-field equipment or a
-   projection artifact; and
-4. creates a renderer-visible pose difference without score tuning from this
-   one excerpt.
-
+Plan v3 now requires candidate-scoped view availability and rebinds every
+checksummed evidence input at render time. A held-out first-person procession
+produces one materially distinct 217.5–226.5 audience cut; agent frame review
+passes, but owner review and a reaction-specific mechanical gate remain open.
 ## Evidence map
 
 - Current architecture: `docs/design/system-overview.md`

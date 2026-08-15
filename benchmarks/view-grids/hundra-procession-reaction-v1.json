@@ -1,0 +1,10 @@
+{
+  "schema_version": "aegis360.context-view-config.v1",
+  "config_id": "hundra-procession-reaction-v1",
+  "candidates": [
+    {"candidate_id": "context:declared:0", "candidate_type": "context", "yaw_degrees": 0.0, "pitch_degrees": 0.0, "horizontal_fov_degrees": 110.0},
+    {"candidate_id": "context:declared:1", "candidate_type": "context", "yaw_degrees": -45.0, "pitch_degrees": 0.0, "horizontal_fov_degrees": 110.0},
+    {"candidate_id": "context:declared:2", "candidate_type": "context", "yaw_degrees": 90.0, "pitch_degrees": 0.0, "horizontal_fov_degrees": 110.0},
+    {"candidate_id": "context:declared:3", "candidate_type": "context", "yaw_degrees": -180.0, "pitch_degrees": 0.0, "horizontal_fov_degrees": 110.0}
+  ]
+}

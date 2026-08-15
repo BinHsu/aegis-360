@@ -1,0 +1,14 @@
+{
+  "schema_version": "aegis360.candidate-availability-config.v1",
+  "config_id": "gaudeamus-audience-v1",
+  "reviewer_kind": "human",
+  "adapter_id": "agent-contact-sheet-review-v1",
+  "candidates": [
+    {
+      "candidate_id": "context:declared:1",
+      "intervals": [
+        {"start_seconds": 11.5, "end_seconds": 119.0}
+      ]
+    }
+  ]
+}
