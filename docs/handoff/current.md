@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T06:08:00+08:00
+Updated: 2026-08-16T06:20:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: b352bb9
-Remote status: `origin/main` is 5ff8eb5; Event Review Packet v1 is committed locally
+Baseline commit: 30b2736
+Remote status: `origin/main` is 3e90169; transient review media is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is temporary review-media rendering and cleanup under accepted ADR 0010.
+gate is closed event-semantic evidence under accepted ADR 0010.
 
 ## Accepted evidence
 
@@ -88,6 +88,12 @@ no media or answer and requires temporary rendered media to be deleted after
 adapter completion. Three real packets reproduce the expected availability
 differences without leaking owner labels.
 
+The transient runner revalidates lineage, resolves only grid-owned geometry,
+renders no more than ten silent 384x216 frames, invokes an argv-only adapter
+and always leaves the temporary-directory scope afterward. A real Gaudeamus
+run produced seven nonempty frames in 0.51 seconds; both a mistaken diagnostic
+failure and the corrected pass cleaned their temporary media.
+
 ## Held-out benchmark
 
 The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
@@ -114,20 +120,19 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `b352bb9` and remote is `5ff8eb5`.
+- Expected branch: `main`; content baseline is `30b2736` and remote is `3e90169`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 336 tests pass.
+- `python3 -m unittest discover -s tests -q`: 339 tests pass.
 - Event Timeline v1 targeted tests: 2 pass.
 - Event Review Packet v1 targeted tests: 3 pass.
+- Transient review-media targeted/contract tests: 3 pass.
 - Real Gaudeamus/Hundra timelines pass their closed privacy declarations and
   contain no absolute path strings.
-- Candidate availability targeted tests: 3 pass.
-- Relative-gain/plan/renderer targeted tests: 10 pass.
 - Hundra source SHA-256 and metadata match the manifest.
 - Both Hundra peers share dimensions, renderer settings, frame count and audio
   frame count.
@@ -153,9 +158,9 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Pending
 
-- Push Event Review Packet v1 after its metadata commit.
-- Implement temporary review-media rendering, grid resolution and cleanup. Do
-  not select a new model first.
+- Push transient review media after its metadata commit.
+- Define closed event-semantic evidence with abstention and immutable packet
+  lineage. Do not select a new model first.
 
 ## Next commands
 
@@ -223,6 +228,10 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `scripts/build_event_review_packet.py`
 - `tests/test_event_review_packet.py`
 - `docs/experiments/event-review-packet-v1-2026-08-16.md`
+- `src/aegis360/review_media.py`
+- `scripts/run_event_review_adapter.py`
+- `tests/test_review_media.py`
+- `docs/experiments/transient-event-review-media-2026-08-16.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
