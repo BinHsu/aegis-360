@@ -63,6 +63,8 @@ privacy-safe summaries when results exist.
   across two sources, with view availability but no imported editorial labels.
 - `event-review-packet-v1-2026-08-16.md`: five-anchor sparse review manifests
   with boundary-aware context and availability-filtered candidate references.
+- `transient-event-review-media-2026-08-16.md`: bounded silent frame rendering,
+  adapter handoff, failure propagation and verified temporary-media cleanup.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

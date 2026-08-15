@@ -10,18 +10,23 @@ from aegis360.event_review_packet import (
 from aegis360.event_timeline import build_event_timeline
 
 
+def build_packet_fixture():
+    grid, grid_sha, roles, reactions, availability = build_fixture()
+    timeline = build_event_timeline(
+        grid, roles, reactions, availability,
+        grid_sha256=grid_sha, roles_sha256=digest(roles),
+        reactions_sha256=digest(reactions),
+        availability_sha256=digest(availability),
+    )
+    return grid, grid_sha, roles, reactions, availability, timeline
+
+
 class EventReviewPacketTests(unittest.TestCase):
     def setUp(self):
         (
             self.grid, self.grid_sha, self.roles, self.reactions,
-            self.availability,
-        ) = build_fixture()
-        self.timeline = build_event_timeline(
-            self.grid, self.roles, self.reactions, self.availability,
-            grid_sha256=self.grid_sha, roles_sha256=digest(self.roles),
-            reactions_sha256=digest(self.reactions),
-            availability_sha256=digest(self.availability),
-        )
+            self.availability, self.timeline,
+        ) = build_packet_fixture()
         self.timeline_sha = digest(self.timeline)
 
     def packet(self, event_id="event:reaction:0000"):

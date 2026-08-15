@@ -188,13 +188,13 @@ path: whole-video event timeline, sparse semantic packets and global planning.
 Event Timeline v1 normalizes two Gaudeamus and one Hundra reaction candidates
 without importing owner labels. Event Review Packet v1 turns each into five
 boundary-aware temporal anchors and lists a proposed view only where candidate
-availability permits it. The next gate is temporary review-media rendering and
-cleanup; no new model should be selected first.
+availability permits it. A transient runner resolves only grid-owned views,
+renders at most ten silent frames and deletes them after adapter exit. The next
+gate is closed event-semantic evidence; no new model should be selected first.
 ## Evidence map
 
 - Current architecture: `docs/design/system-overview.md`
-- Audio reaction gate: `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
-- Event timeline v1: `docs/experiments/event-timeline-v1-2026-08-16.md`
 - Review packet v1: `docs/experiments/event-review-packet-v1-2026-08-16.md`
+- Transient review media: `docs/experiments/transient-event-review-media-2026-08-16.md`
 - Perception and lifecycle rules: `docs/design/perception-and-tracking.md`
 - Operational checkpoint: `docs/handoff/current.md`
