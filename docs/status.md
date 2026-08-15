@@ -185,13 +185,16 @@ The reaction pre-review gate passes both modes mechanically. Gain remains
 owner-authored: SmolVLM2 2.2B pairwise returned abstain on both owner-labeled
 cases and is rejected for this adapter. ADR 0010 restores the automatic product
 path: whole-video event timeline, sparse semantic packets and global planning.
+Event Timeline v1 now checksums four existing evidence inputs and normalizes
+two Gaudeamus and one Hundra reaction candidates without importing the owner's
+promote/abstain labels. It preserves candidate-view availability at and during
+each event. The next gate is a bounded before/during/after review packet; no
+new model should be selected before that contract exists.
 ## Evidence map
 
 - Current architecture: `docs/design/system-overview.md`
 - Audio reaction gate: `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
+- Event timeline v1: `docs/experiments/event-timeline-v1-2026-08-16.md`
 - Perception and lifecycle rules: `docs/design/perception-and-tracking.md`
-- Multi-view acquisition: `docs/experiments/yolox-multiview-semantic-events-2026-08-02.md`
-- Seeded tracking/lifecycle: `docs/experiments/semantic-seeded-vision-lifecycle-2026-08-06.md`
 - Semantic planning gate: `docs/experiments/semantic-lifecycle-planning-gate-2026-08-02.md`
-- Detector equivalence: `docs/experiments/yolox-tiny-conversion-equivalence-protocol.md`
 - Operational checkpoint: `docs/handoff/current.md`
