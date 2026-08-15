@@ -1,10 +1,10 @@
 # Current handoff
 
-Updated: 2026-08-15T18:44:00+08:00
+Updated: 2026-08-15T20:13:32+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 2149eb3
-Remote status: role-bound reaction-plan checkpoint is ready to push
+Baseline commit: d46d1c3
+Remote status: owner-corrected declared-view checkpoint is ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -125,7 +125,7 @@ peers are CFR 15 fps/1,905 frames and pass agent pre-review. Owner composition
 and cut-timing review is next; no generic directing claim is justified.
 ## Repository state
 
-- Expected branch: `main`; content baseline is `2149eb3`.
+- Expected branch: `main`; content baseline is `d46d1c3`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
