@@ -175,10 +175,10 @@ contract test needs no external assets; symmetric cases assert 4/4 fallback
 with a false pose gate and 4/4 selected group with a true pose gate.
 A path-free gate summarizer reports two passing group cases and the Skiing
 failure without scoring fine class, evidence flags or an accuracy percentage.
-Owner rejected v3 because its shared primary view cropped the choir. Declared
-grid v2 moves primary right to -70/+5/120 while retaining audience +90/0/120.
-Equal-contract v4 peers pass mechanical/agent review; owner composition and cut
-timing review is next. No generic autonomous-directing claim follows.
+Owner accepted the need for wider/rightward primary framing but found the first
+reaction cut abrupt after the title animation. Plan v2 rejects events whose
+onset predates live-scene availability. Planned v5 keeps only 109.5–119 audience;
+mechanical/agent gates pass and owner timing review remains next.
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;

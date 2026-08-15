@@ -119,10 +119,10 @@ robust trimming keeps 4/8 observations after one spatial outlier, but its
 3.247-degree paired render is rejected because ego content dominates. The
 opt-in policy remains experimental and the 5-degree guard remains default.
 
-Owner rejected v3's cropped choir. Checksummed grid v2 independently sets
-primary -70/+5/120 and audience +90/0/120; roles retain no geometry. Equal v4
-peers are CFR 15 fps/1,905 frames and pass agent pre-review. Owner composition
-and cut-timing review is next; no generic directing claim is justified.
+Owner rejected the v4 opening reaction as abrupt after titles. Plan v2 now
+requires reaction onset inside an already-live scene, suppressing the 9-second
+event rather than joining it at 11.5. Planned v5 keeps only 109.5–119 audience,
+passes CFR/mechanical/agent gates, and needs owner timing review.
 ## Repository state
 
 - Expected branch: `main`; content baseline is `d46d1c3`.
@@ -188,8 +188,8 @@ and cut-timing review is next; no generic directing claim is justified.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Obtain owner preference between corrected primary-only/planned v4 peers;
-  assess composition and reaction timing, not active-speaker behavior.
+- Review planned v5 against primary-only v4; assess the sole 109.5–119
+  audience reaction and return timing, not active-speaker behavior.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
@@ -211,7 +211,7 @@ For owner review, compare equal-contract v3 peers:
 
 ```sh
 open "$AEGIS_DATA_DIR/outputs/reaction-preview/gaudeamus-full-primary-only-540p-v4-wide/video.mp4"
-open "$AEGIS_DATA_DIR/outputs/reaction-preview/gaudeamus-full-planned-540p-v4-wide/video.mp4"
+open "$AEGIS_DATA_DIR/outputs/reaction-preview/gaudeamus-full-planned-540p-v5-live-onset/video.mp4"
 ```
 
 Keep face evidence path-free and temporary-pixel-only. Preserve

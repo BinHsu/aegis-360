@@ -80,6 +80,18 @@ Both remain 1,905 frames/127 seconds. Agent contact-sheet review finds the choir
 materially more complete, the audience view unchanged, and no new projection or
 codec defect. Owner review remains required.
 
+Owner review then found the 11.5-second cut abrupt because the opening title
+animation led directly into the audience. The cause was interval intersection:
+the sound event began at 9 seconds, before live-scene availability at 11.5, and
+the planner joined it mid-event. Reaction-shot plan v2 now requires the event
+onset itself to occur inside an already-live interval. The opening event is
+therefore suppressed rather than truncated; the ending event remains valid.
+
+Planned v5 has three segments: primary 0–109.5, audience reaction 109.5–119,
+and primary/title 119–127. It remains 1,905 CFR frames with the same audio and
+encoder contract. Agent inspection confirms the opening animation now flows
+directly into the corrected choir view, while the ending audience cut remains.
+
 External evidence:
 
 - `outputs/sound-events/gaudeamus-full-apple-v1/events.json`
@@ -94,3 +106,5 @@ External evidence:
 - `outputs/editorial-view-roles/gaudeamus-full-owner-v2/roles.json`
 - `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v2-wide-primary/plan.json`
 - `outputs/reaction-preview/gaudeamus-full-{primary-only,planned}-540p-v4-wide/`
+- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v3-live-onset/plan.json`
+- `outputs/reaction-preview/gaudeamus-full-planned-540p-v5-live-onset/`

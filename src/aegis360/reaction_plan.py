@@ -37,6 +37,8 @@ def build_reaction_plan(
     reaction_ranges = []
     for event in reactions["intervals"]:
         for visible in availability["intervals"]:
+            if not visible["start_seconds"] <= event["start_seconds"] < visible["end_seconds"]:
+                continue
             overlap_start = max(start, event["start_seconds"], visible["start_seconds"])
             overlap_end = min(end, event["end_seconds"], visible["end_seconds"])
             if overlap_end > overlap_start:
@@ -54,7 +56,7 @@ def build_reaction_plan(
         segments.append({"start_seconds": cursor, "end_seconds": end,
                          "candidate_id": primary, "reason": "primary_performance_default"})
     return {
-        "schema_version": "aegis360.reaction-shot-plan.v1",
+        "schema_version": "aegis360.reaction-shot-plan.v2",
         "source_id": source_id,
         "window": dict(grid["window"]),
         "inputs": {
@@ -64,7 +66,7 @@ def build_reaction_plan(
             "live_scene_intervals_sha256": canonical_sha256(availability),
         },
         "segments": segments,
-        "transition_policy": "hard_cut_between_role_changes_v1",
+        "transition_policy": "hard_cut_only_when_reaction_onset_is_live_v2",
         "limitations": [
             "the plan tests an owner-stated directing rule on one performance",
             "audio thresholds and role assignments are not generic accuracy evidence",
@@ -77,10 +79,18 @@ def validate_reaction_plan(document: Mapping[str, object], grid: Mapping[str, ob
     if not isinstance(document, Mapping) or set(document) != {
         "schema_version", "source_id", "window", "inputs", "segments",
         "transition_policy", "limitations",
-    } or document["schema_version"] != "aegis360.reaction-shot-plan.v1":
+    } or document["schema_version"] not in {
+        "aegis360.reaction-shot-plan.v1", "aegis360.reaction-shot-plan.v2",
+    }:
         raise ValueError("reaction-shot plan fields or schema are invalid")
     if document["source_id"] != grid["source_id"] or document["window"] != grid["window"]:
         raise ValueError("reaction-shot plan window must match its grid")
+    expected_transition = {
+        "aegis360.reaction-shot-plan.v1": "hard_cut_between_role_changes_v1",
+        "aegis360.reaction-shot-plan.v2": "hard_cut_only_when_reaction_onset_is_live_v2",
+    }[document["schema_version"]]
+    if document["transition_policy"] != expected_transition:
+        raise ValueError("reaction-shot transition policy conflicts with schema")
     if document["inputs"].get("context_view_grid_sha256") != grid_sha256:
         raise ValueError("reaction-shot plan grid checksum mismatch")
     candidates = {item["candidate_id"] for item in grid["candidates"]}
