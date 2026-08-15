@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T07:08:00+08:00
+Updated: 2026-08-16T07:22:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 23269f4
-Remote status: `origin/main` is 439f08d; bounded camera segments are committed locally
+Baseline commit: 94ac5eb
+Remote status: `origin/main` is 8722511; scene-change evidence is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is expanding cheap whole-video event evidence before model selection.
+gate is a multi-signal Event Timeline v2 before model selection.
 
 ## Accepted evidence
 
@@ -108,42 +108,32 @@ spherical angular and cross-event repetition costs. It does not yet emit a
 continuous path. Global Camera Segments v1 covers the full window with primary
 and overlays a selected proposal only on exact timeline availability.
 
+FFmpeg scene evidence at 2 fps/320px plus score floor 0.4 and 10-second NMS
+retains nine visually plausible Old Ghost Road boundaries and zero Bellpuig
+candidates. Full 5K VP9 Skiing decode did not finish in the bounded session;
+use a reusable proxy or bounded window, not another full-decode retry.
+
 ## Held-out benchmark
 
-The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
-
-- source page: <https://commons.wikimedia.org/wiki/File:Hundra_knektars_marsch_p%C3%A5_Forum_Vulgaris.webm>
-- creator: Jan Ainali; own work; CC BY-SA 4.0;
-- 1920x960 exact monoscopic ERP, 227.232 seconds, VP8/Vorbis;
-- SHA-256: `63746e59215f72f1d94003b1b7921ac01b87f02048037d2e606fb07bbff1c61c`;
-- 110751744 bytes;
-- incidental minors are background and must not become eligible subjects;
-- excluded from the duration ladder.
-
-Apple SoundAnalysis finds one threshold-qualified interval at 217.5–226.5:
-five supporting windows, applause peak 0.782600 and clapping peak 0.801312.
-Contact-sheet review establishes the camera as part of the moving procession.
-For the bounded 210–226.5 window, yaw 0/pitch 0/HFOV 110 is primary and yaw
--45/pitch 0/HFOV 110 centers the left roadside audience. The +90 direction is
-flag-obscured and -90 is tent-obscured.
-
-The rejected v3 plan contains two segments, but v4 records owner `abstain` and
-contains only primary 210–226.5. Its 248 video and 516 audio frames hash exactly
-the same after decoding as the existing primary render. This prevents the
-rejected cut without disabling the accepted Gaudeamus reaction edit.
+Hundra is a checksummed CC BY-SA 4.0 1920x960 ERP held-out source. Its
+217.5–226.5 reaction candidate is owner-rejected because the primary procession
+view presents the bilateral audience better than the flag/tent-obscured
+proposal. Incidental minors remain ineligible subjects. Exact provenance lives
+in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `23269f4` and remote is `439f08d`.
+- Expected branch: `main`; content baseline is `94ac5eb` and remote is `8722511`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 351 tests pass.
+- `python3 -m unittest discover -s tests -q`: 355 tests pass.
 - Sparse global event DP targeted tests: 3 pass.
 - Global camera segment targeted tests: 2 pass.
+- Scene-event/NMS targeted tests: 4 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
 
@@ -163,9 +153,9 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Pending
 
-- Push bounded camera segments after its metadata commit.
-- Expand low-cost whole-video event evidence beyond the current two reaction
-  sources; do not choose a model from three owner decisions.
+- Push scene-change evidence after its metadata commit.
+- Merge neutral scene-change candidates into Event Timeline v2 without
+  inventing editorial roles; do not choose a model from three owner decisions.
 
 ## Next commands
 
@@ -232,6 +222,9 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `src/aegis360/global_camera_segments.py`
 - `scripts/build_global_camera_segments.py`
 - `tests/test_global_camera_segments.py`
+- `src/aegis360/{scene_events,scene_change_candidates}.py`
+- `scripts/{run_ffmpeg_scene_events,build_scene_change_candidates}.py`
+- `docs/experiments/ffmpeg-scene-change-events-2026-08-16.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
