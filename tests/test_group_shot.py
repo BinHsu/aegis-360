@@ -10,6 +10,7 @@ from aegis360.group_shot import (
     GroupMember,
     GroupShotConfig,
     apply_vertical_composition_anchors,
+    apply_vertical_extent_midpoint,
     build_group_shot,
     build_group_shots,
 )
@@ -43,7 +44,9 @@ class GroupShotTests(unittest.TestCase):
             GroupMember("a", 0, math.radians(-25), math.radians(10), math.radians(-45), math.radians(5)),
             GroupMember("b", math.radians(10), math.radians(-24), math.radians(10), math.radians(-40), math.radians(10)),
         ])
-        self.assertAlmostEqual(math.degrees(result.pitch), -17.5)
+        self.assertGreater(math.degrees(result.pitch), -25)
+        centered = apply_vertical_extent_midpoint(result)
+        self.assertAlmostEqual(math.degrees(centered.pitch), -17.5)
         self.assertAlmostEqual(math.degrees(result.pitch_min), -45)
         self.assertAlmostEqual(math.degrees(result.pitch_max), 10)
 

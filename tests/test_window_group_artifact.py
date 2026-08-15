@@ -90,6 +90,21 @@ class WindowGroupArtifactTests(unittest.TestCase):
             result["composition_policy"]["status"],
             "experimental_complete_vertical_bounds_union_midpoint",
         )
+        baseline = build_window_group_proposal_artifact(
+            spherical, faces, source_id="fixture", window_id="v2-default",
+            start_seconds=0, duration_seconds=1,
+        )
+        self.assertAlmostEqual(
+            math.degrees(baseline["geometry"]["pitch"]), -20.0837712492,
+            places=6,
+        )
+        self.assertGreater(
+            result["geometry"]["pitch"], baseline["geometry"]["pitch"],
+        )
+        self.assertEqual(
+            baseline["composition_policy"]["status"],
+            "tunable_poc_guard_not_validated_default",
+        )
 
 
 if __name__ == "__main__":

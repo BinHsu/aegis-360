@@ -107,21 +107,17 @@ candidate IDs. SmolVLM2 500M Video MLX BF16 was acquired and ran without swap,
 but three prompt-only and two grammar-constrained runs failed semantic or
 cross-field validation. It is rejected for planner integration; stop tuning.
 
-The explicitly acquired SmolVLM2 2.2B MLX BF16 weight matches the pinned
-4,493,651,795-byte SHA-256. A bounded runner builds scope/candidate-coupled
-llguidance schema, forces silent-input audio evidence to unknown, verifies the
-weight, accepts at most four frames by default, validates scene-context v2 and
-writes atomically without durable paths. The formal real run selects
-`group:window:1` with zero swap, 25.05 seconds model elapsed and 6.97 GB MLX
-peak memory. Two identical-input repeats reproduce the decision in 24.75/25.15
-seconds. A non-group window returns uncertain/no-selection in 25.77 seconds.
-A Bellpuig window with 4+ racing riders selects `group:window:1` in 25.80
-seconds. Fine class varies and Bellpuig falsely marks mouth motion/reciprocal
-orientation, so only bounded group selection passes across the two sources. A
-Skiing landscape with only `context:forward` returns uncertain/no-selection
-in 24.91 seconds, failing context selection. Planner integration maps this
-abstention to context-only frames and records `deterministic_context_fallback`;
-the accepted capability remains a group gate and other decisions still fail.
+SmolVLM2 2.2B is checksummed and selects groups across Old Ghost Road and
+Bellpuig at a 6.97 GB MLX peak. Fine class/evidence flags are unreliable and
+Skiing context selection fails, so only the bounded group gate is accepted.
+Selected group and abstention bind to group-only and context-only planner
+frames respectively; greedy utility cannot override the closed review.
+
+Spherical v2 retains complete vertical pitch bounds; v1 remains missing. Old
+Ghost Road bounds reproduce the accepted pitch within 1.22 degrees. Bellpuig
+robust trimming keeps 4/8 observations after one spatial outlier, but its
+3.247-degree paired render is rejected because ego content dominates. The
+opt-in policy remains experimental and the 5-degree guard remains default.
 ## Repository state
 
 - Expected branch: `main`; content baseline is `c50bd75`.
@@ -135,7 +131,7 @@ the accepted capability remains a group gate and other decisions still fail.
 ## Verified
 
 - Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 293 tests, including proposal/selection/
+- The full repository suite passes: 295 tests, including proposal/selection/
   planner contracts.
 - Targeted local-context adapter tests pass for checksum provenance, group and
   uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
@@ -187,8 +183,8 @@ the accepted capability remains a group gate and other decisions still fail.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Test opt-in v2 union midpoint on held-out footage before promotion; v1 stays
-  missing and the 5-degree guard remains default.
+- Find a non-ego held-out group scene before promoting v2 union midpoint; the
+  Bellpuig pair is rejected and the 5-degree guard remains default.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff

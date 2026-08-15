@@ -233,6 +233,13 @@ vertical extent as missing rather than synthesize a default body height. The
 synthetic contract is implemented; real benchmark evidence is still required
 before any composition policy consumes the bounds.
 
+Window aggregation may trim spatial outliers only when the untrimmed group
+cannot fit the maximum FOV. It repeatedly removes the observation contributing
+the largest spherical coverage radius, records the discarded count, and must
+still satisfy the original observation floor. If containment and the floor
+cannot both hold, no proposal is produced. This is geometric robustness, not
+identity association or detector-score ranking.
+
 `src/aegis360/semantic_quality.py` provides a tunable subject-framing gate.
 The v1 proposal quarantines boxes whose normalized width or height is at least
 0.9. This means unsuitable for isolated subject framing, not detector false

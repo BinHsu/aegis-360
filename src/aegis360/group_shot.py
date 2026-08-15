@@ -98,6 +98,21 @@ def apply_vertical_composition_anchors(
     )
 
 
+def apply_vertical_extent_midpoint(shot: GroupShot) -> GroupShot:
+    """Center pitch on complete vertical bounds without changing coverage."""
+
+    if shot.pitch_min is None or shot.pitch_max is None:
+        return shot
+    return GroupShot(
+        member_ids=shot.member_ids,
+        yaw=shot.yaw,
+        pitch=(shot.pitch_min + shot.pitch_max) / 2,
+        horizontal_fov=shot.horizontal_fov,
+        required_horizontal_fov=shot.required_horizontal_fov,
+        fully_contains_members=shot.fully_contains_members,
+        pitch_min=shot.pitch_min,
+        pitch_max=shot.pitch_max,
+    )
 def build_group_shot(
     members: list[GroupMember],
     config: GroupShotConfig = GroupShotConfig(),
@@ -139,8 +154,6 @@ def build_group_shot(
     complete_vertical = all(member.pitch_min is not None for member in ordered)
     pitch_min = min(member.pitch_min for member in ordered) if complete_vertical else None
     pitch_max = max(member.pitch_max for member in ordered) if complete_vertical else None
-    if complete_vertical:
-        pitch = (pitch_min + pitch_max) / 2
     radius = max(
         spherical_distance((yaw, pitch), (member.yaw, member.pitch))
         + member.horizontal_extent / 2.0

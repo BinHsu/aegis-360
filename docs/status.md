@@ -175,8 +175,8 @@ contract test needs no external assets; symmetric cases assert 4/4 fallback
 with a false pose gate and 4/4 selected group with a true pose gate.
 A path-free gate summarizer reports two passing group cases and the Skiing
 failure without scoring fine class, evidence flags or an accuracy percentage.
-Real v2 bounds cover 240 clusters; opt-in pitch is -19.056° versus accepted
--20.278° without proven gain. V1 stays missing and the 5-degree guard default.
+Real v2 bounds pass Old Ghost Road non-regression; Bellpuig's 3.247° pair is
+ego-dominated and rejected. V1 stays missing and the 5-degree guard default.
 
 Do not render until at least one candidate:
 

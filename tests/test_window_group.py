@@ -64,6 +64,24 @@ class WindowGroupTests(unittest.TestCase):
             [shot(54)], total_sample_count=3,
         ))
 
+    def test_spatial_outlier_is_trimmed_without_lowering_observation_floor(self):
+        result = build_window_group_shot(
+            [shot(-58, fov=64), shot(-89, fov=72), shot(-102, fov=73),
+             shot(-98, fov=67), shot(-99, fov=74)],
+            total_sample_count=8,
+        )
+        self.assertIsNotNone(result)
+        self.assertEqual(result.observed_sample_count, 4)
+        self.assertEqual(result.discarded_observed_sample_count, 1)
+        self.assertEqual(result.observation_ratio, .5)
+        self.assertTrue(result.fully_contains_observed_groups)
+        self.assertLessEqual(result.required_horizontal_fov, math.radians(110))
+
+    def test_outlier_trimming_fails_if_containment_would_break_floor(self):
+        self.assertIsNone(build_window_group_shot(
+            [shot(-60, fov=90), shot(60, fov=90)], total_sample_count=4,
+        ))
+
     def test_invalid_observation_fails_closed(self):
         bad = GroupShot(("only",), 0, 0, 1, 1, True)
         with self.assertRaisesRegex(ValueError, "group shot"):
@@ -84,6 +102,10 @@ class WindowGroupTests(unittest.TestCase):
         )
         self.assertEqual(len(frames), 4)
         for frame in frames:
+            self.assertEqual(
+                [candidate.candidate_id for candidate in frame.candidates],
+                ["group:1"],
+            )
             group = next(c for c in frame.candidates if c.candidate_type == "group_context")
             self.assertEqual(group.candidate_id, "group:1")
             self.assertEqual(group.covered_candidate_ids, ("person:1", "person:2"))

@@ -25,6 +25,7 @@ class WindowGroupShot:
     maximum_observed_member_count: int
     fully_contains_observed_groups: bool
     association_provenance: str = "simultaneous_group_geometry_nonidentity"
+    discarded_observed_sample_count: int = 0
 
 
 def window_group_scene_candidates(
@@ -106,7 +107,8 @@ def window_group_candidate_frames(
                 association_provenance=AssociationProvenance.GEOMETRIC_ONLY,
                 covered_candidate_ids=selected.member_candidate_ids,
             ))
-        candidates.append(TemporalCandidate(
+        if abstained:
+            candidates.append(TemporalCandidate(
                 candidate_id="context:forward",
                 track_id=None,
                 yaw=wrap_yaw(forward_yaw),
@@ -151,32 +153,48 @@ def build_window_group_shot(
         if len(shot.member_ids) < 2:
             raise ValueError("each observation must be a group shot")
 
-    ratio = len(observed_shots) / total_sample_count
-    if ratio < minimum_observation_ratio:
+    minimum_count = math.ceil(minimum_observation_ratio * total_sample_count)
+    if len(observed_shots) < minimum_count:
         return None
-    x = statistics.median(math.sin(shot.yaw) for shot in observed_shots)
-    z = statistics.median(math.cos(shot.yaw) for shot in observed_shots)
-    if math.hypot(x, z) <= 1e-9:
-        return None
-    yaw = wrap_yaw(math.atan2(x, z))
-    pitch = statistics.median(shot.pitch for shot in observed_shots)
-    required = max(
-        2 * abs(wrap_yaw(shot.yaw - yaw)) + shot.required_horizontal_fov
-        for shot in observed_shots
-    )
+    retained = list(observed_shots)
+    discarded = 0
+    while True:
+        x = statistics.median(math.sin(shot.yaw) for shot in retained)
+        z = statistics.median(math.cos(shot.yaw) for shot in retained)
+        if math.hypot(x, z) <= 1e-9:
+            return None
+        yaw = wrap_yaw(math.atan2(x, z))
+        contributions = [
+            2 * abs(wrap_yaw(shot.yaw - yaw)) + shot.required_horizontal_fov
+            for shot in retained
+        ]
+        required = max(contributions)
+        if required <= maximum_horizontal_fov:
+            break
+        if len(retained) <= minimum_count:
+            return None
+        worst = max(
+            range(len(retained)),
+            key=lambda index: (contributions[index], retained[index].member_ids),
+        )
+        del retained[worst]
+        discarded += 1
+    pitch = statistics.median(shot.pitch for shot in retained)
+    ratio = len(retained) / total_sample_count
     horizontal_fov = min(
         maximum_horizontal_fov,
-        max(max(shot.horizontal_fov for shot in observed_shots), required),
+        max(max(shot.horizontal_fov for shot in retained), required),
     )
     return WindowGroupShot(
         yaw=yaw,
         pitch=pitch,
         horizontal_fov=horizontal_fov,
         required_horizontal_fov=required,
-        observed_sample_count=len(observed_shots),
+        observed_sample_count=len(retained),
         total_sample_count=total_sample_count,
         observation_ratio=ratio,
-        minimum_observed_member_count=min(len(shot.member_ids) for shot in observed_shots),
-        maximum_observed_member_count=max(len(shot.member_ids) for shot in observed_shots),
-        fully_contains_observed_groups=required <= maximum_horizontal_fov,
+        minimum_observed_member_count=min(len(shot.member_ids) for shot in retained),
+        maximum_observed_member_count=max(len(shot.member_ids) for shot in retained),
+        fully_contains_observed_groups=True,
+        discarded_observed_sample_count=discarded,
     )

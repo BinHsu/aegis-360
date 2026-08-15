@@ -9,6 +9,7 @@ from typing import Mapping
 
 from .group_shot import (
     CompositionAnchor, GroupMember, apply_vertical_composition_anchors,
+    apply_vertical_extent_midpoint,
     build_group_shots,
 )
 from .window_group import build_window_group_shot, window_group_scene_candidates
@@ -117,7 +118,8 @@ def build_window_group_proposal_artifact(
         if groups:
             group = groups[0]
             observed_shots.append(
-                group if use_vertical_bounds_midpoint and group.pitch_min is not None else
+                apply_vertical_extent_midpoint(group)
+                if use_vertical_bounds_midpoint and group.pitch_min is not None else
                 apply_vertical_composition_anchors(
                     group, face_by_timestamp.get(round(timestamp, 9), []),
                     maximum_pitch_correction=math.radians(

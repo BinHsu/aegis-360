@@ -93,6 +93,10 @@ deterministic `context:forward` for that interval and records
 `deterministic_context_fallback`. A fixed-forward result cannot pass the
 pose-differentiation gate or support an auto-directing quality claim.
 
+A selected group is equally binding: the planner exposes only that reviewed
+proposal for the bounded window. Forward context is an abstention resolution,
+not a utility competitor allowed to override the closed review selection.
+
 ## Acceptance criteria
 
 - Every chosen view can be explained from stored evidence and planner costs.

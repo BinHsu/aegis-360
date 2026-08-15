@@ -101,6 +101,21 @@ new blur, seam or coverage defect, but the 1.22-degree difference is too small
 to claim a visual improvement. Vertical-bounds composition is therefore an
 explicit `--use-vertical-bounds-midpoint` experiment; default behavior retains
 the guard until held-out footage supports promotion.
+
+## Bellpuig held-out rejection
+
+The 18–22 second six-view acquisition produced 31 person and 18 bicycle boxes
+in 4.05 seconds. Spherical v2 retained complete bounds. The four-second window
+failed the unchanged 0.5 containable-group floor. A two-second window initially
+required 145.6 degrees because one spatial observation lay outside the dominant
+group. Deterministic outlier trimming retained 4/8 observations, discarded one
+and reduced required HFOV to 90.8 degrees without lowering the floor.
+
+Corrected paired proposals differed by 3.247 degrees vertically. Both selected
+the reviewed group 8/8 and passed mechanical render gates. Agent frame review
+still rejects the comparison: ego bike/body/arm content dominates the lower
+frame, so neither render is a clean group-composition benchmark. No owner review
+or vertical-policy claim is justified from this excerpt.
 It renders at yaw 54.083 degrees, pitch -20.278 degrees and HFOV 110 degrees.
 Both peers are H.264 High, yuv420p, 1920x1080 at 25 fps; the group is selected
 16/16 times and the maximum fixed/auto pose difference is 56.615 degrees.
