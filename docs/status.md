@@ -197,5 +197,4 @@ utility mapping; no new model should be selected first.
 
 - Current architecture: `docs/design/system-overview.md`
 - Transient review media: `docs/experiments/transient-event-review-media-2026-08-16.md`
-- Perception and lifecycle rules: `docs/design/perception-and-tracking.md`
 - Operational checkpoint: `docs/handoff/current.md`
