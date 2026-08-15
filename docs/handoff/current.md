@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T06:29:00+08:00
+Updated: 2026-08-16T06:39:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 9a09c7a
-Remote status: `origin/main` is dee749d; event-semantic evidence is committed locally
+Baseline commit: 6a06a92
+Remote status: `origin/main` is 08b0eb2; event candidate utility is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is deterministic event-evidence-to-utility mapping under ADR 0010.
+gate is multi-event global planning under ADR 0010 and ADR 0006.
 
 ## Accepted evidence
 
@@ -99,6 +99,11 @@ strict claim-free abstention. It cannot emit confidence, free text, identity,
 geometry, candidates, edit decisions or renderer commands. Model ID/SHA and
 exact config/packet hashes are mandatory.
 
+Event Candidate Utility v1 applies a checksummed, tunable policy and retains
+separate relevance, visibility, temporal and relationship components. It does
+not select a view. Abstention keeps current eligible at neutral utility and
+makes proposed ineligible.
+
 ## Held-out benchmark
 
 The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
@@ -125,18 +130,19 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `9a09c7a` and remote is `dee749d`.
+- Expected branch: `main`; content baseline is `6a06a92` and remote is `08b0eb2`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 343 tests pass.
+- `python3 -m unittest discover -s tests -q`: 346 tests pass.
 - Event Timeline v1 targeted tests: 2 pass.
 - Event Review Packet v1 targeted tests: 3 pass.
 - Transient review-media targeted/contract tests: 3 pass.
 - Event-semantic evidence targeted tests: 4 pass.
+- Event candidate utility targeted tests: 3 pass.
 - Real Gaudeamus/Hundra timelines pass their closed privacy declarations and
   contain no absolute path strings.
 - Hundra source SHA-256 and metadata match the manifest.
@@ -164,9 +170,9 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Pending
 
-- Push event-semantic evidence after its metadata commit.
-- Define deterministic evidence-to-utility and abstention fallback. Do not
-  select a new model first.
+- Push event candidate utility after its metadata commit.
+- Integrate utilities into a multi-event global planner with checksummed
+  minimum-advantage, transition, dwell and repetition costs.
 
 ## Next commands
 
@@ -222,6 +228,10 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `scripts/bind_event_semantics.py`
 - `tests/test_event_semantics.py`
 - `docs/design/event-semantic-evidence.md`
+- `src/aegis360/event_utility.py`
+- `scripts/build_event_candidate_utility.py`
+- `tests/test_event_utility.py`
+- `config/event-utility-policy-v1.json`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
