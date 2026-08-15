@@ -194,7 +194,8 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. The next gate is global planning;
 a sparse DP now applies dwell, advantage, switch and repetition costs across
-events. Real semantic evidence and angular path costs remain the next gates.
+events, with grid-derived spherical entry/return cost. Real semantic evidence
+and continuous path integration remain the next gates.
 ## Evidence map
 
 - Operational checkpoint: `docs/handoff/current.md`

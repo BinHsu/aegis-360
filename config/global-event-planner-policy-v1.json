@@ -1,4 +1,5 @@
 {
+  "angular_cost_per_radian_each_way": 0.1,
   "minimum_advantage": 0.5,
   "minimum_proposed_dwell_seconds": 2.0,
   "policy_id": "bounded-reaction-dp-v1",

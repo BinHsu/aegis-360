@@ -18,26 +18,30 @@ from aegis360.global_event_planner import plan_global_events  # noqa: E402
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("policy_json", type=Path)
+    parser.add_argument("grid_json", type=Path)
     parser.add_argument("output_json", type=Path)
     parser.add_argument("utility_packet_pairs", nargs="+", type=Path)
     args = parser.parse_args()
     if len(args.utility_packet_pairs) % 2:
         parser.error("inputs must alternate utility JSON and packet JSON")
-    paths = [args.policy_json, *args.utility_packet_pairs]
+    paths = [args.policy_json, args.grid_json, *args.utility_packet_pairs]
     if not all(path.is_file() for path in paths):
         parser.error("required planner input is missing")
     if args.output_json.exists():
         parser.error("refusing to overwrite output")
     policy_bytes = args.policy_json.read_bytes()
+    grid_bytes = args.grid_json.read_bytes()
     utility_paths = args.utility_packet_pairs[0::2]
     packet_paths = args.utility_packet_pairs[1::2]
     utility_bytes = [path.read_bytes() for path in utility_paths]
     packet_bytes = [path.read_bytes() for path in packet_paths]
     artifact = plan_global_events(
         [json.loads(value) for value in utility_bytes],
-        [json.loads(value) for value in packet_bytes], json.loads(policy_bytes),
+        [json.loads(value) for value in packet_bytes], json.loads(grid_bytes),
+        json.loads(policy_bytes),
         utility_sha256s=[hashlib.sha256(value).hexdigest() for value in utility_bytes],
         packet_sha256s=[hashlib.sha256(value).hexdigest() for value in packet_bytes],
+        grid_sha256=hashlib.sha256(grid_bytes).hexdigest(),
         policy_sha256=hashlib.sha256(policy_bytes).hexdigest(),
     )
     args.output_json.parent.mkdir(parents=True, exist_ok=True)

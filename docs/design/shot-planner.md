@@ -79,16 +79,17 @@ shows the rest-to-rest joins are inadequate.
 0010. It consumes ordered, nonoverlapping Event Review Packets paired with
 checksummed Event Candidate Utility artifacts. Each event offers current and,
 when semantic evidence and duration permit, proposed. The versioned policy
-sets minimum utility advantage, minimum proposed dwell, two-way switch cost
-and repeated-proposed cost.
+sets minimum utility advantage, minimum proposed dwell, two-way fixed switch
+cost, grid-derived angular cost and repeated-proposed cost.
 
 Dynamic programming optimizes the complete event sequence and records selected
-utility plus planning cost per event. A proposed event is modeled as a bounded
-cut away and return, so its switch cost is charged twice. Abstention or a short
-event exposes current only. Deterministic candidate-ID ordering breaks ties.
+utility plus each planning-cost component per event. A proposed event is
+modeled as a bounded cut away and return, so fixed and spherical angular costs
+are charged each way. Abstention or a short event exposes current only.
+Deterministic candidate-ID ordering breaks ties.
 
 This is genuinely cross-event for repetition but not yet a complete camera
-path optimizer: angular motion, continuous transitions between events and
+path optimizer: continuous transitions between events and
 inter-event non-event utility are not modeled. The limitation is explicit in
 the plan and must be closed before claiming the production global planner.
 
