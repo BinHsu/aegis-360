@@ -1,18 +1,18 @@
 # Current handoff
 
-Updated: 2026-08-15T21:00:00+08:00
+Updated: 2026-08-15T21:03:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 53eb015
-Remote status: `origin/main` is d86e20b; reaction hardening is committed locally
+Baseline commit: eb1e6b6
+Remote status: `origin/main` is 935c9d8; owner rejection is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is owner review of a held-out first-person procession reaction edit after
-candidate-scoped evidence hardening.
+gate is a fail-closed relative editorial-gain contract after owner rejection of
+the held-out first-person procession reaction cut.
 
 ## Accepted evidence
 
@@ -66,10 +66,11 @@ flag-obscured and -90 is tent-obscured.
 
 Plan v3 contains exactly two segments: primary 210–217.5 and audience
 217.5–226.5. Equal-contract primary/planned renders both have 248 video frames
-(16.533 seconds) and 516 AAC frames (16.512 seconds). Paired decoded frames at
-source 216.5, 217.4, 217.6, 220 and 225 seconds show a clear difference: the
-planned cut removes the dominant near-field flag and centers the applauding
-crowd. Agent static visual review passes. Owner review is still required.
+(16.533 seconds) and 516 AAC frames (16.512 seconds). Owner review rejects the
+planned cut: the primary view already shows the responsive spectators on both
+sides and retains the procession relationship. A denser one-second paired
+review confirms yaw -45 replaces a flag with a large tent but does not expose
+a clearer reaction. The correct held-out result is primary-only.
 
 The existing `check_render_pre_review.py` consumes legacy fixed/auto bundles,
 not reaction previews. Do not claim that gate passed; add a reaction-specific
@@ -77,7 +78,7 @@ gate after the owner decision unless a defect is found first.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `53eb015` and remote is `d86e20b`.
+- Expected branch: `main`; content baseline is `eb1e6b6` and remote is `935c9d8`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
@@ -90,7 +91,8 @@ gate after the owner decision unless a defect is found first.
 - Hundra source SHA-256 and metadata match the manifest.
 - Both Hundra peers share dimensions, renderer settings, frame count and audio
   frame count.
-- Representative decoded frames were inspected before owner review.
+- Representative decoded frames were inspected before and after owner review;
+  the denser replay confirms the owner's rejection.
 - `python3 scripts/check_handoff.py` and `git diff --check` still need to run
   after this handoff replacement.
 
@@ -102,12 +104,15 @@ gate after the owner decision unless a defect is found first.
 - Do not use +90 (flag-obscured) or -90 (tent-obscured) as Hundra reaction
   geometry without new evidence.
 - Do not claim the legacy fixed/auto pre-review gate passed reaction bundles.
+- Do not equate reduced occlusion or a different composition with improved
+  reaction evidence; the proposed view must beat the current view editorially.
 
 ## Pending
 
 - Push the closed evidence-contract milestone after its metadata commit.
-- Obtain owner review of the Hundra primary/planned pair.
-- Add a reaction-preview mechanical pre-review gate after the owner decision.
+- Define a closed relative editorial-gain gate that can abstain when primary
+  already presents the reaction better than the candidate.
+- Add a reaction-preview mechanical pre-review gate before another owner review.
 
 ## Next commands
 
@@ -120,18 +125,17 @@ git diff --check
 git status --short
 ```
 
-For owner review:
+Rejected comparison retained for reproduction, not renewed owner review:
 
 ```sh
 open "$AEGIS_DATA_DIR/outputs/reaction-preview/hundra-210-226p5-primary-v1/video.mp4"
 open "$AEGIS_DATA_DIR/outputs/reaction-preview/hundra-210-226p5-planned-v1/video.mp4"
 ```
 
-Expected difference: both begin with the same forward procession view. At
-7.5 seconds into the excerpt (source 217.5), planned hard-cuts 45 degrees left
-to emphasize the applauding roadside audience; primary remains forward with a
-large flag occupying the right side. The edit ends on the audience and does
-not perform a half-second return cut.
+Observed difference: both begin with the same forward procession view. At 7.5
+seconds into the excerpt (source 217.5), planned hard-cuts 45 degrees left. It
+removes the right-side flag but introduces a left-side tent and loses the more
+complete bilateral audience response. Keep primary; do not renew this cut.
 
 ## External artifacts
 
