@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T06:20:00+08:00
+Updated: 2026-08-16T06:29:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 30b2736
-Remote status: `origin/main` is 3e90169; transient review media is committed locally
+Baseline commit: 9a09c7a
+Remote status: `origin/main` is dee749d; event-semantic evidence is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is closed event-semantic evidence under accepted ADR 0010.
+gate is deterministic event-evidence-to-utility mapping under ADR 0010.
 
 ## Accepted evidence
 
@@ -94,6 +94,11 @@ and always leaves the temporary-directory scope afterward. A real Gaudeamus
 run produced seven nonempty frames in 0.51 seconds; both a mistaken diagnostic
 failure and the corrected pass cleaned their temporary media.
 
+Event Semantic Evidence v1 allows only packet-bound closed observations or
+strict claim-free abstention. It cannot emit confidence, free text, identity,
+geometry, candidates, edit decisions or renderer commands. Model ID/SHA and
+exact config/packet hashes are mandatory.
+
 ## Held-out benchmark
 
 The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
@@ -120,17 +125,18 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `30b2736` and remote is `3e90169`.
+- Expected branch: `main`; content baseline is `9a09c7a` and remote is `dee749d`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 339 tests pass.
+- `python3 -m unittest discover -s tests -q`: 343 tests pass.
 - Event Timeline v1 targeted tests: 2 pass.
 - Event Review Packet v1 targeted tests: 3 pass.
 - Transient review-media targeted/contract tests: 3 pass.
+- Event-semantic evidence targeted tests: 4 pass.
 - Real Gaudeamus/Hundra timelines pass their closed privacy declarations and
   contain no absolute path strings.
 - Hundra source SHA-256 and metadata match the manifest.
@@ -158,9 +164,9 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Pending
 
-- Push transient review media after its metadata commit.
-- Define closed event-semantic evidence with abstention and immutable packet
-  lineage. Do not select a new model first.
+- Push event-semantic evidence after its metadata commit.
+- Define deterministic evidence-to-utility and abstention fallback. Do not
+  select a new model first.
 
 ## Next commands
 
@@ -198,27 +204,6 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 
 ## Milestone repository files
 
-- `benchmarks/manifest.toml`, `benchmarks/README.md`
-- `benchmarks/view-grids/hundra-procession-reaction-v1.json`
-- `benchmarks/candidate-availability/{gaudeamus,hundra}-audience-v1.json`
-- `src/aegis360/candidate_availability.py`
-- `src/aegis360/reaction_plan.py`
-- `scripts/bind_candidate_availability.py`
-- `scripts/render_reaction_shot_plan.py`
-- `tests/test_candidate_availability.py`
-- `tests/test_reaction_plan.py`
-- `tests/test_reaction_renderer_contract.py`
-- `benchmarks/reaction-view-gain/{gaudeamus,hundra}-owner-v2.json`
-- `src/aegis360/reaction_view_gain.py`
-- `scripts/bind_reaction_view_gain.py`
-- `tests/test_reaction_view_gain.py`
-- `src/aegis360/reaction_pre_review.py`
-- `scripts/check_reaction_pre_review.py`
-- `tests/test_reaction_pre_review.py`
-- `src/aegis360/local_reaction_gain_schema.py`
-- `scripts/run_mlx_vlm_reaction_gain.py`
-- `tests/test_local_reaction_gain_contract.py`
-- `docs/experiments/smolvlm2-2.2b-reaction-gain-gate-2026-08-15.md`
 - `docs/adr/0010-sparse-event-semantic-planning.md`
 - `src/aegis360/event_timeline.py`
 - `scripts/build_event_timeline.py`
@@ -232,6 +217,11 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `scripts/run_event_review_adapter.py`
 - `tests/test_review_media.py`
 - `docs/experiments/transient-event-review-media-2026-08-16.md`
+- `src/aegis360/event_semantics.py`
+- `src/aegis360/local_event_semantics_schema.py`
+- `scripts/bind_event_semantics.py`
+- `tests/test_event_semantics.py`
+- `docs/design/event-semantic-evidence.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
