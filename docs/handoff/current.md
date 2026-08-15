@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T06:58:00+08:00
+Updated: 2026-08-16T07:08:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 90e4c9a
-Remote status: `origin/main` is 1f24e8b; spherical transition cost is committed locally
+Baseline commit: 23269f4
+Remote status: `origin/main` is 439f08d; bounded camera segments are committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is global-event-plan to camera-segment integration under ADR 0010/0006.
+gate is expanding cheap whole-video event evidence before model selection.
 
 ## Accepted evidence
 
@@ -105,7 +105,8 @@ not select a view. Abstention keeps current eligible at neutral utility and
 makes proposed ineligible. Sparse Global Event DP v1 then optimizes ordered
 events with minimum advantage/dwell plus two-way fixed switch, grid-derived
 spherical angular and cross-event repetition costs. It does not yet emit a
-continuous path.
+continuous path. Global Camera Segments v1 covers the full window with primary
+and overlays a selected proposal only on exact timeline availability.
 
 ## Held-out benchmark
 
@@ -133,22 +134,18 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `90e4c9a` and remote is `1f24e8b`.
+- Expected branch: `main`; content baseline is `23269f4` and remote is `439f08d`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 349 tests pass.
-- Event Review Packet v1 targeted tests: 3 pass.
-- Transient review-media targeted/contract tests: 3 pass.
-- Event-semantic evidence targeted tests: 4 pass.
-- Event candidate utility targeted tests: 3 pass.
+- `python3 -m unittest discover -s tests -q`: 351 tests pass.
 - Sparse global event DP targeted tests: 3 pass.
+- Global camera segment targeted tests: 2 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
-- Real pre-review reports pass for Gaudeamus promote and Hundra abstain.
 
 ## Rejected
 
@@ -166,9 +163,9 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Pending
 
-- Push spherical transition cost after its metadata commit.
-- Map global event decisions to bounded camera segments and existing renderer
-  conventions before selecting another model.
+- Push bounded camera segments after its metadata commit.
+- Expand low-cost whole-video event evidence beyond the current two reaction
+  sources; do not choose a model from three owner decisions.
 
 ## Next commands
 
@@ -232,6 +229,9 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `scripts/build_global_event_plan.py`
 - `tests/test_global_event_planner.py`
 - `config/global-event-planner-policy-v1.json`
+- `src/aegis360/global_camera_segments.py`
+- `scripts/build_global_camera_segments.py`
+- `tests/test_global_camera_segments.py`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
