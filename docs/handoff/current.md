@@ -1,204 +1,117 @@
 # Current handoff
 
-Updated: 2026-08-15T20:36:20+08:00
+Updated: 2026-08-15T21:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 43ec184
-Remote status: owner-accepted bounded reaction checkpoint is ready to push
-Working tree at checkpoint: only this checkpoint metadata differs from baseline
+Baseline commit: 53eb015
+Remote status: `origin/main` is d86e20b; reaction hardening is committed locally
+Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer. Conversation-group composition is accepted; the immediate objective is
-to bind Gaudeamus performer/audience roles to deterministic context views.
+viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
+gate is owner review of a held-out first-person procession reaction edit after
+candidate-scoped evidence hardening.
+
+## Accepted evidence
+
+- Old Ghost Road conversation-group framing is owner accepted. It proves
+  bounded group composition, not active-speaker or identity inference.
+- Gaudeamus planned v5 is owner accepted: primary geometry -70/+5/120,
+  audience +90/0/120, opening reaction suppressed, audience 109.5–119 and a
+  natural return to titles.
+- SmolVLM2 2.2B MLX BF16 is accepted only as a bounded group-vs-not-group
+  gate. Fine context, mouth-motion and orientation fields are unusable.
+- SmolVLM2 500M is rejected for planner integration; do not resume tuning it.
 
 ## Last completed milestone
 
-The privacy-safe semantic-event v2 pipeline, load-once Core ML runner,
-spherical dedup and detector-only tracklet diagnostics remain the perception
-foundation. V1 is rejected because it lacked viewport dimensions. The real
-30-second run is recorded in the experiment docs; all continuity remains
-geometric/nonidentity, and the tunable oversized-box quarantine remains
-unvalidated on held-out footage.
+The accepted Gaudeamus result exposed a P0 defect: broad any-view live-scene
+evidence could authorize an audience candidate that was not itself visible.
+The dirty implementation replaces that authority with closed
+`aegis360.candidate-availability.v1` evidence:
 
-Tracklet acquisitions now retain their path-free source observation
-provenance. `semantic_vision_seed` deterministically selects a viewport box,
-converts detector top-left coordinates to Vision bottom-left coordinates and
-retains exact width, height, yaw, pitch and HFOV. The native runner now accepts
-nonzero pitch/HFOV, and a wrapper consumes the seed manifest without manual box
-transcription.
+- availability is bound to exact checksummed config and context grid;
+- intervals are candidate-specific and ordered;
+- an unlisted candidate has no implicit availability;
+- reaction plan schema v3 binds exact grid, roles, reactions and availability;
+- the renderer rehashes and validates all four evidence artifacts;
+- primary geometry comes from role evidence, not a mutable segment reason;
+- nonzero source windows use absolute `atrim` boundaries;
+- legacy plan v1/v2 validation remains readable but cannot bypass v3 building.
 
-The manifest-driven isolated-person run tracked 16/16 frames and separated
-subject extent from output FOV, but its person-centered render was later
-rejected for speaking-group composition. Identity remains unverified.
+The corrected Gaudeamus v6 replay keeps the three owner-accepted segments and
+now records `reaction_event_and_candidate_available`. This is a contract
+hardening replay, not a new owner-review request.
 
-The corrected isolated-person render uses a 110-degree minimum FOV and equal
-1920x1080 H.264 peers. Mechanical review passes, but owner review rejects its
-speaking-group composition; translation-only shake metrics prove no comfort.
+## Held-out benchmark
 
-Owner review rejects the directing result: fixed needs to move right/down and
-auto needs to move up to frame the visible people whose mouths move. Centering
-one whole-body person box is not an acceptable proxy for a speaking subject.
-The lifecycle integration remains valid, but editorial success does not. The
-source contains stereo audio; its spatial convention and utility for speaker
-localization are unverified.
+The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
 
-Semantic planning now has an atomic render-bundle bridge. It copies the four
-path-free planning artifacts into staging, passes source paths only through a
-temporary render request, requires the pose gate, refuses overwrite, cleans up
-failure and publishes only after all three videos exist. A fresh real bundle
-passes mechanical pre-review and a durable path scan without manual copying.
+- source page: <https://commons.wikimedia.org/wiki/File:Hundra_knektars_marsch_p%C3%A5_Forum_Vulgaris.webm>
+- creator: Jan Ainali; own work; CC BY-SA 4.0;
+- 1920x960 exact monoscopic ERP, 227.232 seconds, VP8/Vorbis;
+- SHA-256: `63746e59215f72f1d94003b1b7921ac01b87f02048037d2e606fb07bbff1c61c`;
+- 110751744 bytes;
+- incidental minors are background and must not become eligible subjects;
+- excluded from the duration ladder.
 
-The bounded four-view face probe succeeds on all 64 requests. It finds exactly
-one right-view face at all 16 timestamps near yaw 61.0–61.5 degrees and pitch
--5.4 to -6.4 degrees. The selected whole-body track's pitch was about -28.3
-degrees, validating the owner's upward correction. Another visible group
-member is not detected as a face, so single-face framing is rejected.
+Apple SoundAnalysis finds one threshold-qualified interval at 217.5–226.5:
+five supporting windows, applause peak 0.782600 and clapping peak 0.801312.
+Contact-sheet review establishes the camera as part of the moving procession.
+For the bounded 210–226.5 window, yaw 0/pitch 0/HFOV 110 is primary and yaw
+-45/pitch 0/HFOV 110 centers the left roadside audience. The +90 direction is
+flag-obscured and -90 is tent-obscured.
 
-The closed `aegis360.scene-context.v2` contract makes geometry declare person,
-group and context proposals before human/local-VLM review. A group references
-2+ declared person proposals but asserts no identity; review selects exactly
-one proposal matching its requested scope. It has no free text, camera geometry
-or identity field, and local model provenance requires an exact SHA-256. V1 is
-rejected because it made review compose fragmented cross-time person IDs.
+Plan v3 contains exactly two segments: primary 210–217.5 and audience
+217.5–226.5. Equal-contract primary/planned renders both have 248 video frames
+(16.533 seconds) and 516 AAC frames (16.512 seconds). Paired decoded frames at
+source 216.5, 217.4, 217.6, 220 and 225 seconds show a clear difference: the
+planned cut removes the dominant near-field flag and centers the applauding
+crowd. Agent static visual review passes. Owner review is still required.
 
-Two-person spherical groups exist at 8/16 samples. They are stable near yaw
-53.9–54.4 degrees; the body-based pitch near -25 degrees becomes -5.4 to -6.4
-degrees after a bounded compatible-face correction. Membership, yaw and FOV
-are unchanged. The other eight samples miss the second person, so per-frame
-group presence is not render-ready and needs window-level bounded persistence.
+The existing `check_render_pre_review.py` consumes legacy fixed/auto bundles,
+not reaction previews. Do not claim that gate passed; add a reaction-specific
+gate after the owner decision unless a defect is found first.
 
-The new window aggregator requires explicit group context and accepts the real
-8/16 observation ratio at an inclusive 0.5 floor. It yields yaw 54.083 degrees,
-pitch -6.124 degrees and 51.474 degrees required horizontal coverage. It stores
-no cross-time member IDs and labels the association geometric/nonidentity.
-
-Window geometry now declares proposal-local `person-slot` members from the
-minimum simultaneously observed group size and one group proposal referencing
-them. Slots are coverage provenance, not identities. With that selected group,
-the unchanged primary greedy config chooses it 16/16 over forward context.
-
-Geometry generation no longer consumes scene context. The new atomic,
-refuse-overwrite `aegis360.window-group-proposal.v1` artifact is created first;
-a separate human/local-VLM adapter selects one proposal through scene-context
-v2; a planner adapter verifies that context reproduces the proposal candidates
-before producing the existing semantic planning/render contract.
-
-The first real artifact used the only detected face as the group pitch
-(-6.124 degrees). Although its 1080p render passed mechanical checks, agent
-contact-sheet review rejected it because the group was pulled too high and a
-second visible member was crowded against the lower edge. It was not sent to
-the owner. The replacement limits face correction to a tunable 5 degrees and
-renders yaw 54.083, pitch -20.278 and HFOV 110 degrees. It selects the group
-16/16, reaches 56.615 degrees fixed/auto pose difference, passes the mechanical
-gate, and retains all three visible heads without obvious codec or seam damage.
-The nearby cap-wearing person remains partially cropped below the torso.
-On 2026-08-11 the owner accepted the auto render as successfully capturing the
-two people in conversation. This accepts group framing only; it does not prove
-speaker identity, active-speaker inference, automatic context classification,
-subject switching or longer-window tracking.
-
-The generic local-model importer accepts only the four closed decision fields,
-verifies the exact model asset SHA-256, binds the result to proposal-owned
-candidates, validates scene-context v2, writes atomically and refuses overwrite.
-It permits uncertain/no-selection and rejects free text, geometry and invented
-candidate IDs. SmolVLM2 500M Video MLX BF16 was acquired and ran without swap,
-but three prompt-only and two grammar-constrained runs failed semantic or
-cross-field validation. It is rejected for planner integration; stop tuning.
-
-SmolVLM2 2.2B is checksummed and selects groups across Old Ghost Road and
-Bellpuig at a 6.97 GB MLX peak. Fine class/evidence flags are unreliable and
-Skiing context selection fails, so only the bounded group gate is accepted.
-Selected group and abstention bind to group-only and context-only planner
-frames respectively; greedy utility cannot override the closed review.
-
-Spherical v2 retains complete vertical pitch bounds; v1 remains missing. Old
-Ghost Road bounds reproduce the accepted pitch within 1.22 degrees. Bellpuig
-robust trimming keeps 4/8 observations after one spatial outlier, but its
-3.247-degree paired render is rejected because ego content dominates. The
-opt-in policy remains experimental and the 5-degree guard remains default.
-
-Owner accepts planned v5: corrected primary framing, suppression of the opening
-mid-event cut, 109.5–119 audience reaction and return to titles. This closes one
-bounded role-bound reaction gate; generic thresholds, automatic role inference
-and cross-scene directing remain unvalidated.
 ## Repository state
 
-- Expected branch: `main`; content baseline is `43ec184`.
-- Benchmark media, model weights, contact sheets and generated artifacts are
-  external and gitignored.
-- Signing may require an unavailable interactive SSH-key passphrase. Prior
-  milestone commits intentionally used `git -c commit.gpgsign=false commit`
-  without changing global Git settings.
-- Current docs replace superseded state; Git history is the archive.
+- Expected branch: `main`; content baseline is `53eb015` and remote is `d86e20b`.
+- Only the handoff metadata should differ from the content baseline.
+- Media, models and generated artifacts are external and gitignored.
+- Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- Vision frame and sequence shell gates pass with the added face request.
-- The full repository suite passes: 295 tests, including proposal/selection/
-  planner contracts.
-- Targeted local-context adapter tests pass for checksum provenance, group and
-  uncertain decisions, and fail-closed extra geometry/text/candidate IDs.
-- The acquired 500M model runs without swap. Grammar fixes syntax but still
-  selects wrong semantics or an invalid scope/candidate pair.
-- The acquired 2.2B formal runner emits valid path-free scene-context v2,
-  selects the accepted group and runs without swap; fine class is unstable.
-- Targeted group geometry tests prove compatible faces change only pitch,
-  unrelated faces are ignored and correction magnitude is bounded.
-- Window-group tests cover the 0.5 floor, insufficient evidence, non-group
-  rejection, nonidentity output and seam-safe aggregation.
-- The automated bundle passes equal-encoder and pose gates and retains no
-  absolute source path in its durable JSON.
-- The face sequence is 16/16 stable for one face, deletes temporary pixels and
-  retains no source path, face image, embedding, name or identity claim.
+- `python3 -m unittest discover -s tests -v`: 320 tests pass.
+- Candidate availability targeted tests: 3 pass.
+- Combined reaction plan/renderer contract tests: 8 pass.
+- Hundra source SHA-256 and metadata match the manifest.
+- Both Hundra peers share dimensions, renderer settings, frame count and audio
+  frame count.
+- Representative decoded frames were inspected before owner review.
+- `python3 scripts/check_handoff.py` and `git diff --check` still need to run
+  after this handoff replacement.
 
 ## Rejected
 
-- Do not interpret raw detector count or score as editorial utility.
-- Do not claim cross-view duplicates are separate people or a temporal series
-  is one identity.
-- Do not consume semantic-event v1 for spherical geometry; use v2.
-- Do not promote the suspect `up`-view detections to candidates unchanged.
-- Do not call quarantined oversized boxes detector false positives; context may
-  still use the scene.
-- Do not promote the 0.9 framing threshold to an accepted default without
-  held-out evidence.
-- Do not generalize one isolated 16-frame Vision success to crowded identity,
-  occlusion, seam or cross-viewport handoff.
-- Do not call `v4-extent-render` or `v5-automated-bundle` an editorial pass;
-  owner review rejects their speaking-person composition.
-- Do not infer active speaker from a person box, mouth motion or uncalibrated
-  stereo audio alone.
-- Do not center or crop a conversation candidate from the only detected face;
-  face recall missed another owner-observed member of the interaction group.
-- Do not render raw per-frame group availability; it flickers on half the
-  samples in this excerpt.
-- Do not use the only detected face as the group camera center; the rejected
-  pitch -6.124 render visibly miscomposes another group member.
-- Do not promote the 5-degree face correction to a universal default; it is a
-  tunable POC guard pending held-out evidence.
-- Do not consume scene-context v1 or ask review/VLM to compose person IDs;
-  geometry owns group proposals and membership provenance.
-- Do not lower confidence, challenger hold or switch margin from this excerpt.
-- Do not render until a sustained non-ego lifecycle survives semantic review.
-- Do not return to stabilization-threshold or wider-FOV tuning for this POC.
+- Broad any-view live-scene evidence cannot authorize a specific reaction view.
+- Missing candidate availability must fail closed to primary.
+- Do not treat audio classification as direction, role or editorial utility.
+- Do not use +90 (flag-obscured) or -90 (tent-obscured) as Hundra reaction
+  geometry without new evidence.
+- Do not claim the legacy fixed/auto pre-review gate passed reaction bundles.
 
 ## Pending
 
-- Add more held-out group/context windows before any accuracy claim; fine class
-  remains scoreless. Keep source frames temporary and bounded.
-- Add a distinct licensed performance scene before any cross-scene reaction
-  claim; keep Gaudeamus thresholds and owner roles source-specific.
-- Establish whether audio is merely stereo playback or has a usable, verified
-  direction convention before adding audio localization.
-- Later select a real view-exit/ambiguity segment. Treat exit as a handoff
-  request, not identity proof; post-termination acquisition uses a fresh ID.
-- Global planning, richer interest signals and verified identity remain later.
+- Push the closed evidence-contract milestone after its metadata commit.
+- Obtain owner review of the Hundra primary/planned pair.
+- Add a reaction-preview mechanical pre-review gate after the owner decision.
 
 ## Next commands
 
-Run from the repository root. First validate and deliver this milestone:
+Set `AEGIS_DATA_DIR` to the external artifact root. Validate the checkpoint:
 
 ```sh
 python3 -m unittest discover -s tests -v
@@ -207,31 +120,48 @@ git diff --check
 git status --short
 ```
 
-For owner review, compare equal-contract v3 peers:
+For owner review:
 
 ```sh
-open "$AEGIS_DATA_DIR/outputs/reaction-preview/gaudeamus-full-primary-only-540p-v4-wide/video.mp4"
-open "$AEGIS_DATA_DIR/outputs/reaction-preview/gaudeamus-full-planned-540p-v5-live-onset/video.mp4"
+open "$AEGIS_DATA_DIR/outputs/reaction-preview/hundra-210-226p5-primary-v1/video.mp4"
+open "$AEGIS_DATA_DIR/outputs/reaction-preview/hundra-210-226p5-planned-v1/video.mp4"
 ```
 
-Keep face evidence path-free and temporary-pixel-only. Preserve
-`GEOMETRIC_ONLY`; a face or moving mouth is not identity or proven speech.
+Expected difference: both begin with the same forward procession view. At
+7.5 seconds into the excerpt (source 217.5), planned hard-cuts 45 degrees left
+to emphasize the applauding roadside audience; primary remains forward with a
+large flag occupying the right side. The edit ends on the audience and does
+not perform a half-second return cut.
 
 ## External artifacts
 
-The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
+The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 
-- `outputs/sound-events/gaudeamus-full-apple-v1/events.json`
-- `outputs/reaction-intervals/gaudeamus-full-apple-v1-threshold-p5/intervals.json`
-- `outputs/semantic-events/gaudeamus-full-six-view-yolox-v2/`
-- `outputs/semantic-spherical/gaudeamus-t30-38-six-view-yolox-v2-dedup-v2/`
-- `outputs/vision-face-sequence/gaudeamus-t30-38-4fps-four-view-v1/evidence.json`
-- `outputs/window-group-proposals/gaudeamus-t34p25-1s-face-guard-v1/`
-- `outputs/window-group-proposals/gaudeamus-t34p25-1s-vertical-bounds-experimental-v1/`
-- `outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v3-pitch-guard5-plan/`
-- `outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v4-pitch-guard5-render/`
+- `outputs/candidate-availability/gaudeamus-audience-v1/availability.json`
+- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v5-candidate-availability-trace/plan.json`
+- `outputs/reaction-preview/gaudeamus-full-planned-540p-v6-p0-rebind/`
+- `outputs/sound-events/hundra-full-apple-v1/events.json`
+- `outputs/reaction-intervals/hundra-full-apple-v1-threshold-p5/intervals.json`
+- `outputs/context-view-grids/hundra-210-226p5-declared-v1/grid.json`
+- `outputs/editorial-view-roles/hundra-210-226p5-v1/roles.json`
+- `outputs/candidate-availability/hundra-audience-v1/availability.json`
+- `outputs/reaction-shot-plans/hundra-210-226p5-v1/plan.json`
+- `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v1/`
 
-Do not overwrite or commit these directories.
+## Milestone repository files
+
+- `benchmarks/manifest.toml`, `benchmarks/README.md`
+- `benchmarks/view-grids/hundra-procession-reaction-v1.json`
+- `benchmarks/candidate-availability/{gaudeamus,hundra}-audience-v1.json`
+- `src/aegis360/candidate_availability.py`
+- `src/aegis360/reaction_plan.py`
+- `scripts/bind_candidate_availability.py`
+- `scripts/render_reaction_shot_plan.py`
+- `tests/test_candidate_availability.py`
+- `tests/test_reaction_plan.py`
+- `tests/test_reaction_renderer_contract.py`
+- `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
+- `docs/status.md`, `docs/handoff/current.md`
 
 ## Active agents
 
@@ -239,12 +169,10 @@ No delegated work is active or required to resume this checkpoint.
 
 ## Safety and claims
 
-- Do not commit media, generated video, extracted frames, model weights,
-  faces, audio, absolute paths or identity data.
-- Analysis and rendering remain offline; setup/acquisition requires explicit
-  network action.
+- Keep media, generated pixels, audio, model weights and absolute source paths
+  out of Git and durable privacy-safe JSON.
+- Analysis/rendering remain offline; acquisition requires explicit authority.
 - Preserve bounded queues and the 16 GB unified-memory constraint.
-- Treat semantic/geometry continuity as nonidentity unless a stronger adapter
-  proves otherwise.
-- Do not claim directing quality, real-time output, thermal stability or
-  identity continuity beyond the recorded experiment.
+- Geometry continuity, faces and mouth motion do not establish identity or
+  proven speech.
+- No delegated work is active.
