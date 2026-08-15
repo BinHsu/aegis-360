@@ -175,10 +175,10 @@ contract test needs no external assets; symmetric cases assert 4/4 fallback
 with a false pose gate and 4/4 selected group with a true pose gate.
 A path-free gate summarizer reports two passing group cases and the Skiing
 failure without scoring fine class, evidence flags or an accuracy percentage.
-Gaudeamus now has checksum-bound performer/audience roles and live-scene
-availability. The five-segment reaction plan yields equal-contract 1,905-frame
-peers and passes agent pre-review. Owner review of editorial cut timing is the
-next gate; no generic applause accuracy or autonomous-directing claim follows.
+Owner rejected v3 because its shared primary view cropped the choir. Declared
+grid v2 moves primary right to -70/+5/120 while retaining audience +90/0/120.
+Equal-contract v4 peers pass mechanical/agent review; owner composition and cut
+timing review is next. No generic autonomous-directing claim follows.
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;

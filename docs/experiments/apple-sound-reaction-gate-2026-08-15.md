@@ -67,6 +67,19 @@ declared directions, visible hard cuts, return to the primary view and no
 obvious projection/codec defect. Opening and closing titles remain source
 content. Editorial timing now requires owner review.
 
+Owner review rejected both v3 peers because the shared -90-degree/110-degree
+primary view cropped too much of the choir and needed to move right. Geometry
+frame probes separated center from width: at yaw -70 degrees, 120-degree HFOV
+retains the ensemble while avoiding the extra distortion/empty table of 130 or
+140 degrees. Audience probes retain +90 degrees as better centered than +100 or
++110. A checksummed declared-view grid v2 therefore owns independent geometry:
+primary -70/+5/120 and reaction +90/0/120 degrees. Roles still carry no pose.
+
+The v4 wide peers preserve the same reaction timeline and encoder contract.
+Both remain 1,905 frames/127 seconds. Agent contact-sheet review finds the choir
+materially more complete, the audience view unchanged, and no new projection or
+codec defect. Owner review remains required.
+
 External evidence:
 
 - `outputs/sound-events/gaudeamus-full-apple-v1/events.json`
@@ -77,3 +90,7 @@ External evidence:
 - `outputs/live-scene-intervals/gaudeamus-full-person-gap1p5-v1/intervals.json`
 - `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v1/plan.json`
 - `outputs/reaction-preview/gaudeamus-full-{primary-only,planned}-540p-v3/`
+- `outputs/context-view-grids/gaudeamus-full-declared-v2/grid.json`
+- `outputs/editorial-view-roles/gaudeamus-full-owner-v2/roles.json`
+- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v2-wide-primary/plan.json`
+- `outputs/reaction-preview/gaudeamus-full-{primary-only,planned}-540p-v4-wide/`

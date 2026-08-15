@@ -9,6 +9,9 @@ composition with standing choir rows and seated audience at distinct vertical
 positions. Its `[30,38)` second window tests group retention and vertical
 composition only; it is not active-speaker evidence. Its derivatives are
 CC BY-SA 4.0 and must not be published under a less restrictive media license.
+Its source-specific, checksummed geometry lives in
+`view-grids/gaudeamus-performance-reaction-v2.json`; it is review evidence, not
+a generic camera default.
 
 Set an external data root before acquisition or processing:
 
