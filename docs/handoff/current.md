@@ -1,10 +1,10 @@
 # Current handoff
 
-Updated: 2026-08-15T20:13:32+08:00
+Updated: 2026-08-15T20:30:03+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: d46d1c3
-Remote status: owner-corrected declared-view checkpoint is ready to push
+Baseline commit: 7f94575
+Remote status: live-reaction-onset checkpoint is ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -125,7 +125,7 @@ event rather than joining it at 11.5. Planned v5 keeps only 109.5–119 audience
 passes CFR/mechanical/agent gates, and needs owner timing review.
 ## Repository state
 
-- Expected branch: `main`; content baseline is `d46d1c3`.
+- Expected branch: `main`; content baseline is `7f94575`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
