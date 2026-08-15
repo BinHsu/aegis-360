@@ -34,6 +34,24 @@ class DurationLadderContractTests(unittest.TestCase):
         invalid["debug_uses_auto_path"] = False
         self.assertTrue(validate(self.manifest, invalid))
 
+    def test_supplemental_asset_is_explicitly_excluded_from_ladder(self):
+        supplemental = next(
+            asset for asset in self.manifest["asset"]
+            if asset["id"] == "gaudeamus_igitur_360"
+        )
+        self.assertIs(supplemental["duration_ladder_eligible"], False)
+        self.assertEqual([], validate(self.manifest, self.ladder))
+
+    def test_missing_ladder_eligible_asset_is_rejected(self):
+        invalid = copy.deepcopy(self.manifest)
+        next(
+            asset for asset in invalid["asset"]
+            if asset["id"] == "gaudeamus_igitur_360"
+        )["duration_ladder_eligible"] = True
+        self.assertTrue(any(
+            "exactly match" in error for error in validate(invalid, self.ladder)
+        ))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -41,7 +41,10 @@ def validate(manifest: dict, ladder: dict) -> list[str]:
         errors.append(f"start_seconds must be non-negative, got {start!r}")
         start = 0
 
-    source_assets = {asset["id"]: asset for asset in manifest.get("asset", [])}
+    source_assets = {
+        asset["id"]: asset for asset in manifest.get("asset", [])
+        if asset.get("duration_ladder_eligible", True) is True
+    }
     ladder_assets = {asset["id"]: asset for asset in ladder.get("asset", [])}
     if set(ladder_assets) != set(source_assets):
         errors.append(

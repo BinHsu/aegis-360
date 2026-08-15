@@ -175,9 +175,9 @@ contract test needs no external assets; symmetric cases assert 4/4 fallback
 with a false pose gate and 4/4 selected group with a true pose gate.
 A path-free gate summarizer reports two passing group cases and the Skiing
 failure without scoring fine class, evidence flags or an accuracy percentage.
-Old Ghost Road passes non-regression; Bellpuig is ego-dominated and Skiing has
-no group. New footage is required; v1 stays missing and the guard stays default.
-
+Old Ghost Road passes non-regression; Bellpuig/Skiing remain unsuitable. The licensed
+Gaudeamus pair differs by only 1.287 degrees, so pre-review rejects a render;
+v1 stays missing and the 5-degree guard remains the unvalidated default.
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;

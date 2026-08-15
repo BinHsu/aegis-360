@@ -1,5 +1,5 @@
 manifest_version = 1
-verified_date = "2026-07-23"
+verified_date = "2026-08-15"
 data_root_env = "AEGIS_DATA_DIR"
 implicit_downloads_allowed = false
 
@@ -66,3 +66,26 @@ media_probe = "WebM; VP9 Profile 2 yuv420p10le 5120x2560 at 30000/1001 fps; Opus
 projection_validation = "verified-manual — monoscopic equirectangular for POC use; Commons 360 source classification plus three-timestamp four-heading/pole v360 review; WebM contains no authoritative projection tag"
 audio_rights_review = "pending"
 content_rights_review = "pending"
+
+[[asset]]
+id = "gaudeamus_igitur_360"
+title = "Gaudeamus Igitur"
+source_page = "https://commons.wikimedia.org/wiki/File:Gaudeamus_Igitur.ogv"
+creator = "Abelardo Lopez-Palacios (Wikimedia user Galopax)"
+license_spdx = "CC-BY-SA-4.0"
+license_url = "https://creativecommons.org/licenses/by-sa/4.0/"
+attribution = "Excerpt/derivative from ‘Gaudeamus Igitur’ by Abelardo Lopez-Palacios (Galopax), via Wikimedia Commons, licensed CC BY-SA 4.0; cropped/reprojected from 360-degree equirectangular video and algorithmically edited."
+verified_date = "2026-08-15"
+reported_duration_seconds = 128.101587
+reported_width = 1920
+reported_height = 960
+benchmark_role = "Supplemental held-out group-composition evidence; fixed non-ego choir and audience at sustained, distinct vertical positions; use the [30,38) second window."
+duration_ladder_eligible = false
+direct_url = "https://upload.wikimedia.org/wikipedia/commons/3/38/Gaudeamus_Igitur.ogv"
+sha256 = "35f5dc8cf86e6ea79838e889570b2b0ca946936803a7a32efcd2e06d11bbbc04"
+byte_size = 14253040
+media_probe = "Ogg; Theora 1920x960 at 15 fps; Vorbis audio; duration 128.101587 s; approximately 890 kbit/s overall"
+projection_validation = "verified-manual — exact 2:1 monoscopic equirectangular source; full-duration ERP contact sheet plus [30,38) four-heading v360 review; no cuts in the selected window"
+audio_rights_review = "pending — preserve for local analysis but remove or separately review before public derivative publication"
+content_rights_review = "public choir performance; Commons license verified, but public release still requires ordinary face, performance and venue review"
+derivative_obligation = "Distribute adapted media under CC BY-SA 4.0 or a compatible license; credit creator, link license, identify changes and impose no effective legal or technical restrictions."

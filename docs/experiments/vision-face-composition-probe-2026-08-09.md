@@ -102,6 +102,11 @@ to claim a visual improvement. Vertical-bounds composition is therefore an
 explicit `--use-vertical-bounds-midpoint` experiment; default behavior retains
 the guard until held-out footage supports promotion.
 
+The opt-in policy fails closed unless every observed group in the requested
+window has complete vertical bounds. It never silently mixes midpoint and
+face-guard observations. Proposal traces record requested and effective policy;
+the 5-degree value is the current POC default, not a validated product default.
+
 ## Bellpuig held-out rejection
 
 The 18–22 second six-view acquisition produced 31 person and 18 bicycle boxes
@@ -121,6 +126,22 @@ Skiing at 269–273 seconds was also screened at five one-second timestamps in
 four equatorial directions. It contains snow and trees but no defensible
 multi-person group; no detector run was justified. Across the three current
 benchmarks, no second clean held-out scene distinguishes the vertical policies.
+
+## Supplemental Gaudeamus held-out result
+
+The licensed fixed-camera `Gaudeamus Igitur` choir source adds non-ego people
+at sustained, distinct vertical positions. Its selected `[30,38)` window
+produced 39 person boxes across 32 timestamps in 3.227 seconds. The unchanged
+0.5 containable-group floor correctly rejected both the full eight-second
+window and a two-second attempt; no threshold was lowered. A continuous
+one-second diagnostic at 34.25 seconds retained groups at 3/4 samples.
+
+The paired proposals have identical yaw, 90-degree HFOV and observations.
+The current face guard produces pitch -6.064 degrees; complete vertical bounds
+produce -4.777 degrees, a 1.287-degree difference. This is no more visually
+discriminating than Old Ghost Road's 1.22-degree result, so the agent pre-review
+gate rejects a render and owner review is not requested. The source is useful
+for group-retention work, but it does not justify promoting vertical midpoint.
 It renders at yaw 54.083 degrees, pitch -20.278 degrees and HFOV 110 degrees.
 Both peers are H.264 High, yuv420p, 1920x1080 at 25 fps; the group is selected
 16/16 times and the maximum fixed/auto pose difference is 56.615 degrees.
@@ -134,7 +155,7 @@ group framing only. It does not establish active-speaker recognition, speaker
 identity, automatic context classification, subject switching or longer-window
 tracking.
 
-The 5-degree limit has status `tunable_poc_guard_not_validated_default`. This
+The 5-degree limit has status `current_poc_default_not_product_validated`. This
 four-second human-selected context test does not validate automated scene
 classification, active-speaker identity, longer tracking or a universal
 composition threshold.

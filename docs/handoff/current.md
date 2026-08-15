@@ -183,8 +183,9 @@ opt-in policy remains experimental and the 5-degree guard remains default.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Current footage is exhausted: Bellpuig is ego-dominated and Skiing 269–273
-  has no group. New footage is required; the 5-degree guard remains default.
+- Supplemental Gaudeamus passes provenance, detector and group gates, but its
+  paired proposals differ by only 1.287 degrees; no render is justified. The
+  5-degree guard remains default and vertical midpoint remains experimental.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
@@ -216,11 +217,11 @@ Keep face evidence path-free and temporary-pixel-only. Preserve
 
 The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 
-- `outputs/window-group-proposals/bellpuig-t18-4s-heldout-v1/`
-- `outputs/window-group-proposals/skiing-t389-4s-heldout-v1/`
-- `outputs/semantic-spherical/old-ghost-road-t60-90-six-view-yolox-v2-dedup-v2/`
-- `outputs/vision-tracking-gate/old-ghost-road-t68p5-yaw90-semantic-person-track000007-v2-manifest/`
-- `outputs/window-group-proposals/old-ghost-road-t68p5-4s-v4-vertical-bounds-experimental/`
+- `outputs/semantic-events/gaudeamus-t30-38-six-view-yolox-v2/`
+- `outputs/semantic-spherical/gaudeamus-t30-38-six-view-yolox-v2-dedup-v2/`
+- `outputs/vision-face-sequence/gaudeamus-t30-38-4fps-four-view-v1/evidence.json`
+- `outputs/window-group-proposals/gaudeamus-t34p25-1s-face-guard-v1/`
+- `outputs/window-group-proposals/gaudeamus-t34p25-1s-vertical-bounds-experimental-v1/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
 - `outputs/vision-face-sequence/old-ghost-road-t68p5-4s-4fps-four-view-v1/evidence.json`
 - `outputs/window-group-proposals/old-ghost-road-t68p5-4s-v2-pitch-guard5/`

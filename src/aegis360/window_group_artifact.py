@@ -131,6 +131,13 @@ def build_window_group_proposal_artifact(
         raise ValueError("window contains no spherical samples")
     if len(timestamps) != len(set(timestamps)) or timestamps != sorted(timestamps):
         raise ValueError("window timestamps must be unique and ordered")
+    if use_vertical_bounds_midpoint and any(
+        item.pitch_min is None or item.pitch_max is None for item in observed_shots
+    ):
+        raise ValueError(
+            "experimental vertical-bounds policy requires complete bounds for "
+            "every observed group"
+        )
     shot = build_window_group_shot(
         observed_shots,
         total_sample_count=len(timestamps),
@@ -150,11 +157,20 @@ def build_window_group_proposal_artifact(
         },
         "geometry": asdict(shot),
         "composition_policy": {
+            "requested_policy": (
+                "vertical_bounds_midpoint_experimental_v1"
+                if use_vertical_bounds_midpoint else "face_guard_v1"
+            ),
+            "effective_policy": (
+                "vertical_bounds_midpoint_experimental_v1"
+                if use_vertical_bounds_midpoint else "face_guard_v1"
+            ),
             "maximum_face_pitch_correction_degrees": maximum_face_pitch_correction_degrees,
+            "maximum_face_pitch_correction_applied": not use_vertical_bounds_midpoint,
             "status": (
                 "experimental_complete_vertical_bounds_union_midpoint"
-                if use_vertical_bounds_midpoint and all(item.pitch_min is not None for item in observed_shots)
-                else "tunable_poc_guard_not_validated_default"
+                if use_vertical_bounds_midpoint
+                else "current_poc_default_not_product_validated"
             ),
         },
         "candidates": [asdict(candidate) for candidate in candidates],
