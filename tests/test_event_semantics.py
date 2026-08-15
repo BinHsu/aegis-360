@@ -9,24 +9,29 @@ from aegis360.event_semantics import build_event_semantics, validate_event_seman
 from aegis360.local_event_semantics_schema import local_event_semantics_json_schema
 
 
+def build_semantics_fixture():
+    grid, grid_sha, _, _, _, timeline = build_packet_fixture()
+    packet = build_event_review_packet(
+        timeline, grid, event_id="event:reaction:0000",
+        timeline_sha256=digest(timeline), grid_sha256=grid_sha,
+    )
+    config = {
+        "schema_version": "aegis360.event-semantic-evidence-config.v1",
+        "adapter_id": "fixture-adapter", "model_id": "fixture/model",
+        "model_sha256": "a" * 64, "status": "observed",
+        "event_class": "audience_reaction",
+        "view_relationship": "complements_current",
+        "candidate_observations": [
+            {"candidate_id": "context:cardinal:3", "visibility": "clear", "event_relevance": "primary", "temporal_consistency": "stable"},
+            {"candidate_id": "context:cardinal:1", "visibility": "clear", "event_relevance": "supporting", "temporal_consistency": "stable"},
+        ],
+    }
+    return packet, config
+
+
 class EventSemanticsTests(unittest.TestCase):
     def setUp(self):
-        grid, grid_sha, _, _, _, timeline = build_packet_fixture()
-        self.packet = build_event_review_packet(
-            timeline, grid, event_id="event:reaction:0000",
-            timeline_sha256=digest(timeline), grid_sha256=grid_sha,
-        )
-        self.config = {
-            "schema_version": "aegis360.event-semantic-evidence-config.v1",
-            "adapter_id": "fixture-adapter", "model_id": "fixture/model",
-            "model_sha256": "a" * 64, "status": "observed",
-            "event_class": "audience_reaction",
-            "view_relationship": "complements_current",
-            "candidate_observations": [
-                {"candidate_id": "context:cardinal:3", "visibility": "clear", "event_relevance": "primary", "temporal_consistency": "stable"},
-                {"candidate_id": "context:cardinal:1", "visibility": "clear", "event_relevance": "supporting", "temporal_consistency": "stable"},
-            ],
-        }
+        self.packet, self.config = build_semantics_fixture()
 
     def build(self):
         return build_event_semantics(

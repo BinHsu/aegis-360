@@ -191,10 +191,10 @@ boundary-aware temporal anchors and lists a proposed view only where candidate
 availability permits it. A transient runner resolves only grid-owned views,
 renders at most ten silent frames and deletes them after adapter exit. Closed
 event-semantic evidence now permits only packet-bound observations or strict
-abstention, never edit commands. The next gate is deterministic evidence-to-
-utility mapping; no new model should be selected first.
+abstention, never edit commands. Checksummed explainable weights now emit
+candidate utility without selecting a view. The next gate is global planning;
+no new model should be selected first.
 ## Evidence map
 
 - Current architecture: `docs/design/system-overview.md`
-- Transient review media: `docs/experiments/transient-event-review-media-2026-08-16.md`
 - Operational checkpoint: `docs/handoff/current.md`

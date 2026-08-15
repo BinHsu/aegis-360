@@ -1,0 +1,27 @@
+{
+  "policy_id": "poc-explainable-v1",
+  "relationship_weights": {
+    "complements_current": 2.0,
+    "duplicates_current": -1.0,
+    "unknown": 0.0,
+    "unrelated": -2.0
+  },
+  "relevance_weights": {
+    "primary": 2.0,
+    "supporting": 1.0,
+    "unknown": 0.0,
+    "unrelated": -2.0
+  },
+  "schema_version": "aegis360.event-utility-policy.v1",
+  "temporal_weights": {
+    "changing": 0.0,
+    "stable": 0.5,
+    "unknown": 0.0
+  },
+  "visibility_weights": {
+    "clear": 1.0,
+    "obstructed": -2.0,
+    "partial": 0.0,
+    "unknown": 0.0
+  }
+}

@@ -33,9 +33,21 @@ names, identity, geometry, new candidates and renderer commands are forbidden.
 The constrained raw-output JSON schema narrows decoding; the binder remains
 the authority and rejects missing, invented or reordered candidates.
 
-## Next gate
+## Evidence-to-utility
 
-Do not acquire or tune a model yet. First define deterministic evidence-to-
-utility behavior, especially the abstention fallback, and test it against the
-existing owner-positive Gaudeamus and owner-negative Hundra labels without
-feeding those labels into product input.
+`aegis360.event-candidate-utility.v1` applies a checksummed policy to each
+closed observation. The committed POC policy keeps separate relevance,
+visibility, temporal-consistency and proposed-view relationship components.
+It emits the components and total for both current and proposed candidates,
+while explicitly declaring that no candidate, transition or dwell decision
+has been applied.
+
+Abstention leaves current eligible at neutral utility and makes proposed
+ineligible. This is the deterministic fail-closed route. The weights are
+tunable hypotheses rather than probabilities; changes produce a new policy
+checksum and can be evaluated without changing semantic evidence.
+
+The next gate is event-to-global-planner integration using a configurable
+minimum advantage plus transition, dwell and repetition costs. Do not acquire
+or tune a model before that deterministic path and benchmark-label evaluation
+are defined.
