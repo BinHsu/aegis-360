@@ -146,11 +146,18 @@ Incidental minors remain background and are not eligible subjects.
 A nonzero 210–226.5-second grid produces two segments: primary until 217.5,
 then candidate-scoped audience until the window ends. Equal-contract baseline
 and planned outputs both contain 248 video frames (16.533 seconds) and 516 AAC
-frames (16.512 seconds). Paired decoded-frame review shows the planned cut
-removes the near-field flag that dominates the baseline and centers the
-applauding roadside crowd. This is pre-review evidence, not owner acceptance or
-generic cross-scene accuracy. The legacy fixed/auto pre-review script does not
-consume reaction bundles; a reaction-specific mechanical gate is still needed.
+frames (16.512 seconds). Initial agent review incorrectly promoted removal of a
+near-field flag to improved reaction framing. Owner review rejected that claim.
+A denser paired replay at one-second spacing shows yaw 0 retaining responsive
+spectators on both sides and better preserving the procession relationship;
+yaw -45 replaces the flag with a large tent and does not expose a clearer
+reaction. The correct result is primary-only: sound timing plus candidate
+availability does not establish relative editorial gain or authorize a cut.
+
+This is a useful held-out negative, not cross-scene directing accuracy. Add a
+fail-closed relative-gain comparison between current and proposed views before
+another reaction cut. The legacy fixed/auto pre-review script does not consume
+reaction bundles; a reaction-specific mechanical gate is also still needed.
 
 External evidence:
 

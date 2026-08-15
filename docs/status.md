@@ -1,6 +1,6 @@
 # Project status
 
-Status: Conversation-group and one reaction edit accepted; held-out reaction candidate ready
+Status: Conversation-group and one reaction edit accepted; held-out reaction cut rejected
 
 ## Current conclusion
 
@@ -181,8 +181,8 @@ role-bound reaction gate; generic applause thresholds, role inference and
 cross-scene directing remain unvalidated.
 Plan v3 now requires candidate-scoped view availability and rebinds every
 checksummed evidence input at render time. A held-out first-person procession
-produces one materially distinct 217.5–226.5 audience cut; agent frame review
-passes, but owner review and a reaction-specific mechanical gate remain open.
+rejects the proposed 217.5–226.5 audience cut: primary already shows the
+reaction better. Candidate visibility needs a relative editorial-gain gate.
 ## Evidence map
 
 - Current architecture: `docs/design/system-overview.md`
