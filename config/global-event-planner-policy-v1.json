@@ -1,0 +1,8 @@
+{
+  "minimum_advantage": 0.5,
+  "minimum_proposed_dwell_seconds": 2.0,
+  "policy_id": "bounded-reaction-dp-v1",
+  "repeated_proposed_cost": 1.5,
+  "schema_version": "aegis360.global-event-planner-policy.v1",
+  "switch_cost_each_way": 0.5
+}

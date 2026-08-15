@@ -193,8 +193,8 @@ renders at most ten silent frames and deletes them after adapter exit. Closed
 event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. The next gate is global planning;
-no new model should be selected first.
+a sparse DP now applies dwell, advantage, switch and repetition costs across
+events. Real semantic evidence and angular path costs remain the next gates.
 ## Evidence map
 
-- Current architecture: `docs/design/system-overview.md`
 - Operational checkpoint: `docs/handoff/current.md`
