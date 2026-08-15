@@ -1,10 +1,10 @@
 # Current handoff
 
-Updated: 2026-08-15T08:51:57+08:00
+Updated: 2026-08-15T18:33:27+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5e1dd06
-Remote status: experimental-policy freeze and Gaudeamus checkpoint are ready to push
+Baseline commit: e8befaf
+Remote status: bounded Apple reaction-evidence checkpoint is ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -125,7 +125,7 @@ not authorize cuts. People vanish at the title cards, while the distant
 audience remains below the current detector's useful scale.
 ## Repository state
 
-- Expected branch: `main`; content baseline is `5e1dd06`.
+- Expected branch: `main`; content baseline is `e8befaf`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
