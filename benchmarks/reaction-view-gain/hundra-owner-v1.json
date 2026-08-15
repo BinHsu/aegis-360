@@ -1,0 +1,9 @@
+{
+  "schema_version": "aegis360.reaction-view-gain-config.v1",
+  "config_id": "hundra-owner-v1",
+  "reviewer_kind": "human",
+  "adapter_id": "owner-comparative-review-v1",
+  "decisions": [
+    {"reaction_start_seconds": 217.5, "reaction_end_seconds": 226.5, "decision": "abstain"}
+  ]
+}

@@ -168,3 +168,37 @@ External evidence:
 - `outputs/candidate-availability/hundra-audience-v1/availability.json`
 - `outputs/reaction-shot-plans/hundra-210-226p5-v1/plan.json`
 - `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v1/`
+
+## Relative editorial-gain gate
+
+Reaction plan v4 adds a fifth immutable input,
+`aegis360.reaction-view-gain.v1`. A human or local-VLM adapter may only mark an
+exact declared reaction interval `promote` or `abstain`; current and proposed
+candidates are derived from the checksummed role artifact. It cannot emit
+camera geometry, free text, identity or a new candidate. Missing decisions
+default to abstain. The renderer revalidates the gain artifact and its exact
+SHA-256 with the other four evidence inputs, then rebuilds the unique expected
+plan. A manually altered candidate, timing or reason therefore fails even when
+all evidence hashes remain valid.
+
+The owner decisions form one positive and one negative replay. Gaudeamus
+promotes the 109.5–124.5 event and reproduces the accepted three-segment plan.
+Hundra abstains on 217.5–226.5 and produces one primary-only segment. Renderer
+replays are decoded-identical to their accepted reference outputs:
+
+- Gaudeamus: 1,905 video frames and 5,470 audio frames; reference and v4 video
+  SHA-256 `5294c3f1eea951f2e182218d8bba2f2806653d5cfad54f0da6b6c21384646e88`;
+  audio SHA-256 `e7a67f57838cd2d816d9240c09b4e3c6d3fea0b4e1bfb6dd6fd8f8bbb2112a06`.
+- Hundra: 248 video frames and 516 audio frames; primary and v4 video SHA-256
+  `52faaecc5a61ae814c36a6a54a96c8f996a0fafb5af0bb403d21a420a3350b8f`;
+  audio SHA-256 `7f70ada07572497417e98afd6e694ab2d9cb9b26fc9b1f8a306fc99404b9992b`.
+
+This establishes the fail-closed integration boundary, not an automatic
+relative-gain classifier. External evidence:
+
+- `outputs/reaction-view-gain/gaudeamus-owner-v1/gain.json`
+- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v6-relative-gain/plan.json`
+- `outputs/reaction-preview/gaudeamus-full-planned-540p-v7-relative-gain/`
+- `outputs/reaction-view-gain/hundra-owner-v1/gain.json`
+- `outputs/reaction-shot-plans/hundra-210-226p5-v2-relative-gain-abstain/plan.json`
+- `outputs/reaction-preview/hundra-210-226p5-planned-v2-relative-gain-abstain/`

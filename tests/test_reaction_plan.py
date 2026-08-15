@@ -6,6 +6,7 @@ from aegis360.context_views import build_context_view_grid
 from aegis360.candidate_availability import build_candidate_availability
 from aegis360.editorial_roles import build_editorial_roles
 from aegis360.reaction_plan import build_reaction_plan, validate_reaction_plan
+from aegis360.reaction_view_gain import build_reaction_view_gain
 
 class ReactionPlanTests(unittest.TestCase):
     def availability(self, grid, checksum, candidate_id="context:cardinal:1", intervals=None):
@@ -14,6 +15,9 @@ class ReactionPlanTests(unittest.TestCase):
                   "candidates":[{"candidate_id":candidate_id,"intervals":intervals or []}]}
         return build_candidate_availability(config, grid, config_sha256="1" * 64,
                                             grid_sha256=checksum)
+    def gain(self, grid, checksum, roles, reactions, decisions):
+        config={"schema_version":"aegis360.reaction-view-gain-config.v1","config_id":"fixture","reviewer_kind":"human","adapter_id":"owner-fixture","decisions":decisions}
+        return build_reaction_view_gain(config,grid,roles,reactions,config_sha256="2"*64,grid_sha256=checksum,roles_sha256=hashlib.sha256((json.dumps(roles,indent=2,sort_keys=True)+"\n").encode()).hexdigest(),reactions_sha256=hashlib.sha256((json.dumps(reactions,indent=2,sort_keys=True)+"\n").encode()).hexdigest())
 
     def test_intersects_events_with_availability_and_returns_primary(self):
         grid = build_context_view_grid(source_id="fixture", start_seconds=0, duration_seconds=20)
@@ -21,20 +25,29 @@ class ReactionPlanTests(unittest.TestCase):
         roles = build_editorial_roles(grid, grid_sha256=checksum, primary_candidate_id="context:cardinal:3", reaction_candidate_id="context:cardinal:1", adapter_id="owner-fixture")
         reactions = {"schema_version":"aegis360.reaction-intervals.v1","source_id":"fixture","source_sound_event_schema":"aegis360.apple-sound-events.v1","policy":{"applause_threshold":.5,"clapping_threshold":.5,"minimum_supporting_windows":2,"status":"poc_hypothesis_not_editorial_ground_truth"},"intervals":[{"start_seconds":4,"end_seconds":8,"supporting_window_count":3,"peak_applause_confidence":.8,"peak_clapping_confidence":.9}],"privacy":{},"limitations":[]}
         availability = self.availability(grid, checksum, intervals=[{"start_seconds":2,"end_seconds":6}])
-        result = build_reaction_plan(grid, roles, reactions, availability, grid_sha256=checksum)
+        gain=self.gain(grid,checksum,roles,reactions,[{"reaction_start_seconds":4,"reaction_end_seconds":8,"decision":"promote"}])
+        result = build_reaction_plan(grid, roles, reactions, availability, gain, grid_sha256=checksum)
         validate_reaction_plan(result, grid, grid_sha256=checksum)
         self.assertEqual([(row["start_seconds"],row["end_seconds"],row["candidate_id"]) for row in result["segments"]],[(0,4,"context:cardinal:3"),(4,6,"context:cardinal:1"),(6,20,"context:cardinal:3")])
-        self.assertEqual(result["transition_policy"], "hard_cut_only_when_reaction_candidate_is_available_v3")
+        self.assertEqual(result["transition_policy"], "hard_cut_only_when_candidate_available_and_gain_promoted_v4")
 
         broken = json.loads(json.dumps(result)); broken["segments"][1]["start_seconds"] = 5
         with self.assertRaises(ValueError): validate_reaction_plan(broken, grid, grid_sha256=checksum)
 
         validate_reaction_plan(result, grid, grid_sha256=checksum, roles=roles,
-                               reactions=reactions, availability=availability)
+                               reactions=reactions, availability=availability, gain=gain)
         wrong = json.loads(json.dumps(result)); wrong["inputs"]["editorial_roles_sha256"] = "0" * 64
         with self.assertRaises(ValueError):
             validate_reaction_plan(wrong, grid, grid_sha256=checksum, roles=roles,
-                                   reactions=reactions, availability=availability)
+                                   reactions=reactions, availability=availability, gain=gain)
+        for mutation in (
+            lambda plan: plan["segments"][1].__setitem__("candidate_id", "context:cardinal:2"),
+            lambda plan: plan["segments"][1].__setitem__("reason", "invented_reason"),
+        ):
+            wrong=json.loads(json.dumps(result)); mutation(wrong)
+            with self.assertRaises(ValueError):
+                validate_reaction_plan(wrong,grid,grid_sha256=checksum,roles=roles,
+                                       reactions=reactions,availability=availability,gain=gain)
 
     def test_inputs_are_closed_and_all_sha256_values_are_lowercase_hex(self):
         grid = build_context_view_grid(source_id="fixture", start_seconds=0, duration_seconds=20)
@@ -42,7 +55,8 @@ class ReactionPlanTests(unittest.TestCase):
         roles = build_editorial_roles(grid, grid_sha256=checksum, primary_candidate_id="context:cardinal:3", reaction_candidate_id="context:cardinal:1", adapter_id="owner-fixture")
         reactions = {"schema_version":"aegis360.reaction-intervals.v1","source_id":"fixture","source_sound_event_schema":"aegis360.apple-sound-events.v1","policy":{"applause_threshold":.5,"clapping_threshold":.5,"minimum_supporting_windows":2,"status":"poc_hypothesis_not_editorial_ground_truth"},"intervals":[],"privacy":{},"limitations":[]}
         availability = self.availability(grid, checksum)
-        result = build_reaction_plan(grid, roles, reactions, availability, grid_sha256=checksum)
+        gain=self.gain(grid,checksum,roles,reactions,[])
+        result = build_reaction_plan(grid, roles, reactions, availability, gain, grid_sha256=checksum)
         for mutation in (
             lambda inputs: inputs.update({"extra": "0" * 64}),
             lambda inputs: inputs.__setitem__("editorial_roles_sha256", "A" * 64),
@@ -56,7 +70,8 @@ class ReactionPlanTests(unittest.TestCase):
         roles = build_editorial_roles(grid, grid_sha256=checksum, primary_candidate_id="context:cardinal:3", reaction_candidate_id="context:cardinal:1", adapter_id="owner-fixture")
         reactions = {"schema_version":"aegis360.reaction-intervals.v1","source_id":"fixture","source_sound_event_schema":"aegis360.apple-sound-events.v1","policy":{"applause_threshold":.5,"clapping_threshold":.5,"minimum_supporting_windows":2,"status":"poc_hypothesis_not_editorial_ground_truth"},"intervals":[{"start_seconds":2,"end_seconds":8,"supporting_window_count":3,"peak_applause_confidence":.8,"peak_clapping_confidence":.9}],"privacy":{},"limitations":[]}
         availability = self.availability(grid, checksum, intervals=[{"start_seconds":4,"end_seconds":10}])
-        result = build_reaction_plan(grid, roles, reactions, availability, grid_sha256=checksum)
+        gain=self.gain(grid,checksum,roles,reactions,[{"reaction_start_seconds":2,"reaction_end_seconds":8,"decision":"promote"}])
+        result = build_reaction_plan(grid, roles, reactions, availability, gain, grid_sha256=checksum)
         self.assertEqual(len(result["segments"]), 1)
         self.assertEqual(result["segments"][0]["candidate_id"], "context:cardinal:3")
 
@@ -67,8 +82,20 @@ class ReactionPlanTests(unittest.TestCase):
         reactions = {"schema_version":"aegis360.reaction-intervals.v1","source_id":"fixture","source_sound_event_schema":"aegis360.apple-sound-events.v1","policy":{"applause_threshold":.5,"clapping_threshold":.5,"minimum_supporting_windows":2,"status":"poc_hypothesis_not_editorial_ground_truth"},"intervals":[{"start_seconds":4,"end_seconds":8,"supporting_window_count":3,"peak_applause_confidence":.8,"peak_clapping_confidence":.9}],"privacy":{},"limitations":[]}
         availability = self.availability(grid, checksum, candidate_id="context:cardinal:2",
                                          intervals=[{"start_seconds":2,"end_seconds":10}])
-        result = build_reaction_plan(grid, roles, reactions, availability, grid_sha256=checksum)
+        gain=self.gain(grid,checksum,roles,reactions,[{"reaction_start_seconds":4,"reaction_end_seconds":8,"decision":"promote"}])
+        result = build_reaction_plan(grid, roles, reactions, availability, gain, grid_sha256=checksum)
         self.assertEqual([segment["candidate_id"] for segment in result["segments"]],
                          ["context:cardinal:3"])
+
+    def test_abstain_or_unreviewed_event_stays_primary(self):
+        grid=build_context_view_grid(source_id="fixture",start_seconds=0,duration_seconds=20)
+        checksum=hashlib.sha256((json.dumps(grid,indent=2,sort_keys=True)+"\n").encode()).hexdigest()
+        roles=build_editorial_roles(grid,grid_sha256=checksum,primary_candidate_id="context:cardinal:3",reaction_candidate_id="context:cardinal:1",adapter_id="owner-fixture")
+        reactions={"schema_version":"aegis360.reaction-intervals.v1","source_id":"fixture","source_sound_event_schema":"aegis360.apple-sound-events.v1","policy":{"applause_threshold":.5,"clapping_threshold":.5,"minimum_supporting_windows":2,"status":"poc_hypothesis_not_editorial_ground_truth"},"intervals":[{"start_seconds":4,"end_seconds":8,"supporting_window_count":3,"peak_applause_confidence":.8,"peak_clapping_confidence":.9}],"privacy":{},"limitations":[]}
+        availability=self.availability(grid,checksum,intervals=[{"start_seconds":2,"end_seconds":10}])
+        for decisions in ([],[{"reaction_start_seconds":4,"reaction_end_seconds":8,"decision":"abstain"}]):
+            gain=self.gain(grid,checksum,roles,reactions,decisions)
+            result=build_reaction_plan(grid,roles,reactions,availability,gain,grid_sha256=checksum)
+            self.assertEqual([row["candidate_id"] for row in result["segments"]],["context:cardinal:3"])
 
 if __name__ == "__main__": unittest.main()

@@ -13,6 +13,11 @@ Its source-specific, checksummed geometry lives in
 `view-grids/gaudeamus-performance-reaction-v2.json`; it is review evidence, not
 a generic camera default.
 
+Source-specific candidate visibility and comparative reaction decisions live
+under `candidate-availability/` and `reaction-view-gain/`. These configs bind
+human review evidence; they are benchmark labels, not universal thresholds or
+an automatic editorial model.
+
 Set an external data root before acquisition or processing:
 
 ```sh

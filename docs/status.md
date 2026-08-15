@@ -179,10 +179,9 @@ Owner accepts planned v5: corrected choir framing, no opening mid-event cut,
 109.5–119 audience reaction and return to titles. This closes one bounded
 role-bound reaction gate; generic applause thresholds, role inference and
 cross-scene directing remain unvalidated.
-Plan v3 now requires candidate-scoped view availability and rebinds every
-checksummed evidence input at render time. A held-out first-person procession
-rejects the proposed 217.5–226.5 audience cut: primary already shows the
-reaction better. Candidate visibility needs a relative editorial-gain gate.
+Plan v4 now also requires closed relative editorial gain. Gaudeamus `promote`
+reproduces its accepted edit; Hundra `abstain` is decoded-identical to primary.
+The boundary is verified, but gain is still owner-authored rather than inferred.
 ## Evidence map
 
 - Current architecture: `docs/design/system-overview.md`

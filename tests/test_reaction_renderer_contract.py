@@ -14,6 +14,7 @@ from aegis360.context_views import build_context_view_grid
 from aegis360.candidate_availability import build_candidate_availability
 from aegis360.editorial_roles import build_editorial_roles
 from aegis360.reaction_plan import build_reaction_plan
+from aegis360.reaction_view_gain import build_reaction_view_gain
 
 
 SPEC = importlib.util.spec_from_file_location(
@@ -49,26 +50,27 @@ class ReactionRendererContractTests(unittest.TestCase):
         availability = build_candidate_availability(
             availability_config, grid, config_sha256="1" * 64, grid_sha256=grid_sha
         )
+        roles_sha=hashlib.sha256((json.dumps(roles,indent=2,sort_keys=True)+"\n").encode()).hexdigest()
+        reactions_sha=hashlib.sha256((json.dumps(reactions,indent=2,sort_keys=True)+"\n").encode()).hexdigest()
+        gain_config={"schema_version":"aegis360.reaction-view-gain-config.v1","config_id":"fixture","reviewer_kind":"human","adapter_id":"owner-fixture","decisions":[]}
+        gain=build_reaction_view_gain(gain_config,grid,roles,reactions,config_sha256="2"*64,grid_sha256=grid_sha,roles_sha256=roles_sha,reactions_sha256=reactions_sha)
         plan = build_reaction_plan(
-            grid, roles, reactions, availability, grid_sha256=grid_sha
+            grid, roles, reactions, availability, gain, grid_sha256=grid_sha
         )
-        # Ensure primary-only does not need a primary-tagged segment reason.
-        plan["segments"][0]["reason"] = "opaque_reason_not_a_role"
-
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             paths = {name: root / f"{name}.json" for name in (
-                "grid", "roles", "reactions", "availability", "plan"
+                "grid", "roles", "reactions", "availability", "gain", "plan"
             )}
             paths["grid"].write_text(grid_payload)
             for name, document in (("roles", roles), ("reactions", reactions),
-                                   ("availability", availability), ("plan", plan)):
+                                   ("availability", availability), ("gain", gain), ("plan", plan)):
                 paths[name].write_text(json.dumps(document))
             video = root / "input.mp4"; video.touch()
             output = root / "output"
             argv = ["render_reaction_shot_plan.py", str(video), str(paths["grid"]),
                     str(paths["roles"]), str(paths["reactions"]),
-                    str(paths["availability"]), str(paths["plan"]), str(output),
+                    str(paths["availability"]), str(paths["gain"]), str(paths["plan"]), str(output),
                     "--mode", "primary-only"]
             with mock.patch.object(sys, "argv", argv), mock.patch.object(
                 RENDERER.subprocess, "run"
