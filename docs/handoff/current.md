@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T05:56:18+08:00
+Updated: 2026-08-16T06:08:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 02c27b2
-Remote status: `origin/main` is 267d5b0; Event Timeline v1 is committed locally
+Baseline commit: b352bb9
+Remote status: `origin/main` is 5ff8eb5; Event Review Packet v1 is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is Event Review Packet v1 under accepted ADR 0010.
+gate is temporary review-media rendering and cleanup under accepted ADR 0010.
 
 ## Accepted evidence
 
@@ -80,6 +80,14 @@ Gaudeamus opening has no proposed view at onset and only 11.5–15.0 overlap;
 its ending has availability at onset and 109.5–119.0 overlap. Hundra has full
 217.5–226.5 availability. This schedules review; it authorizes no edit.
 
+Event Review Packet v1 binds the exact timeline and grid. Each event schedules
+before, early, midpoint, late and after anchors; out-of-window context is
+explicitly null. Current view is always scheduled, while the proposed view is
+listed only inside its availability intervals. The durable manifest contains
+no media or answer and requires temporary rendered media to be deleted after
+adapter completion. Three real packets reproduce the expected availability
+differences without leaking owner labels.
+
 ## Held-out benchmark
 
 The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
@@ -104,21 +112,18 @@ contains only primary 210–226.5. Its 248 video and 516 audio frames hash exact
 the same after decoding as the existing primary render. This prevents the
 rejected cut without disabling the accepted Gaudeamus reaction edit.
 
-The existing `check_render_pre_review.py` consumes legacy fixed/auto bundles,
-not reaction previews. Do not claim that gate passed; add a reaction-specific
-gate after the owner decision unless a defect is found first.
-
 ## Repository state
 
-- Expected branch: `main`; content baseline is `02c27b2` and remote is `267d5b0`.
+- Expected branch: `main`; content baseline is `b352bb9` and remote is `5ff8eb5`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 333 tests pass.
+- `python3 -m unittest discover -s tests -q`: 336 tests pass.
 - Event Timeline v1 targeted tests: 2 pass.
+- Event Review Packet v1 targeted tests: 3 pass.
 - Real Gaudeamus/Hundra timelines pass their closed privacy declarations and
   contain no absolute path strings.
 - Candidate availability targeted tests: 3 pass.
@@ -148,9 +153,9 @@ gate after the owner decision unless a defect is found first.
 
 ## Pending
 
-- Push Event Timeline v1 after its metadata commit.
-- Implement Event Review Packet v1 as a durable, pixel-free manifest of sparse
-  before/during/after samples. Do not select a new model first.
+- Push Event Review Packet v1 after its metadata commit.
+- Implement temporary review-media rendering, grid resolution and cleanup. Do
+  not select a new model first.
 
 ## Next commands
 
@@ -162,18 +167,6 @@ python3 scripts/check_handoff.py
 git diff --check
 git status --short
 ```
-
-Rejected comparison retained for reproduction, not renewed owner review:
-
-```sh
-open "$AEGIS_DATA_DIR/outputs/reaction-preview/hundra-210-226p5-primary-v1/video.mp4"
-open "$AEGIS_DATA_DIR/outputs/reaction-preview/hundra-210-226p5-planned-v1/video.mp4"
-```
-
-Observed difference: both begin with the same forward procession view. At 7.5
-seconds into the excerpt (source 217.5), planned hard-cuts 45 degrees left. It
-removes the right-side flag but introduces a left-side tent and loses the more
-complete bilateral audience response. Keep primary; do not renew this cut.
 
 ## External artifacts
 
@@ -196,6 +189,7 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/reaction-pre-review/{gaudeamus-v8-gain-v2,hundra-v3-gain-v2}/report.json`
 - `outputs/reaction-view-gain/{gaudeamus,hundra}-smolvlm2-2p2b-pairwise-v1/gain.json`
 - `outputs/event-timelines/{gaudeamus-reaction-v1,hundra-reaction-v1}/timeline.json`
+- `outputs/event-review-packets/{gaudeamus-reaction-v1,hundra-reaction-v1}/event-reaction-*.json`
 
 ## Milestone repository files
 
@@ -225,6 +219,10 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `scripts/build_event_timeline.py`
 - `tests/test_event_timeline.py`
 - `docs/experiments/event-timeline-v1-2026-08-16.md`
+- `src/aegis360/event_review_packet.py`
+- `scripts/build_event_review_packet.py`
+- `tests/test_event_review_packet.py`
+- `docs/experiments/event-review-packet-v1-2026-08-16.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
