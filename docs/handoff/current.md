@@ -1,18 +1,18 @@
 # Current handoff
 
-Updated: 2026-08-15T21:03:00+08:00
+Updated: 2026-08-15T21:12:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: eb1e6b6
-Remote status: `origin/main` is 935c9d8; owner rejection is committed locally
+Baseline commit: d89552d
+Remote status: `origin/main` is fa427ff; relative-gain milestone is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is a fail-closed relative editorial-gain contract after owner rejection of
-the held-out first-person procession reaction cut.
+gate is a reaction-preview mechanical pre-review contract after completing the
+fail-closed relative editorial-gain boundary.
 
 ## Accepted evidence
 
@@ -27,23 +27,25 @@ the held-out first-person procession reaction cut.
 
 ## Last completed milestone
 
-The accepted Gaudeamus result exposed a P0 defect: broad any-view live-scene
-evidence could authorize an audience candidate that was not itself visible.
-The dirty implementation replaces that authority with closed
-`aegis360.candidate-availability.v1` evidence:
+Candidate-scoped availability and relative editorial gain are now separate,
+closed evidence. Reaction plan v4 requires exact checksums for grid, roles,
+reaction intervals, candidate availability and reaction-view gain:
 
 - availability is bound to exact checksummed config and context grid;
 - intervals are candidate-specific and ordered;
 - an unlisted candidate has no implicit availability;
-- reaction plan schema v3 binds exact grid, roles, reactions and availability;
-- the renderer rehashes and validates all four evidence artifacts;
+- reaction plan schema v4 binds and validates all five evidence artifacts;
+- gain can only mark an exact declared event `promote` or `abstain`;
+- current/proposed candidates derive from role evidence, not reviewer output;
+- unreviewed gain defaults to abstain;
+- renderer validation rebuilds the unique plan and rejects altered segments;
 - primary geometry comes from role evidence, not a mutable segment reason;
 - nonzero source windows use absolute `atrim` boundaries;
-- legacy plan v1/v2 validation remains readable but cannot bypass v3 building.
+- legacy plan v1–v3 validation remains readable but cannot bypass v4 building.
 
-The corrected Gaudeamus v6 replay keeps the three owner-accepted segments and
-now records `reaction_event_and_candidate_available`. This is a contract
-hardening replay, not a new owner-review request.
+Gaudeamus `promote` reproduces the owner-accepted three segments. Hundra
+`abstain` produces one primary-only segment. Both renderer replays are decoded-
+identical to their accepted references for video and audio.
 
 ## Held-out benchmark
 
@@ -64,13 +66,10 @@ For the bounded 210–226.5 window, yaw 0/pitch 0/HFOV 110 is primary and yaw
 -45/pitch 0/HFOV 110 centers the left roadside audience. The +90 direction is
 flag-obscured and -90 is tent-obscured.
 
-Plan v3 contains exactly two segments: primary 210–217.5 and audience
-217.5–226.5. Equal-contract primary/planned renders both have 248 video frames
-(16.533 seconds) and 516 AAC frames (16.512 seconds). Owner review rejects the
-planned cut: the primary view already shows the responsive spectators on both
-sides and retains the procession relationship. A denser one-second paired
-review confirms yaw -45 replaces a flag with a large tent but does not expose
-a clearer reaction. The correct held-out result is primary-only.
+The rejected v3 plan contains two segments, but v4 records owner `abstain` and
+contains only primary 210–226.5. Its 248 video and 516 audio frames hash exactly
+the same after decoding as the existing primary render. This prevents the
+rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 The existing `check_render_pre_review.py` consumes legacy fixed/auto bundles,
 not reaction previews. Do not claim that gate passed; add a reaction-specific
@@ -78,23 +77,23 @@ gate after the owner decision unless a defect is found first.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `eb1e6b6` and remote is `935c9d8`.
+- Expected branch: `main`; content baseline is `d89552d` and remote is `fa427ff`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -v`: 320 tests pass.
+- `python3 -m unittest discover -s tests -v`: 325 tests pass.
 - Candidate availability targeted tests: 3 pass.
-- Combined reaction plan/renderer contract tests: 8 pass.
+- Relative-gain/plan/renderer targeted tests: 10 pass.
 - Hundra source SHA-256 and metadata match the manifest.
 - Both Hundra peers share dimensions, renderer settings, frame count and audio
   frame count.
 - Representative decoded frames were inspected before and after owner review;
   the denser replay confirms the owner's rejection.
-- `python3 scripts/check_handoff.py` and `git diff --check` still need to run
-  after this handoff replacement.
+- Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
+  Hundra v4 abstain and primary decoded video/audio hashes match exactly.
 
 ## Rejected
 
@@ -109,9 +108,7 @@ gate after the owner decision unless a defect is found first.
 
 ## Pending
 
-- Push the closed evidence-contract milestone after its metadata commit.
-- Define a closed relative editorial-gain gate that can abstain when primary
-  already presents the reaction better than the candidate.
+- Push the relative-gain milestone after its metadata commit.
 - Add a reaction-preview mechanical pre-review gate before another owner review.
 
 ## Next commands
@@ -151,6 +148,11 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/candidate-availability/hundra-audience-v1/availability.json`
 - `outputs/reaction-shot-plans/hundra-210-226p5-v1/plan.json`
 - `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v1/`
+- `outputs/reaction-view-gain/{gaudeamus,hundra}-owner-v1/gain.json`
+- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v6-relative-gain/plan.json`
+- `outputs/reaction-shot-plans/hundra-210-226p5-v2-relative-gain-abstain/plan.json`
+- `outputs/reaction-preview/gaudeamus-full-planned-540p-v7-relative-gain/`
+- `outputs/reaction-preview/hundra-210-226p5-planned-v2-relative-gain-abstain/`
 
 ## Milestone repository files
 
@@ -164,6 +166,10 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `tests/test_candidate_availability.py`
 - `tests/test_reaction_plan.py`
 - `tests/test_reaction_renderer_contract.py`
+- `benchmarks/reaction-view-gain/{gaudeamus,hundra}-owner-v1.json`
+- `src/aegis360/reaction_view_gain.py`
+- `scripts/bind_reaction_view_gain.py`
+- `tests/test_reaction_view_gain.py`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
