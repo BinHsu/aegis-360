@@ -1,10 +1,10 @@
 # Current handoff
 
-Updated: 2026-08-15T20:30:03+08:00
+Updated: 2026-08-15T20:36:20+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 7f94575
-Remote status: live-reaction-onset checkpoint is ready to push
+Baseline commit: 43ec184
+Remote status: owner-accepted bounded reaction checkpoint is ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -125,7 +125,7 @@ bounded role-bound reaction gate; generic thresholds, automatic role inference
 and cross-scene directing remain unvalidated.
 ## Repository state
 
-- Expected branch: `main`; content baseline is `7f94575`.
+- Expected branch: `main`; content baseline is `43ec184`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
