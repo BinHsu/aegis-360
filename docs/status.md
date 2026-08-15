@@ -175,9 +175,10 @@ contract test needs no external assets; symmetric cases assert 4/4 fallback
 with a false pose gate and 4/4 selected group with a true pose gate.
 A path-free gate summarizer reports two passing group cases and the Skiing
 failure without scoring fine class, evidence flags or an accuracy percentage.
-Old Ghost Road passes non-regression; Bellpuig/Skiing remain unsuitable. The licensed
-Gaudeamus pair differs by only 1.287 degrees, so pre-review rejects a render;
-v1 stays missing and the 5-degree guard remains the unvalidated default.
+Gaudeamus vertical policies differ by only 1.287 degrees, so no render is
+justified. Its Apple audio gate instead finds reaction candidates at 9–15 and
+109.5–124.5 seconds. They have no cut authority pending declared view roles
+and live-scene availability; the 5-degree guard remains default.
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;
@@ -190,11 +191,10 @@ Do not render until at least one candidate:
 ## Evidence map
 
 - Current architecture: `docs/design/system-overview.md`
+- Audio reaction gate: `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - Perception and lifecycle rules: `docs/design/perception-and-tracking.md`
 - Multi-view acquisition: `docs/experiments/yolox-multiview-semantic-events-2026-08-02.md`
 - Seeded tracking/lifecycle: `docs/experiments/semantic-seeded-vision-lifecycle-2026-08-06.md`
 - Semantic planning gate: `docs/experiments/semantic-lifecycle-planning-gate-2026-08-02.md`
 - Detector equivalence: `docs/experiments/yolox-tiny-conversion-equivalence-protocol.md`
-- Detector cadence: `docs/experiments/yolox-coreml-stream-cadence-2026-07-30.md`
-- Rejected first render: `docs/experiments/first-auto-directed-slice.md`
 - Operational checkpoint: `docs/handoff/current.md`

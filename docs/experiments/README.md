@@ -50,6 +50,8 @@ privacy-safe summaries when results exist.
   lifecycle integration on one bounded isolated person.
 - `vision-face-composition-probe-2026-08-09.md`: stable face-based vertical
   composition evidence and the real-scene rejection of single-face framing.
+- `apple-sound-reaction-gate-2026-08-15.md`: closed offline applause evidence,
+  conservative reaction intervals, and live-scene availability limits.
 - `smolvlm2-500m-context-gate-2026-08-11.md`: acquired MLX model, M4/16 GB
   feasibility and rejection after three closed-output protocols failed.
 - `smolvlm2-2.2b-context-gate-2026-08-13.md`: constrained four-frame group

@@ -11,7 +11,7 @@ Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer. Conversation-group composition is accepted; the immediate objective is
-to bound a checksummed group gate without claiming generic proposal selection.
+to bind Gaudeamus performer/audience roles to deterministic context views.
 
 ## Last completed milestone
 
@@ -118,6 +118,11 @@ Ghost Road bounds reproduce the accepted pitch within 1.22 degrees. Bellpuig
 robust trimming keeps 4/8 observations after one spatial outlier, but its
 3.247-degree paired render is rejected because ego content dominates. The
 opt-in policy remains experimental and the 5-degree guard remains default.
+
+Apple SoundAnalysis emits closed music/applause/clapping/cheering evidence.
+Gaudeamus yields reaction candidates at 9–15 and 109.5–124.5 seconds; they do
+not authorize cuts. People vanish at the title cards, while the distant
+audience remains below the current detector's useful scale.
 ## Repository state
 
 - Expected branch: `main`; content baseline is `5e1dd06`.
@@ -183,9 +188,8 @@ opt-in policy remains experimental and the 5-degree guard remains default.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Supplemental Gaudeamus passes provenance, detector and group gates, but its
-  paired proposals differ by only 1.287 degrees; no render is justified. The
-  5-degree guard remains default and vertical midpoint remains experimental.
+- Bind performer/audience roles only to deterministic declared context views;
+  intersect reaction candidates with live-scene availability before planning.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
@@ -217,14 +221,13 @@ Keep face evidence path-free and temporary-pixel-only. Preserve
 
 The artifact root is configured by `AEGIS_DATA_DIR`. New immutable evidence:
 
-- `outputs/semantic-events/gaudeamus-t30-38-six-view-yolox-v2/`
+- `outputs/sound-events/gaudeamus-full-apple-v1/events.json`
+- `outputs/reaction-intervals/gaudeamus-full-apple-v1-threshold-p5/intervals.json`
+- `outputs/semantic-events/gaudeamus-full-six-view-yolox-v2/`
 - `outputs/semantic-spherical/gaudeamus-t30-38-six-view-yolox-v2-dedup-v2/`
 - `outputs/vision-face-sequence/gaudeamus-t30-38-4fps-four-view-v1/evidence.json`
 - `outputs/window-group-proposals/gaudeamus-t34p25-1s-face-guard-v1/`
 - `outputs/window-group-proposals/gaudeamus-t34p25-1s-vertical-bounds-experimental-v1/`
-- `outputs/semantic-planning/old-ghost-road-t68p5-person-track000007-4s-v5-automated-bundle/`
-- `outputs/vision-face-sequence/old-ghost-road-t68p5-4s-4fps-four-view-v1/evidence.json`
-- `outputs/window-group-proposals/old-ghost-road-t68p5-4s-v2-pitch-guard5/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v3-pitch-guard5-plan/`
 - `outputs/semantic-planning/old-ghost-road-t68p5-conversation-group-4s-v4-pitch-guard5-render/`
 

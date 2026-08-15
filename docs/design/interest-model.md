@@ -52,6 +52,13 @@ Gaze, detailed action recognition, face identity, personalization and trained
 end-to-end ranking remain deferred unless later benchmark failures demonstrate
 their necessity.
 
+Apple SoundAnalysis v1 is a bounded offline audio-event adapter on the reference
+Mac. Its closed artifact retains only music, applause, clapping and cheering
+confidence over time, with no audio, transcript, path or direction claim.
+Concurrent applause/clapping windows may propose a reaction interval, but the
+correlated labels are not ground truth or cut authority. A later planner must
+also bind declared performer/audience roles and live visual availability.
+
 `aegis360.scene-context.v2` is the bounded interface for a human review or
 local VLM. Geometry first declares person, group and context proposals; each
 group references two or more declared person proposals without asserting
