@@ -116,6 +116,11 @@ the reviewed group 8/8 and passed mechanical render gates. Agent frame review
 still rejects the comparison: ego bike/body/arm content dominates the lower
 frame, so neither render is a clean group-composition benchmark. No owner review
 or vertical-policy claim is justified from this excerpt.
+
+Skiing at 269–273 seconds was also screened at five one-second timestamps in
+four equatorial directions. It contains snow and trees but no defensible
+multi-person group; no detector run was justified. Across the three current
+benchmarks, no second clean held-out scene distinguishes the vertical policies.
 It renders at yaw 54.083 degrees, pitch -20.278 degrees and HFOV 110 degrees.
 Both peers are H.264 High, yuv420p, 1920x1080 at 25 fps; the group is selected
 16/16 times and the maximum fixed/auto pose difference is 56.615 degrees.

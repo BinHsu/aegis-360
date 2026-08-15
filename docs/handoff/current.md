@@ -183,8 +183,8 @@ opt-in policy remains experimental and the 5-degree guard remains default.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Find a non-ego held-out group scene before promoting v2 union midpoint; the
-  Bellpuig pair is rejected and the 5-degree guard remains default.
+- Current footage is exhausted: Bellpuig is ego-dominated and Skiing 269–273
+  has no group. New footage is required; the 5-degree guard remains default.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
