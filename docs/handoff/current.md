@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T00:05:00+08:00
+Updated: 2026-08-16T05:56:18+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: e4f1da0
-Remote status: `origin/main` is ace12f1; ADR 0010 is committed locally
+Baseline commit: 02c27b2
+Remote status: `origin/main` is 267d5b0; Event Timeline v1 is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is implementation of `aegis360.event-timeline.v1` under accepted ADR 0010.
+gate is Event Review Packet v1 under accepted ADR 0010.
 
 ## Accepted evidence
 
@@ -68,6 +68,18 @@ checksummed event timeline, bounded before/during/after semantic packets, then
 an explainable global planner with final authority. Per-frame VLM review and
 user approval of every event are rejected.
 
+Event Timeline v1 is implemented as an exact, checksummed derivation of the
+context-view grid, editorial roles, reaction intervals and candidate-scoped
+availability. It emits stable reaction-candidate IDs, retains original and
+window-clipped boundaries, and records availability at onset and throughout
+the event. It contains no owner promote/abstain answer, geometry, paths,
+pixels, audio, names or identity. Validation rebuilds the complete document.
+
+Real execution emits two Gaudeamus candidates and one Hundra candidate. The
+Gaudeamus opening has no proposed view at onset and only 11.5–15.0 overlap;
+its ending has availability at onset and 109.5–119.0 overlap. Hundra has full
+217.5–226.5 availability. This schedules review; it authorizes no edit.
+
 ## Held-out benchmark
 
 The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
@@ -98,14 +110,17 @@ gate after the owner decision unless a defect is found first.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `e4f1da0` and remote is `ace12f1`.
+- Expected branch: `main`; content baseline is `02c27b2` and remote is `267d5b0`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -v`: 331 tests pass.
+- `python3 -m unittest discover -s tests -q`: 333 tests pass.
+- Event Timeline v1 targeted tests: 2 pass.
+- Real Gaudeamus/Hundra timelines pass their closed privacy declarations and
+  contain no absolute path strings.
 - Candidate availability targeted tests: 3 pass.
 - Relative-gain/plan/renderer targeted tests: 10 pass.
 - Hundra source SHA-256 and metadata match the manifest.
@@ -133,9 +148,9 @@ gate after the owner decision unless a defect is found first.
 
 ## Pending
 
-- Push ADR 0010 after its metadata commit.
-- Implement event-timeline v1 from existing reaction evidence; do not select a
-  new model before the timeline/review-packet contracts and more labels exist.
+- Push Event Timeline v1 after its metadata commit.
+- Implement Event Review Packet v1 as a durable, pixel-free manifest of sparse
+  before/during/after samples. Do not select a new model first.
 
 ## Next commands
 
@@ -180,6 +195,7 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v3-gain-v2/`
 - `outputs/reaction-pre-review/{gaudeamus-v8-gain-v2,hundra-v3-gain-v2}/report.json`
 - `outputs/reaction-view-gain/{gaudeamus,hundra}-smolvlm2-2p2b-pairwise-v1/gain.json`
+- `outputs/event-timelines/{gaudeamus-reaction-v1,hundra-reaction-v1}/timeline.json`
 
 ## Milestone repository files
 
@@ -205,6 +221,10 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `tests/test_local_reaction_gain_contract.py`
 - `docs/experiments/smolvlm2-2.2b-reaction-gain-gate-2026-08-15.md`
 - `docs/adr/0010-sparse-event-semantic-planning.md`
+- `src/aegis360/event_timeline.py`
+- `scripts/build_event_timeline.py`
+- `tests/test_event_timeline.py`
+- `docs/experiments/event-timeline-v1-2026-08-16.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
