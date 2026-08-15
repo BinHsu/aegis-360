@@ -92,6 +92,12 @@ and primary/title 119–127. It remains 1,905 CFR frames with the same audio and
 encoder contract. Agent inspection confirms the opening animation now flows
 directly into the corrected choir view, while the ending audience cut remains.
 
+On 2026-08-15 the owner accepted planned v5 as a satisfactory directing result.
+This accepts the corrected choir composition, suppression of the opening
+mid-event cut, the 109.5–119 audience reaction and the return to titles. It does
+not validate generic applause thresholds, automatic performer/audience role
+inference, cross-scene accuracy or active-speaker behavior.
+
 External evidence:
 
 - `outputs/sound-events/gaudeamus-full-apple-v1/events.json`

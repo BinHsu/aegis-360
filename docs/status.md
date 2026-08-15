@@ -175,10 +175,10 @@ contract test needs no external assets; symmetric cases assert 4/4 fallback
 with a false pose gate and 4/4 selected group with a true pose gate.
 A path-free gate summarizer reports two passing group cases and the Skiing
 failure without scoring fine class, evidence flags or an accuracy percentage.
-Owner accepted the need for wider/rightward primary framing but found the first
-reaction cut abrupt after the title animation. Plan v2 rejects events whose
-onset predates live-scene availability. Planned v5 keeps only 109.5–119 audience;
-mechanical/agent gates pass and owner timing review remains next.
+Owner accepts planned v5: corrected choir framing, no opening mid-event cut,
+109.5–119 audience reaction and return to titles. This closes one bounded
+role-bound reaction gate; generic applause thresholds, role inference and
+cross-scene directing remain unvalidated.
 Do not render until at least one candidate:
 
 1. has explicit detector, spherical-merge and lifecycle provenance;

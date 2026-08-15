@@ -119,10 +119,10 @@ robust trimming keeps 4/8 observations after one spatial outlier, but its
 3.247-degree paired render is rejected because ego content dominates. The
 opt-in policy remains experimental and the 5-degree guard remains default.
 
-Owner rejected the v4 opening reaction as abrupt after titles. Plan v2 now
-requires reaction onset inside an already-live scene, suppressing the 9-second
-event rather than joining it at 11.5. Planned v5 keeps only 109.5–119 audience,
-passes CFR/mechanical/agent gates, and needs owner timing review.
+Owner accepts planned v5: corrected primary framing, suppression of the opening
+mid-event cut, 109.5–119 audience reaction and return to titles. This closes one
+bounded role-bound reaction gate; generic thresholds, automatic role inference
+and cross-scene directing remain unvalidated.
 ## Repository state
 
 - Expected branch: `main`; content baseline is `7f94575`.
@@ -188,8 +188,8 @@ passes CFR/mechanical/agent gates, and needs owner timing review.
 
 - Add more held-out group/context windows before any accuracy claim; fine class
   remains scoreless. Keep source frames temporary and bounded.
-- Review planned v5 against primary-only v4; assess the sole 109.5–119
-  audience reaction and return timing, not active-speaker behavior.
+- Add a distinct licensed performance scene before any cross-scene reaction
+  claim; keep Gaudeamus thresholds and owner roles source-specific.
 - Establish whether audio is merely stereo playback or has a usable, verified
   direction convention before adding audio localization.
 - Later select a real view-exit/ambiguity segment. Treat exit as a handoff
