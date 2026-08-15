@@ -37,6 +37,7 @@ not invent a resolution.
 | Change proxy, caching, or memory behavior | ADR 0005 |
 | Change interest scoring, candidate shots, or planning | ADR 0006 |
 | Change event timeline, semantic review packets, or human-review role | ADR 0010, then ADR 0006 |
+| Change event-semantic adapter output or evidence-to-utility mapping | `docs/design/event-semantic-evidence.md`, ADR 0010, then ADR 0006 |
 | Change vertical/group composition policy | `docs/design/interest-model.md`, `docs/experiments/vision-face-composition-probe-2026-08-09.md`, then ADR 0006 |
 | Change audio/reaction-event evidence | `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`, `docs/design/interest-model.md`, then ADR 0006 |
 | Change semantic detection, detector refresh, tracking grace, or lifecycle traces | `docs/design/perception-and-tracking.md`, `docs/experiments/native-detector-refresh-trace-2026-07-29.md` |
