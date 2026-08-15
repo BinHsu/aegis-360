@@ -183,7 +183,8 @@ Plan v4 now also requires closed relative editorial gain. Gaudeamus `promote`
 reproduces its accepted edit; Hundra `abstain` is decoded-identical to primary.
 The reaction pre-review gate passes both modes mechanically. Gain remains
 owner-authored: SmolVLM2 2.2B pairwise returned abstain on both owner-labeled
-cases and is rejected for this adapter. A new model requires an explicit choice.
+cases and is rejected for this adapter. ADR 0010 restores the automatic product
+path: whole-video event timeline, sparse semantic packets and global planning.
 ## Evidence map
 
 - Current architecture: `docs/design/system-overview.md`

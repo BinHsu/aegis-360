@@ -23,6 +23,7 @@ their respective documentation areas.
 | [0007](0007-benchmark-and-evaluation-strategy.md) | Licensed benchmark and comparative evaluation strategy |
 | [0008](0008-adapter-bound-model-backends.md) | Replaceable model backends behind adapters |
 | [0009](0009-bounded-detector-edge-repair.md) | Explicit detector edge repair bounded to one source pixel |
+| [0010](0010-sparse-event-semantic-planning.md) | Sparse whole-video event timeline, bounded semantic review and global planning |
 
 Create a new ADR when changing an accepted decision. Do not rewrite history to
 make an old decision appear never to have existed.
