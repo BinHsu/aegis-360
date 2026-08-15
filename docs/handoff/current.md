@@ -1,10 +1,10 @@
 # Current handoff
 
-Updated: 2026-08-15T08:34:41+08:00
+Updated: 2026-08-15T08:51:57+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: ae0bb6f
-Remote status: vertical held-out exhaustion and checkpoint are ready to push
+Baseline commit: 5e1dd06
+Remote status: experimental-policy freeze and Gaudeamus checkpoint are ready to push
 Working tree at checkpoint: only this checkpoint metadata differs from baseline
 
 ## Objective
@@ -120,7 +120,7 @@ robust trimming keeps 4/8 observations after one spatial outlier, but its
 opt-in policy remains experimental and the 5-degree guard remains default.
 ## Repository state
 
-- Expected branch: `main`; content baseline is `ae0bb6f`.
+- Expected branch: `main`; content baseline is `5e1dd06`.
 - Benchmark media, model weights, contact sheets and generated artifacts are
   external and gitignored.
 - Signing may require an unavailable interactive SSH-key passphrase. Prior
