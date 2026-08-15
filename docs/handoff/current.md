@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T06:49:00+08:00
+Updated: 2026-08-16T06:58:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: a4d2959
-Remote status: `origin/main` is bc7e990; sparse global DP is committed locally
+Baseline commit: 90e4c9a
+Remote status: `origin/main` is 1f24e8b; spherical transition cost is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is geometry-aware event transition cost under ADR 0010 and ADR 0006.
+gate is global-event-plan to camera-segment integration under ADR 0010/0006.
 
 ## Accepted evidence
 
@@ -103,8 +103,9 @@ Event Candidate Utility v1 applies a checksummed, tunable policy and retains
 separate relevance, visibility, temporal and relationship components. It does
 not select a view. Abstention keeps current eligible at neutral utility and
 makes proposed ineligible. Sparse Global Event DP v1 then optimizes ordered
-events with minimum advantage/dwell plus two-way switch and cross-event
-repetition costs. It does not yet model angular motion or continuous paths.
+events with minimum advantage/dwell plus two-way fixed switch, grid-derived
+spherical angular and cross-event repetition costs. It does not yet emit a
+continuous path.
 
 ## Held-out benchmark
 
@@ -132,7 +133,7 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `a4d2959` and remote is `bc7e990`.
+- Expected branch: `main`; content baseline is `90e4c9a` and remote is `1f24e8b`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
@@ -140,7 +141,6 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 ## Verified
 
 - `python3 -m unittest discover -s tests -q`: 349 tests pass.
-- Event Timeline v1 targeted tests: 2 pass.
 - Event Review Packet v1 targeted tests: 3 pass.
 - Transient review-media targeted/contract tests: 3 pass.
 - Event-semantic evidence targeted tests: 4 pass.
@@ -166,9 +166,9 @@ rejected cut without disabling the accepted Gaudeamus reaction edit.
 
 ## Pending
 
-- Push sparse global event DP after its metadata commit.
-- Add grid-bound angular entry/return cost before seeking new semantic labels
-  or selecting another model.
+- Push spherical transition cost after its metadata commit.
+- Map global event decisions to bounded camera segments and existing renderer
+  conventions before selecting another model.
 
 ## Next commands
 
