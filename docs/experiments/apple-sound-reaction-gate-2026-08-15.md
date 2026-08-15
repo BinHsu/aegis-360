@@ -172,7 +172,7 @@ External evidence:
 ## Relative editorial-gain gate
 
 Reaction plan v4 adds a fifth immutable input,
-`aegis360.reaction-view-gain.v1`. A human or local-VLM adapter may only mark an
+`aegis360.reaction-view-gain.v2`. A human or local-VLM adapter may only mark an
 exact declared reaction interval `promote` or `abstain`; current and proposed
 candidates are derived from the checksummed role artifact. It cannot emit
 camera geometry, free text, identity or a new candidate. Missing decisions
@@ -180,6 +180,10 @@ default to abstain. The renderer revalidates the gain artifact and its exact
 SHA-256 with the other four evidence inputs, then rebuilds the unique expected
 plan. A manually altered candidate, timing or reason therefore fails even when
 all evidence hashes remain valid.
+
+V1 is rejected for new plans because it allowed `local_vlm` without mandatory
+model ID/SHA provenance. V2 requires those fields for a model and explicit null
+values for a human reviewer.
 
 The owner decisions form one positive and one negative replay. Gaudeamus
 promotes the 109.5–124.5 event and reproduces the accepted three-segment plan.
@@ -196,12 +200,12 @@ replays are decoded-identical to their accepted reference outputs:
 This establishes the fail-closed integration boundary, not an automatic
 relative-gain classifier. External evidence:
 
-- `outputs/reaction-view-gain/gaudeamus-owner-v1/gain.json`
-- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v6-relative-gain/plan.json`
-- `outputs/reaction-preview/gaudeamus-full-planned-540p-v7-relative-gain/`
-- `outputs/reaction-view-gain/hundra-owner-v1/gain.json`
-- `outputs/reaction-shot-plans/hundra-210-226p5-v2-relative-gain-abstain/plan.json`
-- `outputs/reaction-preview/hundra-210-226p5-planned-v2-relative-gain-abstain/`
+- `outputs/reaction-view-gain/gaudeamus-owner-v2/gain.json`
+- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v7-gain-v2/plan.json`
+- `outputs/reaction-preview/gaudeamus-full-{primary,planned}-540p-v8-gain-v2/`
+- `outputs/reaction-view-gain/hundra-owner-v2/gain.json`
+- `outputs/reaction-shot-plans/hundra-210-226p5-v3-gain-v2-abstain/plan.json`
+- `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v3-gain-v2/`
 
 ## Reaction-preview mechanical gate
 
@@ -218,5 +222,5 @@ Gaudeamus has one 9.5-second promoted segment with a 160-degree maximum declared
 pose difference, identical decoded audio and distinct decoded video. Reports are
 atomic, refuse overwrite and contain no paths or pixels:
 
-- `outputs/reaction-pre-review/hundra-v2-relative-gain-abstain/report.json`
-- `outputs/reaction-pre-review/gaudeamus-v7-relative-gain/report.json`
+- `outputs/reaction-pre-review/hundra-v3-gain-v2/report.json`
+- `outputs/reaction-pre-review/gaudeamus-v8-gain-v2/report.json`

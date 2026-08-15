@@ -16,7 +16,7 @@ class ReactionPlanTests(unittest.TestCase):
         return build_candidate_availability(config, grid, config_sha256="1" * 64,
                                             grid_sha256=checksum)
     def gain(self, grid, checksum, roles, reactions, decisions):
-        config={"schema_version":"aegis360.reaction-view-gain-config.v1","config_id":"fixture","reviewer_kind":"human","adapter_id":"owner-fixture","decisions":decisions}
+        config={"schema_version":"aegis360.reaction-view-gain-config.v2","config_id":"fixture","reviewer_kind":"human","adapter_id":"owner-fixture","model_id":None,"model_sha256":None,"decisions":decisions}
         return build_reaction_view_gain(config,grid,roles,reactions,config_sha256="2"*64,grid_sha256=checksum,roles_sha256=hashlib.sha256((json.dumps(roles,indent=2,sort_keys=True)+"\n").encode()).hexdigest(),reactions_sha256=hashlib.sha256((json.dumps(reactions,indent=2,sort_keys=True)+"\n").encode()).hexdigest())
 
     def test_intersects_events_with_availability_and_returns_primary(self):

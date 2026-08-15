@@ -11,8 +11,8 @@ from .editorial_roles import validate_editorial_roles
 from .reaction_intervals import validate_reaction_intervals
 
 
-SCHEMA = "aegis360.reaction-view-gain.v1"
-CONFIG_SCHEMA = "aegis360.reaction-view-gain-config.v1"
+SCHEMA = "aegis360.reaction-view-gain.v2"
+CONFIG_SCHEMA = "aegis360.reaction-view-gain-config.v2"
 SAFE_ID = re.compile(r"^[A-Za-z0-9._:-]+$")
 SHA256 = re.compile(r"[0-9a-f]{64}")
 DECISIONS = {"promote", "abstain"}
@@ -30,7 +30,8 @@ def build_reaction_view_gain(
     if roles["source_id"] != grid["source_id"] or reactions["source_id"] != grid["source_id"]:
         raise ValueError("reaction-view-gain sources must match")
     if not isinstance(config, Mapping) or set(config) != {
-        "schema_version", "config_id", "reviewer_kind", "adapter_id", "decisions",
+        "schema_version", "config_id", "reviewer_kind", "adapter_id",
+        "model_id", "model_sha256", "decisions",
     } or config["schema_version"] != CONFIG_SCHEMA:
         raise ValueError("reaction-view-gain config is invalid")
     if config["reviewer_kind"] not in {"human", "local_vlm"}:
@@ -42,6 +43,13 @@ def build_reaction_view_gain(
         config_sha256, grid_sha256, roles_sha256, reactions_sha256,
     )):
         raise ValueError("reaction-view-gain checksums are invalid")
+    if config["reviewer_kind"] == "local_vlm":
+        if not isinstance(config["model_id"], str) or not SAFE_ID.fullmatch(config["model_id"]):
+            raise ValueError("local reaction-view-gain model_id is invalid")
+        if not isinstance(config["model_sha256"], str) or SHA256.fullmatch(config["model_sha256"]) is None:
+            raise ValueError("local reaction-view-gain model SHA-256 is invalid")
+    elif config["model_id"] is not None or config["model_sha256"] is not None:
+        raise ValueError("human reaction-view-gain must not claim model provenance")
     assignments = {item["role"]: item["candidate_id"] for item in roles["assignments"]}
     current = assignments["primary_performance"]
     proposed = assignments["audience_reaction"]
@@ -89,6 +97,8 @@ def build_reaction_view_gain(
             "reviewer_kind": config["reviewer_kind"],
             "adapter_id": config["adapter_id"],
             "config_id": config["config_id"],
+            "model_id": config["model_id"],
+            "model_sha256": config["model_sha256"],
         },
         "decisions": decisions,
         "default_decision": "abstain",
@@ -120,7 +130,7 @@ def validate_reaction_view_gain(
         "context_view_grid_sha256", "editorial_roles_sha256",
         "reaction_intervals_sha256", "config_sha256",
     } or not isinstance(provenance, Mapping) or set(provenance) != {
-        "reviewer_kind", "adapter_id", "config_id",
+        "reviewer_kind", "adapter_id", "config_id", "model_id", "model_sha256",
     }:
         raise ValueError("reaction-view-gain bindings are invalid")
     if not isinstance(document["decisions"], list) or any(
@@ -132,6 +142,8 @@ def validate_reaction_view_gain(
         "config_id": provenance["config_id"],
         "reviewer_kind": provenance["reviewer_kind"],
         "adapter_id": provenance["adapter_id"],
+        "model_id": provenance["model_id"],
+        "model_sha256": provenance["model_sha256"],
         "decisions": [{
             "reaction_start_seconds": item.get("reaction_start_seconds"),
             "reaction_end_seconds": item.get("reaction_end_seconds"),

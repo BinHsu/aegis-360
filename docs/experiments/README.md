@@ -57,6 +57,8 @@ privacy-safe summaries when results exist.
 - `smolvlm2-2.2b-context-gate-2026-08-13.md`: constrained four-frame group
   selection across two sources, fixed-input repeatability, and a held-out
   landscape context-selection failure.
+- `smolvlm2-2.2b-reaction-gain-gate-2026-08-15.md`: closed pairwise comparison
+  rejection after the model abstained on both positive and negative cases.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

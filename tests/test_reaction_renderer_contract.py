@@ -52,7 +52,7 @@ class ReactionRendererContractTests(unittest.TestCase):
         )
         roles_sha=hashlib.sha256((json.dumps(roles,indent=2,sort_keys=True)+"\n").encode()).hexdigest()
         reactions_sha=hashlib.sha256((json.dumps(reactions,indent=2,sort_keys=True)+"\n").encode()).hexdigest()
-        gain_config={"schema_version":"aegis360.reaction-view-gain-config.v1","config_id":"fixture","reviewer_kind":"human","adapter_id":"owner-fixture","decisions":[]}
+        gain_config={"schema_version":"aegis360.reaction-view-gain-config.v2","config_id":"fixture","reviewer_kind":"human","adapter_id":"owner-fixture","model_id":None,"model_sha256":None,"decisions":[]}
         gain=build_reaction_view_gain(gain_config,grid,roles,reactions,config_sha256="2"*64,grid_sha256=grid_sha,roles_sha256=roles_sha,reactions_sha256=reactions_sha)
         plan = build_reaction_plan(
             grid, roles, reactions, availability, gain, grid_sha256=grid_sha

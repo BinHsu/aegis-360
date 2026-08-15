@@ -15,7 +15,7 @@ class ReactionViewGainTests(unittest.TestCase):
         self.roles_sha=hashlib.sha256((json.dumps(self.roles,indent=2,sort_keys=True)+"\n").encode()).hexdigest()
         self.reactions_sha=hashlib.sha256((json.dumps(self.reactions,indent=2,sort_keys=True)+"\n").encode()).hexdigest()
     def build(self, decisions):
-        config={"schema_version":"aegis360.reaction-view-gain-config.v1","config_id":"fixture","reviewer_kind":"human","adapter_id":"fixture-review","decisions":decisions}
+        config={"schema_version":"aegis360.reaction-view-gain-config.v2","config_id":"fixture","reviewer_kind":"human","adapter_id":"fixture-review","model_id":None,"model_sha256":None,"decisions":decisions}
         return build_reaction_view_gain(config,self.grid,self.roles,self.reactions,config_sha256="a"*64,grid_sha256=self.grid_sha,roles_sha256=self.roles_sha,reactions_sha256=self.reactions_sha)
     def test_promote_is_bound_to_role_owned_pair_and_exact_event(self):
         value=self.build([{"reaction_start_seconds":4,"reaction_end_seconds":8,"decision":"promote"}])
@@ -36,5 +36,12 @@ class ReactionViewGainTests(unittest.TestCase):
         value=self.build([{"reaction_start_seconds":4,"reaction_end_seconds":8,"decision":"promote"}])
         value["decisions"][0]["proposed_candidate_id"]="context:cardinal:2"
         with self.assertRaises(ValueError): validate_reaction_view_gain(value,self.grid,self.roles,self.reactions,grid_sha256=self.grid_sha,roles_sha256=self.roles_sha,reactions_sha256=self.reactions_sha)
+    def test_local_model_requires_exact_provenance_and_human_forbids_it(self):
+        base={"schema_version":"aegis360.reaction-view-gain-config.v2","config_id":"fixture","reviewer_kind":"local_vlm","adapter_id":"fixture-review","model_id":"smolvlm2-2.2b","model_sha256":"b"*64,"decisions":[]}
+        value=build_reaction_view_gain(base,self.grid,self.roles,self.reactions,config_sha256="a"*64,grid_sha256=self.grid_sha,roles_sha256=self.roles_sha,reactions_sha256=self.reactions_sha)
+        self.assertEqual(value["provenance"]["model_sha256"],"b"*64)
+        for mutation in (lambda c:c.__setitem__("model_sha256",None),lambda c:(c.__setitem__("reviewer_kind","human"))):
+            broken=dict(base); mutation(broken)
+            with self.assertRaises(ValueError): build_reaction_view_gain(broken,self.grid,self.roles,self.reactions,config_sha256="a"*64,grid_sha256=self.grid_sha,roles_sha256=self.roles_sha,reactions_sha256=self.reactions_sha)
 
 if __name__=="__main__": unittest.main()
