@@ -1,18 +1,18 @@
 # Current handoff
 
-Updated: 2026-08-15T21:12:00+08:00
+Updated: 2026-08-15T21:20:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: d89552d
-Remote status: `origin/main` is fa427ff; relative-gain milestone is committed locally
+Baseline commit: 5d3b940
+Remote status: `origin/main` is 2fadd62; reaction pre-review is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is a reaction-preview mechanical pre-review contract after completing the
-fail-closed relative editorial-gain boundary.
+gate is a bounded automatic pairwise-gain adapter after completing the
+reaction-preview mechanical pre-review contract.
 
 ## Accepted evidence
 
@@ -47,6 +47,12 @@ Gaudeamus `promote` reproduces the owner-accepted three segments. Hundra
 `abstain` produces one primary-only segment. Both renderer replays are decoded-
 identical to their accepted references for video and audio.
 
+The new reaction pre-review gate rebuilds v4 evidence, checks equal-lineage
+trace/encoder/probe/audio contracts, and hashes decoded streams. Promote must
+produce a distinct video with at least 8 degrees and 2 seconds of declared
+difference; abstain must decode identically. Both real cases pass. The report
+explicitly retains the need for visual editorial review.
+
 ## Held-out benchmark
 
 The supplemental source is `Hundra knektars marsch på Forum Vulgaris`:
@@ -77,14 +83,14 @@ gate after the owner decision unless a defect is found first.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `d89552d` and remote is `fa427ff`.
+- Expected branch: `main`; content baseline is `5d3b940` and remote is `2fadd62`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -v`: 325 tests pass.
+- `python3 -m unittest discover -s tests -v`: 328 tests pass.
 - Candidate availability targeted tests: 3 pass.
 - Relative-gain/plan/renderer targeted tests: 10 pass.
 - Hundra source SHA-256 and metadata match the manifest.
@@ -94,6 +100,7 @@ gate after the owner decision unless a defect is found first.
   the denser replay confirms the owner's rejection.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
+- Real pre-review reports pass for Gaudeamus promote and Hundra abstain.
 
 ## Rejected
 
@@ -108,8 +115,9 @@ gate after the owner decision unless a defect is found first.
 
 ## Pending
 
-- Push the relative-gain milestone after its metadata commit.
-- Add a reaction-preview mechanical pre-review gate before another owner review.
+- Push the reaction pre-review milestone after its metadata commit.
+- Define a bounded pairwise local-VLM gate; require both owner-labeled cases to
+  pass without weakening the closed gain importer.
 
 ## Next commands
 
@@ -153,6 +161,7 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/reaction-shot-plans/hundra-210-226p5-v2-relative-gain-abstain/plan.json`
 - `outputs/reaction-preview/gaudeamus-full-planned-540p-v7-relative-gain/`
 - `outputs/reaction-preview/hundra-210-226p5-planned-v2-relative-gain-abstain/`
+- `outputs/reaction-pre-review/{gaudeamus-v7-relative-gain,hundra-v2-relative-gain-abstain}/report.json`
 
 ## Milestone repository files
 
@@ -170,6 +179,9 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `src/aegis360/reaction_view_gain.py`
 - `scripts/bind_reaction_view_gain.py`
 - `tests/test_reaction_view_gain.py`
+- `src/aegis360/reaction_pre_review.py`
+- `scripts/check_reaction_pre_review.py`
+- `tests/test_reaction_pre_review.py`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
