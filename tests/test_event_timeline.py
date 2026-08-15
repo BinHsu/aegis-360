@@ -17,18 +17,17 @@ def digest(value):
     return hashlib.sha256(payload.encode()).hexdigest()
 
 
-class EventTimelineTests(unittest.TestCase):
-    def setUp(self):
-        self.grid = build_context_view_grid(
-            source_id="fixture", start_seconds=10, duration_seconds=20,
-        )
-        self.grid_sha = digest(self.grid)
-        self.roles = build_editorial_roles(
-            self.grid, grid_sha256=self.grid_sha,
-            primary_candidate_id="context:cardinal:3",
-            reaction_candidate_id="context:cardinal:1", adapter_id="fixture",
-        )
-        self.reactions = {
+def build_fixture():
+    grid = build_context_view_grid(
+        source_id="fixture", start_seconds=10, duration_seconds=20,
+    )
+    grid_sha = digest(grid)
+    roles = build_editorial_roles(
+        grid, grid_sha256=grid_sha,
+        primary_candidate_id="context:cardinal:3",
+        reaction_candidate_id="context:cardinal:1", adapter_id="fixture",
+    )
+    reactions = {
             "schema_version": "aegis360.reaction-intervals.v1",
             "source_id": "fixture",
             "source_sound_event_schema": "aegis360.apple-sound-events.v1",
@@ -52,8 +51,8 @@ class EventTimelineTests(unittest.TestCase):
                 },
             ],
             "privacy": {}, "limitations": [],
-        }
-        config = {
+    }
+    config = {
             "schema_version": "aegis360.candidate-availability-config.v1",
             "config_id": "fixture", "reviewer_kind": "human",
             "adapter_id": "fixture",
@@ -61,10 +60,19 @@ class EventTimelineTests(unittest.TestCase):
                 "candidate_id": "context:cardinal:1",
                 "intervals": [{"start_seconds": 12, "end_seconds": 26}],
             }],
-        }
-        self.availability = build_candidate_availability(
-            config, self.grid, config_sha256="a" * 64, grid_sha256=self.grid_sha,
-        )
+    }
+    availability = build_candidate_availability(
+        config, grid, config_sha256="a" * 64, grid_sha256=grid_sha,
+    )
+    return grid, grid_sha, roles, reactions, availability
+
+
+class EventTimelineTests(unittest.TestCase):
+    def setUp(self):
+        (
+            self.grid, self.grid_sha, self.roles, self.reactions,
+            self.availability,
+        ) = build_fixture()
 
     def build(self):
         return build_event_timeline(

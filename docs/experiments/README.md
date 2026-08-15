@@ -61,6 +61,8 @@ privacy-safe summaries when results exist.
   rejection after the model abstained on both positive and negative cases.
 - `event-timeline-v1-2026-08-16.md`: checksummed reaction-candidate timeline
   across two sources, with view availability but no imported editorial labels.
+- `event-review-packet-v1-2026-08-16.md`: five-anchor sparse review manifests
+  with boundary-aware context and availability-filtered candidate references.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.
