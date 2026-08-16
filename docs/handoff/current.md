@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T07:34:00+08:00
+Updated: 2026-08-16T16:08:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 1da814a
-Remote status: `origin/main` is 58626cb; Timeline/Packet v2 is committed locally
+Baseline commit: f4ec2fc
+Remote status: `origin/main` is 6914b82; owner-review clips are committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is visual pre-review of nine neutral scene-boundary packets.
+gate is owner ground truth for three pre-screened scene-boundary clips.
 
 ## Accepted evidence
 
@@ -116,7 +116,10 @@ use a reusable proxy or bounded window, not another full-decode retry.
 Event Timeline v2 fuses overlapping cheap-signal review windows. Scene-bearing
 events keep all four declared candidates and no roles. Nine real Old Ghost Road
 events each produce an eight-frame before/after Packet v2. A real runner smoke
-test passes 8/8 and deletes its temporary media.
+test passes 8/8 and deletes its temporary media. Agent pre-review retains
+event 0002 as a clear cut, 0006 as within-scene motion and 0001 as a boundary
+case; all three equal-lineage four-second silent videos pass mechanical and
+visual checks.
 
 ## Held-out benchmark
 
@@ -128,16 +131,16 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `1da814a` and remote is `58626cb`.
+- Expected branch: `main`; content baseline is `f4ec2fc` and remote is `6914b82`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 360 tests pass.
+- `python3 -m unittest discover -s tests -q`: 361 tests pass.
 - Scene-event/NMS targeted tests: 4 pass.
-- Timeline/Packet v2 targeted tests: 5 pass.
+- Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
 
@@ -157,9 +160,9 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Push Timeline/Packet v2 after its metadata commit.
-- Visually pre-review nine neutral packets; request owner labels only for
-  survivors that are materially distinct and relevant.
+- Push owner-review bundle checkpoint after its metadata commit.
+- Wait for owner labels on events 0001, 0002 and 0006; do not run or select a
+  semantic model before those labels are durable.
 
 ## Next commands
 
@@ -176,14 +179,10 @@ git status --short
 
 The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 
-- `outputs/candidate-availability/gaudeamus-audience-v1/availability.json`
-- `outputs/reaction-shot-plans/gaudeamus-full-owner-rule-v5-candidate-availability-trace/plan.json`
-- `outputs/reaction-preview/gaudeamus-full-planned-540p-v6-p0-rebind/`
+- `outputs/scene-boundary-review/old-ghost-road-event-{0001,0002,0006}/`
 - `outputs/sound-events/hundra-full-apple-v1/events.json`
 - `outputs/reaction-intervals/hundra-full-apple-v1-threshold-p5/intervals.json`
 - `outputs/context-view-grids/hundra-210-226p5-declared-v1/grid.json`
-- `outputs/editorial-view-roles/hundra-210-226p5-v1/roles.json`
-- `outputs/candidate-availability/hundra-audience-v1/availability.json`
 - `outputs/event-timelines/old-ghost-road-multi-signal-v2/timeline.json`
 - `outputs/event-review-packets/old-ghost-road-multi-signal-v2/event-multi-*.json`
 - `outputs/reaction-view-gain/{gaudeamus,hundra}-owner-v2/gain.json`
@@ -232,6 +231,7 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `src/aegis360/{multi_signal_timeline,multi_signal_review_packet}.py`
 - `scripts/build_multi_signal_{timeline,review_packet}.py`
 - `docs/experiments/multi-signal-timeline-review-v2-2026-08-16.md`
+- `scripts/render_scene_boundary_review.py`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
