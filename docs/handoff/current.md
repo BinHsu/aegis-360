@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T07:22:00+08:00
+Updated: 2026-08-16T07:34:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 94ac5eb
-Remote status: `origin/main` is 8722511; scene-change evidence is committed locally
+Baseline commit: 1da814a
+Remote status: `origin/main` is 58626cb; Timeline/Packet v2 is committed locally
 Working tree at checkpoint: only this handoff metadata differs from baseline
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is a multi-signal Event Timeline v2 before model selection.
+gate is visual pre-review of nine neutral scene-boundary packets.
 
 ## Accepted evidence
 
@@ -113,6 +113,11 @@ retains nine visually plausible Old Ghost Road boundaries and zero Bellpuig
 candidates. Full 5K VP9 Skiing decode did not finish in the bounded session;
 use a reusable proxy or bounded window, not another full-decode retry.
 
+Event Timeline v2 fuses overlapping cheap-signal review windows. Scene-bearing
+events keep all four declared candidates and no roles. Nine real Old Ghost Road
+events each produce an eight-frame before/after Packet v2. A real runner smoke
+test passes 8/8 and deletes its temporary media.
+
 ## Held-out benchmark
 
 Hundra is a checksummed CC BY-SA 4.0 1920x960 ERP held-out source. Its
@@ -123,17 +128,16 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `94ac5eb` and remote is `8722511`.
+- Expected branch: `main`; content baseline is `1da814a` and remote is `58626cb`.
 - Only the handoff metadata should differ from the content baseline.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 355 tests pass.
-- Sparse global event DP targeted tests: 3 pass.
-- Global camera segment targeted tests: 2 pass.
+- `python3 -m unittest discover -s tests -q`: 360 tests pass.
 - Scene-event/NMS targeted tests: 4 pass.
+- Timeline/Packet v2 targeted tests: 5 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
 
@@ -153,9 +157,9 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Push scene-change evidence after its metadata commit.
-- Merge neutral scene-change candidates into Event Timeline v2 without
-  inventing editorial roles; do not choose a model from three owner decisions.
+- Push Timeline/Packet v2 after its metadata commit.
+- Visually pre-review nine neutral packets; request owner labels only for
+  survivors that are materially distinct and relevant.
 
 ## Next commands
 
@@ -180,8 +184,8 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/context-view-grids/hundra-210-226p5-declared-v1/grid.json`
 - `outputs/editorial-view-roles/hundra-210-226p5-v1/roles.json`
 - `outputs/candidate-availability/hundra-audience-v1/availability.json`
-- `outputs/reaction-shot-plans/hundra-210-226p5-v1/plan.json`
-- `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v1/`
+- `outputs/event-timelines/old-ghost-road-multi-signal-v2/timeline.json`
+- `outputs/event-review-packets/old-ghost-road-multi-signal-v2/event-multi-*.json`
 - `outputs/reaction-view-gain/{gaudeamus,hundra}-owner-v2/gain.json`
 - `outputs/reaction-shot-plans/{gaudeamus-full-owner-rule-v7-gain-v2,hundra-210-226p5-v3-gain-v2-abstain}/plan.json`
 - `outputs/reaction-preview/gaudeamus-full-{primary,planned}-540p-v8-gain-v2/`
@@ -225,6 +229,9 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `src/aegis360/{scene_events,scene_change_candidates}.py`
 - `scripts/{run_ffmpeg_scene_events,build_scene_change_candidates}.py`
 - `docs/experiments/ffmpeg-scene-change-events-2026-08-16.md`
+- `src/aegis360/{multi_signal_timeline,multi_signal_review_packet}.py`
+- `scripts/build_multi_signal_{timeline,review_packet}.py`
+- `docs/experiments/multi-signal-timeline-review-v2-2026-08-16.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
