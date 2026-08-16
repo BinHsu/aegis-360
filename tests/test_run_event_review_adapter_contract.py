@@ -9,6 +9,7 @@ class RunEventReviewAdapterContractTests(unittest.TestCase):
         self.assertIn('"-frames:v", "1"', source)
         self.assertIn('"-an"', source)
         self.assertIn("AEGIS_REVIEW_MEDIA_INDEX", source)
+        self.assertIn("validate_multi_signal_review_packet", source)
         self.assertNotIn("shell=True", source)
 
 

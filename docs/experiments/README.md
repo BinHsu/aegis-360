@@ -67,6 +67,8 @@ privacy-safe summaries when results exist.
   adapter handoff, failure propagation and verified temporary-media cleanup.
 - `ffmpeg-scene-change-events-2026-08-16.md`: privacy-safe scene-score peaks,
   visually rejected 4-second NMS, retained 10-second NMS and 5K VP9 limitation.
+- `multi-signal-timeline-review-v2-2026-08-16.md`: neutral signal fusion,
+  eight-frame cardinal review packets and verified transient-media cleanup.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

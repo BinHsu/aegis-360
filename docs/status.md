@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments
-to candidate availability. Cheap scene-change evidence retains nine plausible
-Old Ghost Road boundaries, zero Bellpuig candidates, and rejects repeated full
-decode of 5K Skiing. Multi-signal timelines and real labels are the next gate;
-continuous transitions remain a later limitation.
+to candidate availability. Timeline/Packet v2 schedule nine neutral Old Ghost
+Road scene boundaries as bounded eight-frame reviews without inventing roles;
+Bellpuig yields zero and 5K Skiing needs a proxy. Visual pre-review and real
+labels are next; continuous transitions remain a later limitation.

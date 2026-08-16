@@ -14,6 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from aegis360.event_review_packet import validate_event_review_packet  # noqa: E402
+from aegis360.multi_signal_review_packet import validate_multi_signal_review_packet  # noqa: E402
 from aegis360.review_media import (  # noqa: E402
     build_review_render_jobs,
     build_transient_media_index,
@@ -44,11 +45,16 @@ def main() -> int:
     packet = json.loads(args.packet_json.read_bytes())
     timeline = json.loads(timeline_bytes)
     grid = json.loads(grid_bytes)
-    validate_event_review_packet(
-        packet, timeline, grid,
-        timeline_sha256=hashlib.sha256(timeline_bytes).hexdigest(),
-        grid_sha256=hashlib.sha256(grid_bytes).hexdigest(),
-    )
+    validation_kwargs = {
+        "timeline_sha256": hashlib.sha256(timeline_bytes).hexdigest(),
+        "grid_sha256": hashlib.sha256(grid_bytes).hexdigest(),
+    }
+    if packet.get("schema_version") == "aegis360.event-review-packet.v1":
+        validate_event_review_packet(packet, timeline, grid, **validation_kwargs)
+    elif packet.get("schema_version") == "aegis360.event-review-packet.v2":
+        validate_multi_signal_review_packet(packet, timeline, grid, **validation_kwargs)
+    else:
+        parser.error("unsupported event-review packet schema")
     jobs = build_review_render_jobs(packet, grid, width=args.width, height=args.height)
     with tempfile.TemporaryDirectory(prefix="aegis-event-review.") as temporary:
         work = Path(temporary)
