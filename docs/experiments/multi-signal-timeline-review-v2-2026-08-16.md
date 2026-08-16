@@ -68,3 +68,23 @@ The grid is coverage geometry, not proof that every direction is useful.
 The contract passes its narrow gate. Visually pre-review the neutral packets,
 discard change caused only by shake/exposure, then request owner labels only
 for the surviving bounded set. Do not acquire or tune a model first.
+
+## Owner-review bundle preparation
+
+Agent review of all nine before/after cardinal contact sheets separates clear
+edits from within-scene motion. Three representative four-second silent 2x2
+cardinal videos were rendered with identical libx264 fast/CRF 18 settings:
+
+- event 0001, boundary case (group/ridge to scenic travel), video SHA-256
+  `1360c7b9d8bca78b2c0e7dac21db903abf0006ff6a7c6d46b1c2c235469bf099`;
+- event 0002, clear positive (hut exterior to interior), video SHA-256
+  `a03a2047facf6db80b5fffe92929993e86a5bcecf991c88d626ac5d25e776e8e`;
+- event 0006, within-scene motion case (forest/rider passage), video SHA-256
+  `49ba66d180d48af1104b7f586c2acb64a524e108e8a81d939982a25cd4c12039`.
+
+All are H.264 1280x720, 4.000 seconds, 100 frames and contain no audio stream.
+Their path-free traces bind timeline, grid and packet hashes. A second
+time-series contact-sheet inspection found the transitions perceptible and no
+obvious blocking, blur or projection defect. Temporary audit pixels were
+deleted. These three now require owner ground-truth labels before semantic
+adapter evaluation continues.

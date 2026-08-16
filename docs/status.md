@@ -195,6 +195,6 @@ abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments
 to candidate availability. Timeline/Packet v2 schedule nine neutral Old Ghost
-Road scene boundaries as bounded eight-frame reviews without inventing roles;
-Bellpuig yields zero and 5K Skiing needs a proxy. Visual pre-review and real
-labels are next; continuous transitions remain a later limitation.
+Road boundaries without inventing roles; Bellpuig yields zero and 5K Skiing
+needs a proxy. Pre-review retains positive 0002, motion 0006 and boundary 0001
+as equal-lineage clips. Owner labels are required; transitions remain later.
