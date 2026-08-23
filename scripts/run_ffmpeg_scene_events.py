@@ -30,7 +30,7 @@ def main() -> int:
     parser.add_argument("source_id")
     parser.add_argument("output_json", type=Path)
     parser.add_argument("--threshold", type=float, default=0.25)
-    parser.add_argument("--sample-fps", type=float, default=2.0)
+    parser.add_argument("--sample-fps", type=float, default=10.0)
     parser.add_argument("--proxy-width", type=int, default=320)
     args = parser.parse_args()
     if not args.source_video.is_file():

@@ -58,3 +58,29 @@ The signal passes only as a sparse boundary proposal. It is not motion climax,
 subject relevance or scene importance. Merge the nine Old Ghost Road points
 into a multi-signal timeline with neutral cardinal candidates next; do not
 infer editorial roles from scene score.
+
+## Full-context correction on 2026-08-23
+
+Owner review accepted the four-direction framing coverage but correctly found
+the four-second silent packets insufficient for story, chapter or tension
+labels. Agent review therefore compared the source over 30-second context,
+one-second local sequences and a whole-video five-second timeline.
+
+The source contains distinct cuts at about 53.0/58.8, 78.9/84.6,
+95.6/99.8/105.0 and 163.5/168.4 seconds. The former 10-second suppression can
+remove one real cut merely because another cut is nearby. The 168.4-second
+forest-to-waterfall transition also scores only 0.272 at 10 fps/320 pixels,
+so the former 0.4 floor drops a story-relevant boundary. Event 0002 at 84.5
+seconds is an exterior-to-interior chapter boundary; 53.0 and 163.5 are
+within-chapter rhythm/action cuts.
+
+The accepted candidate default is therefore floor 0.25 with only one-second
+local-peak suppression. It preserves cheap-signal recall and leaves chapter,
+rhythm and action classification to bounded semantic review. The 0.4/10-second
+artifacts above remain reproducible rejected evidence, not the active policy.
+
+The original 2 fps raw artifact also omitted the visible forest-to-waterfall
+cut. A bounded 10 fps/320-pixel replay detects it at 168.4 seconds with score
+0.272. The active raw-analysis default is therefore 10 fps pending the full
+source replay below; this changes proxy comparison cadence, not the bounded
+streaming or frame-retention contract.

@@ -19,8 +19,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("scene_events_json", type=Path)
     parser.add_argument("output_json", type=Path)
-    parser.add_argument("--score-floor", type=float, default=0.4)
-    parser.add_argument("--minimum-separation-seconds", type=float, default=10.0)
+    parser.add_argument("--score-floor", type=float, default=0.25)
+    parser.add_argument("--minimum-separation-seconds", type=float, default=1.0)
     args = parser.parse_args()
     if not args.scene_events_json.is_file():
         parser.error("scene events are missing")

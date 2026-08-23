@@ -27,6 +27,11 @@ Build the automatic director around a sparse, whole-video semantic hierarchy:
    detections/groups, tracking state, motion changes, scene changes and
    candidate-view availability.
 2. Merge those signals into a checksummed, path-free event timeline.
+   Cheap-signal filtering must favor recall: temporal suppression may merge
+   only local duplicate peaks, not discard distinct nearby cuts on the
+   assumption that a story has at most one event in a fixed interval.
+   Sampling cadence must be validated against source cuts; a cheap proxy may
+   reduce spatial resolution but must not knowingly stride over boundaries.
 3. At sparse event boundaries, generate bounded review packets containing
    before/during/after context, current view, declared candidate views and
    machine evidence. Do not sample a VLM on every frame.

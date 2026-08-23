@@ -9,9 +9,11 @@ from typing import Mapping
 
 def build_scene_change_candidates(
     scene_events: Mapping[str, object], *, scene_events_sha256: str,
-    score_floor: float = 0.4, minimum_separation_seconds: float = 10.0,
+    score_floor: float = 0.25, minimum_separation_seconds: float = 1.0,
 ) -> dict[str, object]:
-    if scene_events.get("schema_version") != "aegis360.ffmpeg-scene-events.v1" or re.fullmatch(r"[0-9a-f]{64}", scene_events_sha256 or "") is None:
+    accepted_schemas = {"aegis360.ffmpeg-scene-events.v1",
+                        "aegis360.ffmpeg-scene-event-pyramid.v1"}
+    if scene_events.get("schema_version") not in accepted_schemas or re.fullmatch(r"[0-9a-f]{64}", scene_events_sha256 or "") is None:
         raise ValueError("scene-change candidate input is invalid")
     if any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0 for value in (score_floor, minimum_separation_seconds)) or score_floor > 1:
         raise ValueError("scene-change candidate policy is invalid")
@@ -27,7 +29,7 @@ def build_scene_change_candidates(
         "input": {"scene_events_sha256": scene_events_sha256},
         "policy": {"score_floor": float(score_floor),
                    "minimum_separation_seconds": float(minimum_separation_seconds),
-                   "selection": "descending_score_temporal_nms_v1"},
+                   "selection": "high_recall_local_peak_nms_v2"},
         "candidates": [
             {"event_id": f"event:scene-change:{index:04d}",
              "timestamp_seconds": event["timestamp_seconds"],
@@ -36,7 +38,9 @@ def build_scene_change_candidates(
         ],
         "privacy": dict(scene_events["privacy"]),
         "limitations": [
-            "temporal suppression reduces duplicate review but does not establish importance",
+            "short-range temporal suppression removes duplicate peaks but does not establish importance",
+            "distinct nearby cuts remain eligible for semantic review",
+            "scores from different sampling cadences are ranking signals, not calibrated probabilities",
             "score floor and separation are tunable POC thresholds",
         ],
     }

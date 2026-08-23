@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments
-to candidate availability. Timeline/Packet v2 schedule nine neutral Old Ghost
-Road boundaries without inventing roles; Bellpuig yields zero and 5K Skiing
-needs a proxy. Pre-review retains positive 0002, motion 0006 and boundary 0001
-as equal-lineage clips. Owner labels are required; transitions remain later.
+to candidate availability. Owner review accepts cardinal coverage but rejects
+four silent seconds for story labels. Source context marks 84.6 as a chapter
+boundary, 53.0/163.5 as within-chapter cuts and 168.4 as a waterfall cut. The
+lossy policy is replaced by a 2+10 fps pyramid with 26 candidates/25 events.

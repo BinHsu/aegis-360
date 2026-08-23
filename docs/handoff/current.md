@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-16T16:08:00+08:00
+Updated: 2026-08-23T17:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f4ec2fc
-Remote status: `origin/main` is 6914b82; owner-review clips are committed locally
-Working tree at checkpoint: only this handoff metadata differs from baseline
+Baseline commit: 867fd61
+Remote status: `origin/main` is 867fd61; multi-cadence scene work is uncommitted
+Working tree at checkpoint: only the listed multi-cadence milestone differs
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is owner ground truth for three pre-screened scene-boundary clips.
+gate is bounded story context for high-recall scene events.
 
 ## Accepted evidence
 
@@ -108,18 +108,17 @@ spherical angular and cross-event repetition costs. It does not yet emit a
 continuous path. Global Camera Segments v1 covers the full window with primary
 and overlays a selected proposal only on exact timeline availability.
 
-FFmpeg scene evidence at 2 fps/320px plus score floor 0.4 and 10-second NMS
-retains nine visually plausible Old Ghost Road boundaries and zero Bellpuig
-candidates. Full 5K VP9 Skiing decode did not finish in the bounded session;
-use a reusable proxy or bounded window, not another full-decode retry.
+Owner review accepts the cardinal framing coverage of the neutral clips but
+correctly rejects four silent seconds as story or tension evidence. Source
+context classifies 84.6 seconds as an exterior/interior chapter boundary,
+53.0 and 163.5 as within-chapter cuts, and finds a waterfall cut at 168.4.
 
-Event Timeline v2 fuses overlapping cheap-signal review windows. Scene-bearing
-events keep all four declared candidates and no roles. Nine real Old Ghost Road
-events each produce an eight-frame before/after Packet v2. A real runner smoke
-test passes 8/8 and deletes its temporary media. Agent pre-review retains
-event 0002 as a clear cut, 0006 as within-scene motion and 0001 as a boundary
-case; all three equal-lineage four-second silent videos pass mechanical and
-visual checks.
+The former 2 fps/score-0.4/10-second NMS is rejected. A checksummed scene-event
+pyramid unions 2 and 10 fps evidence; floor 0.25 plus one-second local NMS
+retains 26 candidates and 25 fused events. It preserves both the 168.4-second
+waterfall cut and 222-second ending transition. ADR 0010 now requires cheap-
+signal recall and cadence validation. Story classification needs bounded
+local/global context, not isolated boundary frames.
 
 ## Held-out benchmark
 
@@ -131,15 +130,15 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; content baseline is `f4ec2fc` and remote is `6914b82`.
-- Only the handoff metadata should differ from the content baseline.
+- Expected branch: `main`; baseline and remote are `867fd61`.
+- Multi-cadence source, scripts, tests and docs are the expected dirty files.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 361 tests pass.
-- Scene-event/NMS targeted tests: 4 pass.
+- Previous full suite: 361 tests pass.
+- Scene pyramid/candidate/timeline/packet targeted tests: 11 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
@@ -157,12 +156,14 @@ in the benchmark manifest and experiment record.
 - Do not integrate the SmolVLM2 2.2B pairwise adapter or count its Hundra
   abstention as a pass; it failed the Gaudeamus positive.
 - Do not consume reaction-view-gain v1 for new plans; use provenance-complete v2.
+- Do not restore 2 fps alone, floor 0.4 or 10-second scene NMS; each loses
+  source-verified story boundaries.
 
 ## Pending
 
-- Push owner-review bundle checkpoint after its metadata commit.
-- Wait for owner labels on events 0001, 0002 and 0006; do not run or select a
-  semantic model before those labels are durable.
+- Commit/push the multi-cadence milestone after full-suite verification.
+- Build bounded scene-story packets with local context and closed labels;
+  preserve the existing reaction-semantic contract separately.
 
 ## Next commands
 
@@ -180,9 +181,9 @@ git status --short
 The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 
 - `outputs/scene-boundary-review/old-ghost-road-event-{0001,0002,0006}/`
-- `outputs/sound-events/hundra-full-apple-v1/events.json`
-- `outputs/reaction-intervals/hundra-full-apple-v1-threshold-p5/intervals.json`
-- `outputs/context-view-grids/hundra-210-226p5-declared-v1/grid.json`
+- `outputs/scene-events/old-ghost-road-{full-ffmpeg-v2-10fps,pyramid-v1}.json`
+- `outputs/scene-change-candidates/old-ghost-road-v5-pyramid-high-recall.json`
+- `outputs/event-timelines/old-ghost-road-multi-signal-v5-pyramid-high-recall/timeline.json`
 - `outputs/event-timelines/old-ghost-road-multi-signal-v2/timeline.json`
 - `outputs/event-review-packets/old-ghost-road-multi-signal-v2/event-multi-*.json`
 - `outputs/reaction-view-gain/{gaudeamus,hundra}-owner-v2/gain.json`
@@ -190,7 +191,6 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/reaction-preview/gaudeamus-full-{primary,planned}-540p-v8-gain-v2/`
 - `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v3-gain-v2/`
 - `outputs/reaction-pre-review/{gaudeamus-v8-gain-v2,hundra-v3-gain-v2}/report.json`
-- `outputs/reaction-view-gain/{gaudeamus,hundra}-smolvlm2-2p2b-pairwise-v1/gain.json`
 - `outputs/event-timelines/{gaudeamus-reaction-v1,hundra-reaction-v1}/timeline.json`
 - `outputs/event-review-packets/{gaudeamus-reaction-v1,hundra-reaction-v1}/event-reaction-*.json`
 
@@ -225,8 +225,8 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `src/aegis360/global_camera_segments.py`
 - `scripts/build_global_camera_segments.py`
 - `tests/test_global_camera_segments.py`
-- `src/aegis360/{scene_events,scene_change_candidates}.py`
-- `scripts/{run_ffmpeg_scene_events,build_scene_change_candidates}.py`
+- `src/aegis360/{scene_events,scene_event_pyramid,scene_change_candidates}.py`
+- `scripts/{run_ffmpeg_scene_events,build_scene_event_pyramid,build_scene_change_candidates}.py`
 - `docs/experiments/ffmpeg-scene-change-events-2026-08-16.md`
 - `src/aegis360/{multi_signal_timeline,multi_signal_review_packet}.py`
 - `scripts/build_multi_signal_{timeline,review_packet}.py`
