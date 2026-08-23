@@ -12,6 +12,8 @@ class BoundedStoryRenderTests(unittest.TestCase):
     def test_renderer_exposes_same_contract_fixed_baseline_mode(self):
         source = (ROOT / "scripts/render_bounded_story_segment_plan.py").read_text()
         self.assertIn('parser.add_argument("--fixed-baseline", action="store_true")', source)
+        self.assertIn('parser.add_argument("--allow-symbolic-baseline", action="store_true"', source)
+        self.assertIn("not args.allow_symbolic_baseline", source)
         self.assertIn('mode = "fixed_baseline" if args.fixed_baseline else "planned"', source)
         self.assertIn('policy["initial_candidate_id"]', source)
 

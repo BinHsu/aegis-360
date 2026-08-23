@@ -4,14 +4,13 @@ Status: Conversation-group and one reaction edit accepted; held-out reaction cut
 
 ## Current conclusion
 
-The repository has an executable offline pipeline skeleton for monoscopic
-equirectangular input: spherical geometry, bounded perception artifacts,
+The repository has an executable offline pipeline for monoscopic equirectangular
+input: spherical geometry, bounded perception artifacts,
 semantic detector adapters, tracking/lifecycle rules, an explainable greedy
 baseline, camera-path generation and FFmpeg rendering. The global planner and
 a useful end-to-end auto-directed result remain incomplete.
 
-The first rendered auto-directed candidates were rejected by owner review.
-Wider framing and gyro-free source-motion variants did not materially improve
+The first rendered candidates were rejected; wider framing and gyro-free variants did not improve
 comfort. A later bicycle plan created visible camera differentiation, but
 agent review rejected its near-field/ego-equipment subject before owner review.
 
@@ -197,4 +196,5 @@ switch, repetition and spherical costs, then clips full-window camera segments.
 Skiing A scores `1 / partial_focus`, then loses pairwise preference to baseline.
 Baseline's lift/skier cues and smoother transition are stronger; A is slightly
 abrupt though both remain acceptable. Closed gain evidence now makes A
-ineligible and retains baseline without making human review a product dependency.
+ineligible. Global DP rejects equal-utility 90-degree moves; the symbolic path
+had skipped costs and now requires an explicit non-production render opt-in.

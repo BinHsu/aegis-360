@@ -4,6 +4,7 @@ import sys
 import unittest
 import hashlib
 import json
+import math
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -71,6 +72,25 @@ class GlobalEventPlannerTests(unittest.TestCase):
         utilities = [utility("e0", 0, 10), utility("e1", 0, 10, eligible=False)]
         plan = self.plan(utilities, packets)
         self.assertEqual([row["selected_candidate_id"] for row in plan["decisions"]], [CURRENT, CURRENT])
+
+    def test_equal_utility_ninety_degree_switch_retains_current(self):
+        plan = self.plan([utility("e0", 2, 2)], [packet("e0", 10, 15)])
+        decision = plan["decisions"][0]
+        self.assertEqual(decision["selected_candidate_id"], CURRENT)
+        self.assertFalse(decision["proposed_eligible"])
+        self.assertAlmostEqual(decision["angular_distance_radians"], math.pi / 2)
+
+    def test_ninety_degree_switch_must_clear_advantage_and_transition_costs(self):
+        transition_cost = 2 * self.policy["switch_cost_each_way"] + (
+            2 * (math.pi / 2) * self.policy["angular_cost_per_radian_each_way"]
+        )
+        insufficient_gain = transition_cost - 0.01
+        plan = self.plan(
+            [utility("e0", 0, insufficient_gain)], [packet("e0", 10, 15)],
+        )
+        decision = plan["decisions"][0]
+        self.assertTrue(decision["proposed_eligible"])
+        self.assertEqual(decision["selected_candidate_id"], CURRENT)
 
     def test_overlap_and_policy_mutation_rejected(self):
         with self.assertRaises(ValueError):

@@ -3,14 +3,13 @@
 Updated: 2026-08-24T00:23:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 124d83d
-Remote status: `origin/main` is 124d83d before the gain-label milestone
-Working tree at checkpoint: segment-gain code/tests/current-state docs only
+Baseline commit: b92512a
+Remote status: `origin/main` is b92512a before the symbolic-render guard
+Working tree at checkpoint: symbolic-render guard/tests/current-state docs only
 
 ## Objective
 
-Build an offline, camera-agnostic 360-video auto-director for an ordinary
-viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
+Build an offline 360-video auto-director for ordinary viewers on the fanless M4/16 GB machine. The immediate
 gate is causal-continuity evidence before proposing another semantic switch.
 
 ## Accepted evidence
@@ -26,8 +25,7 @@ gate is causal-continuity evidence before proposing another semantic switch.
 
 ## Last completed milestone
 
-Candidate-scoped availability and relative editorial gain are now separate,
-closed evidence. Reaction plan v4 requires exact checksums for grid, roles,
+Candidate availability and editorial gain are separate closed evidence; plan v4 checks grid, roles,
 reaction intervals, candidate availability and reaction-view gain:
 
 - availability is bound to exact checksummed config and context grid;
@@ -42,8 +40,7 @@ reaction intervals, candidate availability and reaction-view gain:
 - nonzero source windows use absolute `atrim` boundaries;
 - legacy plan v1–v3 validation remains readable but cannot bypass v4 building.
 
-Gaudeamus `promote` reproduces the owner-accepted three segments. Hundra
-`abstain` produces one primary-only segment. Both renderer replays are decoded-
+Gaudeamus `promote` reproduces the accepted segments; Hundra `abstain` stays primary. Both are decoded-
 identical to their accepted references for video and audio.
 
 The new reaction pre-review gate rebuilds v4 evidence, checks equal-lineage
@@ -68,8 +65,7 @@ checksummed event timeline, bounded before/during/after semantic packets, then
 an explainable global planner with final authority. Per-frame VLM review and
 user approval of every event are rejected.
 
-Event Timeline v1 is implemented as an exact, checksummed derivation of the
-context-view grid, editorial roles, reaction intervals and candidate-scoped
+Event Timeline v1 derives from the grid, roles, reaction intervals and candidate-scoped
 availability. It emits stable reaction-candidate IDs, retains original and
 window-clipped boundaries, and records availability at onset and throughout
 the event. It contains no owner promote/abstain answer, geometry, paths,
@@ -88,8 +84,7 @@ no media or answer and requires temporary rendered media to be deleted after
 adapter completion. Three real packets reproduce the expected availability
 differences without leaking owner labels.
 
-The transient runner revalidates lineage, resolves only grid-owned geometry,
-renders no more than ten silent 384x216 frames, invokes an argv-only adapter
+The transient runner validates lineage/geometry, renders at most ten silent 384x216 frames, invokes an adapter
 and always leaves the temporary-directory scope afterward. A real Gaudeamus
 run produced seven nonempty frames in 0.51 seconds; both a mistaken diagnostic
 failure and the corrected pass cleaned their temporary media.
@@ -160,6 +155,11 @@ full-intent communication does not. Baseline then wins pairwise direction and
 watchability due to lift/skier causal cues and smoother transition. Generic
 segment gain marks A ineligible and maps deterministically to baseline.
 
+Global DP rejects equal-utility 90-degree proposals and gains unable to repay
+the 1.0 fixed plus roughly 0.314 angular round-trip cost. Skiing A bypassed it
+through the no-cost bounded story planner. That plan now declares
+`production_eligible: false`; rendering requires `--allow-symbolic-baseline`.
+
 ## Held-out benchmark
 
 Hundra is a checksummed CC BY-SA 4.0 1920x960 ERP held-out source. Its
@@ -170,8 +170,8 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `124d83d`.
-- This checkpoint adds closed generic segment editorial-gain evidence.
+- Expected branch: `main`; milestone parent is `b92512a`.
+- This checkpoint prevents symbolic no-cost plans from silent promotion.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 

@@ -36,6 +36,8 @@ def main() -> int:
     parser.add_argument("--width", type=int, default=960)
     parser.add_argument("--height", type=int, default=540)
     parser.add_argument("--fixed-baseline", action="store_true")
+    parser.add_argument("--allow-symbolic-baseline", action="store_true",
+                        help="render a planned symbolic experiment without numeric costs")
     args = parser.parse_args()
     paths = [args.source_video, args.segment_timeline_json, args.constraints_json,
              args.grid_json, args.policy_json, args.plan_json, *args.relevance]
@@ -53,6 +55,11 @@ def main() -> int:
         relevance_sha256s=[digest(raw) for raw in relevance_raw],
         grid_sha256=digest(raws[2]), policy_sha256=digest(raws[3]),
     )
+    if not args.fixed_baseline and not args.allow_symbolic_baseline:
+        parser.error(
+            "planned symbolic output is not production-eligible; "
+            "pass --allow-symbolic-baseline only for an explicit experiment"
+        )
     render_plan = copy.deepcopy(plan)
     mode = "fixed_baseline" if args.fixed_baseline else "planned"
     if args.fixed_baseline:

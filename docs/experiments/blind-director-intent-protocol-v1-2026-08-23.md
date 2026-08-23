@@ -76,3 +76,12 @@ slightly abrupt, though both clips remained acceptable and human-feeling.
 hashes. Its closed decision is `retain_baseline`; candidate eligibility is
 false for stronger causal cues, smoother transition, no preference gain and an
 abrupt switch. This is a benchmark negative for forced semantic reframing.
+
+The failure was an integration-path failure, not evidence that ordinary camera
+motion is undesirable. Candidate A came from the bounded symbolic story
+planner, which can switch to a stable primary at a chapter boundary but applies
+no numeric transition cost. Under the existing global-DP policy, an otherwise
+equal 90-degree cut-away-and-return is rejected: it incurs 1.0 fixed cost plus
+approximately 0.314 angular cost, after first needing 0.5 minimum advantage.
+The renderer now requires an explicit symbolic-experiment opt-in; such output
+cannot silently stand in for a production-planner candidate.

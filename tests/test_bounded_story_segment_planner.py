@@ -66,6 +66,7 @@ class BoundedStorySegmentPlannerTests(unittest.TestCase):
                          ["context:cardinal:0", "context:cardinal:0", proposed])
         self.assertEqual(value["decisions"][1]["reason"], "continuity_keeps_usable_current")
         self.assertFalse(value["planner_authority"]["numeric_costs_applied"])
+        self.assertFalse(value["planner_authority"]["production_eligible"])
 
     def test_abstain_unreviewed_and_aligned_window_retain(self):
         value = self.plan([self.relevance("s1", "context:cardinal:1", "abstain")],

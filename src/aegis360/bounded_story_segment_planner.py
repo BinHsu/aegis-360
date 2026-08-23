@@ -133,7 +133,8 @@ def plan_bounded_story_segments(
         "policy_id": policy["policy_id"], "decisions": decisions,
         "planner_authority": {"candidate_selected": True,
                               "numeric_costs_applied": False,
-                              "renderer_command_emitted": False},
+                              "renderer_command_emitted": False,
+                              "production_eligible": False},
         "limitations": [
             "this is a bounded symbolic integration baseline, not the production global DP",
             "unreviewed and abstained segments retain the current candidate",

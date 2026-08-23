@@ -85,7 +85,10 @@ missing/abstained relevance retains the current view, continuity keeps a usable
 current candidate, chapter change may adopt a stable primary, and closing
 holds. It applies no numeric cost and cannot support footage outside its exact
 segment-aligned window. The production planner remains the global DP required
-by ADR 0006.
+by ADR 0006. Its plan therefore declares `production_eligible: false`, and its
+renderer requires an explicit `--allow-symbolic-baseline` experiment opt-in
+for planned output. A chapter boundary and stable primary alone cannot promote
+a production candidate without numeric advantage and transition costs.
 
 ## Chapter map before temporal reordering
 
