@@ -114,3 +114,10 @@ calibrated evidence hash, at least two chapters and a later destination
 chapter. Abstention or missing destination returns `eligible: false`. A pass
 only permits the next planner to consider one prefix; it still selects no
 interval, view, transition or renderer command.
+
+Relative gain must also exist outside reaction-specific edits. The generic
+`aegis360.segment-editorial-gain.v1` binds an exact candidate/baseline media
+pair to closed human, agent or local-model evidence. `retain_baseline` requires
+explicit no-preference-gain evidence and makes the candidate ineligible. It is
+a benchmark label boundary, not a production human-approval dependency or a
+substitute for causal-continuity signals in the automatic utility model.

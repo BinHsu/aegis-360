@@ -65,3 +65,14 @@ response artifact SHA is
 `035798c1828094c2db50a8f78c662835e7c6f2013a1771985f0c521f85a5a833`.
 This supports protocol usefulness and edit legibility, not full-intent
 communication or planner accuracy.
+
+After the blind response was frozen and the key opened, the owner viewed the
+same-contract baseline second. Baseline won both perceived direction and
+natural/watchable preference because the lift and skiers established stronger
+action expectations and the transition was smoother. Candidate A's switch was
+slightly abrupt, though both clips remained acceptable and human-feeling.
+
+`aegis360.segment-editorial-gain.v1` binds that result to the exact two media
+hashes. Its closed decision is `retain_baseline`; candidate eligibility is
+false for stronger causal cues, smoother transition, no preference gain and an
+abrupt switch. This is a benchmark negative for forced semantic reframing.

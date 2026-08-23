@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-The sealed Skiing intent pilot scores `1 / partial_focus`, confusion false.
-Owner identified skiing, scenery, other skiers and expected closer action, but
-not the hidden gathering→terrain→shared-departure relationship. The edit is
-legible and acceptable, but specific director intent remains under-communicated.
+Skiing A scores `1 / partial_focus`, then loses pairwise preference to baseline.
+Baseline's lift/skier cues and smoother transition are stronger; A is slightly
+abrupt though both remain acceptable. Closed gain evidence now makes A
+ineligible and retains baseline without making human review a product dependency.

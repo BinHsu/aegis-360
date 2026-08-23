@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-24T00:12:00+08:00
+Updated: 2026-08-24T00:23:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f0253dc
-Remote status: `origin/main` is f0253dc before the blind-result checkpoint
-Working tree at checkpoint: blind-result/current-state docs only
+Baseline commit: 124d83d
+Remote status: `origin/main` is 124d83d before the gain-label milestone
+Working tree at checkpoint: segment-gain code/tests/current-state docs only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is whether to revise partial intent or compare its hidden baseline.
+gate is causal-continuity evidence before proposing another semantic switch.
 
 ## Accepted evidence
 
@@ -156,7 +156,9 @@ A 35-second neutral Skiing pilot and hidden baseline share exact contracts.
 The sealed-key result is `1 / partial_focus`, confusion false: owner saw
 skiing, scenery, other skiers and expected closer action, but not the hidden
 gathering-to-terrain/shared-departure relationship. Edit legibility passes;
-full-intent communication does not.
+full-intent communication does not. Baseline then wins pairwise direction and
+watchability due to lift/skier causal cues and smoother transition. Generic
+segment gain marks A ineligible and maps deterministically to baseline.
 
 ## Held-out benchmark
 
@@ -168,14 +170,14 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `f0253dc`.
-- This checkpoint records the frozen blind response and sealed-key adjudication.
+- Expected branch: `main`; milestone parent is `124d83d`.
+- This checkpoint adds closed generic segment editorial-gain evidence.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 399 tests pass.
+- `python3 -m unittest discover -s tests -q`: 401 tests pass.
 - Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
@@ -199,8 +201,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Choose the next evidence path: revise the partial-intent edit or reveal and
-  compare its same-contract baseline as a separate preference question.
+- Do not make another Skiing switch until an explainable causal-continuity
+  signal can preserve lift/skier expectations as well as transition smoothness.
 
 ## Next commands
 
@@ -228,11 +230,9 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 
 - `docs/adr/{0010-sparse-event-semantic-planning,0011-fail-closed-chapter-aware-foreshadow}.md`
 - `docs/design/event-semantic-evidence.md`
-- `src/aegis360/{story_segment_timeline,story_segment_review_packet,segment_view_relevance}.py`
-- `docs/experiments/story-segment-view-relevance-v1-2026-08-23.md`
 - `src/aegis360/{whole_film_chapter_map,chapter_map_foreshadow_eligibility}.py`
 - `scripts/{build_whole_film_chapter_map,assess_chapter_map_foreshadow}.py`
-- `config/chapter-map-foreshadow-policy-v1.json`
+- `src/aegis360/segment_editorial_gain.py`, `scripts/bind_segment_editorial_gain.py`, `tests/test_segment_editorial_gain.py`
 - `docs/experiments/whole-film-chapter-map-v1-2026-08-23.md`
 - `src/aegis360/scene_boundary_story_packet.py`, `scripts/build_scene_boundary_story_packet.py`
 - `src/aegis360/prefix_foreshadow_plan.py`, `scripts/plan_prefix_foreshadow.py`
