@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T19:31:00+08:00
+Updated: 2026-08-23T19:43:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 010c701
-Remote status: `origin/main` is 010c701 before the exact-signal milestone
-Working tree at checkpoint: exact-signal packet milestone delta only
+Baseline commit: d9cd146
+Remote status: `origin/main` is d9cd146 before this review checkpoint
+Working tree at checkpoint: current-state docs only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is source-context disposition of all 26 retained scene signals.
+gate is owner review of four uncertain coarse chapter boundaries.
 
 ## Accepted evidence
 
@@ -148,7 +148,9 @@ pass only permits planning and selects no interval, view or renderer command.
 No complete Old Ghost Road map has been claimed. Exact-signal story packet v1
 now separates the fused 24.5/25.9-second boundaries while retaining six bounded
 cardinal composites and transient deletion. All 26 external JSON manifests
-exist without pixels; 21 signals still need semantic disposition.
+exist without pixels. A coarse eight-chapter agent map passes completeness but
+its qualification abstains, so eligibility is false. A no-reencode MKV exposes
+the proposed boundaries as IINA chapter markers for owner review.
 
 ## Held-out benchmark
 
@@ -160,8 +162,8 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `8ca4b3b`.
-- This checkpoint adds the candidate-free foreshadow-eligibility gate.
+- Expected branch: `main`; milestone parent is `d9cd146`.
+- This checkpoint records the owner chapter-boundary review gate.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
@@ -191,8 +193,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Commit/push the exact-signal story packet milestone.
-- Review and disposition 21 missing signals before building any full map.
+- Owner reviews proposed boundaries at 43.1, 121.6, 157.5 and 174.4 seconds.
+- Keep qualification abstained and chronology enabled until that review.
 
 ## Next commands
 
@@ -211,14 +213,12 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 
 - `outputs/scene-change-candidates/old-ghost-road-v5-pyramid-high-recall.json`
 - `outputs/event-timelines/old-ghost-road-multi-signal-v5-pyramid-high-recall/timeline.json`
-- `outputs/scene-story-review-packets/old-ghost-road-pyramid-v1/event-multi-*.json`
-- `outputs/scene-story-semantics/old-ghost-road-agent-v1/event-multi-*.json`
-- `outputs/story-planner-constraints/old-ghost-road-agent-v1/constraints.json`
 - `outputs/story-segment-timelines/old-ghost-road-pyramid-v1/timeline.json`
 - `outputs/story-segment-review-packets/old-ghost-road-pyramid-v1/*.json`
 - `outputs/segment-view-relevance/old-ghost-road-agent-v1/*.json`
 - `outputs/bounded-story-segment-plans/old-ghost-road-*/plan.json`
 - `outputs/bounded-story-segment-renders/old-ghost-road-*/{video.mp4,trace.json}`
+- `outputs/chapter-map-reviews/old-ghost-road-agent-v1/original-with-agent-chapters.mkv`
 
 ## Milestone repository files
 

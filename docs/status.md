@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-Exact-signal story packets now disambiguate all 26 Old Ghost Road boundaries,
-including the fused 24.5/25.9-second event, with bounded transient review media.
-Twenty-one signals still lack dispositions; no complete or qualified chapter
-map exists, so chronology still wins.
+An eight-chapter coarse agent map accounts all 26 signals but remains
+unqualified; eligibility correctly returns false. A no-reencode original MKV
+with chapter markers is ready for owner boundary review. Chronology remains
+the only authorized temporal structure.
