@@ -57,3 +57,21 @@ causes the A-like switch; adding observed same-view preservation retains the
 baseline-like path. This proves DP integration, not Skiing semantics. A real
 Skiing plan still awaits complete per-segment relevance utility, so this
 checkpoint authorizes no render.
+
+## Real planner replay
+
+Independent exact-sample review abstains on segment 0000: its 382/385-second
+lift and staging content becomes open alpine terrain by 388 seconds, so one
+segment-wide primary would conflate two states. Segment 0001 has cardinal 0 as
+the stable clear primary; cardinal 1 is low and cardinals 2/3 are supporting.
+The resulting real v2 plan retains cardinal 0 for both segments. Its objective
+is 5.5: 3.5 segment utility plus 2.0 continuity utility. A zero-continuity
+replay retains the identical path at objective 3.5. Thus continuity supports
+the result but is not decision-critical in this replay.
+
+The planner SHA is
+`b3ab2344e905190acd3ed2cdff9b2320c1f3abaec47906b0f3e079377f3ae3bb`.
+Transient six-sample audit pixels were deleted. A 385.5–387.5-second local
+probe finds a continuous rapid semantic transition, not a hard cut; the old
+hand-authored 390-second boundary is late. Corrected boundary evidence and
+rebuilt lineage are required before another production-eligible render.

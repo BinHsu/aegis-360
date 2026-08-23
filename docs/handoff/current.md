@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-08-24T06:05:00+08:00
+Updated: 2026-08-24T06:10:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 224f520
@@ -10,7 +10,7 @@ Working tree at checkpoint: planner v2, CLI, tests and current evidence docs onl
 ## Objective
 
 Build an offline 360-video auto-director for ordinary viewers on the fanless M4/16 GB machine. The immediate
-gate is complete Skiing segment relevance before proposing another render.
+gate is corrected Skiing semantic-boundary lineage before another render.
 
 ## Accepted evidence
 
@@ -158,7 +158,7 @@ segment gain marks A ineligible and maps deterministically to baseline.
 Persistent story DP requires complete ordered per-segment utility. It retains
 DP state on abstain/closing, and charges one fixed plus spherical-angular cost
 only when the persistent candidate changes. Equal-utility and cost-deficient
-90-degree switches fail. Skiing continuity scores 0→0 at 2.0 and A's 3→0 at 0.0; planner v2 consumes it and its synthetic path ablation passes.
+90-degree switches fail. Real Skiing v2 retains c0/c0 with or without continuity; continuity raises objective 3.5→5.5 but is not decision-critical.
 
 ## Held-out benchmark
 
@@ -201,8 +201,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Build complete closed Skiing segment relevance and run the real v2 plan;
-  do not render from synthetic-ablation evidence.
+- Replace the late 390-second Skiing boundary near the continuous 385.5–386-second
+  semantic transition; rebuild evidence and do not render stale lineage.
 
 ## Next commands
 
