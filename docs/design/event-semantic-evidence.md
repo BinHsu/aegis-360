@@ -167,3 +167,11 @@ from observation and the next candidate's to observation. Same-candidate
 preservation applies only when IDs match; cross-candidate preservation is zero
 because it was not observed. Abstention emits a complete zero matrix. This
 artifact applies no transition cost and selects no candidate or transition.
+
+`aegis360.continuous-onset-candidates.v1` is a separate review-only proposal
+for continuous changes that hard-cut scores miss. It consumes checksummed,
+path-free frame-difference samples plus a versioned hysteresis policy and emits
+an uncertainty interval only after a quiet baseline followed by sustained high
+values. It explicitly emits neither a hard-cut claim nor a story boundary and
+is never production eligible. Semantic corroboration and a new typed timeline
+remain separate future authorities.

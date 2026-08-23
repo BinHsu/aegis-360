@@ -75,3 +75,8 @@ Transient six-sample audit pixels were deleted. A 385.5–387.5-second local
 probe finds a continuous rapid semantic transition, not a hard cut; the old
 hand-authored 390-second boundary is late. Corrected boundary evidence and
 rebuilt lineage are required before another production-eligible render.
+
+The repository now has a pure, closed continuous-onset candidate contract for
+this class of signal. Synthetic tests cover sustained onset, hysteresis, single
+spikes, ordering, cadence, privacy and exact rebuild. It has no media runner or
+calibrated Skiing policy yet and cannot alter the timeline.

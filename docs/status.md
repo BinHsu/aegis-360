@@ -197,4 +197,4 @@ Skiing A scores `1 / partial_focus`, then loses pairwise preference to baseline.
 Baseline's lift/skier cues and smoother transition are stronger; A is slightly
 abrupt. Numeric persistent story DP now rejects no-gain/cost-deficient switches,
 requires complete utility; closed narrative edges bind adjacent packets/candidates without utility;
-Skiing real v2 keeps c0 in both segments; zero-continuity keeps the same path. The late 390-second semantic boundary now gates rendering.
+Skiing real v2 keeps c0/c0 with or without continuity. A review-only onset contract exists; acquisition and typed boundary evidence gate rendering.
