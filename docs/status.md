@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-Chapter-map v1 accounts every retained signal. A separate exact-lineage gate
-now requires independent qualification, two chapters and a later destination
-before permitting foreshadow planning; it selects no interval or view. Current
-Old Ghost Road evidence is incomplete, so chronology still wins.
+Exact-signal story packets now disambiguate all 26 Old Ghost Road boundaries,
+including the fused 24.5/25.9-second event, with bounded transient review media.
+Twenty-one signals still lack dispositions; no complete or qualified chapter
+map exists, so chronology still wins.

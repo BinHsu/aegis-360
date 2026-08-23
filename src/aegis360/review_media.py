@@ -48,6 +48,7 @@ def build_story_review_render_jobs(
 ) -> list[dict[str, object]]:
     """Resolve one composite job per story sample, with four owned viewports."""
     accepted = {"aegis360.scene-story-review-packet.v1",
+                "aegis360.scene-boundary-story-review-packet.v1",
                 "aegis360.story-segment-review-packet.v1"}
     if packet.get("schema_version") not in accepted:
         raise ValueError("story review packet schema is invalid")
@@ -79,8 +80,9 @@ def build_story_review_render_jobs(
             "width": width * 2, "height": height * 2,
             "filename": f"{sample['sample_id'].replace(':', '-')}-cardinal-contact.png",
         })
-    minimum, maximum = ((2, 6) if packet["schema_version"] ==
-                        "aegis360.scene-story-review-packet.v1" else (3, 3))
+    minimum, maximum = ((2, 6) if packet["schema_version"] in {
+                        "aegis360.scene-story-review-packet.v1",
+                        "aegis360.scene-boundary-story-review-packet.v1"} else (3, 3))
     if not minimum <= len(jobs) <= maximum or len(jobs) * 4 > maximum * 4:
         raise ValueError("story review jobs exceed the bounded contract")
     return jobs

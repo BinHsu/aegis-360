@@ -75,6 +75,8 @@ privacy-safe summaries when results exist.
   scopes, three-composite packets and observed/abstained candidate evidence.
 - `whole-film-chapter-map-v1-2026-08-23.md`: exact signal-level chapter
   accounting before any temporal-reordering authorization.
+- `exact-signal-story-review-v1-2026-08-23.md`: disambiguated six-anchor story
+  packets for every retained scene signal.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T19:12:00+08:00
+Updated: 2026-08-23T19:31:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 8ca4b3b
-Remote status: `origin/main` is 8ca4b3b before the eligibility milestone
-Working tree at checkpoint: foreshadow-eligibility milestone delta only
+Baseline commit: 010c701
+Remote status: `origin/main` is 010c701 before the exact-signal milestone
+Working tree at checkpoint: exact-signal packet milestone delta only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is bounded prefix/payoff selection after structural eligibility.
+gate is source-context disposition of all 26 retained scene signals.
 
 ## Accepted evidence
 
@@ -145,7 +145,10 @@ event/signal/timestamp and derives gap-free chapters. The independent
 eligibility gate requires exact-map qualification, at least two chapters and a
 later destination. Abstain or missing destination returns closed failure; a
 pass only permits planning and selects no interval, view or renderer command.
-No complete Old Ghost Road map has been claimed.
+No complete Old Ghost Road map has been claimed. Exact-signal story packet v1
+now separates the fused 24.5/25.9-second boundaries while retaining six bounded
+cardinal composites and transient deletion. All 26 external JSON manifests
+exist without pixels; 21 signals still need semantic disposition.
 
 ## Held-out benchmark
 
@@ -188,9 +191,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Commit/push the chapter-map eligibility milestone.
-- Define bounded prefix/payoff interval evidence before rendering any
-  non-chronological candidate.
+- Commit/push the exact-signal story packet milestone.
+- Review and disposition 21 missing signals before building any full map.
 
 ## Next commands
 
@@ -222,11 +224,6 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 
 - `docs/adr/{0010-sparse-event-semantic-planning,0011-fail-closed-chapter-aware-foreshadow}.md`
 - `docs/design/event-semantic-evidence.md`
-- `src/aegis360/{scene_story_packet,scene_story_semantics}.py`
-- `scripts/{build_scene_story_packet,bind_scene_story_semantics}.py`
-- `src/aegis360/story_planner_constraints.py`
-- `config/story-planner-constraint-policy-v1.json`
-- `scripts/build_story_planner_constraints.py`
 - `src/aegis360/{story_segment_timeline,story_segment_review_packet,segment_view_relevance}.py`
 - `docs/experiments/story-segment-view-relevance-v1-2026-08-23.md`
 - `src/aegis360/{bounded_story_segment_planner,bounded_story_render}.py`
@@ -235,6 +232,9 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `scripts/{build_whole_film_chapter_map,assess_chapter_map_foreshadow}.py`
 - `config/chapter-map-foreshadow-policy-v1.json`
 - `docs/experiments/whole-film-chapter-map-v1-2026-08-23.md`
+- `src/aegis360/scene_boundary_story_packet.py`
+- `scripts/build_scene_boundary_story_packet.py`
+- `docs/experiments/exact-signal-story-review-v1-2026-08-23.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
