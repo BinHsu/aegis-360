@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T20:27:00+08:00
+Updated: 2026-08-24T00:12:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 0072c12
-Remote status: `origin/main` is 0072c12 before the blind-protocol milestone
-Working tree at checkpoint: blind-intent protocol/current-state docs only
+Baseline commit: f0253dc
+Remote status: `origin/main` is f0253dc before the blind-result checkpoint
+Working tree at checkpoint: blind-result/current-state docs only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is one non-leading hidden-intent response on neutral media A.
+gate is whether to revise partial intent or compare its hidden baseline.
 
 ## Accepted evidence
 
@@ -152,9 +152,11 @@ exist without pixels. Owner accepts the unchanged original's eight marked
 chapters as natural. A new source-verified lineage passes eligibility while
 preserving the prior abstain artifact. Prefix v1 is perceptually rejected; v2
 is intelligible only after intent disclosure and cannot count as blind proof.
-A new 35-second neutral Skiing pilot and hidden baseline share exact codec,
-dimensions, duration and zero start. An independent agent sealed the scoring
-key at SHA `576029f793a6e0a6898fcc3abad0be14ec5c36c0eb52491b070ba1ca6db2a41f`.
+A 35-second neutral Skiing pilot and hidden baseline share exact contracts.
+The sealed-key result is `1 / partial_focus`, confusion false: owner saw
+skiing, scenery, other skiers and expected closer action, but not the hidden
+gathering-to-terrain/shared-departure relationship. Edit legibility passes;
+full-intent communication does not.
 
 ## Held-out benchmark
 
@@ -166,8 +168,8 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `0072c12`.
-- This checkpoint adds the non-leading blind-intent protocol and sealed pilot.
+- Expected branch: `main`; milestone parent is `f0253dc`.
+- This checkpoint records the frozen blind response and sealed-key adjudication.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
@@ -197,8 +199,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Owner watches neutral media A once, without baseline, and answers the four
-  uncontaminated open questions before the hidden key is opened.
+- Choose the next evidence path: revise the partial-intent edit or reveal and
+  compare its same-contract baseline as a separate preference question.
 
 ## Next commands
 
@@ -218,9 +220,7 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/scene-change-candidates/old-ghost-road-v5-pyramid-high-recall.json`
 - `outputs/event-timelines/old-ghost-road-multi-signal-v5-pyramid-high-recall/timeline.json`
 - `outputs/story-segment-timelines/old-ghost-road-pyramid-v1/timeline.json`
-- `outputs/story-segment-review-packets/old-ghost-road-pyramid-v1/*.json`
 - `outputs/segment-view-relevance/old-ghost-road-agent-v1/*.json`
-- `outputs/bounded-story-segment-plans/old-ghost-road-*/plan.json`
 - `outputs/blind-intent-pilots/skiing-a-v1/{blind-intent-A,baseline}.mp4`
 - `outputs/chapter-map-reviews/old-ghost-road-agent-v1/original-with-agent-chapters.mkv`
 

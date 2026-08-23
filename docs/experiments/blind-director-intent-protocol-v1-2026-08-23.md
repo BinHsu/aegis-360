@@ -48,3 +48,20 @@ Genre/category inference is therefore contaminated and excluded. Focus,
 relationship, expectation and confusion remain hidden-intent questions. This
 hand-authored clip validates the protocol only; it is not automatic-planner
 accuracy evidence.
+
+## Pilot result
+
+The independent key was sealed before the response at SHA
+`576029f793a6e0a6898fcc3abad0be14ec5c36c0eb52491b070ba1ca6db2a41f`.
+After one uninterrupted viewing, the owner identified skiing, snow scenery,
+the progression toward other skiers and an expectation of more direct skiing
+action. No bad join or temporal confusion was reported, and the edit was
+acceptable.
+
+The frozen key required a people/gathering-to-terrain relationship plus an
+expected shared departure for score 2. The response did not infer that full
+relationship, so the result is `1 / partial_focus`, confusion false. The exact
+response artifact SHA is
+`035798c1828094c2db50a8f78c662835e7c6f2013a1771985f0c521f85a5a833`.
+This supports protocol usefulness and edit legibility, not full-intent
+communication or planner accuracy.

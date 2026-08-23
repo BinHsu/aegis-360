@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-Old Ghost Road is contaminated for blind intent review. A neutral 35-second
-Skiing pilot and same-contract hidden baseline pass pre-review; an independent
-agent sealed the intent key at SHA `576029f7…2a41f`. Genre is contaminated,
-but focus, shot relationship, expectation and confusion remain blind.
+The sealed Skiing intent pilot scores `1 / partial_focus`, confusion false.
+Owner identified skiing, scenery, other skiers and expected closer action, but
+not the hidden gathering→terrain→shared-departure relationship. The edit is
+legible and acceptable, but specific director intent remains under-communicated.
