@@ -11,7 +11,9 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from aegis360.context_views import build_context_view_grid
 from aegis360.global_story_segment_planner import (plan_global_story_segments,
-                                                   validate_global_story_segment_plan)
+                                                   plan_global_story_segments_v2,
+                                                   validate_global_story_segment_plan,
+                                                   validate_global_story_segment_plan_v2)
 
 
 def digest(value):
@@ -81,6 +83,44 @@ class GlobalStorySegmentPlannerTests(unittest.TestCase):
             grid_sha256=digest(self.grid), policy_sha256=digest(self.policy),
         )
 
+    def continuity(self, same_bonus=0.0):
+        ids = [item["candidate_id"] for item in self.grid["candidates"]]
+        edges = []
+        for left, right in zip(self.timeline["segments"], self.timeline["segments"][1:]):
+            transitions = []
+            for previous in ids:
+                for following in ids:
+                    value = same_bonus if previous == following else 0.0
+                    transitions.append({
+                        "previous_candidate_id": previous,
+                        "next_candidate_id": following,
+                        "components": {"from_cue_support": 0.0,
+                                       "to_cue_support": 0.0,
+                                       "same_candidate_preservation": value},
+                        "total": value,
+                    })
+            edges.append({"from_segment_id": left["segment_id"],
+                          "to_segment_id": right["segment_id"],
+                          "evidence_status": "observed",
+                          "transitions": transitions})
+        return {
+            "schema_version": "aegis360.continuity-transition-utility.v1",
+            "source_id": "fixture",
+            "inputs": {"context_view_grid_sha256": digest(self.grid)},
+            "edge_utilities": edges,
+        }
+
+    def plan_v2(self, utilities, continuity):
+        return plan_global_story_segments_v2(
+            self.timeline, self.constraints, utilities, continuity,
+            self.grid, self.policy,
+            timeline_sha256=digest(self.timeline),
+            constraints_sha256=digest(self.constraints),
+            utility_sha256s=[digest(value) for value in utilities],
+            continuity_utility_sha256=digest(continuity),
+            grid_sha256=digest(self.grid), policy_sha256=digest(self.policy),
+        )
+
     def test_equal_utility_ninety_degree_view_retains_current(self):
         utilities = self.complete([self.utility("s1", 2, 2)])
         value = self.plan(utilities)
@@ -143,6 +183,40 @@ class GlobalStorySegmentPlannerTests(unittest.TestCase):
         missing_constraint["constraints"].pop()
         with self.assertRaises(ValueError):
             self.plan(self.complete(), constraints=missing_constraint)
+
+    def test_v2_continuity_ablation_changes_a_like_switch_to_baseline(self):
+        utilities = self.complete([self.utility("s1", 0, 2)])
+        zero = self.continuity(same_bonus=0)
+        observed = self.continuity(same_bonus=2)
+        a_like = self.plan_v2(utilities, zero)
+        baseline_like = self.plan_v2(utilities, observed)
+        self.assertEqual(a_like["schema_version"],
+                         "aegis360.global-story-segment-plan.v2")
+        self.assertEqual(a_like["decisions"][1]["selected_candidate_id"],
+                         self.proposed)
+        self.assertEqual(baseline_like["decisions"][1]["selected_candidate_id"],
+                         self.current)
+        self.assertTrue(baseline_like["planner_authority"]["continuity_utility_applied"])
+        validate_global_story_segment_plan_v2(
+            baseline_like, self.timeline, self.constraints, utilities, observed,
+            self.grid, self.policy,
+            timeline_sha256=digest(self.timeline),
+            constraints_sha256=digest(self.constraints),
+            utility_sha256s=[digest(value) for value in utilities],
+            continuity_utility_sha256=digest(observed),
+            grid_sha256=digest(self.grid), policy_sha256=digest(self.policy),
+        )
+
+    def test_v2_rejects_tampered_matrix_and_edge_mismatch(self):
+        utilities = self.complete([self.utility("s1", 0, 2)])
+        tampered = self.continuity()
+        tampered["edge_utilities"][0]["transitions"][0]["total"] = 1
+        with self.assertRaises(ValueError):
+            self.plan_v2(utilities, tampered)
+        mismatch = self.continuity()
+        mismatch["edge_utilities"][0]["to_segment_id"] = "s2"
+        with self.assertRaises(ValueError):
+            self.plan_v2(utilities, mismatch)
 
 
 if __name__ == "__main__":

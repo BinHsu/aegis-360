@@ -51,6 +51,9 @@ External path: `outputs/causal-continuity/skiing-a-v1/`. SHA-256:
 - observed evidence: `bc34aac9c5395c1cee62243a6affeb4d671998d844c0a1c3d49ef1cefee55858`;
 - transition utility: `e841501499986c6e150cef924cb06651cf9c37d415872225290d716c13a942d5`.
 
-The matrix is not yet consumed by global story DP and authorizes no render.
-Next is exact planner integration plus an ablation showing that removing this
-component erases the expected baseline advantage.
+Global story DP v2 now consumes the exact matrix. A closed synthetic ablation
+shows the intended wiring: with a zero matrix the competing segment utility
+causes the A-like switch; adding observed same-view preservation retains the
+baseline-like path. This proves DP integration, not Skiing semantics. A real
+Skiing plan still awaits complete per-segment relevance utility, so this
+checkpoint authorizes no render.

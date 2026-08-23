@@ -141,9 +141,11 @@ this complete numeric plan declares production eligibility; the bounded
 symbolic plan remains an experiment baseline.
 
 The v1 utility weights are explainable hypotheses, not calibrated preference.
-They still lack a cross-segment causal-continuity component. Therefore this
-numeric integration closes the no-cost bypass but does not yet authorize a new
-Skiing semantic switch.
+`aegis360.global-story-segment-plan.v2` additionally consumes the exact
+adjacent-edge continuity matrix. For each DP transition it adds that one cell,
+then charges the same single fixed plus angular cost used by v1. The first
+segment has no invented edge value; closing holds and segment abstentions still
+retain the incoming view. Its separate CLI keeps v1 inputs unambiguous.
 
 ## Cross-segment narrative association evidence
 
@@ -156,8 +158,8 @@ labels. Missing or unassessable evidence becomes a claim-free edge abstention.
 
 The artifact contains no identity, free text, confidence, utility, incumbent,
 rank, edit or camera command. Candidate observations do not select a view.
-Utility mapping remains a future deterministic adapter; until it exists and is
-validated on the Skiing pair, the numeric planner receives no continuity gain.
+Utility mapping is deterministic and the v2 planner can consume it, but a real
+Skiing plan still requires complete per-segment relevance utility.
 
 `aegis360.continuity-transition-utility.v1` emits a complete previous-by-next
 candidate matrix for every edge. Endpoint support uses the previous candidate's

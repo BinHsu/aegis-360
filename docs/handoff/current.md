@@ -1,16 +1,16 @@
 # Current handoff
 
-Updated: 2026-08-24T00:23:00+08:00
+Updated: 2026-08-24T06:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 7c67a03
-Remote status: `origin/main` is 7c67a03 before transition utility
-Working tree at checkpoint: transition utility/config/CLI/tests/evidence docs only
+Baseline commit: 224f520
+Remote status: `origin/main` is 224f520 before planner v2
+Working tree at checkpoint: planner v2, CLI, tests and current evidence docs only
 
 ## Objective
 
 Build an offline 360-video auto-director for ordinary viewers on the fanless M4/16 GB machine. The immediate
-gate is causal-continuity evidence before proposing another semantic switch.
+gate is complete Skiing segment relevance before proposing another render.
 
 ## Accepted evidence
 
@@ -158,7 +158,7 @@ segment gain marks A ineligible and maps deterministically to baseline.
 Persistent story DP requires complete ordered per-segment utility. It retains
 DP state on abstain/closing, and charges one fixed plus spherical-angular cost
 only when the persistent candidate changes. Equal-utility and cost-deficient
-90-degree switches fail. Skiing continuity scores 0→0 at 2.0 and A's 3→0 at 0.0; planner wiring remains absent.
+90-degree switches fail. Skiing continuity scores 0→0 at 2.0 and A's 3→0 at 0.0; planner v2 consumes it and its synthetic path ablation passes.
 
 ## Held-out benchmark
 
@@ -171,13 +171,13 @@ in the benchmark manifest and experiment record.
 ## Repository state
 
 - Expected branch: `main`; milestone parent is `7c67a03`.
-- This checkpoint adds deterministic continuity transition utility.
+- This checkpoint adds continuity-aware persistent story planner v2.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 423 tests pass.
+- `python3 -m unittest discover -s tests -q`: 425 tests pass.
 - Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
@@ -201,8 +201,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Wire exact continuity matrices into story DP and run an ablation; do not
-  render another switch before the expected baseline advantage passes.
+- Build complete closed Skiing segment relevance and run the real v2 plan;
+  do not render from synthetic-ablation evidence.
 
 ## Next commands
 

@@ -11,6 +11,7 @@ from .geometry import spherical_distance
 
 
 SCHEMA = "aegis360.global-story-segment-plan.v1"
+SCHEMA_V2 = "aegis360.global-story-segment-plan.v2"
 UTILITY_SCHEMA = "aegis360.segment-candidate-utility.v1"
 POLICY_SCHEMA = "aegis360.global-story-segment-planner-policy.v1"
 SHA256 = re.compile(r"[0-9a-f]{64}")
@@ -229,3 +230,196 @@ def validate_global_story_segment_plan(
     )
     if document != expected:
         raise ValueError("global story segment plan must exactly derive from inputs")
+
+
+def plan_global_story_segments_v2(
+    timeline: Mapping[str, object], constraints: Mapping[str, object],
+    utilities: Sequence[Mapping[str, object]],
+    continuity_utility: Mapping[str, object], grid: Mapping[str, object],
+    policy: Mapping[str, object], *, timeline_sha256: str,
+    constraints_sha256: str, utility_sha256s: Sequence[str],
+    continuity_utility_sha256: str, grid_sha256: str, policy_sha256: str,
+) -> dict[str, object]:
+    """Plan persistent story views with segment and adjacent-edge utility."""
+    # Reuse v1's closed validation for the timeline, constraints, segment
+    # utilities, grid and numeric policy before introducing another authority.
+    plan_global_story_segments(
+        timeline, constraints, utilities, grid, policy,
+        timeline_sha256=timeline_sha256,
+        constraints_sha256=constraints_sha256,
+        utility_sha256s=utility_sha256s, grid_sha256=grid_sha256,
+        policy_sha256=policy_sha256,
+    )
+    if (not isinstance(continuity_utility_sha256, str)
+            or SHA256.fullmatch(continuity_utility_sha256) is None
+            or continuity_utility.get("schema_version") !=
+            "aegis360.continuity-transition-utility.v1"
+            or continuity_utility.get("source_id") != grid["source_id"]
+            or continuity_utility.get("inputs", {}).get(
+                "context_view_grid_sha256") != grid_sha256):
+        raise ValueError("global-story continuity utility lineage is invalid")
+
+    segments = timeline["segments"]
+    candidate_geometry = {item["candidate_id"]: item for item in grid["candidates"]}
+    candidate_ids = list(candidate_geometry)
+    expected_edges = [(left["segment_id"], right["segment_id"])
+                      for left, right in zip(segments, segments[1:])]
+    edges = continuity_utility.get("edge_utilities")
+    if (not isinstance(edges, list)
+            or [(edge.get("from_segment_id"), edge.get("to_segment_id"))
+                for edge in edges] != expected_edges):
+        raise ValueError("global-story continuity edges must cover adjacency exactly")
+    expected_pairs = [(previous, following) for previous in candidate_ids
+                      for following in candidate_ids]
+    edge_by_destination = {}
+    for edge in edges:
+        status = edge.get("evidence_status")
+        transitions = edge.get("transitions")
+        if (status not in {"observed", "abstain"} or not isinstance(transitions, list)
+                or [(row.get("previous_candidate_id"), row.get("next_candidate_id"))
+                    for row in transitions] != expected_pairs):
+            raise ValueError("global-story continuity matrix is invalid")
+        matrix = {}
+        for row in transitions:
+            components = row.get("components")
+            total = row.get("total")
+            if (set(row) != {"previous_candidate_id", "next_candidate_id",
+                             "components", "total"}
+                    or not isinstance(components, Mapping)
+                    or set(components) != {"from_cue_support", "to_cue_support",
+                                           "same_candidate_preservation"}
+                    or any(isinstance(value, bool)
+                           or not isinstance(value, (int, float))
+                           or not math.isfinite(value)
+                           for value in components.values())
+                    or isinstance(total, bool) or not isinstance(total, (int, float))
+                    or not math.isfinite(total)
+                    or not math.isclose(total, sum(components.values()),
+                                        rel_tol=0, abs_tol=1e-12)):
+                raise ValueError("global-story continuity transition is invalid")
+            matrix[(row["previous_candidate_id"], row["next_candidate_id"])] = float(total)
+        if status == "abstain" and any(value != 0 for value in matrix.values()):
+            raise ValueError("abstained continuity matrix must be neutral")
+        edge_by_destination[edge["to_segment_id"]] = {
+            "status": status, "matrix": matrix,
+        }
+
+    utility_by_segment = {item["segment_id"]: item for item in utilities}
+    constraint_by_event = {item["event_id"]: item for item in constraints["constraints"]}
+    initial = policy["initial_candidate_id"]
+    states = {initial: (0.0, [])}
+    for index, segment in enumerate(segments):
+        utility = utility_by_segment[segment["segment_id"]]
+        totals = {} if utility["evidence_status"] == "abstain" else {
+            row["candidate_id"]: float(row["total"])
+            for row in utility["utilities"] if row["eligible"]
+        }
+        edge = None if index == 0 else edge_by_destination[segment["segment_id"]]
+        left = segment.get("left_boundary")
+        constraint = None if left is None else constraint_by_event[left["event_id"]]
+        preference = ("continuity_preferred" if constraint is None
+                      else constraint["transition_preference"])
+        duration = segment["end_seconds"] - segment["start_seconds"]
+        next_states = {}
+        for previous, (score, path) in states.items():
+            retain_edge = 0.0 if edge is None else edge["matrix"][(previous, previous)]
+            retain_value = totals.get(previous, 0.0) + retain_edge
+            choices = [previous]
+            if (totals and preference != "closing_hold"
+                    and duration >= policy["minimum_dwell_seconds"]):
+                choices.extend(
+                    candidate for candidate in totals if candidate != previous
+                    and totals[candidate] + (0.0 if edge is None else edge["matrix"][(previous, candidate)])
+                    >= retain_value + policy["minimum_advantage"]
+                )
+            for candidate in choices:
+                changed = candidate != previous
+                edge_utility = (0.0 if edge is None
+                                else edge["matrix"][(previous, candidate)])
+                angular_distance = 0.0
+                if changed:
+                    before = candidate_geometry[previous]
+                    after = candidate_geometry[candidate]
+                    angular_distance = spherical_distance(
+                        (math.radians(before["yaw_degrees"]), math.radians(before["pitch_degrees"])),
+                        (math.radians(after["yaw_degrees"]), math.radians(after["pitch_degrees"])),
+                    )
+                fixed_cost = float(policy["switch_cost"]) if changed else 0.0
+                angular_cost = (angular_distance * policy["angular_cost_per_radian"]
+                                if changed else 0.0)
+                segment_utility = totals.get(candidate, 0.0)
+                total = score + segment_utility + edge_utility - fixed_cost - angular_cost
+                row = {
+                    "segment_id": segment["segment_id"],
+                    "start_seconds": float(segment["start_seconds"]),
+                    "end_seconds": float(segment["end_seconds"]),
+                    "previous_candidate_id": previous,
+                    "selected_candidate_id": candidate,
+                    "evidence_status": utility["evidence_status"],
+                    "continuity_evidence_status": (None if edge is None else edge["status"]),
+                    "transition_preference": preference,
+                    "selected_utility": segment_utility,
+                    "selected_transition_utility": edge_utility,
+                    "planning_cost_components": {
+                        "fixed_switch": fixed_cost,
+                        "angular_transition": angular_cost,
+                    },
+                    "planning_cost": fixed_cost + angular_cost,
+                    "angular_distance_radians": angular_distance,
+                }
+                candidate_path = path + [row]
+                incumbent = next_states.get(candidate)
+                path_key = tuple(item["selected_candidate_id"] for item in candidate_path)
+                if (incumbent is None or total > incumbent[0] or (
+                        total == incumbent[0] and path_key < tuple(
+                            item["selected_candidate_id"] for item in incumbent[1]))):
+                    next_states[candidate] = (total, candidate_path)
+        states = next_states
+    objective, decisions = min(
+        states.values(),
+        key=lambda item: (-item[0], tuple(row["selected_candidate_id"] for row in item[1])),
+    )
+    return {
+        "schema_version": SCHEMA_V2, "source_id": grid["source_id"],
+        "window": dict(grid["window"]),
+        "inputs": {
+            "story_segment_timeline_sha256": timeline_sha256,
+            "story_planner_constraints_sha256": constraints_sha256,
+            "segment_candidate_utility_sha256s": list(utility_sha256s),
+            "continuity_transition_utility_sha256": continuity_utility_sha256,
+            "context_view_grid_sha256": grid_sha256,
+            "planner_policy_sha256": policy_sha256,
+        },
+        "policy_id": policy["policy_id"], "objective": objective,
+        "decisions": decisions,
+        "planner_authority": {
+            "candidate_selected": True, "numeric_costs_applied": True,
+            "continuity_utility_applied": True,
+            "renderer_command_emitted": False, "production_eligible": True,
+        },
+        "limitations": [
+            "v2 permits a new view only at a declared story-segment boundary",
+            "abstained segment utility retains the incoming candidate",
+            "continuity utility is limited to adjacent story segments",
+        ],
+    }
+
+
+def validate_global_story_segment_plan_v2(
+    document: Mapping[str, object], timeline: Mapping[str, object],
+    constraints: Mapping[str, object], utilities: Sequence[Mapping[str, object]],
+    continuity_utility: Mapping[str, object], grid: Mapping[str, object],
+    policy: Mapping[str, object], *, timeline_sha256: str,
+    constraints_sha256: str, utility_sha256s: Sequence[str],
+    continuity_utility_sha256: str, grid_sha256: str, policy_sha256: str,
+) -> None:
+    expected = plan_global_story_segments_v2(
+        timeline, constraints, utilities, continuity_utility, grid, policy,
+        timeline_sha256=timeline_sha256,
+        constraints_sha256=constraints_sha256,
+        utility_sha256s=utility_sha256s,
+        continuity_utility_sha256=continuity_utility_sha256,
+        grid_sha256=grid_sha256, policy_sha256=policy_sha256,
+    )
+    if document != expected:
+        raise ValueError("global story segment plan v2 must exactly derive from inputs")
