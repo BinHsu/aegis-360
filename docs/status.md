@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-Story semantics map deterministically to candidate-free planner constraints:
-chapter permits change/resets repetition, within-chapter prefers continuity,
-and ending holds closing. No numeric cost, geometry or edit is emitted. The
-next missing evidence is independent candidate-view relevance.
+Candidate relevance is now segment-scoped: 26 boundaries produce 27 segments,
+each sampled at 20/50/80%. Three representative segments have stable primary
+views; forest-motion and closing segments abstain. Five labels cannot support
+a full-film plan. Next: bounded planner tests over two labeled chapters.

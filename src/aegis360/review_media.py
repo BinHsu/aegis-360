@@ -47,7 +47,9 @@ def build_story_review_render_jobs(
     width: int = 384, height: int = 216,
 ) -> list[dict[str, object]]:
     """Resolve one composite job per story sample, with four owned viewports."""
-    if packet.get("schema_version") != "aegis360.scene-story-review-packet.v1":
+    accepted = {"aegis360.scene-story-review-packet.v1",
+                "aegis360.story-segment-review-packet.v1"}
+    if packet.get("schema_version") not in accepted:
         raise ValueError("story review packet schema is invalid")
     if isinstance(width, bool) or isinstance(height, bool) or not (
         64 <= width <= 960 and 64 <= height <= 540
@@ -77,7 +79,9 @@ def build_story_review_render_jobs(
             "width": width * 2, "height": height * 2,
             "filename": f"{sample['sample_id'].replace(':', '-')}-cardinal-contact.png",
         })
-    if not 2 <= len(jobs) <= 6 or len(jobs) * 4 > 24:
+    minimum, maximum = ((2, 6) if packet["schema_version"] ==
+                        "aegis360.scene-story-review-packet.v1" else (3, 3))
+    if not minimum <= len(jobs) <= maximum or len(jobs) * 4 > maximum * 4:
         raise ValueError("story review jobs exceed the bounded contract")
     return jobs
 
@@ -104,8 +108,12 @@ def build_story_transient_media_index(
     packet: Mapping[str, object], jobs: list[Mapping[str, object]],
 ) -> dict[str, object]:
     return {
-        "schema_version": "aegis360.transient-story-review-media-index.v1",
-        "source_id": packet["source_id"], "event_id": packet["event_id"],
+        "schema_version": ("aegis360.transient-story-review-media-index.v1"
+                           if "event_id" in packet else
+                           "aegis360.transient-story-segment-review-media-index.v1"),
+        "source_id": packet["source_id"],
+        **({"event_id": packet["event_id"]} if "event_id" in packet else
+           {"segment_id": packet["segment_id"]}),
         "audio_provided": False,
         "frames": [{
             "sample_id": job["sample_id"], "temporal_role": job["temporal_role"],

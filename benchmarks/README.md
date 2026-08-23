@@ -22,6 +22,9 @@ Closed story-role configs live under `scene-story-labels/`. Their README states
 whether provenance is owner, agent or model; never promote agent source-context
 review to owner ground truth.
 
+Segment-scoped direction labels live under `segment-view-labels/`. They include
+explicit abstentions when one stable primary cannot be justified.
+
 Set an external data root before acquisition or processing:
 
 ```sh

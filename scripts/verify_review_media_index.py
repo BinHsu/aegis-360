@@ -16,6 +16,7 @@ def main() -> int:
     expected_schemas = {
         "aegis360.transient-review-media-index.v1",
         "aegis360.transient-story-review-media-index.v1",
+        "aegis360.transient-story-segment-review-media-index.v1",
     }
     if index.get("schema_version") not in expected_schemas or index.get("audio_provided") is not False:
         raise ValueError("transient review index is invalid")

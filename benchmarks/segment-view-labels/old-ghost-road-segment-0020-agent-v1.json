@@ -1,0 +1,8 @@
+{
+  "candidate_observations": [],
+  "reviewer_asset_sha256": null,
+  "reviewer_id": "segment-view-audit-v1",
+  "reviewer_type": "agent",
+  "schema_version": "aegis360.segment-view-relevance-config.v1",
+  "status": "abstain"
+}

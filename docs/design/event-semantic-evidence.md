@@ -72,3 +72,10 @@ boundary. It maps structural roles to change/continuity/closing and repetition
 symbols, plus viewer value to coverage priority. It cannot choose geometry or
 apply numeric costs. A future planner revision may consume it only alongside
 independently checksummed candidate-view relevance.
+
+Candidate relevance is segment-scoped, not boundary-event-scoped. A story
+segment timeline partitions the source at retained cuts; its packet samples
+only within one segment. `aegis360.segment-view-relevance.v1` records ordered
+candidate visibility, relevance and temporal consistency or strict abstention.
+It cannot select a candidate. Boundary constraints and segment relevance meet
+only inside the global planner.

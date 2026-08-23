@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from aegis360.event_review_packet import validate_event_review_packet  # noqa: E402
 from aegis360.multi_signal_review_packet import validate_multi_signal_review_packet  # noqa: E402
 from aegis360.scene_story_packet import validate_scene_story_packet  # noqa: E402
+from aegis360.story_segment_review_packet import validate_story_segment_review_packet  # noqa: E402
 from aegis360.review_media import (  # noqa: E402
     build_review_render_jobs,
     build_story_review_render_jobs,
@@ -58,9 +59,18 @@ def main() -> int:
         validate_multi_signal_review_packet(packet, timeline, grid, **validation_kwargs)
     elif packet.get("schema_version") == "aegis360.scene-story-review-packet.v1":
         validate_scene_story_packet(packet, timeline, grid, **validation_kwargs)
+    elif packet.get("schema_version") == "aegis360.story-segment-review-packet.v1":
+        validate_story_segment_review_packet(
+            packet, timeline, grid,
+            segment_timeline_sha256=validation_kwargs["timeline_sha256"],
+            grid_sha256=validation_kwargs["grid_sha256"],
+        )
     else:
         parser.error("unsupported event-review packet schema")
-    story_mode = packet.get("schema_version") == "aegis360.scene-story-review-packet.v1"
+    story_mode = packet.get("schema_version") in {
+        "aegis360.scene-story-review-packet.v1",
+        "aegis360.story-segment-review-packet.v1",
+    }
     jobs = (build_story_review_render_jobs(packet, grid, width=args.width, height=args.height)
             if story_mode else
             build_review_render_jobs(packet, grid, width=args.width, height=args.height))

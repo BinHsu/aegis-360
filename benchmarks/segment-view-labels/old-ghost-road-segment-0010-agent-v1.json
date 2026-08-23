@@ -1,0 +1,13 @@
+{
+  "candidate_observations": [
+    {"candidate_id": "context:cardinal:0", "segment_relevance": "primary", "temporal_consistency": "stable", "visibility": "clear"},
+    {"candidate_id": "context:cardinal:1", "segment_relevance": "low", "temporal_consistency": "stable", "visibility": "clear"},
+    {"candidate_id": "context:cardinal:2", "segment_relevance": "supporting", "temporal_consistency": "stable", "visibility": "partial"},
+    {"candidate_id": "context:cardinal:3", "segment_relevance": "supporting", "temporal_consistency": "stable", "visibility": "partial"}
+  ],
+  "reviewer_asset_sha256": null,
+  "reviewer_id": "segment-view-audit-v1",
+  "reviewer_type": "agent",
+  "schema_version": "aegis360.segment-view-relevance-config.v1",
+  "status": "observed"
+}

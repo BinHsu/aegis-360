@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T17:52:00+08:00
+Updated: 2026-08-23T18:16:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 82e9db3
-Remote status: `origin/main` is 82e9db3; story-constraint work is uncommitted
-Working tree at checkpoint: only the listed story-constraint milestone differs
+Baseline commit: 4781fd1
+Remote status: `origin/main` is 4781fd1; segment-view work is uncommitted
+Working tree at checkpoint: only the listed segment-view milestone differs
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is candidate-view relevance independent from closed story evidence.
+gate is a bounded planner over labeled story segments and boundaries.
 
 ## Accepted evidence
 
@@ -125,6 +125,15 @@ maps to coverage priority. The real five-event artifact SHA is
 `5e88ff336fe96b676265a93ad04dfbbed3f68dfd34b7d356f5431d6aee2c542c`;
 it applies no numeric costs and selects no candidate.
 
+Exact story contact sheets prove event-wide view relevance invalid: before and
+after often require different directions, and far context crosses later cuts.
+The segment timeline partitions 26 boundaries into 27 positive-duration scopes
+(1.4–25.1 seconds), SHA
+`c54aaafe55e17126c4004bd9b5c949eca6ab17a216d71e640c7f5bc8edc3967e`.
+Segment packets sample 20/50/80% without crossing boundaries; real 0010 passes
+3/3 composite probes and cleanup. Relevance labels 0007/0010/0021 observed
+stable primaries; 0020/0026 abstain. They are agent labels, not owner truth.
+
 ## Held-out benchmark
 
 Hundra is a checksummed CC BY-SA 4.0 1920x960 ERP held-out source. Its
@@ -135,15 +144,15 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; baseline and remote are `82e9db3`.
-- Story-constraint source, script, policy, test and docs are expected dirty.
+- Expected branch: `main`; baseline and remote are `4781fd1`.
+- Segment timeline/review/relevance code, labels and docs are expected dirty.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 375 tests pass.
-- Story-constraint targeted tests: 2 pass.
+- `python3 -m unittest discover -s tests -q`: 382 tests pass.
+- Segment timeline/packet/relevance targeted tests: 7 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
@@ -166,9 +175,9 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Commit/push the symbolic story-constraint milestone.
-- Audit exact composites and define independent candidate-view relevance;
-  constraints alone cannot drive the existing reaction-oriented DP.
+- Commit/push the segment-view milestone.
+- Build bounded plans for 53–95.6 and 163.5–174.4 seconds. Unreviewed or
+  abstained segments retain the current view; do not claim full-film coverage.
 
 ## Next commands
 
@@ -185,34 +194,23 @@ git status --short
 
 The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 
-- `outputs/scene-boundary-review/old-ghost-road-event-{0001,0002,0006}/`
-- `outputs/scene-events/old-ghost-road-{full-ffmpeg-v2-10fps,pyramid-v1}.json`
 - `outputs/scene-change-candidates/old-ghost-road-v5-pyramid-high-recall.json`
 - `outputs/event-timelines/old-ghost-road-multi-signal-v5-pyramid-high-recall/timeline.json`
 - `outputs/scene-story-review-packets/old-ghost-road-pyramid-v1/event-multi-*.json`
 - `outputs/scene-story-semantics/old-ghost-road-agent-v1/event-multi-*.json`
 - `outputs/story-planner-constraints/old-ghost-road-agent-v1/constraints.json`
+- `outputs/story-segment-timelines/old-ghost-road-pyramid-v1/timeline.json`
+- `outputs/story-segment-review-packets/old-ghost-road-pyramid-v1/*.json`
+- `outputs/segment-view-relevance/old-ghost-road-agent-v1/*.json`
 
 ## Milestone repository files
 
 - `docs/adr/0010-sparse-event-semantic-planning.md`
-- `src/aegis360/event_review_packet.py`
-- `scripts/build_event_review_packet.py`
-- `tests/test_event_review_packet.py`
-- `docs/experiments/event-review-packet-v1-2026-08-16.md`
 - `src/aegis360/review_media.py`
 - `scripts/run_event_review_adapter.py`
 - `tests/test_review_media.py`
 - `docs/experiments/transient-event-review-media-2026-08-16.md`
-- `src/aegis360/event_semantics.py`
-- `src/aegis360/local_event_semantics_schema.py`
-- `scripts/bind_event_semantics.py`
-- `tests/test_event_semantics.py`
 - `docs/design/event-semantic-evidence.md`
-- `src/aegis360/event_utility.py`
-- `scripts/build_event_candidate_utility.py`
-- `tests/test_event_utility.py`
-- `config/event-utility-policy-v1.json`
 - `src/aegis360/global_event_planner.py`
 - `scripts/build_global_event_plan.py`
 - `tests/test_global_event_planner.py`
@@ -232,6 +230,8 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `src/aegis360/story_planner_constraints.py`
 - `config/story-planner-constraint-policy-v1.json`
 - `scripts/build_story_planner_constraints.py`
+- `src/aegis360/{story_segment_timeline,story_segment_review_packet,segment_view_relevance}.py`
+- `docs/experiments/story-segment-view-relevance-v1-2026-08-23.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 

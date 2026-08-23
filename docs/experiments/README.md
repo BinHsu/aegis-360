@@ -71,6 +71,8 @@ privacy-safe summaries when results exist.
   eight-frame cardinal review packets and verified transient-media cleanup.
 - `scene-story-context-v1-2026-08-23.md`: multi-cadence boundary correction,
   bounded 30-second cardinal context and closed source-context story labels.
+- `story-segment-view-relevance-v1-2026-08-23.md`: boundary-partitioned shot
+  scopes, three-composite packets and observed/abstained candidate evidence.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.
