@@ -81,6 +81,8 @@ privacy-safe summaries when results exist.
   by the complete chronological body, plus its short editorial review pair.
 - `blind-director-intent-protocol-v1-2026-08-23.md`: non-leading intent recall,
   contamination handling and hidden-key scoring.
+- `skiing-continuity-transition-v1-2026-08-24.md`: packet-bound narrative
+  association and transition utility for the rejected Skiing A.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

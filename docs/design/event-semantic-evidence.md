@@ -158,3 +158,10 @@ The artifact contains no identity, free text, confidence, utility, incumbent,
 rank, edit or camera command. Candidate observations do not select a view.
 Utility mapping remains a future deterministic adapter; until it exists and is
 validated on the Skiing pair, the numeric planner receives no continuity gain.
+
+`aegis360.continuity-transition-utility.v1` emits a complete previous-by-next
+candidate matrix for every edge. Endpoint support uses the previous candidate's
+from observation and the next candidate's to observation. Same-candidate
+preservation applies only when IDs match; cross-candidate preservation is zero
+because it was not observed. Abstention emits a complete zero matrix. This
+artifact applies no transition cost and selects no candidate or transition.

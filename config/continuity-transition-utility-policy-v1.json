@@ -1,0 +1,14 @@
+{
+  "endpoint_weights": {
+    "clear_absent": -1.0,
+    "clear_present": 1.0,
+    "partial_present": 0.5
+  },
+  "policy_id": "closed-narrative-association-v1",
+  "preservation_weights": {
+    "breaks": -1.0,
+    "partial": 0.5,
+    "preserves": 1.0
+  },
+  "schema_version": "aegis360.continuity-transition-utility-policy.v1"
+}
