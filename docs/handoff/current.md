@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T18:16:00+08:00
+Updated: 2026-08-23T18:40:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 4781fd1
-Remote status: `origin/main` is 4781fd1; segment-view work is uncommitted
-Working tree at checkpoint: only the listed segment-view milestone differs
+Baseline commit: 5eaaaa1
+Remote status: `origin/main` is 5eaaaa1; bounded planner work is uncommitted
+Working tree at checkpoint: only the listed bounded planner milestone differs
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is a bounded planner over labeled story segments and boundaries.
+gate is owner preference on the same-contract waterfall review pair.
 
 ## Accepted evidence
 
@@ -134,6 +134,14 @@ Segment packets sample 20/50/80% without crossing boundaries; real 0010 passes
 3/3 composite probes and cleanup. Relevance labels 0007/0010/0021 observed
 stable primaries; 0020/0026 abstain. They are agent labels, not owner truth.
 
+The symbolic planner keeps cardinal 0 throughout 53–95.6 and switches from
+cardinal 0 to 1 at the 168.4 waterfall chapter in 163.5–174.4. It is not the
+production DP and applies no numeric costs. Same-contract waterfall peers are
+10.900-second H.264 960x540/AAC; decoded PCM SHA matches exactly at
+`7afa310473fb473009002a386e0ebdbc5df2aaf0059c536302caadcce6c43056`.
+Agent review finds planned cleanly frames the waterfall while fixed retains a
+near-field helmet/person. Owner must choose the preferred editorial context.
+
 ## Held-out benchmark
 
 Hundra is a checksummed CC BY-SA 4.0 1920x960 ERP held-out source. Its
@@ -144,15 +152,15 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; baseline and remote are `4781fd1`.
-- Segment timeline/review/relevance code, labels and docs are expected dirty.
+- Expected branch: `main`; baseline and remote are `5eaaaa1`.
+- Bounded planner/renderer code, policies, tests and docs are expected dirty.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 382 tests pass.
-- Segment timeline/packet/relevance targeted tests: 7 pass.
+- `python3 -m unittest discover -s tests -q`: 388 tests pass.
+- Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
@@ -175,9 +183,9 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Commit/push the segment-view milestone.
-- Build bounded plans for 53–95.6 and 163.5–174.4 seconds. Unreviewed or
-  abstained segments retain the current view; do not claim full-film coverage.
+- Commit/push the bounded planner/render milestone.
+- Ask owner to compare fixed vs planned waterfall peers; do not expand to a
+  full-film plan until the editorial preference is durable.
 
 ## Next commands
 
@@ -202,6 +210,8 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/story-segment-timelines/old-ghost-road-pyramid-v1/timeline.json`
 - `outputs/story-segment-review-packets/old-ghost-road-pyramid-v1/*.json`
 - `outputs/segment-view-relevance/old-ghost-road-agent-v1/*.json`
+- `outputs/bounded-story-segment-plans/old-ghost-road-*/plan.json`
+- `outputs/bounded-story-segment-renders/old-ghost-road-*/{video.mp4,trace.json}`
 
 ## Milestone repository files
 
@@ -211,18 +221,6 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `tests/test_review_media.py`
 - `docs/experiments/transient-event-review-media-2026-08-16.md`
 - `docs/design/event-semantic-evidence.md`
-- `src/aegis360/global_event_planner.py`
-- `scripts/build_global_event_plan.py`
-- `tests/test_global_event_planner.py`
-- `config/global-event-planner-policy-v1.json`
-- `src/aegis360/global_camera_segments.py`
-- `scripts/build_global_camera_segments.py`
-- `tests/test_global_camera_segments.py`
-- `src/aegis360/{scene_events,scene_event_pyramid,scene_change_candidates}.py`
-- `scripts/{run_ffmpeg_scene_events,build_scene_event_pyramid,build_scene_change_candidates}.py`
-- `docs/experiments/ffmpeg-scene-change-events-2026-08-16.md`
-- `src/aegis360/{multi_signal_timeline,multi_signal_review_packet}.py`
-- `scripts/build_multi_signal_{timeline,review_packet}.py`
 - `docs/experiments/multi-signal-timeline-review-v2-2026-08-16.md`
 - `src/aegis360/{scene_story_packet,scene_story_semantics}.py`
 - `scripts/{build_scene_story_packet,bind_scene_story_semantics}.py`
@@ -232,6 +230,8 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `scripts/build_story_planner_constraints.py`
 - `src/aegis360/{story_segment_timeline,story_segment_review_packet,segment_view_relevance}.py`
 - `docs/experiments/story-segment-view-relevance-v1-2026-08-23.md`
+- `src/aegis360/{bounded_story_segment_planner,bounded_story_render}.py`
+- `scripts/{plan_bounded_story_segments,render_bounded_story_segment_plan}.py`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 

@@ -69,3 +69,35 @@ boundaries. Five labels do not cover all 27 segments, so a full-film plan would
 be unsupported. The next gate is a bounded planner over 53–95.6 and
 163.5–174.4 seconds: unreviewed/abstained segments retain the current view;
 observed relevance may propose a change subject to boundary constraints.
+
+## Bounded symbolic planner and render
+
+The bounded planner is an integration baseline, not the production global DP.
+Unreviewed/abstained segments retain the current view. Within-chapter cuts keep
+a stable current view when it remains at least supporting. Chapter boundaries
+may use a stable primary; closing holds. The policy applies no numeric costs.
+
+The 53–95.6-second plan keeps cardinal 0 across four segments: the 53-second
+alternative is only a within-chapter preference, and the 84.6-second chapter's
+primary is already cardinal 0. Plan SHA-256 is
+`0089dd99602d9a649671da32b9a94a591893cd740f9dd3d7652f74a316bac089`.
+The 163.5–174.4-second plan retains cardinal 0 for abstained forest motion and
+switches to cardinal 1 at the 168.4-second waterfall chapter boundary. Plan
+SHA-256 is
+`0f8152d16bbf1101beba569821cde7ec77b07f8f80a7b9ba0600386f8ee94f66`.
+
+The renderer exact-rebuilds the plan, trims/project-concats video by segment,
+and trims audio once across the whole window. Both peers use 960x540 libx264
+fast/CRF 18 and AAC 192k. Planned waterfall video SHA is
+`daf6ea1e13a125b13b52a3d437e7470d5c923166dd2b91c59547171d49d52e1c`;
+same-contract fixed SHA is
+`3d9ecf02bd923ed3f663812e3d7f37dac201907cd6d6e20df1a5c8de1a54a917`.
+Both last 10.900 seconds and their decoded PCM audio SHA matches exactly at
+`7afa310473fb473009002a386e0ebdbc5df2aaf0059c536302caadcce6c43056`;
+decoded video hashes differ.
+
+Agent contact-sheet review finds no blocking, blur or projection defect. Before
+168.4 seconds the peers match. Afterward planned cardinal 1 presents the
+waterfall without the fixed view's near-field helmet/person, a perceptible
+editorial difference. Owner preference is now required: clean scenic subject
+versus retaining rider context. Temporary audit pixels were deleted.

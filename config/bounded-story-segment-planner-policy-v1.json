@@ -1,0 +1,11 @@
+{
+  "abstain_behavior": "retain_current",
+  "closing_behavior": "retain_current",
+  "continuity_keep_relevance": ["primary", "supporting"],
+  "initial_candidate_id": "context:cardinal:0",
+  "policy_id": "bounded-symbolic-story-segments-v1",
+  "schema_version": "aegis360.bounded-story-segment-planner-policy.v1",
+  "switch_primary_consistency": "stable",
+  "switch_primary_visibility": ["clear", "partial"],
+  "unreviewed_behavior": "retain_current"
+}

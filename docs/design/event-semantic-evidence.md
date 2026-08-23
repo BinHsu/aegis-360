@@ -79,3 +79,10 @@ only within one segment. `aegis360.segment-view-relevance.v1` records ordered
 candidate visibility, relevance and temporal consistency or strict abstention.
 It cannot select a candidate. Boundary constraints and segment relevance meet
 only inside the global planner.
+
+The first bounded symbolic planner is a fail-closed integration baseline:
+missing/abstained relevance retains the current view, continuity keeps a usable
+current candidate, chapter change may adopt a stable primary, and closing
+holds. It applies no numeric cost and cannot support footage outside its exact
+segment-aligned window. The production planner remains the global DP required
+by ADR 0006.
