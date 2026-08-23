@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T18:54:00+08:00
+Updated: 2026-08-23T19:04:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 10d7852
-Remote status: `origin/main` is 10d7852 before this decision milestone
-Working tree at checkpoint: chapter-aware foreshadow decision files only
+Baseline commit: 4d070f0
+Remote status: `origin/main` is 4d070f0 before the chapter-map milestone
+Working tree at checkpoint: chapter-map milestone delta only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is a complete chapter-map contract that preserves chronology on doubt.
+gate is independent foreshadow authorization over a complete chapter map.
 
 ## Accepted evidence
 
@@ -140,6 +140,14 @@ destination-first story hint only if complete chapter starts and ends make the
 time excursion legible. ADR 0011 records the fail-closed rule: current local
 labels cannot authorize reordering, so chronology remains the fallback.
 
+Whole-film chapter-map v1 accounts every retained scene boundary by exact
+event ID, signal ID and timestamp, then derives ordered gap-free chapters from
+closed dispositions. This avoids ambiguity when one fused event contains
+multiple scene signals. Reviewer provenance is explicit and local models need
+an asset checksum. The map itself selects no view and explicitly denies
+temporal-reordering authority. Four targeted tests pass; no complete Old Ghost
+Road map has been claimed.
+
 ## Held-out benchmark
 
 Hundra is a checksummed CC BY-SA 4.0 1920x960 ERP held-out source. Its
@@ -150,14 +158,14 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `10d7852`.
-- This checkpoint contains ADR 0011 and index/design/current-state updates.
+- Expected branch: `main`; milestone parent is `4d070f0`.
+- This checkpoint adds the candidate-free whole-film chapter-map contract.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 388 tests pass.
+- `python3 -m unittest discover -s tests -q`: 392 tests pass.
 - Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
@@ -181,9 +189,9 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Commit/push the chapter-aware foreshadow decision milestone.
-- Define a complete, path-free chapter-map artifact and fail-closed
-  authorization gate before rendering any non-chronological candidate.
+- Commit/push the whole-film chapter-map contract milestone.
+- Define the independent fail-closed authorization artifact before selecting
+  or rendering any non-chronological prefix.
 
 ## Next commands
 
@@ -213,16 +221,10 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 
 ## Milestone repository files
 
-- `docs/adr/0010-sparse-event-semantic-planning.md`
-- `src/aegis360/review_media.py`
-- `scripts/run_event_review_adapter.py`
-- `tests/test_review_media.py`
-- `docs/experiments/transient-event-review-media-2026-08-16.md`
+- `docs/adr/{0010-sparse-event-semantic-planning,0011-fail-closed-chapter-aware-foreshadow}.md`
 - `docs/design/event-semantic-evidence.md`
-- `docs/experiments/multi-signal-timeline-review-v2-2026-08-16.md`
 - `src/aegis360/{scene_story_packet,scene_story_semantics}.py`
 - `scripts/{build_scene_story_packet,bind_scene_story_semantics}.py`
-- `docs/experiments/scene-story-context-v1-2026-08-23.md`
 - `src/aegis360/story_planner_constraints.py`
 - `config/story-planner-constraint-policy-v1.json`
 - `scripts/build_story_planner_constraints.py`
@@ -230,19 +232,19 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `docs/experiments/story-segment-view-relevance-v1-2026-08-23.md`
 - `src/aegis360/{bounded_story_segment_planner,bounded_story_render}.py`
 - `scripts/{plan_bounded_story_segments,render_bounded_story_segment_plan}.py`
+- `src/aegis360/whole_film_chapter_map.py`
+- `scripts/build_whole_film_chapter_map.py`
+- `docs/experiments/whole-film-chapter-map-v1-2026-08-23.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
 ## Active agents
-
 No delegated work is active or required to resume this checkpoint.
 
 ## Safety and claims
 
-- Keep media, generated pixels, audio, model weights and absolute source paths
-  out of Git and durable privacy-safe JSON.
+- Keep media, pixels, audio, weights and absolute source paths out of Git.
 - Analysis/rendering remain offline; acquisition requires explicit authority.
 - Preserve bounded queues and the 16 GB unified-memory constraint.
-- Geometry continuity, faces and mouth motion do not establish identity or
-  proven speech.
+- Geometry, faces and mouth motion do not establish identity or proven speech.
 - Temporal reordering remains disabled until the ADR 0011 gate is implemented.

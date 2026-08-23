@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-Bounded plans prove fail-closed continuity and one chapter-view switch. Owner
-accepts a destination-first hint only when chapter starts and ends are reliable.
-ADR 0011 therefore preserves chronology unless a complete validated chapter
-map authorizes one traced foreshadow; five local labels cannot yet do so.
+Chapter-map v1 now requires exact signal-level accounting for every retained
+boundary and derives gap-free chapters without selecting views or authorizing
+reordering. Existing event-level labels cannot safely resolve fused signals.
+Current Old Ghost Road labels remain incomplete, so chronology still wins.
