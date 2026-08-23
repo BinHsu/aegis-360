@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-An eight-chapter coarse agent map accounts all 26 signals but remains
-unqualified; eligibility correctly returns false. A no-reencode original MKV
-with chapter markers is ready for owner boundary review. Chronology remains
-the only authorized temporal structure.
+Owner accepts the unchanged original's eight marked chapters as natural. A new
+source-verified lineage passes structural eligibility while preserving the
+earlier abstain artifact. No teaser interval or view is selected yet, so the
+rendered temporal structure remains chronological.

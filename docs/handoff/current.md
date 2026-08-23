@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T19:43:00+08:00
+Updated: 2026-08-23T19:52:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: d9cd146
-Remote status: `origin/main` is d9cd146 before this review checkpoint
+Baseline commit: 995424a
+Remote status: `origin/main` is 995424a before this qualification checkpoint
 Working tree at checkpoint: current-state docs only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is owner review of four uncertain coarse chapter boundaries.
+gate is bounded prefix/payoff interval selection over qualified chapters.
 
 ## Accepted evidence
 
@@ -148,9 +148,9 @@ pass only permits planning and selects no interval, view or renderer command.
 No complete Old Ghost Road map has been claimed. Exact-signal story packet v1
 now separates the fused 24.5/25.9-second boundaries while retaining six bounded
 cardinal composites and transient deletion. All 26 external JSON manifests
-exist without pixels. A coarse eight-chapter agent map passes completeness but
-its qualification abstains, so eligibility is false. A no-reencode MKV exposes
-the proposed boundaries as IINA chapter markers for owner review.
+exist without pixels. Owner accepts the unchanged original's eight marked
+chapters as natural. A new source-verified lineage passes eligibility while
+preserving the prior abstain artifact; no interval or view is selected yet.
 
 ## Held-out benchmark
 
@@ -163,7 +163,7 @@ in the benchmark manifest and experiment record.
 ## Repository state
 
 - Expected branch: `main`; milestone parent is `d9cd146`.
-- This checkpoint records the owner chapter-boundary review gate.
+- This checkpoint records source-specific owner qualification and eligibility.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
@@ -193,8 +193,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Owner reviews proposed boundaries at 43.1, 121.6, 157.5 and 174.4 seconds.
-- Keep qualification abstained and chronology enabled until that review.
+- Define and test one bounded destination prefix while retaining the complete
+  chronological body and payoff under ADR 0011.
 
 ## Next commands
 

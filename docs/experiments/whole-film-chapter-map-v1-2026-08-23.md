@@ -43,3 +43,10 @@ for abstention or missing destination. Its authority stops at allowing one
 future planner invocation; no teaser interval or render is selected. Three
 tests cover pass, abstain, absent destination, stale qualification and policy
 mutation.
+
+The owner reviewed the unchanged original stream with eight chapter markers
+and accepted the structure as natural. A new owner-qualified lineage preserves
+the earlier coarse abstention artifact rather than overwriting it. The exact
+eligibility gate now returns true with no reasons, while still selecting no
+teaser interval or view. This is source-specific validation, not evidence that
+an automatic chapter model generalizes.
