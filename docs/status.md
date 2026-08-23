@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-Owner accepts the unchanged original's eight marked chapters as natural. A new
-source-verified lineage passes structural eligibility while preserving the
-earlier abstain artifact. No teaser interval or view is selected yet, so the
-rendered temporal structure remains chronological.
+Qualified chapters now permit a 169–171 second waterfall prefix plan followed
+by the complete chronological body. A same-contract 17-second preview passes
+mechanical/visual pre-review. Owner must judge whether waterfall-to-title hard
+cut reads as a deliberate cold open or an abrupt interruption.

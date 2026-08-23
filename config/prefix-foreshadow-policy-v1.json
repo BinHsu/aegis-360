@@ -1,0 +1,10 @@
+{
+  "audio_behavior": "source_synchronous",
+  "body_behavior": "complete_chronological",
+  "maximum_duration_seconds": 3.0,
+  "maximum_prefix_count": 1,
+  "minimum_duration_seconds": 1.0,
+  "payoff_behavior": "retain_in_body",
+  "policy_id": "single-source-synchronous-prefix-v1",
+  "schema_version": "aegis360.prefix-foreshadow-policy.v1"
+}

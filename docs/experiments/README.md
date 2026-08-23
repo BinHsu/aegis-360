@@ -77,6 +77,8 @@ privacy-safe summaries when results exist.
   accounting before any temporal-reordering authorization.
 - `exact-signal-story-review-v1-2026-08-23.md`: disambiguated six-anchor story
   packets for every retained scene signal.
+- `prefix-foreshadow-plan-v1-2026-08-23.md`: one bounded future copy followed
+  by the complete chronological body, plus its short editorial review pair.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

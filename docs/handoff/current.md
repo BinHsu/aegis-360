@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T19:52:00+08:00
+Updated: 2026-08-23T20:03:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 995424a
-Remote status: `origin/main` is 995424a before this qualification checkpoint
-Working tree at checkpoint: current-state docs only
+Baseline commit: e4f20a1
+Remote status: `origin/main` is e4f20a1 before the prefix-plan milestone
+Working tree at checkpoint: prefix-plan milestone delta only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is bounded prefix/payoff interval selection over qualified chapters.
+gate is owner preference on the 17-second hard-cut prefix review pair.
 
 ## Accepted evidence
 
@@ -150,7 +150,9 @@ now separates the fused 24.5/25.9-second boundaries while retaining six bounded
 cardinal composites and transient deletion. All 26 external JSON manifests
 exist without pixels. Owner accepts the unchanged original's eight marked
 chapters as natural. A new source-verified lineage passes eligibility while
-preserving the prior abstain artifact; no interval or view is selected yet.
+preserving the prior abstain artifact. Prefix plan v1 copies 169–171 seconds,
+then retains the complete chronological body. A short same-contract preview
+passes agent pre-review; waterfall-to-title transition awaits owner judgment.
 
 ## Held-out benchmark
 
@@ -162,8 +164,8 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `d9cd146`.
-- This checkpoint records source-specific owner qualification and eligibility.
+- Expected branch: `main`; milestone parent is `e4f20a1`.
+- This checkpoint adds the bounded prefix plan and editorial review gate.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
@@ -193,8 +195,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Define and test one bounded destination prefix while retaining the complete
-  chronological body and payoff under ADR 0011.
+- Owner compares chronological versus hard-cut waterfall-prefix previews.
+- Do not expand to a full render before the transition is accepted or revised.
 
 ## Next commands
 
@@ -217,7 +219,7 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/story-segment-review-packets/old-ghost-road-pyramid-v1/*.json`
 - `outputs/segment-view-relevance/old-ghost-road-agent-v1/*.json`
 - `outputs/bounded-story-segment-plans/old-ghost-road-*/plan.json`
-- `outputs/bounded-story-segment-renders/old-ghost-road-*/{video.mp4,trace.json}`
+- `outputs/prefix-foreshadow-reviews/old-ghost-road-waterfall-agent-v1/*.mp4`
 - `outputs/chapter-map-reviews/old-ghost-road-agent-v1/original-with-agent-chapters.mkv`
 
 ## Milestone repository files
@@ -232,17 +234,15 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `scripts/{build_whole_film_chapter_map,assess_chapter_map_foreshadow}.py`
 - `config/chapter-map-foreshadow-policy-v1.json`
 - `docs/experiments/whole-film-chapter-map-v1-2026-08-23.md`
-- `src/aegis360/scene_boundary_story_packet.py`
-- `scripts/build_scene_boundary_story_packet.py`
-- `docs/experiments/exact-signal-story-review-v1-2026-08-23.md`
-- `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
+- `src/aegis360/scene_boundary_story_packet.py`, `scripts/build_scene_boundary_story_packet.py`
+- `src/aegis360/prefix_foreshadow_plan.py`, `scripts/plan_prefix_foreshadow.py`
+- `docs/experiments/{exact-signal-story-review-v1,prefix-foreshadow-plan-v1}-2026-08-23.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
 ## Active agents
 No delegated work is active or required to resume this checkpoint.
 
 ## Safety and claims
-
 - Keep media, pixels, audio, weights and absolute source paths out of Git.
 - Analysis/rendering remain offline; acquisition requires explicit authority.
 - Preserve bounded queues and the 16 GB unified-memory constraint.
