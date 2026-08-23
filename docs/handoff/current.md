@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T18:40:00+08:00
+Updated: 2026-08-23T18:54:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5eaaaa1
-Remote status: `origin/main` is 5eaaaa1; bounded planner work is uncommitted
-Working tree at checkpoint: only the listed bounded planner milestone differs
+Baseline commit: 10d7852
+Remote status: `origin/main` is 10d7852 before this decision milestone
+Working tree at checkpoint: chapter-aware foreshadow decision files only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is owner preference on the same-contract waterfall review pair.
+gate is a complete chapter-map contract that preserves chronology on doubt.
 
 ## Accepted evidence
 
@@ -135,12 +135,10 @@ Segment packets sample 20/50/80% without crossing boundaries; real 0010 passes
 stable primaries; 0020/0026 abstain. They are agent labels, not owner truth.
 
 The symbolic planner keeps cardinal 0 throughout 53–95.6 and switches from
-cardinal 0 to 1 at the 168.4 waterfall chapter in 163.5–174.4. It is not the
-production DP and applies no numeric costs. Same-contract waterfall peers are
-10.900-second H.264 960x540/AAC; decoded PCM SHA matches exactly at
-`7afa310473fb473009002a386e0ebdbc5df2aaf0059c536302caadcce6c43056`.
-Agent review finds planned cleanly frames the waterfall while fixed retains a
-near-field helmet/person. Owner must choose the preferred editorial context.
+cardinal 0 to 1 at the 168.4 waterfall chapter in 163.5–174.4. Owner accepts a
+destination-first story hint only if complete chapter starts and ends make the
+time excursion legible. ADR 0011 records the fail-closed rule: current local
+labels cannot authorize reordering, so chronology remains the fallback.
 
 ## Held-out benchmark
 
@@ -152,8 +150,8 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; baseline and remote are `5eaaaa1`.
-- Bounded planner/renderer code, policies, tests and docs are expected dirty.
+- Expected branch: `main`; milestone parent is `10d7852`.
+- This checkpoint contains ADR 0011 and index/design/current-state updates.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
@@ -183,9 +181,9 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Commit/push the bounded planner/render milestone.
-- Ask owner to compare fixed vs planned waterfall peers; do not expand to a
-  full-film plan until the editorial preference is durable.
+- Commit/push the chapter-aware foreshadow decision milestone.
+- Define a complete, path-free chapter-map artifact and fail-closed
+  authorization gate before rendering any non-chronological candidate.
 
 ## Next commands
 
@@ -247,4 +245,4 @@ No delegated work is active or required to resume this checkpoint.
 - Preserve bounded queues and the 16 GB unified-memory constraint.
 - Geometry continuity, faces and mouth motion do not establish identity or
   proven speech.
-- No delegated work is active.
+- Temporal reordering remains disabled until the ADR 0011 gate is implemented.

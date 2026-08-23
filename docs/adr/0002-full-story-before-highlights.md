@@ -19,6 +19,10 @@ after Full Story is credible.
 The analysis pass must nevertheless retain explainable interest, novelty, and
 event evidence so Highlights can reuse it later.
 
+ADR 0011 permits only a fail-closed, explicitly traced future-chapter
+foreshadow after a complete chapter map is independently validated. It does
+not weaken chronological Full Story when that evidence is absent.
+
 ## Consequences
 
 - Dead-air removal is not a first-gate acceptance requirement.

@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-Bounded plans now prove fail-closed continuity and one chapter switch. The
-waterfall pair is same-duration/encoder/audio; planned removes near-field rider
-context for a clean scenic subject. Owner preference is required before this
-symbolic baseline advances; five labels still cannot support a full-film plan.
+Bounded plans prove fail-closed continuity and one chapter-view switch. Owner
+accepts a destination-first hint only when chapter starts and ends are reliable.
+ADR 0011 therefore preserves chronology unless a complete validated chapter
+map authorizes one traced foreshadow; five local labels cannot yet do so.

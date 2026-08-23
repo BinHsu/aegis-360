@@ -86,3 +86,24 @@ current candidate, chapter change may adopt a stable primary, and closing
 holds. It applies no numeric cost and cannot support footage outside its exact
 segment-aligned window. The production planner remains the global DP required
 by ADR 0006.
+
+## Chapter map before temporal reordering
+
+Story-boundary observations and the cut-partitioned segment timeline do not by
+themselves form a chapter map. A chapter map must cover the complete selected
+story window, assign every segment to exactly one ordered chapter, bind chapter
+starts and ends to observed evidence, and expose every abstention or unresolved
+boundary. It must not derive certainty from candidate-view relevance.
+
+Under ADR 0011, only an independently validated complete chapter map may
+authorize a bounded future-chapter foreshadow. Missing coverage, an unresolved
+boundary, or a merely local chapter label preserves chronology. This repository
+does not yet implement that chapter-map contract, so the current planner has no
+authority to reorder source time.
+
+The minimal temporal form is `[future prefix][complete chronological body]`.
+The prefix duplicates rather than moves the payoff interval; the body has no
+other source-time reversal. The eventual plan must declare the chapter-map and
+policy checksums, prefix source interval, destination chapter, return point and
+fallback reason. Exact rebuild validation must reject any mutated interval or
+lineage.

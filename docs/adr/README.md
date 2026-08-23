@@ -24,6 +24,7 @@ their respective documentation areas.
 | [0008](0008-adapter-bound-model-backends.md) | Replaceable model backends behind adapters |
 | [0009](0009-bounded-detector-edge-repair.md) | Explicit detector edge repair bounded to one source pixel |
 | [0010](0010-sparse-event-semantic-planning.md) | Sparse whole-video event timeline, bounded semantic review and global planning |
+| [0011](0011-fail-closed-chapter-aware-foreshadow.md) | Preserve chronology unless a complete chapter map authorizes one bounded foreshadow |
 
 Create a new ADR when changing an accepted decision. Do not rewrite history to
 make an old decision appear never to have existed.
