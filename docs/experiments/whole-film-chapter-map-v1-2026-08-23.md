@@ -35,3 +35,11 @@ that the declared chapters match an ordinary viewer's understanding. A
 separate authorization gate must require validated chapter-map evidence and
 then independently verify any proposed prefix/payoff interval. Current Old
 Ghost Road evidence is incomplete and cannot be promoted into a full map.
+
+That structural eligibility gate is now executable. It validates the exact map
+derivation, binds an independent qualification and fixed policy, requires two
+or more chapters plus a later `destination`, and returns closed reason codes
+for abstention or missing destination. Its authority stops at allowing one
+future planner invocation; no teaser interval or render is selected. Three
+tests cover pass, abstain, absent destination, stale qualification and policy
+mutation.

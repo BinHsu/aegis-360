@@ -1,0 +1,7 @@
+{
+  "eligible_destination_roles": ["destination"],
+  "ineligible_target_roles": ["opening", "closing"],
+  "minimum_chapter_count": 2,
+  "policy_id": "chapter-map-foreshadow-eligibility-v1",
+  "schema_version": "aegis360.chapter-map-foreshadow-policy.v1"
+}

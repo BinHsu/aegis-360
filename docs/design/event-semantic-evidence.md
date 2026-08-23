@@ -107,3 +107,10 @@ other source-time reversal. The eventual plan must declare the chapter-map and
 policy checksums, prefix source interval, destination chapter, return point and
 fallback reason. Exact rebuild validation must reject any mutated interval or
 lineage.
+
+`aegis360.chapter-map-foreshadow-eligibility.v1` is the next candidate-free
+gate. It requires an exact-map qualification with a source-verified or held-out
+calibrated evidence hash, at least two chapters and a later destination
+chapter. Abstention or missing destination returns `eligible: false`. A pass
+only permits the next planner to consider one prefix; it still selects no
+interval, view, transition or renderer command.

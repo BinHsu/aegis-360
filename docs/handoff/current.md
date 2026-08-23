@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T19:04:00+08:00
+Updated: 2026-08-23T19:12:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 4d070f0
-Remote status: `origin/main` is 4d070f0 before the chapter-map milestone
-Working tree at checkpoint: chapter-map milestone delta only
+Baseline commit: 8ca4b3b
+Remote status: `origin/main` is 8ca4b3b before the eligibility milestone
+Working tree at checkpoint: foreshadow-eligibility milestone delta only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is independent foreshadow authorization over a complete chapter map.
+gate is bounded prefix/payoff selection after structural eligibility.
 
 ## Accepted evidence
 
@@ -141,12 +141,11 @@ time excursion legible. ADR 0011 records the fail-closed rule: current local
 labels cannot authorize reordering, so chronology remains the fallback.
 
 Whole-film chapter-map v1 accounts every retained scene boundary by exact
-event ID, signal ID and timestamp, then derives ordered gap-free chapters from
-closed dispositions. This avoids ambiguity when one fused event contains
-multiple scene signals. Reviewer provenance is explicit and local models need
-an asset checksum. The map itself selects no view and explicitly denies
-temporal-reordering authority. Four targeted tests pass; no complete Old Ghost
-Road map has been claimed.
+event/signal/timestamp and derives gap-free chapters. The independent
+eligibility gate requires exact-map qualification, at least two chapters and a
+later destination. Abstain or missing destination returns closed failure; a
+pass only permits planning and selects no interval, view or renderer command.
+No complete Old Ghost Road map has been claimed.
 
 ## Held-out benchmark
 
@@ -158,8 +157,8 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `4d070f0`.
-- This checkpoint adds the candidate-free whole-film chapter-map contract.
+- Expected branch: `main`; milestone parent is `8ca4b3b`.
+- This checkpoint adds the candidate-free foreshadow-eligibility gate.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
@@ -189,9 +188,9 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Commit/push the whole-film chapter-map contract milestone.
-- Define the independent fail-closed authorization artifact before selecting
-  or rendering any non-chronological prefix.
+- Commit/push the chapter-map eligibility milestone.
+- Define bounded prefix/payoff interval evidence before rendering any
+  non-chronological candidate.
 
 ## Next commands
 
@@ -232,8 +231,9 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `docs/experiments/story-segment-view-relevance-v1-2026-08-23.md`
 - `src/aegis360/{bounded_story_segment_planner,bounded_story_render}.py`
 - `scripts/{plan_bounded_story_segments,render_bounded_story_segment_plan}.py`
-- `src/aegis360/whole_film_chapter_map.py`
-- `scripts/build_whole_film_chapter_map.py`
+- `src/aegis360/{whole_film_chapter_map,chapter_map_foreshadow_eligibility}.py`
+- `scripts/{build_whole_film_chapter_map,assess_chapter_map_foreshadow}.py`
+- `config/chapter-map-foreshadow-policy-v1.json`
 - `docs/experiments/whole-film-chapter-map-v1-2026-08-23.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
