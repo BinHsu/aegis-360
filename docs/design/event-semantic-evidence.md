@@ -144,3 +144,17 @@ The v1 utility weights are explainable hypotheses, not calibrated preference.
 They still lack a cross-segment causal-continuity component. Therefore this
 numeric integration closes the no-cost bypass but does not yet authorize a new
 Skiing semantic switch.
+
+## Cross-segment narrative association evidence
+
+`aegis360.causal-continuity-evidence.v1` names the product gap but does not
+claim physical causality. It exact-rebuilds one review packet per segment and
+requires one time-ordered edge per adjacent pair. Each observed edge binds both
+cue endpoints to declared packet samples and covers every grid candidate in
+order with separate assessability, cue match and relationship-preservation
+labels. Missing or unassessable evidence becomes a claim-free edge abstention.
+
+The artifact contains no identity, free text, confidence, utility, incumbent,
+rank, edit or camera command. Candidate observations do not select a view.
+Utility mapping remains a future deterministic adapter; until it exists and is
+validated on the Skiing pair, the numeric planner receives no continuity gain.

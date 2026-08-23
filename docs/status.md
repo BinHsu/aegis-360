@@ -196,5 +196,5 @@ switch, repetition and spherical costs, then clips full-window camera segments.
 Skiing A scores `1 / partial_focus`, then loses pairwise preference to baseline.
 Baseline's lift/skier cues and smoother transition are stronger; A is slightly
 abrupt. Numeric persistent story DP now rejects no-gain/cost-deficient switches,
-requires complete per-segment utility, and keeps symbolic renders non-production.
-Causal-continuity evidence remains the next gate before another Skiing switch.
+requires complete utility; closed narrative edges bind adjacent packets/candidates without utility;
+Skiing evidence and deterministic continuity scoring remain the next gate.

@@ -3,9 +3,9 @@
 Updated: 2026-08-24T00:23:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 25c9730
-Remote status: `origin/main` is 25c9730 before numeric story DP
-Working tree at checkpoint: numeric story utility/DP/config/CLI/docs only
+Baseline commit: 016b14c
+Remote status: `origin/main` is 016b14c before continuity evidence
+Working tree at checkpoint: continuity evidence/binder/tests/docs only
 
 ## Objective
 
@@ -158,7 +158,7 @@ segment gain marks A ineligible and maps deterministically to baseline.
 Persistent story DP requires complete ordered per-segment utility. It retains
 DP state on abstain/closing, and charges one fixed plus spherical-angular cost
 only when the persistent candidate changes. Equal-utility and cost-deficient
-90-degree switches fail. Symbolic rendering remains experiment-only.
+90-degree switches fail. Closed edges bind adjacent packets/candidates without utility; symbolic rendering stays experimental.
 
 ## Held-out benchmark
 
@@ -170,14 +170,14 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `25c9730`.
-- This checkpoint adds numeric persistent story utility and DP artifacts.
+- Expected branch: `main`; milestone parent is `016b14c`.
+- This checkpoint adds closed cross-segment continuity evidence only.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 413 tests pass.
+- `python3 -m unittest discover -s tests -q`: 416 tests pass.
 - Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
@@ -201,8 +201,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Do not make another Skiing switch until an explainable causal-continuity
-  signal can preserve lift/skier expectations as well as transition smoothness.
+- Bind Skiing's exact adjacent packets to closed continuity evidence, then add
+  deterministic utility; do not render another switch before that gate passes.
 
 ## Next commands
 
