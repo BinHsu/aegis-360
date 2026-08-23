@@ -124,3 +124,23 @@ pair to closed human, agent or local-model evidence. `retain_baseline` requires
 explicit no-preference-gain evidence and makes the candidate ineligible. It is
 a benchmark label boundary, not a production human-approval dependency or a
 substitute for causal-continuity signals in the automatic utility model.
+
+## Numeric persistent story planning
+
+`aegis360.segment-candidate-utility.v1` converts one exact segment-relevance
+artifact into closed relevance, visibility and temporal components for every
+grid candidate. It selects nothing. Explicit abstention exposes no eligible
+alternative; the global planner retains its own incoming state.
+
+`aegis360.global-story-segment-plan.v1` requires one ordered utility artifact
+for every segment in the complete grid window. Candidate IDs are persistent DP
+states. An actual view change pays one fixed plus spherical-angular transition
+cost; this differs from reaction cut-aways, whose event DP charges an outward
+and return path. Closing holds and abstentions retain the incoming state. Only
+this complete numeric plan declares production eligibility; the bounded
+symbolic plan remains an experiment baseline.
+
+The v1 utility weights are explainable hypotheses, not calibrated preference.
+They still lack a cross-segment causal-continuity component. Therefore this
+numeric integration closes the no-cost bypass but does not yet authorize a new
+Skiing semantic switch.

@@ -195,6 +195,6 @@ candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
 Skiing A scores `1 / partial_focus`, then loses pairwise preference to baseline.
 Baseline's lift/skier cues and smoother transition are stronger; A is slightly
-abrupt though both remain acceptable. Closed gain evidence now makes A
-ineligible. Global DP rejects equal-utility 90-degree moves; the symbolic path
-had skipped costs and now requires an explicit non-production render opt-in.
+abrupt. Numeric persistent story DP now rejects no-gain/cost-deficient switches,
+requires complete per-segment utility, and keeps symbolic renders non-production.
+Causal-continuity evidence remains the next gate before another Skiing switch.

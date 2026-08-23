@@ -3,9 +3,9 @@
 Updated: 2026-08-24T00:23:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: b92512a
-Remote status: `origin/main` is b92512a before the symbolic-render guard
-Working tree at checkpoint: symbolic-render guard/tests/current-state docs only
+Baseline commit: 25c9730
+Remote status: `origin/main` is 25c9730 before numeric story DP
+Working tree at checkpoint: numeric story utility/DP/config/CLI/docs only
 
 ## Objective
 
@@ -155,10 +155,10 @@ full-intent communication does not. Baseline then wins pairwise direction and
 watchability due to lift/skier causal cues and smoother transition. Generic
 segment gain marks A ineligible and maps deterministically to baseline.
 
-Global DP rejects equal-utility 90-degree proposals and gains unable to repay
-the 1.0 fixed plus roughly 0.314 angular round-trip cost. Skiing A bypassed it
-through the no-cost bounded story planner. That plan now declares
-`production_eligible: false`; rendering requires `--allow-symbolic-baseline`.
+Persistent story DP requires complete ordered per-segment utility. It retains
+DP state on abstain/closing, and charges one fixed plus spherical-angular cost
+only when the persistent candidate changes. Equal-utility and cost-deficient
+90-degree switches fail. Symbolic rendering remains experiment-only.
 
 ## Held-out benchmark
 
@@ -170,14 +170,14 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `b92512a`.
-- This checkpoint prevents symbolic no-cost plans from silent promotion.
+- Expected branch: `main`; milestone parent is `25c9730`.
+- This checkpoint adds numeric persistent story utility and DP artifacts.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 401 tests pass.
+- `python3 -m unittest discover -s tests -q`: 413 tests pass.
 - Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;

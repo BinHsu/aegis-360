@@ -1,0 +1,9 @@
+{
+  "angular_cost_per_radian": 0.1,
+  "initial_candidate_id": "context:cardinal:0",
+  "minimum_advantage": 0.5,
+  "minimum_dwell_seconds": 2.0,
+  "policy_id": "persistent-story-dp-v1",
+  "schema_version": "aegis360.global-story-segment-planner-policy.v1",
+  "switch_cost": 0.5
+}
