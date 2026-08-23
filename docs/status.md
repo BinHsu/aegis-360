@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-Story Packet v1 supplies six ±15-second four-cardinal composites plus whole-
-video position. Closed semantics separate structure, function, change and
-viewer value without choosing an edit/view. Five reproducible agent source-
-context labels cover chapter/within-chapter/ending roles, not owner truth.
+Story semantics map deterministically to candidate-free planner constraints:
+chapter permits change/resets repetition, within-chapter prefers continuity,
+and ending holds closing. No numeric cost, geometry or edit is emitted. The
+next missing evidence is independent candidate-view relevance.

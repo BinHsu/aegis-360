@@ -75,3 +75,18 @@ story roles without per-second VLM sampling. The global planner must consume
 the complete ordered label sequence and retain final authority. Story labels
 must constrain cut/dwell/transition policy separately from candidate-view
 relevance; they do not identify the best direction by themselves.
+
+## Candidate-free planner constraints
+
+The deterministic follow-up maps structural roles to symbolic constraints:
+chapter boundaries permit change and reset repetition memory; within-chapter
+cuts prefer continuity and retain memory; ending transitions hold the closing
+view. Viewer value maps only to high/medium/low coverage priority. The v1
+policy fixes these safe mappings and applies no numeric costs.
+
+The five ordered labels produce
+`outputs/story-planner-constraints/old-ghost-road-agent-v1/constraints.json`,
+SHA-256 `5e88ff336fe96b676265a93ad04dfbbed3f68dfd34b7d356f5431d6aee2c542c`.
+It selects no candidate, applies no numeric cost and emits no renderer command.
+The next evidence gap is independent candidate-view relevance for neutral
+events; story role cannot supply it.

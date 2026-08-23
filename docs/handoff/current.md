@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T17:35:00+08:00
+Updated: 2026-08-23T17:52:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 81d5a95
-Remote status: `origin/main` is 81d5a95; scene-story work is uncommitted
-Working tree at checkpoint: only the listed scene-story milestone differs
+Baseline commit: 82e9db3
+Remote status: `origin/main` is 82e9db3; story-constraint work is uncommitted
+Working tree at checkpoint: only the listed story-constraint milestone differs
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is deterministic global-planner use of closed story evidence.
+gate is candidate-view relevance independent from closed story evidence.
 
 ## Accepted evidence
 
@@ -119,7 +119,11 @@ Closed story semantics separate structural role, narrative function, change
 type and viewer value. Observed labels must be complete; abstention is all-
 unknown. Five agent source-context labels cover two chapter boundaries, two
 within-chapter cuts and one ending. They are not owner ground truth and do not
-select views or edits. The global planner must consume chronology separately.
+select views or edits. Symbolic constraints now map chapter to change/reset,
+within-chapter to continuity/retain and ending to closing/retain. Viewer value
+maps to coverage priority. The real five-event artifact SHA is
+`5e88ff336fe96b676265a93ad04dfbbed3f68dfd34b7d356f5431d6aee2c542c`;
+it applies no numeric costs and selects no candidate.
 
 ## Held-out benchmark
 
@@ -131,15 +135,15 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; baseline and remote are `81d5a95`.
-- Scene-story source, scripts, tests, labels and docs are expected dirty files.
+- Expected branch: `main`; baseline and remote are `82e9db3`.
+- Story-constraint source, script, policy, test and docs are expected dirty.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 373 tests pass.
-- Scene-story packet/semantic/media targeted tests: 11 pass.
+- `python3 -m unittest discover -s tests -q`: 375 tests pass.
+- Story-constraint targeted tests: 2 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
@@ -162,9 +166,9 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Commit/push the scene-story milestone after updating this handoff.
-- Convert ordered story evidence to deterministic planner constraints without
-  allowing story semantics to choose candidate geometry or a renderer command.
+- Commit/push the symbolic story-constraint milestone.
+- Audit exact composites and define independent candidate-view relevance;
+  constraints alone cannot drive the existing reaction-oriented DP.
 
 ## Next commands
 
@@ -187,18 +191,11 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/event-timelines/old-ghost-road-multi-signal-v5-pyramid-high-recall/timeline.json`
 - `outputs/scene-story-review-packets/old-ghost-road-pyramid-v1/event-multi-*.json`
 - `outputs/scene-story-semantics/old-ghost-road-agent-v1/event-multi-*.json`
-- `outputs/reaction-view-gain/{gaudeamus,hundra}-owner-v2/gain.json`
-- `outputs/reaction-shot-plans/{gaudeamus-full-owner-rule-v7-gain-v2,hundra-210-226p5-v3-gain-v2-abstain}/plan.json`
-- `outputs/event-timelines/{gaudeamus-reaction-v1,hundra-reaction-v1}/timeline.json`
-- `outputs/event-review-packets/{gaudeamus-reaction-v1,hundra-reaction-v1}/event-reaction-*.json`
+- `outputs/story-planner-constraints/old-ghost-road-agent-v1/constraints.json`
 
 ## Milestone repository files
 
 - `docs/adr/0010-sparse-event-semantic-planning.md`
-- `src/aegis360/event_timeline.py`
-- `scripts/build_event_timeline.py`
-- `tests/test_event_timeline.py`
-- `docs/experiments/event-timeline-v1-2026-08-16.md`
 - `src/aegis360/event_review_packet.py`
 - `scripts/build_event_review_packet.py`
 - `tests/test_event_review_packet.py`
@@ -232,6 +229,9 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `src/aegis360/{scene_story_packet,scene_story_semantics}.py`
 - `scripts/{build_scene_story_packet,bind_scene_story_semantics}.py`
 - `docs/experiments/scene-story-context-v1-2026-08-23.md`
+- `src/aegis360/story_planner_constraints.py`
+- `config/story-planner-constraint-policy-v1.json`
+- `scripts/build_story_planner_constraints.py`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 

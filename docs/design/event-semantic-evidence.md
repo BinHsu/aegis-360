@@ -66,3 +66,9 @@ images. Its closed evidence separates structural role, narrative function,
 change type and ordinary-viewer value. None chooses a candidate view or edit.
 The global planner owns chronological comparison and must combine story role
 with independent view relevance and transition costs.
+
+`aegis360.story-planner-constraints.v1` is the candidate-free integration
+boundary. It maps structural roles to change/continuity/closing and repetition
+symbols, plus viewer value to coverage priority. It cannot choose geometry or
+apply numeric costs. A future planner revision may consume it only alongside
+independently checksummed candidate-view relevance.

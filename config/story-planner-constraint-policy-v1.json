@@ -1,0 +1,23 @@
+{
+  "policy_id": "full-story-symbolic-constraints-v1",
+  "schema_version": "aegis360.story-planner-constraint-policy.v1",
+  "structural_rules": {
+    "chapter_boundary": {
+      "repetition_memory": "reset",
+      "transition_preference": "change_permitted"
+    },
+    "ending_transition": {
+      "repetition_memory": "retain",
+      "transition_preference": "closing_hold"
+    },
+    "within_chapter_cut": {
+      "repetition_memory": "retain",
+      "transition_preference": "continuity_preferred"
+    }
+  },
+  "viewer_priority": {
+    "low": "low",
+    "primary": "high",
+    "supporting": "medium"
+  }
+}
