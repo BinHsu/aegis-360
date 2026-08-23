@@ -193,8 +193,8 @@ renders at most ten silent frames and deletes them after adapter exit. Closed
 event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
-switch, repetition and spherical costs, then clips full-window camera segments
-to candidate availability. Owner review accepts cardinal coverage but rejects
-four silent seconds for story labels. Source context marks 84.6 as a chapter
-boundary, 53.0/163.5 as within-chapter cuts and 168.4 as a waterfall cut. The
-lossy policy is replaced by a 2+10 fps pyramid with 26 candidates/25 events.
+switch, repetition and spherical costs, then clips full-window camera segments.
+Story Packet v1 supplies six ±15-second four-cardinal composites plus whole-
+video position. Closed semantics separate structure, function, change and
+viewer value without choosing an edit/view. Five reproducible agent source-
+context labels cover chapter/within-chapter/ending roles, not owner truth.

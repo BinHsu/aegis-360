@@ -18,6 +18,10 @@ under `candidate-availability/` and `reaction-view-gain/`. These configs bind
 human review evidence; they are benchmark labels, not universal thresholds or
 an automatic editorial model.
 
+Closed story-role configs live under `scene-story-labels/`. Their README states
+whether provenance is owner, agent or model; never promote agent source-context
+review to owner ground truth.
+
 Set an external data root before acquisition or processing:
 
 ```sh

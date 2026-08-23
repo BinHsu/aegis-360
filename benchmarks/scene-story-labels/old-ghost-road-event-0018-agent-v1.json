@@ -1,0 +1,11 @@
+{
+  "change_type": "hard_cut",
+  "narrative_function": "action_continuation",
+  "reviewer_asset_sha256": null,
+  "reviewer_id": "source-context-review-v1",
+  "reviewer_type": "agent",
+  "schema_version": "aegis360.scene-story-semantics-config.v1",
+  "status": "observed",
+  "structural_role": "within_chapter_cut",
+  "viewer_value": "supporting"
+}

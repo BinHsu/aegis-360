@@ -1,0 +1,11 @@
+{
+  "change_type": "gradual_transition",
+  "narrative_function": "closing",
+  "reviewer_asset_sha256": null,
+  "reviewer_id": "source-context-review-v1",
+  "reviewer_type": "agent",
+  "schema_version": "aegis360.scene-story-semantics-config.v1",
+  "status": "observed",
+  "structural_role": "ending_transition",
+  "viewer_value": "low"
+}

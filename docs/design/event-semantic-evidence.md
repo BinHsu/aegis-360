@@ -51,3 +51,18 @@ The next gate is event-to-global-planner integration using a configurable
 minimum advantage plus transition, dwell and repetition costs. Do not acquire
 or tune a model before that deterministic path and benchmark-label evaluation
 are defined.
+
+## Neutral scene-story evidence
+
+Reaction evidence v1 remains unchanged. Neutral scene events use the separate
+`aegis360.scene-story-review-packet.v1` and
+`aegis360.scene-story-semantics.v1` contracts because two isolated boundary
+frames and reaction-specific classes cannot represent story context.
+
+The scene-story packet supplies bounded local temporal context, whole-video
+position and neighboring event summaries. Four cardinal source viewports are
+composited into one image per anchor so a semantic adapter receives at most six
+images. Its closed evidence separates structural role, narrative function,
+change type and ordinary-viewer value. None chooses a candidate view or edit.
+The global planner owns chronological comparison and must combine story role
+with independent view relevance and transition costs.

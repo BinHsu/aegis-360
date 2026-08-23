@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T17:05:00+08:00
+Updated: 2026-08-23T17:35:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 867fd61
-Remote status: `origin/main` is 867fd61; multi-cadence scene work is uncommitted
-Working tree at checkpoint: only the listed multi-cadence milestone differs
+Baseline commit: 81d5a95
+Remote status: `origin/main` is 81d5a95; scene-story work is uncommitted
+Working tree at checkpoint: only the listed scene-story milestone differs
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is bounded story context for high-recall scene events.
+gate is deterministic global-planner use of closed story evidence.
 
 ## Accepted evidence
 
@@ -108,17 +108,18 @@ spherical angular and cross-event repetition costs. It does not yet emit a
 continuous path. Global Camera Segments v1 covers the full window with primary
 and overlays a selected proposal only on exact timeline availability.
 
-Owner review accepts the cardinal framing coverage of the neutral clips but
-correctly rejects four silent seconds as story or tension evidence. Source
-context classifies 84.6 seconds as an exterior/interior chapter boundary,
-53.0 and 163.5 as within-chapter cuts, and finds a waterfall cut at 168.4.
+Story Packet v1 uses up to six far/near/boundary anchors over about 30 seconds.
+Each temporary image is a 2x2 four-cardinal composite, so the adapter sees at
+most six images/24 source viewports. Whole-video position and adjacent-event
+summaries are durable; pixels are deleted after adapter exit. A real 0008 run
+passes 6/6 768x432 probes and runner cleanup. Width/height options must precede
+positional inputs because the adapter command uses `argparse.REMAINDER`.
 
-The former 2 fps/score-0.4/10-second NMS is rejected. A checksummed scene-event
-pyramid unions 2 and 10 fps evidence; floor 0.25 plus one-second local NMS
-retains 26 candidates and 25 fused events. It preserves both the 168.4-second
-waterfall cut and 222-second ending transition. ADR 0010 now requires cheap-
-signal recall and cadence validation. Story classification needs bounded
-local/global context, not isolated boundary frames.
+Closed story semantics separate structural role, narrative function, change
+type and viewer value. Observed labels must be complete; abstention is all-
+unknown. Five agent source-context labels cover two chapter boundaries, two
+within-chapter cuts and one ending. They are not owner ground truth and do not
+select views or edits. The global planner must consume chronology separately.
 
 ## Held-out benchmark
 
@@ -130,15 +131,15 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; baseline and remote are `867fd61`.
-- Multi-cadence source, scripts, tests and docs are the expected dirty files.
+- Expected branch: `main`; baseline and remote are `81d5a95`.
+- Scene-story source, scripts, tests, labels and docs are expected dirty files.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- Previous full suite: 361 tests pass.
-- Scene pyramid/candidate/timeline/packet targeted tests: 11 pass.
+- `python3 -m unittest discover -s tests -q`: 373 tests pass.
+- Scene-story packet/semantic/media targeted tests: 11 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
   Hundra v4 abstain and primary decoded video/audio hashes match exactly.
@@ -161,9 +162,9 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Commit/push the multi-cadence milestone after full-suite verification.
-- Build bounded scene-story packets with local context and closed labels;
-  preserve the existing reaction-semantic contract separately.
+- Commit/push the scene-story milestone after updating this handoff.
+- Convert ordered story evidence to deterministic planner constraints without
+  allowing story semantics to choose candidate geometry or a renderer command.
 
 ## Next commands
 
@@ -184,13 +185,10 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/scene-events/old-ghost-road-{full-ffmpeg-v2-10fps,pyramid-v1}.json`
 - `outputs/scene-change-candidates/old-ghost-road-v5-pyramid-high-recall.json`
 - `outputs/event-timelines/old-ghost-road-multi-signal-v5-pyramid-high-recall/timeline.json`
-- `outputs/event-timelines/old-ghost-road-multi-signal-v2/timeline.json`
-- `outputs/event-review-packets/old-ghost-road-multi-signal-v2/event-multi-*.json`
+- `outputs/scene-story-review-packets/old-ghost-road-pyramid-v1/event-multi-*.json`
+- `outputs/scene-story-semantics/old-ghost-road-agent-v1/event-multi-*.json`
 - `outputs/reaction-view-gain/{gaudeamus,hundra}-owner-v2/gain.json`
 - `outputs/reaction-shot-plans/{gaudeamus-full-owner-rule-v7-gain-v2,hundra-210-226p5-v3-gain-v2-abstain}/plan.json`
-- `outputs/reaction-preview/gaudeamus-full-{primary,planned}-540p-v8-gain-v2/`
-- `outputs/reaction-preview/hundra-210-226p5-{primary,planned}-v3-gain-v2/`
-- `outputs/reaction-pre-review/{gaudeamus-v8-gain-v2,hundra-v3-gain-v2}/report.json`
 - `outputs/event-timelines/{gaudeamus-reaction-v1,hundra-reaction-v1}/timeline.json`
 - `outputs/event-review-packets/{gaudeamus-reaction-v1,hundra-reaction-v1}/event-reaction-*.json`
 
@@ -231,7 +229,9 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `src/aegis360/{multi_signal_timeline,multi_signal_review_packet}.py`
 - `scripts/build_multi_signal_{timeline,review_packet}.py`
 - `docs/experiments/multi-signal-timeline-review-v2-2026-08-16.md`
-- `scripts/render_scene_boundary_review.py`
+- `src/aegis360/{scene_story_packet,scene_story_semantics}.py`
+- `scripts/{build_scene_story_packet,bind_scene_story_semantics}.py`
+- `docs/experiments/scene-story-context-v1-2026-08-23.md`
 - `docs/experiments/apple-sound-reaction-gate-2026-08-15.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
