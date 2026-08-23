@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T20:11:00+08:00
+Updated: 2026-08-23T20:27:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 0a99d10
-Remote status: `origin/main` is 0a99d10 before this review checkpoint
-Working tree at checkpoint: v2 review-state docs only
+Baseline commit: 0072c12
+Remote status: `origin/main` is 0072c12 before the blind-protocol milestone
+Working tree at checkpoint: blind-intent protocol/current-state docs only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is owner perception of the three-second waterfall-prefix v2.
+gate is one non-leading hidden-intent response on neutral media A.
 
 ## Accepted evidence
 
@@ -150,9 +150,11 @@ now separates the fused 24.5/25.9-second boundaries while retaining six bounded
 cardinal composites and transient deletion. All 26 external JSON manifests
 exist without pixels. Owner accepts the unchanged original's eight marked
 chapters as natural. A new source-verified lineage passes eligibility while
-preserving the prior abstain artifact. Prefix v1 copies 169–171 seconds, but
-owner could not perceive its waterfall and rejects it. V2 uses 168.4–171.4,
-holds waterfall through 2.0 seconds and returns to titles by 2.9 seconds.
+preserving the prior abstain artifact. Prefix v1 is perceptually rejected; v2
+is intelligible only after intent disclosure and cannot count as blind proof.
+A new 35-second neutral Skiing pilot and hidden baseline share exact codec,
+dimensions, duration and zero start. An independent agent sealed the scoring
+key at SHA `576029f793a6e0a6898fcc3abad0be14ec5c36c0eb52491b070ba1ca6db2a41f`.
 
 ## Held-out benchmark
 
@@ -164,14 +166,14 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `0a99d10`.
-- This checkpoint rejects v1 perceptually and records the v2 review gate.
+- Expected branch: `main`; milestone parent is `0072c12`.
+- This checkpoint adds the non-leading blind-intent protocol and sealed pilot.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 392 tests pass.
+- `python3 -m unittest discover -s tests -q`: 399 tests pass.
 - Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
@@ -195,8 +197,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Owner compares the 18-second v2 peers from playback position zero.
-- Do not expand to a full render before the transition is accepted or revised.
+- Owner watches neutral media A once, without baseline, and answers the four
+  uncontaminated open questions before the hidden key is opened.
 
 ## Next commands
 
@@ -219,7 +221,7 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/story-segment-review-packets/old-ghost-road-pyramid-v1/*.json`
 - `outputs/segment-view-relevance/old-ghost-road-agent-v1/*.json`
 - `outputs/bounded-story-segment-plans/old-ghost-road-*/plan.json`
-- `outputs/prefix-foreshadow-reviews/old-ghost-road-waterfall-agent-v2/*.mp4`
+- `outputs/blind-intent-pilots/skiing-a-v1/{blind-intent-A,baseline}.mp4`
 - `outputs/chapter-map-reviews/old-ghost-road-agent-v1/original-with-agent-chapters.mkv`
 
 ## Milestone repository files
@@ -228,15 +230,13 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `docs/design/event-semantic-evidence.md`
 - `src/aegis360/{story_segment_timeline,story_segment_review_packet,segment_view_relevance}.py`
 - `docs/experiments/story-segment-view-relevance-v1-2026-08-23.md`
-- `src/aegis360/{bounded_story_segment_planner,bounded_story_render}.py`
-- `scripts/{plan_bounded_story_segments,render_bounded_story_segment_plan}.py`
 - `src/aegis360/{whole_film_chapter_map,chapter_map_foreshadow_eligibility}.py`
 - `scripts/{build_whole_film_chapter_map,assess_chapter_map_foreshadow}.py`
 - `config/chapter-map-foreshadow-policy-v1.json`
 - `docs/experiments/whole-film-chapter-map-v1-2026-08-23.md`
 - `src/aegis360/scene_boundary_story_packet.py`, `scripts/build_scene_boundary_story_packet.py`
 - `src/aegis360/prefix_foreshadow_plan.py`, `scripts/plan_prefix_foreshadow.py`
-- `docs/experiments/{exact-signal-story-review-v1,prefix-foreshadow-plan-v1}-2026-08-23.md`
+- `docs/experiments/{prefix-foreshadow-plan-v1,blind-director-intent-protocol-v1}-2026-08-23.md`
 - `docs/status.md`, `docs/handoff/current.md`
 
 ## Active agents

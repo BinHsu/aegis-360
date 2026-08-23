@@ -79,6 +79,8 @@ privacy-safe summaries when results exist.
   packets for every retained scene signal.
 - `prefix-foreshadow-plan-v1-2026-08-23.md`: one bounded future copy followed
   by the complete chronological body, plus its short editorial review pair.
+- `blind-director-intent-protocol-v1-2026-08-23.md`: non-leading intent recall,
+  contamination handling and hidden-key scoring.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

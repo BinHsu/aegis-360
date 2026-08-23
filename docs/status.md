@@ -194,7 +194,7 @@ event-semantic evidence now permits only packet-bound observations or strict
 abstention, never edit commands. Checksummed explainable weights now emit
 candidate utility without selecting a view. Sparse DP applies dwell, advantage,
 switch, repetition and spherical costs, then clips full-window camera segments.
-Owner rejects the two-second preview because the waterfall was not perceptible.
-A three-second v2 visibly holds the waterfall through 2.0 seconds and returns
-to titles by 2.9 seconds; streams start at zero and total 18 seconds. V2 awaits
-owner review and has not replaced the v1 plan.
+Old Ghost Road is contaminated for blind intent review. A neutral 35-second
+Skiing pilot and same-contract hidden baseline pass pre-review; an independent
+agent sealed the intent key at SHA `576029f7…2a41f`. Genre is contaminated,
+but focus, shot relationship, expectation and confusion remain blind.
