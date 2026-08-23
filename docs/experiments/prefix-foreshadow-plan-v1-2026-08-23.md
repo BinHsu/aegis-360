@@ -17,3 +17,10 @@ chronological 0–17 seconds versus waterfall 169–171 followed by chronologica
 frames with no obvious projection or compression failure. The hard cut returns
 to the source's white 360 title animation. Whether that reads as an intentional
 cold open or an abrupt interruption is the active owner editorial gate.
+
+Owner review could not perceive the two-second waterfall at all, so v1 is
+rejected regardless of frame-level presence. A v2 review hypothesis expands
+the prefix to the policy maximum, 168.4–171.4 seconds. Pre-review confirms
+waterfall at 0, 0.5 and 2.0 seconds, then title animation by 2.9/3.2 seconds;
+both streams start at zero and total duration is 18 seconds. V2 awaits owner
+perceptual review and has not replaced the checksummed v1 plan.

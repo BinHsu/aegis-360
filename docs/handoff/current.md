@@ -1,17 +1,17 @@
 # Current handoff
 
-Updated: 2026-08-23T20:03:00+08:00
+Updated: 2026-08-23T20:11:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: e4f20a1
-Remote status: `origin/main` is e4f20a1 before the prefix-plan milestone
-Working tree at checkpoint: prefix-plan milestone delta only
+Baseline commit: 0a99d10
+Remote status: `origin/main` is 0a99d10 before this review checkpoint
+Working tree at checkpoint: v2 review-state docs only
 
 ## Objective
 
 Build an offline, camera-agnostic 360-video auto-director for an ordinary
 viewer on a fanless M4 MacBook Air with 16 GB unified memory. The immediate
-gate is owner preference on the 17-second hard-cut prefix review pair.
+gate is owner perception of the three-second waterfall-prefix v2.
 
 ## Accepted evidence
 
@@ -150,9 +150,9 @@ now separates the fused 24.5/25.9-second boundaries while retaining six bounded
 cardinal composites and transient deletion. All 26 external JSON manifests
 exist without pixels. Owner accepts the unchanged original's eight marked
 chapters as natural. A new source-verified lineage passes eligibility while
-preserving the prior abstain artifact. Prefix plan v1 copies 169–171 seconds,
-then retains the complete chronological body. A short same-contract preview
-passes agent pre-review; waterfall-to-title transition awaits owner judgment.
+preserving the prior abstain artifact. Prefix v1 copies 169–171 seconds, but
+owner could not perceive its waterfall and rejects it. V2 uses 168.4–171.4,
+holds waterfall through 2.0 seconds and returns to titles by 2.9 seconds.
 
 ## Held-out benchmark
 
@@ -164,8 +164,8 @@ in the benchmark manifest and experiment record.
 
 ## Repository state
 
-- Expected branch: `main`; milestone parent is `e4f20a1`.
-- This checkpoint adds the bounded prefix plan and editorial review gate.
+- Expected branch: `main`; milestone parent is `0a99d10`.
+- This checkpoint rejects v1 perceptually and records the v2 review gate.
 - Media, models and generated artifacts are external and gitignored.
 - Git history is the archive; current handoff/status replace stale state.
 
@@ -195,7 +195,7 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Owner compares chronological versus hard-cut waterfall-prefix previews.
+- Owner compares the 18-second v2 peers from playback position zero.
 - Do not expand to a full render before the transition is accepted or revised.
 
 ## Next commands
@@ -219,7 +219,7 @@ The external artifact root is configured by `AEGIS_DATA_DIR`; never commit it.
 - `outputs/story-segment-review-packets/old-ghost-road-pyramid-v1/*.json`
 - `outputs/segment-view-relevance/old-ghost-road-agent-v1/*.json`
 - `outputs/bounded-story-segment-plans/old-ghost-road-*/plan.json`
-- `outputs/prefix-foreshadow-reviews/old-ghost-road-waterfall-agent-v1/*.mp4`
+- `outputs/prefix-foreshadow-reviews/old-ghost-road-waterfall-agent-v2/*.mp4`
 - `outputs/chapter-map-reviews/old-ghost-road-agent-v1/original-with-agent-chapters.mkv`
 
 ## Milestone repository files
