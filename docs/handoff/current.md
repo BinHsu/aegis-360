@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-07T01:40:00+08:00
+Updated: 2026-09-07T02:10:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: ee2d813
-Remote status: `origin/main` at `ee2d813`
-Working tree at checkpoint: label-free scorer integration
+Baseline commit: 826cc32
+Remote status: `origin/main` at `826cc32`
+Working tree at checkpoint: rejected blind-replication result documentation
 
 ## Objective
 
@@ -45,8 +45,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `ee2d813`.
-- Expected dirty files: label-free score contract/module/CLI/tests and handoff.
+- Expected branch/remote before checkpoint: `main` at `826cc32`.
+- Expected dirty files: result documentation and handoff only.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
 - Full suite: 560 tests pass after label-free scorer integration.
@@ -65,9 +65,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Commit/push the synthetic-only scorer checkpoint, then run its one exact
-  full-source acquisition and freeze the eight-score artifact SHA.
-- Keep review classifications unaggregated until that score hash freezes.
+- Record and push the frozen rejection, then delete transient review pixels as
+  required by protocol while retaining hashes and metadata artifacts.
+- Design a semantic sparse-event successor; do not retune this descriptor.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -91,8 +91,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. Independent label-separation audit passed; the
-  main agent owns the one real score acquisition and subsequent coordinator run.
+- No delegated work is active. The main agent owns result integration and
+  transient pixel cleanup.
 
 ## Safety and claims
 

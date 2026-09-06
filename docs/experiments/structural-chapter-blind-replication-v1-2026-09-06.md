@@ -1,6 +1,6 @@
 # Structural chapter blind replication v1
 
-Status: selection proof and anonymous review schedule frozen; no new score or pixel
+Status: executed and rejected by the frozen strict-ordering gate
 
 Selection-policy SHA-256:
 `c4a1f411e26de8061c46f49e7db43474b4aeb75839d7d7f140cc38bd5df2e6cb`.
@@ -98,8 +98,42 @@ Both closed schemas exact-validate with eight ordered responses and distinct
 opaque slots. The coordinator-private, identity-free distinct-principal
 attestation SHA is
 `0efe10192a4441f75910932992f2a8c0c0613f4fcade078860d575428cae4bd6`.
-Review classifications remain unopened while the already frozen label-free
-score adapter is implemented and tested.
+Review classifications remained unopened until the already frozen label-free
+score adapter was implemented, tested and its real artifact hash frozen.
+
+## Result
+
+The label-free score artifact SHA is
+`0c0c059ba1d1dc5b9498dc173d40cefcd261f8208c1c17f0923e72ef83d2e81b`.
+Only after it and both review hashes were frozen did the raw-byte coordinator
+join them. Evaluation artifact SHA is
+`7c9b4ae8b5d3697b6c44ed7fd0e98f95863b056e19d7d9044c6f51f4bf440afb`.
+
+Both reviewers agree on all eight packets: six `story_change` and two
+`no_semantic_change`. Class balance is adequate, but the lowest story score is
+0.04363508 at 205.6 seconds while the highest no-change score is 0.06806761 at
+132.4 seconds. The predeclared result is therefore `reject`, not `inconclusive`.
+
+| Source second | Event | Unanimous class | Score |
+| ---: | --- | --- | ---: |
+| 24.5 | `event:multi:0002` | no semantic change | 0.02073898 |
+| 35.1 | `event:multi:0003` | story change | 0.07047933 |
+| 43.1 | `event:multi:0004` | story change | 0.06766957 |
+| 95.6 | `event:multi:0009` | story change | 0.17297827 |
+| 121.6 | `event:multi:0014` | story change | 0.13457435 |
+| 132.4 | `event:multi:0016` | no semantic change | 0.06806761 |
+| 193.4 | `event:multi:0021` | story change | 0.10136846 |
+| 205.6 | `event:multi:0023` | story change | 0.04363508 |
+
+Post-reveal visual diagnosis explains the inversion without changing it. The
+205.6-second story change moves from a confined forest path to a suspension-
+bridge/river context, yet both sides retain dense grayscale edges and vertical
+structure after coarse cyclic alignment. The 132.4-second no-change packet stays
+within one mountain-trail activity, while viewpoint rotation, a nearby hiker and
+foreground/background redistribution produce a larger tile-structure distance.
+The descriptor is sensitive to viewpoint and spatial rearrangement but not
+monotonic with story change. Do not tune a threshold, discard either packet,
+backfill, or promote this score to chapter authority.
 
 Two fresh reviewers work independently. Only unanimous `story_change` and
 unanimous `no_semantic_change` packets enter ranking; at least two of each are

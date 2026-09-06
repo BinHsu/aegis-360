@@ -165,17 +165,16 @@ version; they must not be silently reinterpreted.
 - The frozen structural contrast primary passes: chapter event 0008 scores
   0.15776835 versus within-chapter 0005 at 0.08512510. The report-only
   correlated 0018/0019 pair reverses, so only blind replication is permitted.
+- Blind replication adds an independent reversal: the 205.6-second unanimous
+  story change scores below the 132.4-second unanimous no-change packet.
+  Viewpoint and spatial rearrangement remain confounds after cyclic alignment.
 
 ## Active acceptance gate
 
-The 26-row structural selection proof is frozen at `ad6f29b1…2a567`; its exact
-eight-packet anonymous schedule is frozen at `3964162f…0d8ba`. Its private/
-public exact rebuild, renderer, canonical bundle-tree and joined review gate pass
-synthetic tests. The exact 48-image bundle is frozen at `4f55b456…3c000`.
-Two fresh isolated reviews are frozen at `71998fe5…7930` and
-`37a87a20…8eed`. The frozen label-free score contract and adapter pass synthetic
-tests. Acquire its eight scores once without aggregating reviews, then run the
-raw-byte coordinator once.
+The structural blind replication is rejected. Both reviewers agree on all eight
+packets and supply adequate 6:2 story/no-change classes, but minimum story score
+0.04363508 is below maximum no-change score 0.06806761. This descriptor is not a
+monotonic story-change ranker and grants no boundary, camera or render authority.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -193,5 +192,5 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Run and freeze the one exact label-free structural-score artifact.
-selection over unused Old Ghost events. Do not infer boundaries or render video.
+Design a semantic sparse-event successor; do not retune this visual descriptor,
+infer boundaries from it or render production video.
