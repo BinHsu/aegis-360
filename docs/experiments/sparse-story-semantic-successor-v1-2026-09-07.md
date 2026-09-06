@@ -35,7 +35,10 @@ media-input authority; it invokes neither a renderer nor a model.
 The isolated adapter-runner protocol is now frozen after independent causal and
 vertical audits. Its capability-test-first backend, exact asset/request/receipt/
 aggregate schemas and synthetic case matrix are design authority only; no runner
-implementation or production isolation PASS exists yet.
+production isolation PASS exists yet. Non-authoritative structural codecs and a
+descriptor-bound, selector-driven capture primitive now pass 22 focused tests and
+independent trust audit. Every authority-bearing derivation still fails closed;
+the production backend, coordinator, asset proof and publisher remain absent.
 
 ## Question and claim boundary
 

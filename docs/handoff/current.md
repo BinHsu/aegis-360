@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T16:20:00+08:00
+Updated: 2026-09-06T17:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 32eac92
-Remote status: `origin/main` at `32eac92`
-Working tree at checkpoint: audited isolated-runner protocol ready to commit
+Baseline commit: 288d063
+Remote status: `origin/main` at `288d063`
+Working tree at checkpoint: audited runner codecs/capture ready to commit
 
 ## Objective
 
@@ -57,11 +57,11 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `32eac92`.
-- Expected dirty files: handoff and sparse-story successor protocol only.
+- Expected branch/remote before checkpoint: `main` at `288d063`.
+- Expected dirty files: handoff, runner codecs/capture and their tests.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 578 tests pass after sparse-story media-tree integration.
+- Full suite: 600 tests pass after runner codecs/capture integration.
 
 ## Verified
 
@@ -77,8 +77,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Implement bounded synthetic runner schemas/capture behind an injected backend
-  that cannot claim production isolation.
+- Implement coordinator-owned raw capability proofs and authoritative derivation
+  without adding a production backend or model invocation.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
@@ -105,9 +105,10 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. Causal and vertical runner-protocol audits PASS.
-- Main owns integration and the synthetic implementation; no model, real media
-  or score acquisition is allowed.
+- No delegated work is active. The two-module trust audit PASS is scoped to
+  non-authoritative codecs and factual capture only.
+- Main owns integration and the next coordinator proof layer. No model, real
+  media or score acquisition.
 
 ## Safety and claims
 
