@@ -162,16 +162,14 @@ version; they must not be silently reinterpreted.
 - Numeric audit shows RGB palette shifts dominate 46/297 while the station-to-
   slope change at 200 has weak coarse structure. The reciprocal 297/337 peaks
   are one A→B→A visual excursion, which separation does not model.
-- A separately audited structural contrast is frozen before acquisition. Its
-  primary gate compares pre-existing Old Ghost event 0008 against 0005; the
-  correlated 0018/0019 pair is report-only, not independent evidence.
-- Its closed implementation passes synthetic descriptor, exact episode,
-  privacy, mutation and atomic-publication gates without external access.
+- The frozen structural contrast primary passes: chapter event 0008 scores
+  0.15776835 versus within-chapter 0005 at 0.08512510. The report-only
+  correlated 0018/0019 pair reverses, so only blind replication is permitted.
 
 ## Active acceptance gate
 
-Checkpoint the frozen structural implementation, then run it once without
-changing config `8baf66a…f7f7a2`.
+Freeze a blind within-source replication that excludes all four development
+labels before acquiring any additional structural score.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -189,6 +187,5 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Checkpoint and push the successor freeze before decoding. Then implement its
-closed validators/acquisition and run the labeled contrast once. Do not infer
-boundaries or render video.
+Checkpoint and push the labeled-contrast result. Then design blinded replication
+selection over unused Old Ghost events. Do not infer boundaries or render video.

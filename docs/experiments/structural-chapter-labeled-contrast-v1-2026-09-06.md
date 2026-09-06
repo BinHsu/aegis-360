@@ -1,6 +1,6 @@
 # Structural chapter labeled contrast v1
 
-Status: frozen after independent audit; no feature acquisition
+Status: one frozen execution complete; primary passes, secondary reverses
 
 Frozen config SHA-256:
 `8baf66a00a008625cd91292aaa8ac0a8794d9fb20338e0acfab054b3a2f7f7a2`.
@@ -88,3 +88,27 @@ choice or render. Config and fixture hashes must be committed before decoding.
 
 An independent no-artifact audit passed the corrected timing, evidence lineage,
 descriptor math, correlated-pair limitation and fixture pairing semantics.
+
+## Frozen result
+
+The committed implementation ran once against the exact Old Ghost Road source.
+It decoded 451 frames on the declared 2-fps grid and emitted the path-free
+artifact SHA-256
+`83ba3f456f1d56b9bc40fef413cbc93009c0fd4c4813c85f9004614fc8843346`.
+Source hashes before and after match the frozen manifest.
+
+The primary ordinal gate passes:
+
+- event 0005, within-chapter action continuation: score 0.08512510;
+- event 0008, chapter/activity transition: score 0.15776835.
+
+All eight exact episode fixtures pass. The correlated report-only pair reverses
+the desired order: within-chapter event 0018 scores 0.03082203 while chapter
+event 0019 scores 0.02279322. Its overlapping intermediate state and higher
+window dispersion were predeclared reasons it cannot control the gate, but the
+reversal is still contrary evidence and must not be hidden.
+
+The bounded primary result permits a blind replication design only. It does not
+show generalized chapter detection, rescue the Skiing policy, or authorize a
+story boundary, camera decision or render. Replication selection must exclude
+these four labels and be frozen before acquiring new structural scores.

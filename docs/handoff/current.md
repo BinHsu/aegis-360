@@ -1,68 +1,75 @@
 # Current handoff
 
-Updated: 2026-09-06T20:00:00+08:00
+Updated: 2026-09-06T20:25:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 6e358e8
-Remote status: `origin/main` at `6e358e8`
-Working tree at checkpoint: structural successor implementation complete
+Baseline commit: 7a9fb10
+Remote status: `origin/main` at `7a9fb10`
+Working tree at checkpoint: one frozen structural contrast result
 
 ## Objective
 
 Build an offline 360-video auto-director for ordinary viewers on a fanless M4
-MacBook Air with 16 GB unified memory. The proposal policy has run exactly once;
-the first blind review is complete and rejects that policy as a chapter detector.
+MacBook Air with 16 GB unified memory. The first Skiing chapter-proposal policy
+is rejected; a color-independent structural successor now requires blind
+replication after one bounded labeled contrast.
 
 ## Last completed milestone
 
-Commit `26e9870` records the frozen proposal result and exact private/public
-schedule contract. The one permitted execution emits review-only proposals at
-seconds 46 and 297; frozen hash-lattice controls are 200, 140 and 460. No rule
-was retuned, and no proposal has semantic or boundary authority.
+The frozen Old Ghost Road contrast config SHA is
+`8baf66a00a008625cd91292aaa8ac0a8794d9fb20338e0acfab054b3a2f7f7a2`.
+It ran once using direct-source 2-fps 160x80 gray frames, exact rational sample
+mapping, closed label/packet/evidence hashes and source hashes before/after.
 
-This checkpoint adds an exact private schedule/public neutral projection
-contract. A 64-hex private salt is file-only; salted opaque IDs and order are
-recomputed before atomic publication. The public projection contains ordinal,
-qualitative row roles, neutral media references, four anonymous view slots and
-questions only. It excludes absolute times, offsets, cardinal directions,
-yaw/FOV, scores, hashes, candidate/control labels and source rationales.
+- Result artifact SHA:
+  `83ba3f456f1d56b9bc40fef413cbc93009c0fd4c4813c85f9004614fc8843346`.
+- Primary passes: chapter/activity event 0008 scores 0.15776835; within-chapter
+  action event 0005 scores 0.08512510.
+- Correlated secondary reverses: chapter event 0019 scores 0.02279322; within-
+  chapter event 0018 scores 0.03082203. This contrary evidence is report-only
+  by precommit but prevents any general detector claim.
+- All eight exact A→B→A fixtures pass. Source hashes before/after match.
+- Authority is blind-replication design only: no story boundary, camera choice
+  or render.
+
+## Prior Skiing rejection
+
+- Frozen visual-state proposals at 46 and 297 seconds are independently
+  reviewed `no_semantic_change`; the unlabeled 200-second control alone is
+  `story_change`. Two reviewers agree on all five packets.
+- Numeric audit shows palette-dominated RGB scores 0.3114/0.3044 at 46/297 and
+  only 0.0230 at 200. The 297/337 pair is one A→B→A appearance excursion.
+- Do not rerun, retune or lower the 0.08 floor. The external public review bundle
+  tree SHA is
+  `7163a4f54c6daf919a40465dad785050ba0b12061da790b6a33096114c461159`.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `26e9870`.
-- Expected dirty files are renderer module/CLI/test, the updated proposal-result
-  experiment record, status and this handoff.
-- External proxy, feature/proposal JSON, private key/salt and review pixels stay
+- Expected branch/remote before checkpoint: `main` at `7a9fb10`.
+- Expected dirty files: structural experiment result, status and this handoff.
+- External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
+- Full suite: 538 tests pass before result-document integration.
 
 ## Verified
 
-- Proposal artifact SHA:
-  `eeddadd92e86478aea79d4659b0ed8edb0fbcc92e74ddc57b7f051a29fa146f3`.
-- Policy/protocol hashes are recorded in the proposal experiment document.
-- Renderer focused suite: 3 tests pass; full suite: 534 tests pass.
-- Exact rebuild rejects private HMAC/ID/order and public bundle-ID mutations.
-- Renderer separates lineage/source and proxy hashes, uses proxy time, strips
-  PNG metadata, validates exact refs and publishes atomically.
+- Frozen source/config/fixture and four evidence lineages exact-validate.
+- Primary structural ordinal gate and all eight synthetic episode gates pass.
+- Result artifact is path-free and grants no production authority.
 
 ## Rejected
 
-- Frame-difference onset or active scene score as the sole chapter detector.
-- Looking at Skiing feature values before freezing the proposal policy.
-- Top-six selection, family quotas or threshold relaxation that backfill weak
-  proposals.
-- Treating proposal coverage as sufficient segment-evidence coverage.
-- Requiring the owner to label proposal packets.
-- The frozen persistent-state policy as a chapter detector: both proposals are
-  observed negatives and one of three controls exposes a miss.
+- The Skiing RGB-persistence policy as a chapter detector.
+- Treating the passing primary pair as accuracy or hiding the secondary reversal.
+- Retuning either frozen experiment after seeing its result.
 
 ## Pending
 
-- Commit and push the renderer and blind negative result.
-- Audit descriptor values around 46/200/297 without retuning the frozen policy.
-- Precommit a successor signal hypothesis and evaluate it on separate evidence.
-- Chapters longer than about 90 seconds or evidence gaps over 30 seconds must
-  receive denser segment review or abstain. No video awaits owner review.
+- Commit and push the frozen labeled-contrast result.
+- Freeze a blinded within-source replication over unused Old Ghost events. Its
+  selection must not use the four development labels or their scores.
+- Replication must use neutral packets and fresh independent reviewers before
+  opening event identities/positions. Do not render production video.
 
 ## Next commands
 
@@ -74,74 +81,22 @@ git diff --check
 git status --short
 ```
 
-After checkpointing, inspect why RGB/persistence descriptors favor the two
-observed negatives over the second-200 transition. Do not retune the frozen
-policy or infer boundaries from proposal times.
-
 ## External artifacts
 
-Set `AEGIS_DATA_DIR` locally. The full proxy is under
-`outputs/analysis-proxies/skiing-full-ffv1-v1/`; proposal material is under
-`outputs/chapter-proposals/skiing-blind-v1/`. Never commit external artifacts.
+Set `AEGIS_DATA_DIR` locally. Skiing material is under
+`outputs/chapter-proposals/skiing-blind-v1/`. The new structural result is
+`outputs/structural-chapter-contrast/old-ghost-road-labeled-v1.json`. Never
+commit external artifacts.
 
 ## Active agents
 
-None. Structural implementation is complete without external access. The main
-agent owns its checkpoint and single real execution.
+None. The main agent owns result integration and blind-replication design.
 
 ## Safety and claims
 
 - Never commit media, frames, audio, model weights, identities or absolute
   local source paths.
 - Analysis remains offline; downloads require explicit authority.
-- Frame memory is bounded; compact JSON rows grow at one row per second and do
-  not establish arbitrary-duration constant memory.
-- The 0.08 proposal floor is a pre-data hypothesis, not a probability.
-- Proposals cannot create semantics, boundaries, camera paths or renders.
+- This label-selected contrast is not source-level held-out evidence, accuracy
+  or an effect-size claim.
 - Git history is the archive; status and handoff contain current state only.
-
-## Frozen review schedules
-
-- Private schedule SHA:
-  `7f09f628c30575ddd9934816e2e2af32c219fb2b494ef91d14bccc8d81b81463`.
-- Public reviewer-index SHA:
-  `dd26f02b347467628aad92504070fd6399a1f00a8bc753ce3a49a239f7cad0b4`.
-- The external salt is mode 0600 and its raw value is neither logged nor
-  committed. Five packets were published atomically.
-- Public transient bundle: five packets and 30 sanitized 960x540 RGB PNGs;
-  path-independent tree SHA
-  `7163a4f54c6daf919a40465dad785050ba0b12061da790b6a33096114c461159`.
-
-## Blind result
-
-- Both reviewers: packet 2 `story_change`; packets 1/3/4/5
-  `no_semantic_change`.
-- Post-review mapping: packet 2 is the second-200 control; packets 1 and 4 are
-  proposals at seconds 297 and 46. Controls 140 and 460 are observed negatives.
-- The policy therefore emits two observed negatives and misses one observed
-  control transition. This rejects promotion but is not a calibrated rate.
-- Next: read-only descriptor audit at 46/200/297, then precommit a successor
-  signal hypothesis on separate evidence. No production video is authorized.
-
-## Causal diagnosis
-
-- RGB persistence scores are 0.3114 at 46, 0.0230 at 200 and 0.3044 at 297.
-  The coarse representation favors palette/exposure/environment changes over
-  the smaller station/person/infrastructure layout used by reviewers.
-- The 297 and 337 reciprocal peaks share the [307,327) middle state and express
-  one A→B→A excursion. Separation suppresses the exit but does not model it.
-- Existing 15-second RGB change also favors appearance excursions and is not a
-  justified fix. No threshold or policy was changed.
-- Successor hypothesis: color-independent tilewise structural occupancy plus
-  explicit episode/return reasoning, precommitted before separate evidence.
-
-## Successor freeze
-
-- Config SHA: `8baf66a00a008625cd91292aaa8ac0a8794d9fb20338e0acfab054b3a2f7f7a2`.
-- Synthetic fixture SHA:
-  `3cd1cc5360c61035adac8c15c7cfda103d0ced31c34cc712d702ff271eee4913`.
-- Primary ordinal contrast is non-overlapping event 0005 versus 0008. The
-  adjacent 0018/0019 pair is correlated and report-only.
-- Checkpoint `6e358e8` is pushed; deterministic implementation is authorized,
-  and synthetic/full-suite gates pass. Real acquisition waits for the
-  implementation checkpoint.
