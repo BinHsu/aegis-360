@@ -135,6 +135,12 @@ The descriptor is sensitive to viewpoint and spatial rearrangement but not
 monotonic with story change. Do not tune a threshold, discard either packet,
 backfill, or promote this score to chapter authority.
 
+After evaluation, both transient bundle copies, temporary reviewer responses
+and diagnostic montages were deleted as predeclared. Coordinator metadata,
+reviews, scores, evaluation, source, schedule and owner-only salt remain. The
+48 PNGs are not directly recoverable, but the frozen inputs can re-render a
+bundle whose canonical tree must equal `4f55b456…3c000`.
+
 Two fresh reviewers work independently. Only unanimous `story_change` and
 unanimous `no_semantic_change` packets enter ranking; at least two of each are
 required. `min(story score) > max(no-change score)` passes. Adequate balance

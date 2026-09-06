@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-07T02:10:00+08:00
+Updated: 2026-09-07T02:30:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 826cc32
-Remote status: `origin/main` at `826cc32`
-Working tree at checkpoint: rejected blind-replication result documentation
+Baseline commit: f94a389
+Remote status: `origin/main` at `f94a389`
+Working tree at checkpoint: transient review material cleanup documentation
 
 ## Objective
 
@@ -45,7 +45,7 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `826cc32`.
+- Expected branch/remote before checkpoint: `main` at `f94a389`.
 - Expected dirty files: result documentation and handoff only.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
@@ -65,9 +65,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Record and push the frozen rejection, then delete transient review pixels as
-  required by protocol while retaining hashes and metadata artifacts.
-- Design a semantic sparse-event successor; do not retune this descriptor.
+- Design a semantic sparse-event successor that uses cheap whole-film signals
+  for recall and bounded semantic review for meaning.
+- Do not retune either rejected visual descriptor or render production video.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -91,8 +91,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. The main agent owns result integration and
-  transient pixel cleanup.
+- No delegated work is active. Transient review pixels and `/tmp` copies are
+  deleted; frozen coordinator metadata remains on the external data volume.
 
 ## Safety and claims
 
