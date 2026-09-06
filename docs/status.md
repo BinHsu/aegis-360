@@ -168,8 +168,10 @@ version; they must not be silently reinterpreted.
 
 ## Active acceptance gate
 
-Freeze a blind within-source replication that excludes all four development
-labels before acquiring any additional structural score.
+The 26-row structural selection proof is frozen at
+`ad6f29b1…2a567`: eight selected, nine development-excluded, four separation-
+rejected and five after cap. Freeze its proof-bound anonymous schedule before
+acquiring any review pixel or structural score.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -177,8 +179,8 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests -q`: 534 tests pass before final
-  documentation integration.
+- `python3 -m unittest discover -s tests`: 543 tests pass after selection-proof
+  integration.
 - Visual-state suite: 6 tests pass after the real FFmpeg count fix.
 - Chapter-proposal suite: 8 tests pass.
 - Typed packet/relevance/utility/continuity/planner integration: 53 tests pass.
@@ -187,5 +189,5 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Checkpoint and push the labeled-contrast result. Then design blinded replication
+Design and freeze the proof-bound private/public salted review schedule.
 selection over unused Old Ghost events. Do not infer boundaries or render video.

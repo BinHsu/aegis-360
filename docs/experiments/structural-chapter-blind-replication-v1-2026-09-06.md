@@ -1,9 +1,12 @@
 # Structural chapter blind replication v1
 
-Status: selection policy frozen after independent audit; no new score or pixel
+Status: selection proof frozen; no new score or pixel
 
 Selection-policy SHA-256:
 `c4a1f411e26de8061c46f49e7db43474b4aeb75839d7d7f140cc38bd5df2e6cb`.
+
+Selection-proof SHA-256:
+`ad6f29b1cf34374ad3130afa3bd2535ac81676fdb4300a2891fb5c6c8712a567`.
 
 ## Claim boundary and staged lineage
 
@@ -38,6 +41,14 @@ with event-ID then signal-ID ascending tie break. Select a row only when
 its distance from every earlier selection is at least eight seconds. Stop at
 eight; fail if the cap cannot be filled. Record excluded, separation-rejected,
 selected and after-cap rows in digest order. Never backfill.
+
+The one frozen build accounts for all 26 rows: eight selected, nine development
+excluded, four rejected for minimum separation and five after cap. Selection
+rank order is event/signal `0023/0024` at 205.6 s, `0003/0004` at 35.1 s,
+`0002/0002` at 24.5 s, `0009/0010` at 95.6 s, `0014/0015` at 121.6 s,
+`0021/0022` at 193.4 s, `0016/0017` at 132.4 s and `0004/0005` at 43.1 s.
+The artifact contains no pixels, audio, labels or local paths and grants no
+semantic, boundary, camera or render authority.
 
 ## Label-free scoring contract
 

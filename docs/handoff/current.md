@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T22:10:00+08:00
+Updated: 2026-09-06T22:25:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 8f7cb37
-Remote status: `origin/main` at `8f7cb37`
-Working tree at checkpoint: clean after selection implementation milestone
+Baseline commit: af27aca
+Remote status: `origin/main` at `af27aca`
+Working tree at checkpoint: selection-proof result documentation
 
 ## Objective
 
@@ -65,9 +65,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Build the exact 26-entry metadata-only selection proof once against the
-  frozen timeline, context grid and legacy lineage packets.
-- Record its checksum and selected identities before any pixels are rendered.
+- Design and freeze the selection-proof-bound private schedule and salted
+  public index before any pixels or structural scores are acquired.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -85,8 +84,9 @@ git status --short
 
 Set `AEGIS_DATA_DIR` locally. Skiing material is under
 `outputs/chapter-proposals/skiing-blind-v1/`. The new structural result is
-`outputs/structural-chapter-contrast/old-ghost-road-labeled-v1.json`. Never
-commit external artifacts.
+`outputs/structural-chapter-contrast/old-ghost-road-labeled-v1.json`; selection
+proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
+`ad6f29b1…2a567`. Never commit external artifacts.
 
 ## Active agents
 
