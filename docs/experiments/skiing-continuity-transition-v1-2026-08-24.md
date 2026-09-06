@@ -147,3 +147,37 @@ External artifact SHA-256 values:
 - zero-edge continuity evidence: `02ba0363ec4116540ce48071fd70a19ae02f08cafe624bfb395aae4751d9898b`;
 - zero-edge transition utility: `3749672e633af1f4f32270f6a9039db4445632abd9dc155793874b7a0d143277`;
 - typed global plan: `29b58c779ad6ae861283da87a669f56ec692cdb510c5205387a28d00a16482a8`.
+
+## Authoritative continuous 380–415 replay
+
+The two diagnostic windows are not merged because doing so would reset onset
+hysteresis at 395 seconds. One new 35-second acquisition instead preserves the
+continuous state and emits 139 rows. Its only onset is the same byte-for-byte
+candidate core at 386.25–386.75; the already reviewed five sample rows are
+identical, so the no-semantic-change labels are re-bound to the new lineage.
+The complete typed timeline contains one 380–415 segment.
+
+Three transient four-cardinal composites at 387/397.5/408 seconds were reviewed
+independently and then deleted. Cardinal 0 is clear, primary and stable;
+cardinal 1 is clear, supporting and changing; cardinal 2 is clear, low and
+stable; cardinal 3 is partial, low and changing. This is segment composition
+evidence, not subject identity or continuous tracking evidence.
+
+Candidate utilities are respectively 3.5, 2.0, 0.5 and -1.0. The typed global
+plan therefore retains cardinal 0 for the complete window at objective 3.5,
+with no edge, switch or transition cost. Every required evidence scope is
+observed, so the plan is production eligible, but it emits no renderer command.
+Rendering is skipped because the decision is identical to the existing fixed
+cardinal-0 baseline and would provide no new directing evidence.
+
+Authoritative artifact SHA-256 values:
+
+- frame-difference samples: `d6b186c747e594f5a788b152eb3ab773fc887c831e476c121dfbf7bed21bbdb6`;
+- onset candidates: `30b2627bc3673f48beedd11d548203fafe5d51a4a02025ccd76413a234ccaa7e`;
+- semantic evidence: `ff3c9e1519e6a9ccaad9e580e4da85929c9f93520dbfcfe32cc29a8ce1cdb831`;
+- typed boundaries: `d8127140656257cc7dbadad814ad797905a774a55028d5bc0cf18caa4bf289cd`;
+- typed timeline: `299bcf9a54a329a13350e6c1ed3953f552a431a6ce493fb12bb01e74c47c7543`;
+- observed relevance: `3b6da315a0bc9e338a5ac0a3643651439d7679190b4eb791c3347fb29b14f494`;
+- candidate utility: `e7f359ab859af4dbb673ba8a872935b4cbdc5f2b1e2527f494b27dfb9c8b72e3`;
+- zero-edge transition utility: `0e4ba4fecc80417d83db722827b18a02ffae05bf5e4a8cf04db208143e085e83`;
+- typed global plan: `9c983a0f00a9708e6a594d08f76ac167efa6e03de69c9d1a09bc6a7d3b604de6`.

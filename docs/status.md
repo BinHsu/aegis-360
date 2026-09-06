@@ -8,12 +8,14 @@ The repository has an executable offline analysis-to-render architecture for
 monoscopic equirectangular input on the M4/16 GB reference machine. It now
 includes typed continuous-onset segmentation and a persistent numeric global
 planner. The latest real Skiing replay correctly produces no cut and no render:
-motion evidence at 386.25–386.75 seconds is not a semantic story change, and
-candidate-view evidence for the resulting 380–395 segment abstains.
+motion evidence at 386.25–386.75 seconds is not a semantic story change, while
+observed 380–415 candidate-view evidence selects the existing cardinal-0
+baseline, making another identical render unnecessary.
 
-This is a contract/integration pass, not a directing-quality pass. The system
-does not yet have typed evidence for 395–415 seconds or observed candidate-view
-relevance for the bounded segment.
+The complete 380–415 window now has observed candidate-view relevance and a
+production-eligible plan. It retains the already preferred fixed-forward view,
+so no redundant render is produced. This is a bounded directing pass, not a
+whole-source result.
 
 ## Accepted evidence
 
@@ -45,13 +47,17 @@ relevance for the bounded segment.
 - The typed-boundary adapter rejects the onset with null effective time and
   authorizes zero boundaries.
 - The typed 380–395 timeline therefore contains one complete segment.
-- Review packet v2 samples 383, 387.5 and 392 seconds. No candidate-view review
-  is claimed, so relevance abstains and utility is neutral/ineligible.
+- The authoritative continuous 380–415 acquisition contains 139 rows and
+  preserves hysteresis across 395 seconds. It emits only the same rejected
+  motion onset and forms one 35-second typed segment.
+- Review packet v2 samples 387, 397.5 and 408 seconds. Independent review finds
+  cardinal 0 clear/primary/stable; all other directions score lower.
 - A one-segment timeline has zero adjacency edges. Continuity evidence and
   transition utility correctly contain empty edge lists.
-- Typed global planning retains `context:cardinal:0`; objective, utility,
-  transition utility and cost are all zero. `production_eligible=false` and
-  `renderer_command_emitted=false`.
+- Typed global planning retains `context:cardinal:0` at objective 3.5 with no
+  transition or cost. `production_eligible=true` and
+  `renderer_command_emitted=false`; rendering is skipped because this is
+  decision-identical to the fixed-forward baseline.
 
 The exact artifact hashes are recorded in
 `docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`.
@@ -78,10 +84,7 @@ version; they must not be silently reinterpreted.
 
 ## Current limitations
 
-- Typed continuous-onset evidence covers only 380–395, not 395–415 or the full
-  616.392-second Skiing source.
-- No observed per-candidate relevance exists for the typed segment; the plan is
-  therefore deliberately non-production.
+- Typed evidence covers 380–415, not the full 616.392-second Skiing source.
 - The rejected 386-second onset demonstrates one false positive class, not a
   calibrated general onset detector.
 - No real benchmark proves identity through occlusion, view handoff or an ERP
@@ -96,11 +99,10 @@ version; they must not be silently reinterpreted.
 
 ## Active acceptance gate
 
-Extend the same typed evidence chain over 395–415 seconds, without importing
-the legacy hand-authored 390-second split. Then produce closed candidate-view
-relevance for every resulting typed segment. Only a complete observed plan may
-reach the renderer gate; abstention must continue to retain state and block
-production eligibility.
+Scale the same continuous acquisition contract to the full Skiing source, then
+measure onset count before committing to semantic review volume. Preserve one
+continuous hysteresis state; do not concatenate independently classified
+windows. Only complete observed segment evidence may reach the renderer gate.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -108,14 +110,14 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests -q`: 493 tests pass.
+- `python3 -m unittest discover -s tests -q`: 498 tests pass.
 - Typed packet/relevance/utility/continuity/planner integration: 53 tests pass.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Checkpoint and push the typed planner integration, then acquire or derive the
-bounded 395–415 frame-difference evidence under the same v2 acquisition
-contract. Do not render until the complete typed planner result is production
-eligible.
+Checkpoint and push the complete 380–415 replay and zero-candidate CLI/review
+runner wiring. Then run a bounded-cost full-source onset-count acquisition;
+do not render unless the resulting plan differs materially from an existing
+validated baseline.

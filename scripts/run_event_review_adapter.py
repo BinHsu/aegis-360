@@ -62,7 +62,10 @@ def main() -> int:
         validate_scene_story_packet(packet, timeline, grid, **validation_kwargs)
     elif packet.get("schema_version") == "aegis360.scene-boundary-story-review-packet.v1":
         validate_scene_boundary_story_packet(packet, timeline, grid, **validation_kwargs)
-    elif packet.get("schema_version") == "aegis360.story-segment-review-packet.v1":
+    elif packet.get("schema_version") in {
+        "aegis360.story-segment-review-packet.v1",
+        "aegis360.story-segment-review-packet.v2",
+    }:
         validate_story_segment_review_packet(
             packet, timeline, grid,
             segment_timeline_sha256=validation_kwargs["timeline_sha256"],
@@ -74,6 +77,7 @@ def main() -> int:
         "aegis360.scene-story-review-packet.v1",
         "aegis360.scene-boundary-story-review-packet.v1",
         "aegis360.story-segment-review-packet.v1",
+        "aegis360.story-segment-review-packet.v2",
     }
     jobs = (build_story_review_render_jobs(packet, grid, width=args.width, height=args.height)
             if story_mode else

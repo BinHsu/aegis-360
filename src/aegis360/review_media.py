@@ -49,7 +49,8 @@ def build_story_review_render_jobs(
     """Resolve one composite job per story sample, with four owned viewports."""
     accepted = {"aegis360.scene-story-review-packet.v1",
                 "aegis360.scene-boundary-story-review-packet.v1",
-                "aegis360.story-segment-review-packet.v1"}
+                "aegis360.story-segment-review-packet.v1",
+                "aegis360.story-segment-review-packet.v2"}
     if packet.get("schema_version") not in accepted:
         raise ValueError("story review packet schema is invalid")
     if isinstance(width, bool) or isinstance(height, bool) or not (

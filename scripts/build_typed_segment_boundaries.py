@@ -18,8 +18,8 @@ def main() -> int:
     for name in ("onset_json", "samples_json", "grid_json", "policy_json",
                  "output_json"):
         parser.add_argument(name, type=Path)
-    parser.add_argument("--packet", type=Path, action="append", required=True)
-    parser.add_argument("--evidence", type=Path, action="append", required=True)
+    parser.add_argument("--packet", type=Path, action="append", default=[])
+    parser.add_argument("--evidence", type=Path, action="append", default=[])
     args = parser.parse_args()
     paths = [args.onset_json, args.samples_json, args.grid_json, args.policy_json,
              *args.packet, *args.evidence]

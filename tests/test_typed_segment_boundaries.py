@@ -134,6 +134,29 @@ class TypedSegmentBoundaryTests(unittest.TestCase):
             self.assertNotEqual(repeated.returncode, 0)
             self.assertIn("refusing to overwrite", repeated.stderr)
 
+    def test_cli_accepts_zero_candidates_without_review_flags(self):
+        onset = copy.deepcopy(self.onset)
+        onset["candidates"] = []
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            paths = {}
+            for name, value in (("onset", onset), ("samples", self.samples),
+                                ("grid", self.grid), ("policy", self.policy)):
+                paths[name] = root / f"{name}.json"
+                paths[name].write_text(json.dumps(value, sort_keys=True))
+            output = root / "boundaries.json"
+            result = subprocess.run([
+                sys.executable,
+                str(ROOT / "scripts/build_typed_segment_boundaries.py"),
+                str(paths["onset"]), str(paths["samples"]),
+                str(paths["grid"]), str(paths["policy"]), str(output),
+            ], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            artifact = json.loads(output.read_text())
+            self.assertEqual(artifact["boundaries"], [])
+            self.assertEqual(
+                artifact["boundary_authority"]["authorized_boundary_count"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

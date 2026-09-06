@@ -1,111 +1,84 @@
 # Current handoff
 
-Updated: 2026-09-06T09:30:00+08:00
+Updated: 2026-09-06T10:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: a334ba6
-Remote status: `origin/main` at `a334ba6` before this checkpoint
-Working tree at checkpoint: typed packet/relevance/continuity/planner integration plus current docs
+Baseline commit: de10b29
+Remote status: `origin/main` at `de10b29` before this checkpoint
+Working tree at checkpoint: complete 380–415 replay, zero-candidate CLI and typed review-runner wiring
 
 ## Objective
 
 Build an offline 360-video auto-director for ordinary viewers on a fanless
-MacBook Air M4 with 16 GB unified memory. The immediate gate is a complete,
-typed and fail-closed Skiing plan before any further render.
-
-## Read first
-
-1. `AGENTS.md`
-2. `docs/status.md`
-3. `docs/design/event-semantic-evidence.md`
-4. `docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`
-5. ADR 0010, then ADR 0006 and ADR 0011
-
-No chat transcript, agent session or vendor-specific memory is required.
+MacBook Air M4 with 16 GB unified memory. The current gate is scaling the typed
+continuous-onset route beyond one bounded Skiing interval without creating
+review or render work unsupported by evidence.
 
 ## Last completed milestone
 
-- Typed story timelines emit review packet v2 with explicit typed lineage;
-  legacy packet v1 output and its fixed digest remain unchanged.
-- Segment relevance explicitly accepts only packet v1/v2. Typed packet
-  abstention feeds the existing neutral candidate-utility contract.
-- Causal continuity accepts typed timeline/packet lineage. A typed one-segment
-  timeline legally produces zero edges; legacy timelines still require at
-  least two segments.
-- `aegis360.typed-global-story-plan.v1` consumes only typed timelines, complete
-  ordered candidate utilities, complete continuity utility, grid and policy.
-- Planner input contracts are closed over root/nested shapes, lineage,
-  producer authority, candidate order, finite totals and safe IDs.
-- Observed segment utility must make every grid candidate eligible; abstention
-  makes none eligible and keeps every total neutral.
-- DP applies one edge cell and one fixed plus spherical-angular cost per
-  actual switch. Closing hold and abstention retain the incoming candidate.
-- Any segment or edge abstention sets `production_eligible=false`.
-- The planner never emits renderer commands.
+The previous pushed commit `de10b29` completed typed packet/relevance,
+zero-edge causal continuity and strict numeric global-planner integration. This
+checkpoint extends the real evidence window from 380–395 to a continuous
+380–415 acquisition and closes observed segment-view relevance.
+
+The frame-difference runner emits 139 normalized rows. The frozen uncalibrated
+policy finds only the prior 386.25–386.75 motion burst. Its five semantic rows
+are byte-identical to the independently reviewed bounded packet core, so
+`no_semantic_change` is re-bound to the new source/window lineage. Zero typed
+boundaries produce one complete 35-second segment.
+
+Typed packet v2 schedules 387/397.5/408-second four-cardinal composites. Main
+and independent agent review agree cardinal 0 is clear/primary/stable. The
+other candidates are lower-value or changing. Utility scores are c0=3.5,
+c1=2.0, c2=0.5, c3=-1.0. The plan retains c0 with no edge, switch or cost and
+objective 3.5. It is production eligible but emits no renderer command.
+
+No video was rendered: the selected view is identical to the existing fixed
+cardinal-0 baseline, so another file would add no directing evidence. All
+transient review pixels were deleted.
+
+Two vertical CLI gaps were closed:
+
+- zero-onset windows may call the typed-boundary CLI with no packet/evidence
+  flags; both lists still must have equal length;
+- transient story review explicitly accepts packet v2 at both runner and
+  render-job layers, retains exactly three composites and mandatory cleanup.
 
 ## Repository state
 
-- Expected branch: `main`; baseline and remote were `a334ba6`.
-- Generated evidence is external and must remain untracked.
+- Expected branch: `main`; baseline/remote before checkpoint: `de10b29`.
+- Dirty files should be only the CLI/review wiring, tests and current docs.
+- External evidence is untracked under the configured data root.
 
 ## Verified
 
-- Targeted vertical integration: 53 tests pass.
-- Full suite: 493 tests pass.
-- `git diff --check`: passes.
-- Media, models, review pixels and generated artifacts are external only.
-- Temporary five-sample semantic review pixels were deleted.
-
-## Real replay
-
-External root:
-`$AEGIS_DATA_DIR/outputs/continuous-onset/skiing-v1`
-
-The 380–395 acquisition contains 59 normalized frame-difference samples. Its
-single proposed onset at 386.25–386.75 is independently classified
-`no_semantic_change`: the ski area, lift, slope and skiers persist while
-relative motion, a near object and the stitch band change.
-
-The typed boundary artifact therefore authorizes zero boundaries and the typed
-timeline contains one segment. The new vertical path produces:
-
-- review packet v2 SHA `6792ed35cbdbb11600195e562bb92197d076aaeb2fdf792790a1b3ff97a7d339`;
-- abstain relevance SHA `37f7bb687be6eea19d5ed6d305c77e2b9e91e919453509943e1a3e68ab7874f2`;
-- neutral utility SHA `e7aa3eb45fd2e986363365c86603b9b45675e75351b1373bdcbbb351051860d4`;
-- zero-edge continuity evidence SHA `02ba0363ec4116540ce48071fd70a19ae02f08cafe624bfb395aae4751d9898b`;
-- zero-edge transition utility SHA `3749672e633af1f4f32270f6a9039db4445632abd9dc155793874b7a0d143277`;
-- typed plan SHA `29b58c779ad6ae861283da87a669f56ec692cdb510c5205387a28d00a16482a8`.
-
-The plan keeps `context:cardinal:0` over 380–395 with objective 0, no edge,
-no switch and no cost. It is deliberately not production eligible. No video
-was rendered and no owner review is pending.
-
-## Policy-v1 caveats
-
-- `chapter_boundary` and `within_chapter_cut` retain different labels but use
-  the same numeric switch gate.
-- `minimum_dwell_seconds` is the duration of the destination segment, not
-  accumulated time since the last switch.
-- `minimum_advantage` prunes locally before fixed/angular costs.
-
-Do not change these meanings without a measured policy-v2 experiment.
+- The authoritative 380–415 plan SHA is
+  `9c983a0f00a9708e6a594d08f76ac167efa6e03de69c9d1a09bc6a7d3b604de6`.
+- The authoritative typed timeline SHA is
+  `299bcf9a54a329a13350e6c1ed3953f552a431a6ce493fb12bb01e74c47c7543`.
+- Packet/job and zero-candidate targeted tests pass.
+- Full suite: 498 tests pass; handoff checker and diff check pass.
+- No temporary review pixels remain.
 
 ## Rejected
 
-- The old hand-authored 390-second split is pilot edit timing, not source
-  semantic-boundary evidence.
+- Do not merge independently classified 380–395 and 395–415 windows: that
+  resets hysteresis and treats the join as an implicit semantic boundary.
+- The legacy hand-authored 390-second split is pilot edit timing, not source
+  story-boundary evidence.
 - The 386-second motion burst is not a story change.
-- The typed replay does not cover 395–415 or the full Skiing source.
-- Empty continuity for a one-segment timeline is not an abstained edge and
-  must not be replaced with fabricated observations.
-- A retained default view under abstention is not evidence that the view is
-  editorially best.
+- A production-eligible plan does not require a redundant render when its
+  decision is identical to an already validated baseline.
+- Segment composition evidence does not prove subject identity or tracking.
 
 ## Pending
 
-- Checkpoint and push this typed planner integration.
-- Extend the same acquisition/evidence chain over 395–415 seconds.
-- Obtain complete observed segment-view relevance before rendering.
+- Run full-source Skiing frame-difference acquisition under the same v2 config
+  and measure onset count before expanding semantic review.
+- Keep one continuous hysteresis state across the source.
+- Review only emitted sparse onset packets and resulting typed segments.
+- Render only if a complete observed plan materially differs from an existing
+  validated baseline.
 
 ## Next commands
 
@@ -117,33 +90,24 @@ git diff --check
 git status --short
 ```
 
-After the checkpoint is pushed, continue with bounded 395–415 acquisition
-under the existing frame-difference v2 contract. Build typed boundary and
-timeline artifacts from that evidence; do not reuse the legacy 390-second
-split. Produce complete segment-view evidence before invoking a renderer.
+After pushing, run `scripts/run_ffmpeg_frame_difference.py` on the full
+616.392-second Skiing source with
+`config/skiing-continuous-onset-acquisition-v2.json`. Store output externally,
+then run `scripts/build_continuous_onset_candidates.py` with the frozen Skiing
+policy. Stop expansion only if the sparse review count itself creates a real
+cost/quality decision.
 
 ## External artifacts
 
-Set `AEGIS_DATA_DIR` locally. Durable generated artifacts are under
-`outputs/continuous-onset/skiing-v1/`; exact hashes are listed above and in
-the experiment record. Never commit that directory.
-
-## Main repository files in this checkpoint
-
-- `src/aegis360/story_segment_review_packet.py`
-- `src/aegis360/segment_view_relevance.py`
-- `src/aegis360/causal_continuity_evidence.py`
-- `src/aegis360/typed_global_story_planner.py`
-- `scripts/plan_typed_global_story.py`
-- corresponding tests under `tests/`
-- `docs/design/event-semantic-evidence.md`
-- `docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`
-- `docs/status.md`, `docs/handoff/current.md`, `docs/README.md`, `README.md`
+Set `AEGIS_DATA_DIR` locally. Authoritative artifacts are under
+`outputs/continuous-onset/skiing-t380-t415-v1/`. Exact hashes are recorded in
+`docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`. The separate
+`skiing-t395-t415-v1` directory is diagnostic only. Never commit either.
 
 ## Active agents
 
-No delegated work remains active. All completion packets were integrated and
-independently rechecked by the main agent.
+No delegated work remains active. The independent visual review completed
+without editing repository files.
 
 ## Safety and claims
 
@@ -152,6 +116,7 @@ independently rechecked by the main agent.
 - Analysis/rendering remain offline; downloads require explicit authority.
 - Keep queues and memory bounded for the 16 GB unified-memory machine.
 - Geometry, faces and mouth motion do not establish identity or speech.
+- Policy v1 uses destination-segment duration as dwell and applies minimum
+  advantage before transition costs; do not silently change these semantics.
 - Git history is the archive; status and handoff contain current state only.
-- Stop for user input only on a real decision, new authority or external
-  dependency. Otherwise update this handoff at each milestone and continue.
+- Stop only for a real user decision, new authority or external dependency.

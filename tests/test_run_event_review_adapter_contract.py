@@ -10,6 +10,7 @@ class RunEventReviewAdapterContractTests(unittest.TestCase):
         self.assertIn('"-an"', source)
         self.assertIn("AEGIS_REVIEW_MEDIA_INDEX", source)
         self.assertIn("validate_multi_signal_review_packet", source)
+        self.assertIn('"aegis360.story-segment-review-packet.v2"', source)
         self.assertNotIn("shell=True", source)
 
 

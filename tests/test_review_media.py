@@ -7,6 +7,8 @@ from aegis360.review_media import (build_review_render_jobs, build_story_review_
                                    build_story_transient_media_index,
                                    build_transient_media_index)
 from tests.test_scene_story_packet import build_story_fixture, digest as story_digest
+from tests.test_story_segment_review_packet import build_segment_packet_fixture
+from aegis360.story_segment_review_packet import build_story_segment_review_packet
 from tests.test_event_timeline import digest
 
 
@@ -50,6 +52,20 @@ class ReviewMediaTests(unittest.TestCase):
         self.assertNotIn("yaw_degrees", index["frames"][0])
         self.assertEqual(index["frames"][0]["representation"],
                          "four_cardinal_contact_sheet")
+
+    def test_typed_segment_packet_v2_retains_three_composite_bound(self):
+        grid, grid_sha, timeline = build_segment_packet_fixture()
+        packet = build_story_segment_review_packet(
+            timeline, grid, segment_id="segment:story:0000",
+            segment_timeline_sha256=digest(timeline), grid_sha256=grid_sha)
+        packet["schema_version"] = "aegis360.story-segment-review-packet.v2"
+        packet["inputs"] = {
+            "typed_story_segment_timeline_sha256": "a" * 64,
+            "context_view_grid_sha256": grid_sha,
+        }
+        jobs = build_story_review_render_jobs(packet, grid)
+        self.assertEqual(len(jobs), 3)
+        self.assertTrue(all(len(job["viewports"]) == 4 for job in jobs))
 
 
 if __name__ == "__main__":
