@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-09-06T18:00:00+08:00
+Updated: 2026-09-06T18:30:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 26e9870
@@ -86,9 +86,9 @@ Set `AEGIS_DATA_DIR` locally. The full proxy is under
 
 ## Active agents
 
-None. Two fresh no-history reviewers completed independently with exact outcome
-agreement. The main agent owns integration and causal failure analysis;
-proposal execution must not be rerun or retuned.
+None. The read-only numeric audit is complete. The main agent owns independent
+evidence selection and the successor-hypothesis freeze. Proposal execution must
+not be rerun or retuned.
 
 ## Safety and claims
 
@@ -123,3 +123,15 @@ proposal execution must not be rerun or retuned.
   control transition. This rejects promotion but is not a calibrated rate.
 - Next: read-only descriptor audit at 46/200/297, then precommit a successor
   signal hypothesis on separate evidence. No production video is authorized.
+
+## Causal diagnosis
+
+- RGB persistence scores are 0.3114 at 46, 0.0230 at 200 and 0.3044 at 297.
+  The coarse representation favors palette/exposure/environment changes over
+  the smaller station/person/infrastructure layout used by reviewers.
+- The 297 and 337 reciprocal peaks share the [307,327) middle state and express
+  one A→B→A excursion. Separation suppresses the exit but does not model it.
+- Existing 15-second RGB change also favors appearance excursions and is not a
+  justified fix. No threshold or policy was changed.
+- Successor hypothesis: color-independent tilewise structural occupancy plus
+  explicit episode/return reasoning, precommitted before separate evidence.

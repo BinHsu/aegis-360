@@ -98,3 +98,37 @@ This is a bounded rejection, not a calibrated precision/recall estimate. The
 policy must not be threshold-tuned on this result or promoted to typed-boundary
 authority. Next, inspect why the persistent visual descriptors favor 46/297
 over 200 and design a new precommitted signal hypothesis on separate evidence.
+
+## Causal numeric audit
+
+The artifact hashes were reverified before a read-only numeric audit. The
+failure is a representation/target mismatch plus a fixed-window limitation,
+not faulty score arithmetic or local-maximum selection.
+
+- At 46, RGB state distance 0.38828487 minus dispersions 0.04049841 and
+  0.03637424 leaves 0.31141222. All eight luma tiles darken and roughly
+  0.25–0.33 histogram mass per channel moves out of the highest bin.
+- At 200, RGB distance is only 0.06026114; dispersions 0.01090838 and
+  0.02633608 leave 0.02301667. Spatial distance 0.03934794 is entirely
+  cancelled by 0.04244326 dispersion. It is a local maximum, so local-peak and
+  separation logic did not miss it; the coarse snow-dominated states look
+  similar while the later window is internally variable.
+- At 297, RGB distance 0.37530744 minus dispersion leaves 0.30437681, driven by
+  about 0.30 mass per channel moving into the highest bin.
+- At 337, the reciprocal RGB shift leaves 0.28239276. The 297 after-window and
+  337 before-window are both [307,327), proving entry and exit around one
+  roughly 40-second visual excursion. Separation hides the second peak but
+  does not model return to an earlier state.
+
+The proposal scorer does not consume the feature artifact's five/15-second
+`long_baseline_change`; this matches the frozen contract. Simply wiring it is
+not supported as a remedy: mean 15-second RGB change near 46/200/297/337 is
+0.1951/0.0456/0.0861/0.3536 and still favors appearance excursions.
+
+A falsifiable successor hypothesis is pre-design only: color-independent
+tilewise edge-density and gradient-orientation occupancy, plus an explicit
+A→B→A episode audit, should rank persistent layout/context changes above
+palette-only travel excursions. It must be frozen before and tested on separate
+human-labeled evidence. It is rejected if held-out semantic changes do not
+improve relative to continuous-travel/color negatives, or if short valid
+chapters are systematically collapsed.

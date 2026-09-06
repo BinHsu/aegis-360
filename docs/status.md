@@ -159,12 +159,14 @@ version; they must not be silently reinterpreted.
 - The frozen persistent-state proposal policy misses the observed second-200
   change and emits two observed negatives. It is rejected as a chapter detector;
   this five-packet result is not a calibrated precision/recall estimate.
+- Numeric audit shows RGB palette shifts dominate 46/297 while the station-to-
+  slope change at 200 has weak coarse structure. The reciprocal 297/337 peaks
+  are one A→B→A visual excursion, which separation does not model.
 
 ## Active acceptance gate
 
-Explain why the frozen descriptors rank 46/297 above the observed second-200
-transition without retuning this policy. A replacement signal hypothesis must
-be precommitted and tested on separate evidence before any typed boundary.
+Precommit a color-independent spatial-structure and A→B→A episode hypothesis,
+then test it on separate human-labeled evidence before any typed boundary.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -182,6 +184,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Checkpoint and push the blind negative result plus renderer contract. Then run
-a read-only causal signal audit around 46/200/297 and design a separate
-precommitted successor hypothesis. Do not infer boundaries or render video.
+Checkpoint and push the causal failure diagnosis. Then select independent
+existing human-labeled evidence and freeze the successor experiment before
+feature acquisition. Do not infer boundaries or render video.
