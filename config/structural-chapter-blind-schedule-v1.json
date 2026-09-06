@@ -40,6 +40,8 @@
   },
   "render": {
     "atomic_publish": "sibling-stage-directory-then-rename-no-overwrite",
+    "bundle_tree_sha256": "sha256-of-utf8-bytes-formed-for-each-scoped-file-sorted-by-relative-posix-path-as-lowercase-hex-sha256-of-file-bytes-plus-two-ascii-spaces-plus-relative-posix-path-plus-lf-including-final-lf",
+    "bundle_tree_scope": "regular-file-at-literal-relative-path-public-reviewer-index.json-plus-exactly-every-regular-file-referenced-by-public-packets-no-other-files-no-symlinks",
     "panel_height": 270,
     "panel_width": 480,
     "png_chunks_allowed": ["IHDR", "IDAT", "IEND"],

@@ -9,7 +9,7 @@ Selection-proof SHA-256:
 `ad6f29b1cf34374ad3130afa3bd2535ac81676fdb4300a2891fb5c6c8712a567`.
 
 Anonymous-schedule config SHA-256:
-`561ece66e9b90cdb4e78703b3beb214298589d817518dbf25930d79eb926445f`.
+`3964162f0cb99bf9959cee1b19bef9fd041a04a76dfae9085052c9babb30d8ba`.
 
 ## Claim boundary and staged lineage
 

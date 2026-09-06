@@ -169,7 +169,7 @@ version; they must not be silently reinterpreted.
 ## Active acceptance gate
 
 The 26-row structural selection proof is frozen at `ad6f29b1…2a567`; its exact
-eight-packet anonymous schedule is frozen at `561ece66…6445f`. Implement and
+eight-packet anonymous schedule is frozen at `3964162f…0d8ba`. Implement and
 synthetically validate private/public exact rebuild before acquiring any review
 pixel or structural score.
 

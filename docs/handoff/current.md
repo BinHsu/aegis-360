@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T23:00:00+08:00
+Updated: 2026-09-06T23:10:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 228b98c
-Remote status: `origin/main` at `228b98c`
-Working tree at checkpoint: anonymous schedule config freeze
+Baseline commit: f987da1
+Remote status: `origin/main` at `f987da1`
+Working tree at checkpoint: synthetic-only schedule implementation delegation
 
 ## Objective
 
@@ -90,8 +90,11 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. Independent schedule and review-contract audits
-  passed; implementation may proceed without external artifact access.
+- `structural_contrast_impl`: implement private/public schedule, exact rebuild,
+  CLI and synthetic tests from frozen config; no renderer or external data.
+- `causal_signal_audit`: implement closed reviewer artifact and joined gate with
+  synthetic tests only; no schedule/renderer edits or external data.
+- Main agent owns integration and renderer adaptation after both contracts land.
 
 ## Safety and claims
 
