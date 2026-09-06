@@ -173,8 +173,9 @@ eight-packet anonymous schedule is frozen at `3964162f…0d8ba`. Its private/
 public exact rebuild, renderer, canonical bundle-tree and joined review gate pass
 synthetic tests. The exact 48-image bundle is frozen at `4f55b456…3c000`.
 Two fresh isolated reviews are frozen at `71998fe5…7930` and
-`37a87a20…8eed`. Implement the already frozen label-free score adapter without
-opening their classifications, then run the raw-byte coordinator once.
+`37a87a20…8eed`. The frozen label-free score contract and adapter pass synthetic
+tests. Acquire its eight scores once without aggregating reviews, then run the
+raw-byte coordinator once.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -182,8 +183,8 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests`: 557 tests pass after structural blind
-  renderer and raw-byte coordinator integration.
+- `python3 -m unittest discover -s tests`: 560 tests pass after label-free
+  structural scorer integration.
 - Visual-state suite: 6 tests pass after the real FFmpeg count fix.
 - Chapter-proposal suite: 8 tests pass.
 - Typed packet/relevance/utility/continuity/planner integration: 53 tests pass.
@@ -192,5 +193,5 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Implement and test the frozen label-free structural-score artifact adapter.
+Run and freeze the one exact label-free structural-score artifact.
 selection over unused Old Ghost events. Do not infer boundaries or render video.

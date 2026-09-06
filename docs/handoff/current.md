@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-07T01:05:00+08:00
+Updated: 2026-09-07T01:40:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 492c09e
-Remote status: `origin/main` at `492c09e`
-Working tree at checkpoint: frozen blind-review result documentation
+Baseline commit: ee2d813
+Remote status: `origin/main` at `ee2d813`
+Working tree at checkpoint: label-free scorer integration
 
 ## Objective
 
@@ -45,11 +45,11 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `492c09e`.
-- Expected dirty files: result documentation and handoff only.
+- Expected branch/remote before checkpoint: `main` at `ee2d813`.
+- Expected dirty files: label-free score contract/module/CLI/tests and handoff.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 557 tests pass after renderer/coordinator integration.
+- Full suite: 560 tests pass after label-free scorer integration.
 
 ## Verified
 
@@ -65,9 +65,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Implement and synthetically test a label-free score artifact adapter using
-  only the already frozen descriptor subset and proof-selected rational times.
-- Keep review classifications unopened until the score artifact hash freezes.
+- Commit/push the synthetic-only scorer checkpoint, then run its one exact
+  full-source acquisition and freeze the eight-score artifact SHA.
+- Keep review classifications unaggregated until that score hash freezes.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -91,8 +91,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. Both fresh isolated reviewer artifacts are
-  frozen and exact-validate; neither classification set has been aggregated.
+- No delegated work is active. Independent label-separation audit passed; the
+  main agent owns the one real score acquisition and subsequent coordinator run.
 
 ## Safety and claims
 

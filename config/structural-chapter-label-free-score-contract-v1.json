@@ -1,0 +1,33 @@
+{
+  "acquisition": {
+    "analysis_grid": {"origin_seconds": {"denominator": 1, "numerator": 0}, "rate_fps": 2, "selection": "nearest-grid-point-earlier-tie"},
+    "ffmpeg_filter_order": ["fps=fps=2:start_time=0:round=near", "scale=160:80:flags=area", "format=gray"],
+    "hash_source_after": true,
+    "hash_source_before": true,
+    "maximum_nominal_to_grid_error_seconds": {"denominator": 4, "numerator": 1},
+    "pixel_format": "gray8",
+    "threads": 2
+  },
+  "descriptor": {
+    "border_rule": "horizontal-wrap-vertical-reflect",
+    "color_features_forbidden": true,
+    "component_distance": {"combined": "(Dmag+Dori)/2", "magnitude": "sum-32-abs-differences/32", "orientation": "sum-32-(sum-8-abs-differences/2)/32"},
+    "component_weights": {"mean_magnitude": {"denominator": 2, "numerator": 1}, "orientation_occupancy": {"denominator": 2, "numerator": 1}},
+    "discrete_horizontal_alignment": {"apply_to": "after-state-center-only-shared-by-both-components", "candidate_tile_shifts": [0, 1, 2, 3, 4, 5, 6, 7], "selection": "argmin-combined-D-before-center-vs-shifted-after-center", "tie_rule": "smallest-nonnegative-shift"},
+    "gradient": {
+      "grayscale_range": [0, 255],
+      "gx_kernel": [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],
+      "gy_kernel": [[-1, -2, -1], [0, 0, 0], [1, 2, 1]],
+      "magnitude": "abs-gx-plus-abs-gy-divided-by-2040",
+      "orientation": {"bin_count": 8, "boundary_rule": "lower-inclusive-upper-exclusive", "formula": "atan2(gy,gx)-modulo-pi-into-[0,pi)", "zero_gradient_rule": "zero-weight-all-bins"}
+    },
+    "orientation_occupancy": "per-tile-magnitude-weighted-bin-mass-normalized-to-sum-one-or-all-zero",
+    "rounding": {"digits": 8, "stage": "final-recorded-scalars-only-half-even"},
+    "spatial_tiles": {"columns": 8, "rows": 4},
+    "state_center": "componentwise-arithmetic-mean-of-four-native-coordinate-frame-descriptors",
+    "vertical_reflect_index_examples": {"minus_one_maps_to": 1, "height_maps_to": "height-minus-2"},
+    "window_dispersion": "arithmetic-mean-of-exactly-four-native-coordinate-frame-to-own-state-center-combined-D-no-cyclic-alignment"
+  },
+  "sample_offsets_seconds": [{"denominator": 4, "numerator": -15}, {"denominator": 4, "numerator": -13}, {"denominator": 4, "numerator": -11}, {"denominator": 4, "numerator": -9}, {"denominator": 4, "numerator": 9}, {"denominator": 4, "numerator": 11}, {"denominator": 4, "numerator": 13}, {"denominator": 4, "numerator": 15}],
+  "score": "max-zero-combined-state-distance-minus-before-dispersion-minus-after-dispersion"
+}
