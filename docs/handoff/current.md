@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T17:33:25+08:00
+Updated: 2026-09-06T17:36:09+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 89d9142
-Remote status: push confirmed `origin/main` advanced to `89d9142`
-Working tree at checkpoint: backend shape/renderer and retained Mach-O gate in progress
+Baseline commit: 5ea976e
+Remote status: push confirmed `origin/main` advanced to `5ea976e`
+Working tree at checkpoint: clean before this handoff refresh
 
 ## Objective
 
@@ -76,9 +76,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `89d9142`.
-- Expected dirty files: current docs plus Seatbelt harness, runner/asset
-  contracts and their three focused test files.
+- Expected branch/remote before checkpoint: `main` at `5ea976e`.
+- Expected dirty file after checkpoint refresh: this handoff only.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
 - Full suite: 637 tests pass after the Mach-O audit remediation.
@@ -129,9 +128,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 - Three bounded backend reviews completed. App Sandbox and VM are not protocol-fit;
   the host-bound Seatbelt primitive feasibility milestone passed both audits.
-- No delegated work is active. Backend/renderer integration and retained Mach-O
-  passed cross-audit. Main owns the next coordinator proof gate; no capability
-  authority, model, real media or score acquisition is authorized.
+- Main is preparing three bounded reviews for the native launcher, retained OS
+  backend proof and installed-policy proof. No capability token/receipt, model,
+  real media or score acquisition is authorized.
 
 ## Safety and claims
 
