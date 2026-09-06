@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import platform
+import plistlib
 import signal
 import shutil
 import socket
@@ -22,6 +23,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "tools" / "seatbelt_feasibility_probe.c"
+sys.path.insert(0, str(ROOT / "src"))
+from aegis360.sparse_story_runner_contract import (  # noqa: E402
+    build_seatbelt_backend_manifest_shape,
+    render_seatbelt_policy_input_shape_bytes,
+)
 DENIAL_ERRNOS = {errno.EACCES, errno.EPERM}
 ALLOWED_BYTES = {
     "bundle_read": b"bundle-stand-in-v1",
@@ -34,15 +40,8 @@ COMPILE_TIMEOUT_SECONDS = 15
 PROBE_TIMEOUT_SECONDS = 15
 TERMINATION_GRACE_SECONDS = 2
 CAPTURE_LIMIT_BYTES = 65_536
-SYSTEM_READ_SUBPATHS = (
-    "/System/Library",
-    "/private/var/db/dyld",
-    "/usr/lib",
-)
-SYSTEM_READ_LITERALS = (
-    ("file-read-metadata", "/tmp"),
-    ("file-read-data", "/"),
-)
+SYNTHETIC_LAUNCHER_MANIFEST_SHA256 = hashlib.sha256(
+    b"aegis360.synthetic-seatbelt-feasibility-launcher.v1").hexdigest()
 EXPECTED_OPERATIONS = frozenset(ALLOWED_BYTES) | {
     "scratch_write", "repository_read", "protocol_read", "neighbor_read",
     "result_read", "outside_create", "outside_overwrite", "outside_truncate",
@@ -51,32 +50,16 @@ EXPECTED_OPERATIONS = frozenset(ALLOWED_BYTES) | {
     "unix_connect", "forbidden_exec"}
 
 
-def _sbpl_string(value: str) -> str:
-    """Render one SBPL string with a single deterministic escaping rule."""
-    if not isinstance(value, str) or "\x00" in value:
-        raise ValueError("SBPL value must be a NUL-free string")
-    return json.dumps(value, ensure_ascii=True, separators=(",", ":"))
-
-
-def render_candidate_policy(*, executable: Path, forbidden_executable: Path,
-                            readable_roots: tuple[Path, ...],
-                            scratch_root: Path) -> bytes:
-    """Return deterministic candidate SBPL; this conveys no policy authority."""
-    roots = tuple(sorted({str(path.resolve()) for path in readable_roots}))
-    systems = tuple(sorted(SYSTEM_READ_SUBPATHS))
-    lines = ["(version 1)", "(deny default)",
-             f"(allow process-exec (literal {_sbpl_string(str(executable.resolve()))}))",
-             "(deny process-fork)",
-             "(allow process-info* (target self))",
-             f"(allow file-read* (literal {_sbpl_string(str(executable.resolve()))})",
-             f"  (literal {_sbpl_string(str(forbidden_executable.resolve()))})"]
-    lines.extend(f"  (subpath {_sbpl_string(path)})" for path in systems + roots)
-    lines[-1] += ")"
-    lines.extend(f"(allow {operation} (literal {_sbpl_string(path)}))"
-                 for operation, path in SYSTEM_READ_LITERALS)
-    lines.append(f"(allow file-write* (subpath {_sbpl_string(str(scratch_root.resolve()))}))")
-    lines.append("(allow sysctl-read)")
-    return ("\n".join(lines) + "\n").encode("ascii")
+def _candidate_backend_shape(sandbox_exec: Path):
+    """Build non-authoritative renderer input from current host content facts."""
+    with Path("/System/Library/CoreServices/SystemVersion.plist").open("rb") as stream:
+        os_build = plistlib.load(stream)["ProductBuildVersion"]
+    value = sandbox_exec.stat()
+    return build_seatbelt_backend_manifest_shape(
+        os_build=os_build, architecture="arm64",
+        backend_executable_sha256=hashlib.sha256(sandbox_exec.read_bytes()).hexdigest(),
+        backend_executable_size=value.st_size,
+        launcher_runtime_manifest_sha256=SYNTHETIC_LAUNCHER_MANIFEST_SHA256)
 
 
 def parse_probe_stdout(value: bytes) -> dict[str, dict[str, object]]:
@@ -297,14 +280,15 @@ def _run_inner(progress: dict[str, str]) -> tuple[str, dict[str, object]]:
             tempfile.TemporaryDirectory(prefix="aegis-seatbelt-", dir="/tmp"))
         base = Path(raw_temp).resolve()
         allowed = {name: base / name for name in ("bundle", "model", "prompt")}
+        runtime = base / "runtime"
         scratch = base / "scratch"
         private_home = base / "home"
         private_tmpdir = base / "tmpdir"
         forbidden = base / "forbidden"
-        for directory in (*allowed.values(), scratch, private_home, private_tmpdir,
+        for directory in (*allowed.values(), runtime, scratch, private_home, private_tmpdir,
                           forbidden):
             directory.mkdir(mode=0o700)
-        executable = base / "probe"
+        executable = runtime / "probe"
         forbidden_executable = forbidden / "exec-sentinel"
         progress["stage"] = "compile"
         try:
@@ -344,9 +328,15 @@ def _run_inner(progress: dict[str, str]) -> tuple[str, dict[str, object]]:
         before_rename = _safe_snapshot(scratch)[rename_source.name]
         before_home = _safe_snapshot(private_home)
         before_tmpdir = _safe_snapshot(private_tmpdir)
-        policy = render_candidate_policy(executable=executable,
-            forbidden_executable=forbidden_executable,
-            readable_roots=tuple(allowed.values()), scratch_root=scratch)
+        policy = render_seatbelt_policy_input_shape_bytes(
+            backend_manifest=_candidate_backend_shape(sandbox_exec),
+            dynamic_roots={"runtime_root": str(runtime),
+                "runtime_executable": str(executable),
+                "forbidden_executable": str(forbidden_executable),
+                "bundle_root": str(allowed["bundle"]),
+                "model_root": str(allowed["model"]),
+                "prompt_root": str(allowed["prompt"]),
+                "scratch_root": str(scratch)})
         policy_path = base / "candidate.sb"
         policy_path.write_bytes(policy)
         argv = [str(sandbox_exec), "-f", str(policy_path), str(executable),

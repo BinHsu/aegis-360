@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T17:03:27+08:00
+Updated: 2026-09-06T17:33:25+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5f21ab6
-Remote status: `origin/main` expected at `5f21ab6`; verify before mutation
-Working tree at checkpoint: feasibility harness, tests and current-only docs
+Baseline commit: 89d9142
+Remote status: push confirmed `origin/main` advanced to `89d9142`
+Working tree at checkpoint: backend shape/renderer and retained Mach-O gate in progress
 
 ## Objective
 
@@ -26,11 +26,13 @@ This is design authority only; no production isolation or capability authority
 exists.
 
 The audited synthetic harness subsequently reached `feasible` on the reference
-host with exact literal dyld startup allowances and candidate policy SHA-256
-`5f2a954eed7c0b9e3911c4e1495437f365d0d089ff2b677d3329d8deb9b1098f`.
+host with exact literal dyld startup allowances and least-privilege no-sysctl
+canonical policy SHA-256
+`847d44bfd2f09ffba0fcc71951e7604866ecbbae3a0397e8fc45e4bfacf38c91`.
 All 21 operation rows, listener, side-effect and process-group checks closed.
-This remains primitive feasibility only because backend schema and retained
-native-Mach-O enforcement are absent.
+This remains primitive feasibility only. The exact backend shape/renderer and
+retained native-Mach-O format gate are implemented but do not yet own backend,
+launcher, installed-policy or invocation authority.
 
 The model-neutral sparse story semantic successor protocol passed independent
 causal-sampling and vertical-contract audits. It fixes a six-packet known-label
@@ -74,11 +76,12 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `5f21ab6`.
-- Expected dirty file after checkpoint refresh: this handoff only.
+- Expected branch/remote before checkpoint: `main` at `89d9142`.
+- Expected dirty files: current docs plus Seatbelt harness, runner/asset
+  contracts and their three focused test files.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 624 tests pass after the Seatbelt feasibility harness integration.
+- Full suite: 637 tests pass after the Mach-O audit remediation.
 
 ## Verified
 
@@ -96,9 +99,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Freeze the backend-manifest and canonical policy-renderer schema, then enforce
-  a retained host-native Mach-O entrypoint before implementing coordinator-owned
-  capability authority.
+- Implement coordinator-owned retained backend/launcher derivation and installed
+  canonical-policy proofs without emitting a capability receipt or token.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
@@ -127,10 +129,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 - Three bounded backend reviews completed. App Sandbox and VM are not protocol-fit;
   the host-bound Seatbelt primitive feasibility milestone passed both audits.
-- No delegated work is active. Main owns backend-schema and retained-Mach-O
-  design; no capability authority, model, real media or score acquisition.
-- Main owns integration and capability-coordinator design. No model, real media
-  or score acquisition is authorized.
+- No delegated work is active. Backend/renderer integration and retained Mach-O
+  passed cross-audit. Main owns the next coordinator proof gate; no capability
+  authority, model, real media or score acquisition is authorized.
 
 ## Safety and claims
 

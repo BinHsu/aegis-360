@@ -435,7 +435,7 @@ The synthetic Seatbelt spike ran in the host context on macOS 26.5.2
 `/tmp` removed that denial but retained an exact `file-read-data /` denial and
 the same abort; its path-bound candidate policy SHA-256 was
 `f41c62c20393c160c6a9a0a59dfec8a7794fbeae85fe3967fd9141838babd2d0`.
-The next and final candidate added exact `file-read-data` for literal `/`, never
+The next candidate added exact `file-read-data` for literal `/`, never
 a root or temporary subpath. Its path-bound policy SHA-256 was
 `5f2a954eed7c0b9e3911c4e1495437f365d0d089ff2b677d3329d8deb9b1098f` and the
 harness classified it `feasible`: exact allowed reads and scratch write
@@ -447,6 +447,16 @@ with empty stderr. Temporary resolved paths and candidate bytes were destroyed
 by design, so these hashes identify those executions but are not independently
 reconstructible manifests. This is host-specific primitive feasibility only and
 creates no capability or production-backend authority.
+One least-privilege follow-up removed the broad, matrix-unneeded `sysctl-read`
+allowance and retained the same complete `feasible` result. Its path-bound policy
+SHA-256 was `1a545dcff8764090d0d8586c6c681a7fb90f2613aad301f04f17d95b20933128`;
+renderer v1 therefore contains no sysctl allowance.
+After the exact backend shape and sole renderer were frozen, the harness moved
+the probe beneath a disjoint runtime root and consumed those policy bytes
+directly. The host matrix remained fully `feasible`; its path-bound canonical
+policy SHA-256 was
+`847d44bfd2f09ffba0fcc71951e7604866ecbbae3a0397e8fc45e4bfacf38c91`.
+This closes renderer consistency only, not retained backend/launcher authority.
 
 Drain stdout and stderr concurrently as binary pipes. Do not merge, incrementally
 decode, trim, normalize, extract fenced JSON or accept a valid prefix. Success
@@ -510,6 +520,43 @@ real-media execution is authorized by this gate alone.
 
 ### Exact subordinate contracts
 
+Seatbelt backend shape `aegis360.sparse-story-seatbelt-backend-manifest.v1`
+has exactly `schema_version`,
+`renderer_version=aegis360.seatbelt-policy-renderer.v1`, `host`, `backend`,
+`launcher`, `system_rules`. `host` is exactly
+`{operating_system:macOS,os_build,architecture:arm64}`; `os_build` is a
+1..128-byte ASCII token matching `[A-Za-z0-9][A-Za-z0-9._-]*`. `backend` is
+exactly `{logical_identity:com.apple.sandbox-exec,executable_sha256,
+executable_size}` where size is a non-boolean integer 1..16 GiB. It describes
+the OS-owned tool by content, never path. `launcher` is exactly
+`{logical_identity:aegis360.native-process-launcher,runtime_manifest_sha256}`;
+that separate runtime asset manifest and retained native proof own the
+repo-controlled launcher's leaf sizes and identity. Neither fact may reuse the
+asset proof's root-oriented `backend_identity()` name.
+
+`system_rules` exact-rebuilds only this ordered list: `file-read*` subpaths
+`/System/Library`, `/private/var/db/dyld`, `/usr/lib`; `file-read-data` literal
+`/`; and `file-read-metadata` literal `/tmp`. It contains no sysctl, unobserved
+system prefix, root subpath, temporary subpath or allow-default rule. Dynamic
+paths never enter this manifest. Its shape/canonical JSON helpers convey no
+filesystem, installation or execution authority; authoritative serialization,
+derivation and validation require coordinator-owned retained proofs and remain
+unavailable until implemented.
+
+Renderer v1 accepts that exact shape plus exactly `runtime_root`,
+`runtime_executable`, `forbidden_executable`, `bundle_root`, `model_root`,
+`prompt_root`, `scratch_root`. Each is a canonical absolute control-free UTF-8
+path of 1..4096 bytes and none is `/`; runtime executable is strictly beneath
+runtime root. The five scoped roots are pairwise nonoverlapping and the forbidden
+executable overlaps none in either direction. Exact output is ASCII with JSON
+string escaping and final LF: version; deny default; sole process-exec literal
+for runtime executable; deny fork; self process-info; one file-read rule with
+runtime and forbidden-executable literals followed by bytewise-sorted subpaths
+for runtime/bundle/model/prompt; the five system rules above; and the sole
+scratch write subpath. No sysctl or allow-default line exists. These transient
+bytes and their hash may bind a later token, but the pure renderer does not prove
+installation or capability.
+
 Runtime, model and prompt/schema assets use
 `aegis360.sparse-story-asset-manifest.v1` with exactly `schema_version`,
 `asset_kind`, `root_tree_sha256`, `entrypoint`, `entries`. `asset_kind` is
@@ -523,9 +570,22 @@ for `synthetic_support`, whose empty form has no leaves and root-tree SHA-256 eq
 to SHA-256 of the empty byte string. Leaves are regular,
 no-follow and link-count one; mode is 0444 except runtime entrypoint 0555. The
 runtime entrypoint is additionally a directly executable native Mach-O for the
-host architecture; scripts and interpreter-mediated entrypoints are invalid
-before spawn. The directory set is exactly the root and required proper
+host architecture. V1 accepts only the 32-byte little-endian `mach_header_64`
+with `MH_MAGIC_64=0xfeedfacf`, `CPU_TYPE_ARM64=0x0100000c`,
+`CPU_SUBTYPE_ARM64_ALL=0` and `MH_EXECUTE=2`; every script, interpreter-mediated
+entrypoint, swapped magic, other subtype/type/architecture and fat/universal
+container is invalid before spawn. `sizeofcmds` must fit after the header,
+`ncmds <= sizeofcmds/8`, and each retained-FD-read load command has size at least
+eight, divisible by eight and within the table; their sizes consume the table
+exactly. This proves format eligibility, not signature, loadability or behavior.
+The directory set is exactly the root and required proper
 ancestors, all 0555.
+The retained implementation passed independent re-audit: it checks kernel
+Darwin/arm64 facts, never requests more than the 32-byte header or one 8-byte
+load-command header, revalidates retained and parent/name identity after hashing,
+re-lists exact child maps after all leaves, and opens retained nodes CLOEXEC.
+Synthetic huge-table, short-read, host mismatch and replacement-during-hash cases
+fail closed. This grants format eligibility only.
 Retained descriptors preserve every node's device/inode identity and each leaf's
 size/timestamp evidence through the tree decision. Tree hashing reuses the media-tree line
 grammar and identity rules. `model_asset_sha256` in semantic evidence is SHA-256

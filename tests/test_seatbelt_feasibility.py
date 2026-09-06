@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import platform
 import os
 import signal
@@ -23,22 +24,33 @@ SPEC.loader.exec_module(seatbelt)
 class SeatbeltFeasibilityTests(unittest.TestCase):
     def test_candidate_policy_is_canonical_sorted_and_default_deny(self):
         with tempfile.TemporaryDirectory() as temporary:
-            base = Path(temporary)
-            executable = base / "probe"
-            executable.touch()
-            forbidden_executable = base / "forbidden-probe"
-            forbidden_executable.touch()
-            scratch = base / "scratch"
-            scratch.mkdir()
-            roots = (base / "z", base / "a")
-            for root in roots:
+            base = Path(temporary).resolve()
+            runtime = base / "runtime"
+            forbidden = base / "forbidden"
+            roots = {name: base / name for name in
+                     ("bundle", "model", "prompt", "scratch")}
+            for root in (runtime, forbidden, *roots.values()):
                 root.mkdir()
-            first = seatbelt.render_candidate_policy(
-                executable=executable, forbidden_executable=forbidden_executable,
-                readable_roots=roots, scratch_root=scratch)
-            second = seatbelt.render_candidate_policy(
-                executable=executable, forbidden_executable=forbidden_executable,
-                readable_roots=tuple(reversed(roots)), scratch_root=scratch)
+            executable = runtime / "probe"
+            executable.touch()
+            forbidden_executable = forbidden / "forbidden-probe"
+            forbidden_executable.touch()
+            manifest = seatbelt.build_seatbelt_backend_manifest_shape(
+                os_build="25F84", architecture="arm64",
+                backend_executable_sha256="a" * 64, backend_executable_size=123,
+                launcher_runtime_manifest_sha256="b" * 64)
+            dynamic = {"runtime_root": str(runtime),
+                "runtime_executable": str(executable),
+                "forbidden_executable": str(forbidden_executable),
+                "bundle_root": str(roots["bundle"]),
+                "model_root": str(roots["model"]),
+                "prompt_root": str(roots["prompt"]),
+                "scratch_root": str(roots["scratch"])}
+            first = seatbelt.render_seatbelt_policy_input_shape_bytes(
+                backend_manifest=manifest, dynamic_roots=dynamic)
+            second = seatbelt.render_seatbelt_policy_input_shape_bytes(
+                backend_manifest=manifest,
+                dynamic_roots=dict(reversed(list(dynamic.items()))))
             self.assertEqual(first, second)
             self.assertTrue(first.startswith(b"(version 1)\n(deny default)\n"))
             self.assertNotIn(b"(allow default)", first)
@@ -46,11 +58,10 @@ class SeatbeltFeasibilityTests(unittest.TestCase):
             self.assertIn(b'(allow file-read-data (literal "/"))', first)
             self.assertNotIn(b'(subpath "/tmp")', first)
             self.assertNotIn(b'(subpath "/")', first)
-            self.assertLess(first.index(str(roots[1]).encode()),
-                            first.index(str(roots[0]).encode()))
-            forbidden_literal = (
-                b"(literal " + seatbelt._sbpl_string(
-                    str(forbidden_executable.resolve())).encode("ascii") + b")")
+            self.assertLess(first.index(str(roots["bundle"]).encode()),
+                            first.index(str(roots["model"]).encode()))
+            forbidden_literal = (b"(literal " + json.dumps(
+                str(forbidden_executable.resolve())).encode("ascii") + b")")
             self.assertIn(forbidden_literal, first)
             process_exec_lines = [line for line in first.splitlines()
                                   if b"process-exec" in line]

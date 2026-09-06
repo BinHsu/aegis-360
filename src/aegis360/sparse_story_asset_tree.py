@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 import stat
+import struct
 from pathlib import Path, PurePosixPath
 from typing import Mapping
 
@@ -21,6 +22,11 @@ MAX_LEAF_BYTES = 16 * 1024 ** 3
 MAX_TOTAL_BYTES = 64 * 1024 ** 3
 
 _PROOF_FACTORY_TOKEN = object()
+
+_CPU_TYPE_ARM64 = 0x0100000C
+_CPU_SUBTYPE_ARM64_ALL = 0
+_MH_EXECUTE = 2
+_MH_MAGIC_64_BYTES = b"\xcf\xfa\xed\xfe"
 
 
 def _common_identity(value: os.stat_result) -> tuple[int, int, int, int, int]:
@@ -43,6 +49,54 @@ def _close_all(fds) -> OSError | None:
             if first_error is None:
                 first_error = error
     return first_error
+
+
+def _pread_exact(fd: int, *, offset: int, length: int, file_size: int) -> bytes:
+    if offset < 0 or length < 0 or offset > file_size or length > file_size - offset:
+        raise ValueError("Mach-O range exceeds entrypoint")
+    value = os.pread(fd, length, offset)
+    if len(value) != length:
+        raise ValueError("Mach-O data is truncated")
+    return value
+
+
+def _validate_runtime_entrypoint(fd: int) -> None:
+    """Validate the frozen v1 native Darwin arm64 entrypoint through its fd."""
+    host = os.uname()
+    if host.sysname != "Darwin" or host.machine != "arm64":
+        raise ValueError("runtime entrypoint host is not Darwin arm64")
+    header_size = 32
+    file_size = os.fstat(fd).st_size
+    if file_size < header_size:
+        raise ValueError("Mach-O thin header is truncated")
+    header = _pread_exact(fd, offset=0, length=header_size,
+                          file_size=file_size)
+    if header[:4] != _MH_MAGIC_64_BYTES:
+        raise ValueError("runtime entrypoint is not a little-endian thin 64-bit Mach-O")
+    (_, cpu_type, cpu_subtype, file_type, command_count, commands_size,
+     _, _) = struct.unpack(
+        "<IiiIIIII", header)
+    if cpu_type != _CPU_TYPE_ARM64:
+        raise ValueError("Mach-O architecture does not match the host")
+    if cpu_subtype != _CPU_SUBTYPE_ARM64_ALL:
+        raise ValueError("Mach-O architecture subtype is not ARM64_ALL")
+    if file_type != _MH_EXECUTE:
+        raise ValueError("runtime entrypoint is not a Mach-O executable")
+    if commands_size > file_size - header_size or command_count > commands_size // 8:
+        raise ValueError("Mach-O load-command table exceeds entrypoint")
+    cursor = 0
+    for _ in range(command_count):
+        if cursor > commands_size - 8:
+            raise ValueError("Mach-O load-command table is truncated")
+        command_header = _pread_exact(fd, offset=header_size + cursor, length=8,
+                                      file_size=file_size)
+        _, command_size = struct.unpack("<II", command_header)
+        if (command_size < 8 or command_size % 8 != 0
+                or command_size > commands_size - cursor):
+            raise ValueError("Mach-O load command is malformed")
+        cursor += command_size
+    if cursor != commands_size:
+        raise ValueError("Mach-O load-command table has trailing bytes")
 
 
 class _AssetTreeProof:
@@ -106,14 +160,25 @@ class _AssetTreeProof:
                     or not stat.S_ISREG(named.st_mode)
                     or stat.S_IMODE(named.st_mode) != expected_mode):
                 raise ValueError("asset leaf identity, link count, or mode changed")
+            if self._asset_kind == "runtime" and relative == self._entrypoint:
+                _validate_runtime_entrypoint(fd)
             os.lseek(fd, 0, os.SEEK_SET)
             digest = hashlib.sha256()
             while chunk := os.read(fd, 1024 * 1024):
                 digest.update(chunk)
-            if _leaf_identity(os.fstat(fd)) != frozen:
+            after = os.fstat(fd)
+            named_after = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+            if (not stat.S_ISREG(after.st_mode)
+                    or not stat.S_ISREG(named_after.st_mode)
+                    or _leaf_identity(after) != frozen
+                    or _leaf_identity(named_after) != frozen
+                    or stat.S_IMODE(named_after.st_mode) != expected_mode):
                 raise ValueError("asset leaf changed while hashing")
             entries.append({"relative_path": relative, "mode": expected_mode,
                             "size": before.st_size, "sha256": digest.hexdigest()})
+        for relative, names in self._children.items():
+            if set(os.listdir(directory_fds[relative])) != names:
+                raise ValueError("asset directory children changed while hashing")
         entries.sort(key=lambda row: row["relative_path"].encode("utf-8"))
         required_dirs = {str(parent) for row in entries
             for parent in _proper_parents(PurePosixPath(row["relative_path"]))}
@@ -197,7 +262,8 @@ def _observe_asset_tree(*, root: Path, asset_kind: str,
     """Observe a tree internally; this is not an authority boundary."""
     if not isinstance(root, Path) or not root.is_absolute() or root.name == "":
         raise ValueError("asset root must be a non-root absolute Path")
-    parent_fd = os.open(root.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    parent_fd = os.open(root.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+                        | os.O_CLOEXEC)
     root_fd = -1
     directories = []
     leaves = []
@@ -205,8 +271,8 @@ def _observe_asset_tree(*, root: Path, asset_kind: str,
     total_size = 0
     try:
         root_info = os.stat(root.name, dir_fd=parent_fd, follow_symlinks=False)
-        root_fd = os.open(root.name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
-                          dir_fd=parent_fd)
+        root_fd = os.open(root.name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+                          | os.O_CLOEXEC, dir_fd=parent_fd)
         opened_root = os.fstat(root_fd)
         if (not stat.S_ISDIR(root_info.st_mode)
                 or _common_identity(root_info) != _common_identity(opened_root)
@@ -232,8 +298,8 @@ def _observe_asset_tree(*, root: Path, asset_kind: str,
                 info = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
                 if stat.S_ISDIR(info.st_mode):
                     try:
-                        child = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
-                                        dir_fd=directory_fd)
+                        child = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+                                        | os.O_CLOEXEC, dir_fd=directory_fd)
                     except OSError as error:
                         if error.errno == errno.EMFILE:
                             raise ValueError("asset proof lacks descriptor capacity") from error
@@ -253,7 +319,8 @@ def _observe_asset_tree(*, root: Path, asset_kind: str,
                     visit(child, relative)
                 elif stat.S_ISREG(info.st_mode):
                     try:
-                        fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=directory_fd)
+                        fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                                     dir_fd=directory_fd)
                     except OSError as error:
                         if error.errno == errno.EMFILE:
                             raise ValueError("asset proof lacks descriptor capacity") from error

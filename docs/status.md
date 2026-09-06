@@ -165,9 +165,12 @@ is granted by these clarifications.
 The synthetic Seatbelt harness now classifies the final host candidate
 `feasible` on macOS 26.5.2/arm64 after two exact dyld-log-driven literal read
 allowances. All allowed, forbidden, socket, side-effect and process-group checks
-close; policy SHA-256 is `5f2a954e…1098f`. This is deliberately not a capability
+close; the sole canonical renderer's host policy SHA-256 is `847d44bf…8c91`.
+This is deliberately not a capability
 receipt or production-backend result. The backend schema and retained native
-Mach-O enforcement are still absent.
+Mach-O authority remains absent; its retained format-eligibility gate and the
+non-authoritative backend shape/renderer now have independently audited
+executable coverage.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -175,14 +178,13 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full suite: 624 tests pass after the Seatbelt feasibility harness integration.
+- Full suite: 637 tests pass after the Mach-O audit remediation.
 - Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Freeze the exact Seatbelt backend schema and implement retained host-native
-Mach-O entrypoint enforcement before coordinator-owned capability derivation.
-Acquire no model or real media and construct no capability authority until both
-gates pass independent audit.
+Implement coordinator-owned retained backend/launcher derivation and installed
+canonical-policy proofs. Acquire no model or real media and construct no
+capability receipt or token until that next gate passes independent audit.

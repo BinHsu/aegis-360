@@ -21,6 +21,20 @@ RECEIPT_SCHEMA = "aegis360.sparse-story-adapter-run-receipt.v1"
 CASES_SCHEMA = "aegis360.sparse-story-runner-cases.v1"
 CASE_RESULT_SCHEMA = "aegis360.sparse-story-runner-case-result.v1"
 RUN_RESULT_SCHEMA = "aegis360.sparse-story-adapter-run-result.v1"
+BACKEND_MANIFEST_SCHEMA = "aegis360.sparse-story-seatbelt-backend-manifest.v1"
+SEATBELT_RENDERER_VERSION = "aegis360.seatbelt-policy-renderer.v1"
+SEATBELT_BACKEND_IDENTITY = "com.apple.sandbox-exec"
+SEATBELT_LAUNCHER_IDENTITY = "aegis360.native-process-launcher"
+MAX_BACKEND_EXECUTABLE_BYTES = 16 * 1024 ** 3
+SEATBELT_DYNAMIC_KEYS = {"runtime_root", "runtime_executable",
+    "forbidden_executable", "bundle_root", "model_root", "prompt_root",
+    "scratch_root"}
+SEATBELT_SYSTEM_RULES = (
+    ("file-read*", "subpath", "/System/Library"),
+    ("file-read*", "subpath", "/private/var/db/dyld"),
+    ("file-read*", "subpath", "/usr/lib"),
+    ("file-read-data", "literal", "/"),
+    ("file-read-metadata", "literal", "/tmp"))
 
 PRIVACY = {"contains_source_path": False, "contains_pixels": False,
     "contains_audio": False, "contains_identity": False,
@@ -92,6 +106,7 @@ class AuthorityUnavailable(ValueError):
 
 
 def canonical_asset_manifest_shape_bytes(value): validate_asset_manifest_shape(value); return _canonical(value)
+def canonical_seatbelt_backend_manifest_shape_bytes(value): validate_seatbelt_backend_manifest_shape(value); return _canonical(value)
 def canonical_runner_policy_bytes(value, **inputs): validate_runner_policy(value, **inputs); return _canonical(value)
 def canonical_adapter_request_shape_bytes(value): validate_adapter_request_shape(value); return _canonical(value)
 def canonical_capability_receipt_shape_bytes(value): validate_capability_receipt_shape(value); return _canonical(value)
@@ -103,6 +118,22 @@ def canonical_run_result_shape_bytes(value): validate_run_result_shape(value); r
 
 def canonical_asset_manifest_bytes(*args, **kwargs):
     raise AuthorityUnavailable("asset serialization requires retained-FD filesystem proof")
+
+
+def canonical_seatbelt_backend_manifest_bytes(*args, **kwargs):
+    raise AuthorityUnavailable("backend serialization requires coordinator-owned raw proofs")
+
+
+def derive_seatbelt_backend_manifest(*args, **kwargs):
+    raise AuthorityUnavailable("backend derivation requires coordinator-owned raw proofs")
+
+
+def validate_seatbelt_backend_manifest(*args, **kwargs):
+    raise AuthorityUnavailable("backend authority requires coordinator-owned raw proofs")
+
+
+def canonical_seatbelt_policy_input_bytes(*args, **kwargs):
+    raise AuthorityUnavailable("installed policy authority requires coordinator-owned raw proofs")
 
 
 def canonical_adapter_request_bytes(*args, **kwargs):
@@ -139,6 +170,130 @@ def _safe_path(value: object) -> bool:
 def _tree_digest(entries) -> str:
     lines = [f"{entry['sha256']}  {entry['relative_path']}\n" for entry in entries]
     return hashlib.sha256("".join(lines).encode()).hexdigest()
+
+
+def _closed_token(value, label):
+    if (not isinstance(value, str) or not value
+            or len(value.encode("utf-8")) > 128
+            or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", value) is None):
+        raise ValueError(f"{label} is invalid")
+    return value
+
+
+def _absolute_policy_path(value, label):
+    if not isinstance(value, str):
+        raise ValueError(f"{label} is invalid")
+    try:
+        encoded = value.encode("utf-8")
+        path = PurePosixPath(value)
+    except (UnicodeError, ValueError):
+        raise ValueError(f"{label} is invalid") from None
+    if (not 1 <= len(encoded) <= 4096 or not path.is_absolute()
+            or path == PurePosixPath("/") or path.as_posix() != value
+            or any(part in {".", ".."} for part in path.parts)
+            or any(ord(character) < 32 or ord(character) == 127 for character in value)):
+        raise ValueError(f"{label} is invalid")
+    return path
+
+
+def _beneath(path, root):
+    return path != root and root in path.parents
+
+
+def build_seatbelt_backend_manifest_shape(*, os_build: str, architecture: str,
+        backend_executable_sha256: str, backend_executable_size: int,
+        launcher_runtime_manifest_sha256: str):
+    _closed_token(os_build, "OS build")
+    if (architecture != "arm64" or not _is_sha(backend_executable_sha256)
+            or type(backend_executable_size) is not int
+            or not 1 <= backend_executable_size <= MAX_BACKEND_EXECUTABLE_BYTES
+            or not _is_sha(launcher_runtime_manifest_sha256)):
+        raise ValueError("backend host or hashes are invalid")
+    return {"schema_version": BACKEND_MANIFEST_SCHEMA,
+        "renderer_version": SEATBELT_RENDERER_VERSION,
+        "host": {"operating_system": "macOS", "os_build": os_build,
+                 "architecture": architecture},
+        "backend": {"logical_identity": SEATBELT_BACKEND_IDENTITY,
+                    "executable_sha256": backend_executable_sha256,
+                    "executable_size": backend_executable_size},
+        "launcher": {"logical_identity": SEATBELT_LAUNCHER_IDENTITY,
+                     "runtime_manifest_sha256": launcher_runtime_manifest_sha256},
+        "system_rules": [{"operation": operation, "match": match, "path": path}
+                         for operation, match, path in SEATBELT_SYSTEM_RULES]}
+
+
+def validate_seatbelt_backend_manifest_shape(value):
+    if (not isinstance(value, Mapping)
+            or set(value) != {"schema_version", "renderer_version", "host",
+                              "backend", "launcher", "system_rules"}
+            or value.get("schema_version") != BACKEND_MANIFEST_SCHEMA
+            or value.get("renderer_version") != SEATBELT_RENDERER_VERSION
+            or not isinstance(value.get("host"), Mapping)
+            or set(value["host"]) != {"operating_system", "os_build", "architecture"}
+            or value["host"].get("operating_system") != "macOS"
+            or not isinstance(value.get("backend"), Mapping)
+            or set(value["backend"]) != {"logical_identity", "executable_sha256",
+                                         "executable_size"}
+            or value["backend"].get("logical_identity") != SEATBELT_BACKEND_IDENTITY
+            or not isinstance(value.get("launcher"), Mapping)
+            or set(value["launcher"]) != {"logical_identity", "runtime_manifest_sha256"}
+            or value["launcher"].get("logical_identity") != SEATBELT_LAUNCHER_IDENTITY):
+        raise ValueError("backend manifest shape is invalid")
+    rebuilt = build_seatbelt_backend_manifest_shape(
+        os_build=value["host"]["os_build"], architecture=value["host"]["architecture"],
+        backend_executable_sha256=value["backend"]["executable_sha256"],
+        backend_executable_size=value["backend"]["executable_size"],
+        launcher_runtime_manifest_sha256=value["launcher"]["runtime_manifest_sha256"])
+    if value != rebuilt:
+        raise ValueError("backend manifest must exactly rebuild")
+
+
+def _sbpl_string(value):
+    return json.dumps(value, ensure_ascii=True, separators=(",", ":"))
+
+
+def render_seatbelt_policy_input_shape_bytes(*,
+        backend_manifest: Mapping[str, object], dynamic_roots: Mapping[str, str]):
+    """Render deterministic candidate bytes without claiming installation authority."""
+    validate_seatbelt_backend_manifest_shape(backend_manifest)
+    if not isinstance(dynamic_roots, Mapping) or set(dynamic_roots) != SEATBELT_DYNAMIC_KEYS:
+        raise ValueError("Seatbelt dynamic roots are invalid")
+    paths = {name: _absolute_policy_path(dynamic_roots[name], name)
+             for name in SEATBELT_DYNAMIC_KEYS}
+    if len(set(paths.values())) != len(paths):
+        raise ValueError("Seatbelt dynamic roots must be distinct")
+    if not _beneath(paths["runtime_executable"], paths["runtime_root"]):
+        raise ValueError("runtime executable must be beneath runtime root")
+    scoped_roots = [paths[name] for name in ("runtime_root", "bundle_root",
+        "model_root", "prompt_root", "scratch_root")]
+    if any(left == right or left in right.parents or right in left.parents
+           for number, left in enumerate(scoped_roots)
+           for right in scoped_roots[number + 1:]):
+        raise ValueError("Seatbelt roots must not overlap")
+    if any(paths["forbidden_executable"] == root
+           or root in paths["forbidden_executable"].parents
+           or paths["forbidden_executable"] in root.parents
+           for root in scoped_roots):
+        raise ValueError("forbidden executable overlaps an allowed root")
+    runtime = _sbpl_string(str(paths["runtime_executable"]))
+    forbidden = _sbpl_string(str(paths["forbidden_executable"]))
+    lines = ["(version 1)", "(deny default)",
+        f"(allow process-exec (literal {runtime}))", "(deny process-fork)",
+        "(allow process-info* (target self))",
+        f"(allow file-read* (literal {runtime})", f"  (literal {forbidden})"]
+    read_roots = sorted(str(paths[name]) for name in
+        ("runtime_root", "bundle_root", "model_root", "prompt_root"))
+    lines.extend(f"  (subpath {_sbpl_string(path)})" for path in read_roots)
+    lines[-1] += ")"
+    for row in backend_manifest["system_rules"]:
+        lines.append(f"(allow {row['operation']} ({row['match']} "
+                     f"{_sbpl_string(row['path'])}))")
+    lines.append(f"(allow file-write* (subpath "
+                 f"{_sbpl_string(str(paths['scratch_root']))}))")
+    encoded = ("\n".join(lines) + "\n").encode("ascii")
+    if b"(allow default)" in encoded:
+        raise ValueError("allow-default policy is forbidden")
+    return encoded
 
 
 def build_asset_manifest_shape(*, asset_kind: str, entries: Sequence[Mapping[str, object]],

@@ -1,9 +1,11 @@
 import errno
 import os
+import struct
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,7 +13,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from aegis360.sparse_story_asset_tree import (  # noqa: E402
     MAX_DEPTH, MAX_LEAF_BYTES, MAX_LEAVES, MAX_TOTAL_BYTES,
     _AssetTreeProof, _observe_asset_manifest_shape, _observe_asset_tree,
-    validate_asset_tree,
+    _validate_runtime_entrypoint, validate_asset_tree,
 )
 
 
@@ -36,12 +38,37 @@ def unseal(root):
     root.chmod(0o755)
 
 
+def thin_macho(cpu_type=0x0100000C, cpu_subtype=0, file_type=2,
+               load_command=None):
+    if load_command is None:
+        load_command = struct.pack("<IIQQ", 0x80000028, 24, 0, 0)
+    command_count = 0 if not load_command else 1
+    return struct.pack("<IiiIIIII", 0xFEEDFACF, cpu_type, cpu_subtype,
+                       file_type, command_count, len(load_command), 0, 0) + load_command
+
+
+def universal_macho(cpu_type=0x0100000C, *, fat64=False):
+    entry_size = 32 if fat64 else 20
+    offset = 8 + entry_size
+    payload = thin_macho(cpu_type)
+    magic = 0xCAFEBABF if fat64 else 0xCAFEBABE
+    if fat64:
+        row = struct.pack(">iiQQII", cpu_type, 0, offset, len(payload), 0, 0)
+    else:
+        row = struct.pack(">iiIII", cpu_type, 0, offset, len(payload), 0)
+    return struct.pack(">II", magic, 1) + row + payload
+
+
 class SparseStoryAssetTreeTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.base = Path(self.temporary.name)
+        self.uname = mock.patch("aegis360.sparse_story_asset_tree.os.uname",
+            return_value=SimpleNamespace(sysname="Darwin", machine="arm64"))
+        self.uname.start()
 
     def tearDown(self):
+        self.uname.stop()
         for node in self.base.iterdir():
             unseal(node)
         self.temporary.cleanup()
@@ -77,7 +104,7 @@ class SparseStoryAssetTreeTests(unittest.TestCase):
         runtime = self.base / "runtime"
         (runtime / "bin").mkdir(parents=True)
         entrypoint = runtime / "bin" / "adapter"
-        entrypoint.write_bytes(b"#!/bin/false")
+        entrypoint.write_bytes(thin_macho())
         entrypoint.chmod(0o555)
         runtime.chmod(0o555)
         (runtime / "bin").chmod(0o555)
@@ -90,6 +117,196 @@ class SparseStoryAssetTreeTests(unittest.TestCase):
         manifest = self.precommit(support, "synthetic_support")
         with validate_asset_tree(manifest=manifest, root=support) as proof:
             self.assertEqual(proof.manifest()["entries"], [])
+
+    def test_runtime_rejects_script_malformed_and_thin_wrong_architecture(self):
+        for name, content in (
+                ("script", b"#!/bin/false\n"),
+                ("malformed", b"not a native executable"),
+                ("wrong-architecture", thin_macho(0x01000007)),
+                ("arm64e-subtype", thin_macho(cpu_subtype=2)),
+                ("wrong-file-type", thin_macho(file_type=6)),
+                ("swapped-magic", b"\xfe\xed\xfa\xcf" + thin_macho()[4:])):
+            with self.subTest(name=name):
+                runtime = self.base / name
+                runtime.mkdir()
+                entrypoint = runtime / "adapter"
+                entrypoint.write_bytes(content)
+                entrypoint.chmod(0o555)
+                runtime.chmod(0o555)
+                with self.assertRaisesRegex(ValueError, "Mach-O|architecture"):
+                    self.precommit(runtime, "runtime", "adapter")
+
+    def test_runtime_accepts_only_thin_host_architecture(self):
+        runtime = self.base / "thin"
+        runtime.mkdir()
+        entrypoint = runtime / "adapter"
+        entrypoint.write_bytes(thin_macho())
+        entrypoint.chmod(0o555)
+        runtime.chmod(0o555)
+        manifest = self.precommit(runtime, "runtime", "adapter")
+        with validate_asset_tree(manifest=manifest, root=runtime) as proof:
+            self.assertEqual(proof.manifest(), manifest)
+
+    def test_runtime_requires_kernel_darwin_arm64_host_facts(self):
+        runtime = self.base / "host-facts"
+        runtime.mkdir()
+        entrypoint = runtime / "adapter"
+        entrypoint.write_bytes(thin_macho())
+        entrypoint.chmod(0o555)
+        runtime.chmod(0o555)
+        for sysname, machine in (("Linux", "arm64"), ("Darwin", "x86_64")):
+            with self.subTest(sysname=sysname, machine=machine), mock.patch(
+                    "aegis360.sparse_story_asset_tree.os.uname",
+                    return_value=SimpleNamespace(sysname=sysname, machine=machine)):
+                with self.assertRaisesRegex(ValueError, "host"):
+                    self.precommit(runtime, "runtime", "adapter")
+        with mock.patch("aegis360.sparse_story_asset_tree.os.uname",
+                        return_value=SimpleNamespace(sysname="Darwin", machine="arm64")):
+            self.assertEqual(self.precommit(runtime, "runtime", "adapter")
+                             ["entrypoint"], "adapter")
+
+    def test_runtime_rejects_every_universal_binary(self):
+        for name, content in (
+                ("fat-host", universal_macho()),
+                ("fat64-host", universal_macho(fat64=True)),
+                ("fat-without-host", universal_macho(0x01000007))):
+            with self.subTest(name=name):
+                runtime = self.base / name
+                runtime.mkdir()
+                entrypoint = runtime / "adapter"
+                entrypoint.write_bytes(content)
+                entrypoint.chmod(0o555)
+                runtime.chmod(0o555)
+                with self.assertRaisesRegex(ValueError, "thin"):
+                    self.precommit(runtime, "runtime", "adapter")
+
+    def test_runtime_rejects_truncated_and_overflowing_load_command_tables(self):
+        truncated = struct.pack("<IiiIIIII", 0xFEEDFACF, 0x0100000C, 0,
+                                2, 1, 8, 0, 0) + b"\x00" * 4
+        overflowing = struct.pack("<IiiIIIII", 0xFEEDFACF, 0x0100000C, 0,
+                                  2, 1, 0xFFFFFFFF, 0, 0)
+        malformed_command = (struct.pack("<IiiIIIII", 0xFEEDFACF, 0x0100000C,
+                                         0, 2, 1, 8, 0, 0)
+                             + struct.pack("<II", 1, 0xFFFFFFFF))
+        unaligned_command = (struct.pack("<IiiIIIII", 0xFEEDFACF, 0x0100000C,
+                                         0, 2, 1, 9, 0, 0)
+                             + struct.pack("<II", 1, 9) + b"x")
+        cases = (
+            ("truncated-table", truncated),
+            ("overflowing-table", overflowing),
+            ("overflowing-command", malformed_command),
+            ("unaligned-command", unaligned_command),
+        )
+        for name, content in cases:
+            with self.subTest(name=name):
+                runtime = self.base / name
+                runtime.mkdir()
+                entrypoint = runtime / "adapter"
+                entrypoint.write_bytes(content)
+                entrypoint.chmod(0o555)
+                runtime.chmod(0o555)
+                with self.assertRaisesRegex(ValueError, "truncated|exceeds|malformed"):
+                    self.precommit(runtime, "runtime", "adapter")
+
+    def test_runtime_parser_bounds_pread_and_accepts_exact_command_tables(self):
+        zero = thin_macho(load_command=b"")
+        two_commands = (struct.pack("<II", 1, 8)
+                        + struct.pack("<II", 2, 8))
+        multiple = (struct.pack("<IiiIIIII", 0xFEEDFACF, 0x0100000C,
+                                0, 2, 2, len(two_commands), 0, 0)
+                    + two_commands)
+        for content in (zero, multiple):
+            path = self.base / f"commands-{len(content)}"
+            path.write_bytes(content)
+            fd = os.open(path, os.O_RDONLY)
+            try:
+                _validate_runtime_entrypoint(fd)
+            finally:
+                os.close(fd)
+
+        huge_size = 0xFFFFFFF8
+        huge = (struct.pack("<IiiIIIII", 0xFEEDFACF, 0x0100000C,
+                            0, 2, 1, huge_size, 0, 0)
+                + struct.pack("<II", 1, huge_size))
+        path = self.base / "huge-command"
+        path.write_bytes(huge)
+        fd = os.open(path, os.O_RDONLY)
+        real_pread = os.pread
+        requests = []
+
+        def observe_pread(selected_fd, length, offset):
+            requests.append(length)
+            return real_pread(selected_fd, length, offset)
+
+        try:
+            with mock.patch("aegis360.sparse_story_asset_tree.os.fstat",
+                    return_value=SimpleNamespace(st_size=32 + huge_size)), \
+                 mock.patch("aegis360.sparse_story_asset_tree.os.pread",
+                            side_effect=observe_pread):
+                _validate_runtime_entrypoint(fd)
+        finally:
+            os.close(fd)
+        self.assertTrue(requests)
+        self.assertLessEqual(max(requests), 32)
+
+    def test_runtime_parser_rejects_short_pread(self):
+        path = self.base / "short-pread"
+        path.write_bytes(thin_macho())
+        fd = os.open(path, os.O_RDONLY)
+        try:
+            with mock.patch("aegis360.sparse_story_asset_tree.os.pread",
+                            return_value=b"\xcf\xfa\xed"):
+                with self.assertRaisesRegex(ValueError, "truncated"):
+                    _validate_runtime_entrypoint(fd)
+        finally:
+            os.close(fd)
+
+    def test_runtime_entrypoint_replacement_remains_detected(self):
+        runtime = self.base / "replace-runtime"
+        runtime.mkdir()
+        entrypoint = runtime / "adapter"
+        entrypoint.write_bytes(thin_macho())
+        entrypoint.chmod(0o555)
+        runtime.chmod(0o555)
+        manifest = self.precommit(runtime, "runtime", "adapter")
+        proof = validate_asset_tree(manifest=manifest, root=runtime)
+        try:
+            runtime.chmod(0o755)
+            entrypoint.unlink()
+            entrypoint.write_bytes(thin_macho())
+            entrypoint.chmod(0o555)
+            runtime.chmod(0o555)
+            with self.assertRaisesRegex(ValueError, "identity"):
+                proof.manifest()
+        finally:
+            proof.close()
+
+    def test_runtime_replacement_during_validation_and_hash_is_detected(self):
+        runtime = self.base / "replace-during-hash"
+        runtime.mkdir()
+        entrypoint = runtime / "adapter"
+        entrypoint.write_bytes(thin_macho())
+        entrypoint.chmod(0o555)
+        runtime.chmod(0o555)
+        manifest = self.precommit(runtime, "runtime", "adapter")
+        proof = validate_asset_tree(manifest=manifest, root=runtime)
+        original = _validate_runtime_entrypoint
+
+        def validate_then_replace(fd):
+            original(fd)
+            runtime.chmod(0o755)
+            entrypoint.unlink()
+            entrypoint.write_bytes(thin_macho())
+            entrypoint.chmod(0o555)
+            runtime.chmod(0o555)
+
+        try:
+            with mock.patch("aegis360.sparse_story_asset_tree._validate_runtime_entrypoint",
+                            side_effect=validate_then_replace):
+                with self.assertRaisesRegex(ValueError, "changed while hashing"):
+                    proof.manifest()
+        finally:
+            proof.close()
 
     def test_root_and_directory_utime_do_not_invalidate_proof(self):
         root = self.base / "asset"

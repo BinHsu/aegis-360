@@ -58,6 +58,130 @@ class SparseStoryRunnerContractTests(unittest.TestCase):
         changed = copy.deepcopy(capability); changed["matrix"] = bad
         with self.assertRaises(ValueError): validate_capability_receipt_shape(changed)
 
+    def seatbelt_backend(self):
+        return build_seatbelt_backend_manifest_shape(os_build="25F84",
+            architecture="arm64", backend_executable_sha256=H("a"),
+            backend_executable_size=12345,
+            launcher_runtime_manifest_sha256=H("b"))
+
+    def seatbelt_roots(self):
+        return {"runtime_root": "/private/tmp/runtime",
+            "runtime_executable": "/private/tmp/runtime/bin/adapter",
+            "forbidden_executable": "/private/tmp/forbidden/exec-sentinel",
+            "bundle_root": "/private/tmp/bundle", "model_root": "/private/tmp/model",
+            "prompt_root": "/private/tmp/prompt", "scratch_root": "/private/tmp/scratch"}
+
+    def test_seatbelt_backend_manifest_exact_rebuild_and_authority_closed(self):
+        manifest = self.seatbelt_backend()
+        validate_seatbelt_backend_manifest_shape(manifest)
+        self.assertEqual(manifest["system_rules"], [
+            {"operation": operation, "match": match, "path": path}
+            for operation, match, path in SEATBELT_SYSTEM_RULES])
+        self.assertEqual(manifest["backend"], {"logical_identity": "com.apple.sandbox-exec",
+            "executable_sha256": H("a"), "executable_size": 12345})
+        self.assertEqual(manifest["launcher"], {
+            "logical_identity": "aegis360.native-process-launcher",
+            "runtime_manifest_sha256": H("b")})
+        self.assertEqual(canonical_seatbelt_backend_manifest_shape_bytes(manifest),
+                         canonical_bytes(manifest))
+        for function in (canonical_seatbelt_backend_manifest_bytes,
+                         derive_seatbelt_backend_manifest,
+                         validate_seatbelt_backend_manifest,
+                         canonical_seatbelt_policy_input_bytes):
+            with self.assertRaises(AuthorityUnavailable):
+                function(manifest)
+        for mutation in ("extra", "type", "order", "match"):
+            changed = copy.deepcopy(manifest)
+            if mutation == "extra": changed["extra"] = False
+            elif mutation == "type": changed["host"]["os_build"] = True
+            elif mutation == "order": changed["system_rules"][0], changed["system_rules"][1] = changed["system_rules"][1], changed["system_rules"][0]
+            else: changed["system_rules"][0]["match"] = "literal"
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                validate_seatbelt_backend_manifest_shape(changed)
+        for path, match in (("/.", "literal"), ("/", "subpath")):
+            changed = copy.deepcopy(manifest)
+            changed["system_rules"][3].update(path=path, match=match)
+            with self.subTest(path=path, match=match), self.assertRaises(ValueError):
+                validate_seatbelt_backend_manifest_shape(changed)
+        with self.assertRaises(ValueError):
+            build_seatbelt_backend_manifest_shape(os_build="25 F84", architecture="arm64",
+                backend_executable_sha256=H("a"), backend_executable_size=1,
+                launcher_runtime_manifest_sha256=H("b"))
+        with self.assertRaises(ValueError):
+            build_seatbelt_backend_manifest_shape(os_build="25F84", architecture="x86_64",
+                backend_executable_sha256=H("a"), backend_executable_size=1,
+                launcher_runtime_manifest_sha256=H("b"))
+        for size in (True, 0, MAX_BACKEND_EXECUTABLE_BYTES + 1):
+            with self.subTest(size=size), self.assertRaises(ValueError):
+                build_seatbelt_backend_manifest_shape(os_build="25F84", architecture="arm64",
+                    backend_executable_sha256=H("a"), backend_executable_size=size,
+                    launcher_runtime_manifest_sha256=H("b"))
+
+    def test_seatbelt_policy_bytes_are_exact_deterministic_and_default_deny(self):
+        manifest = self.seatbelt_backend(); roots = self.seatbelt_roots()
+        first = render_seatbelt_policy_input_shape_bytes(
+            backend_manifest=manifest, dynamic_roots=roots)
+        second = render_seatbelt_policy_input_shape_bytes(
+            backend_manifest=copy.deepcopy(manifest),
+            dynamic_roots=dict(reversed(list(roots.items()))))
+        self.assertEqual(first, second)
+        self.assertTrue(first.startswith(b"(version 1)\n(deny default)\n"))
+        self.assertNotIn(b"(allow default)", first)
+        self.assertNotIn(b"sysctl", first)
+        lines = first.splitlines()
+        exec_lines = [line for line in lines if b"process-exec" in line]
+        self.assertEqual(exec_lines, [
+            b'(allow process-exec (literal "/private/tmp/runtime/bin/adapter"))'])
+        self.assertNotIn(b"forbidden/exec-sentinel", exec_lines[0])
+        self.assertIn(b'(literal "/private/tmp/forbidden/exec-sentinel")', first)
+        for operation, match, path in SEATBELT_SYSTEM_RULES:
+            expected = (f"(allow {operation} ({match} "
+                        f"{__import__('json').dumps(path)}))").encode()
+            self.assertIn(expected, lines)
+        self.assertEqual(first[-1:], b"\n")
+        self.assertEqual(first, b'''(version 1)
+(deny default)
+(allow process-exec (literal "/private/tmp/runtime/bin/adapter"))
+(deny process-fork)
+(allow process-info* (target self))
+(allow file-read* (literal "/private/tmp/runtime/bin/adapter")
+  (literal "/private/tmp/forbidden/exec-sentinel")
+  (subpath "/private/tmp/bundle")
+  (subpath "/private/tmp/model")
+  (subpath "/private/tmp/prompt")
+  (subpath "/private/tmp/runtime"))
+(allow file-read* (subpath "/System/Library"))
+(allow file-read* (subpath "/private/var/db/dyld"))
+(allow file-read* (subpath "/usr/lib"))
+(allow file-read-data (literal "/"))
+(allow file-read-metadata (literal "/tmp"))
+(allow file-write* (subpath "/private/tmp/scratch"))
+''')
+
+    def test_seatbelt_policy_rejects_unsafe_or_overlapping_dynamic_paths(self):
+        manifest = self.seatbelt_backend()
+        mutations = []
+        extra = self.seatbelt_roots(); extra["extra"] = "/private/tmp/extra"; mutations.append(extra)
+        relative = self.seatbelt_roots(); relative["bundle_root"] = "relative"; mutations.append(relative)
+        normalized = self.seatbelt_roots(); normalized["model_root"] = "/private/tmp/a/../model"; mutations.append(normalized)
+        control = self.seatbelt_roots(); control["prompt_root"] = "/private/tmp/pro\nmp"; mutations.append(control)
+        overlap = self.seatbelt_roots(); overlap["model_root"] = "/private/tmp/bundle/model"; mutations.append(overlap)
+        interpreter = self.seatbelt_roots(); interpreter["runtime_executable"] = "/private/tmp/other"; mutations.append(interpreter)
+        forbidden = self.seatbelt_roots(); forbidden["forbidden_executable"] = "/private/tmp/model/exec"; mutations.append(forbidden)
+        forbidden_parent = self.seatbelt_roots(); forbidden_parent["forbidden_executable"] = "/private/tmp"; mutations.append(forbidden_parent)
+        root = self.seatbelt_roots(); root["scratch_root"] = "/"; mutations.append(root)
+        for roots in mutations:
+            with self.subTest(roots=roots), self.assertRaises(ValueError):
+                render_seatbelt_policy_input_shape_bytes(
+                    backend_manifest=manifest, dynamic_roots=roots)
+
+    def test_seatbelt_policy_escaping_is_deterministic(self):
+        roots = self.seatbelt_roots()
+        roots["bundle_root"] = '/private/tmp/bundle "quoted" \\ path'
+        encoded = render_seatbelt_policy_input_shape_bytes(
+            backend_manifest=self.seatbelt_backend(), dynamic_roots=roots)
+        self.assertIn(b'bundle \\"quoted\\" \\\\ path', encoded)
+
     def test_request_exact_six_projection_order_and_handles(self):
         prompt = build_asset_manifest_shape(asset_kind="prompt_schema", entries=[
             self.entry("prompt.txt"), self.entry("raw-observation-schema.json", digest="2")])
