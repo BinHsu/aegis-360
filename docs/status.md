@@ -181,20 +181,20 @@ result publication and fail closed under mutation. No model or real media has
 been acquired and neither Stage A nor Stage B has run, so this remains contract
 evidence rather than semantic evidence.
 
+The isolated-runner protocol passed both audits, but is not implemented; no
+process-isolation or model-invocation claim exists.
+
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests`: 578 tests pass after sparse-story
-  semantic, projection and closed media-tree contract integration.
+- Full suite: 578 tests pass after closed media-tree integration.
 - Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Design and synthetically verify the isolated adapter-runner gate: minimal
-environment, no repository/network, exact stdout and bounded cleanup. Until its
-independent review, acquire no model or real media and render no video.
+Implement bounded synthetic runner schemas/capture; acquire no model or real media.

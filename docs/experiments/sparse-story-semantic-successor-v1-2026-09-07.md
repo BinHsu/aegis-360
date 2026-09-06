@@ -32,6 +32,11 @@ vertical audits passed after closing snapshot-reopen, self-consistent forged-tre
 mutation-cleanup and result-mode bypasses. This grants only sanitized transient
 media-input authority; it invokes neither a renderer nor a model.
 
+The isolated adapter-runner protocol is now frozen after independent causal and
+vertical audits. Its capability-test-first backend, exact asset/request/receipt/
+aggregate schemas and synthetic case matrix are design authority only; no runner
+implementation or production isolation PASS exists yet.
+
 ## Question and claim boundary
 
 Can one bounded semantic observation per cheap-signal event distinguish a
@@ -333,6 +338,277 @@ It grants sanitized transient-media input authority only. Real FFmpeg rendering,
 source-time seeking, process environment, repository/filesystem isolation,
 network denial, adapter stdout and post-invocation deletion remain later gates.
 
+## Isolated adapter-runner synthetic gate
+
+This gate is separate from media publication and model quality. One coordinator
+call owns one validated opaque packet and starts exactly one fresh child process
+group. There is no retry, repair prompt, fallback backend, reused conversation or
+worker reuse between packets. `missing_anchor` is unreachable here: the runner
+accepts only a complete one-packet projection and six-file media tree; missing
+media is invalid upstream proof, not a caller flag. Invalid lineage,
+index, tree, executable/runtime/model/prompt manifest or isolation policy is
+`invalid`, emits no semantic evidence and starts zero children.
+
+Before spawn, bind the private packet and canonical hash, exact adapter projection
+and hash, validated adapter index, retained input-derived media-tree proof, exact
+six packet refs, executable/runtime manifest, closed multi-file model manifest,
+prompt/schema bundle and runner policy. Every manifest uses a canonical sorted
+compact JSON representation and binds each regular no-follow file by relative
+path, mode, size and SHA-256 plus a canonical tree digest. Absolute paths remain
+private except the transient allowlisted model/prompt root handles in stdin; no
+absolute path enters stdout-derived or durable results.
+
+Runner policy v1 fixes a 120-second monotonic wall timeout, two-second termination
+grace, 65,536-byte stdout ceiling and 65,536-byte stderr ceiling; each pipe retains
+one extra byte solely to prove overflow. These values cannot be tuned after model
+output is seen. The child receives one canonical request on stdin followed by EOF.
+It contains only the opaque packet ID, anonymous projection, bundle-relative
+handles for the six sanitized media files and transient absolute handles for the
+prompt/schema and model roots. It contains no source,
+time, event/signal/proposal role, geometry, expected class, reviewer material,
+repository/protocol/history, prior output, salt, HMAC, private hash or destination.
+
+Invoke an absolute, regular, non-symlink executable directly with no shell, in a
+new process session with the sealed one-packet bundle as cwd and umask 077. Close every
+non-stdio descriptor and pass none explicitly. Build a fresh environment without
+copying the parent: exactly `LANG=C`, `LC_ALL=C`, `TZ=UTC`, `NO_COLOR=1`, private
+`HOME` and `TMPDIR`; v1 permits no additional variables. `PATH`, proxy,
+credential, cloud, SSH, telemetry, `DYLD_*`, `PYTHON*` and repository/data
+variables are absent. Another variable requires a new frozen policy version.
+
+An isolation backend is mandatory and must capability-test its installed policy
+before every execution batch. Default deny must demonstrably allow only exact
+system/runtime/model/prompt/sanitized inputs for read and the private scratch for
+write, while denying network inbound/outbound, child process execution, repository
+and protocol reads, other packet/result reads and every outside write. Probes use
+actual operations and sentinels, not command inspection. A skipped probe, policy
+installation error, unexpected allow or unavailable backend is `invalid` with
+zero adapter invocations. Presence of `/usr/bin/sandbox-exec`, a clean environment,
+temporary cwd or `shell=false` is not isolation evidence and never authorizes an
+unsandboxed fallback. A finite probe proves only the frozen matrix plus inspection
+of its default-deny policy, not universal confinement. The deprecated Seatbelt CLI remains only a candidate until
+this exact capability gate passes on the execution host.
+
+Drain stdout and stderr concurrently as binary pipes. Do not merge, incrementally
+decode, trim, normalize, extract fenced JSON or accept a valid prefix. Success
+requires spawn success, no timeout or overflow, normal exit code zero, exactly zero
+stderr bytes and nonempty stdout of at most 65,536 bytes. Empty stdout explicitly
+sets `invocation_failed=true`. Only nonempty success bytes pass unchanged to the
+existing strict parser and binder. Any spawn/exec
+error, signal, nonzero exit, timeout, either overflow or any stderr byte sets
+`invocation_failed=true`; exactly the first 65,537 stdout bytes are retained and
+hashed while all later bytes are drained/discarded. They enter the
+existing operational-failure path but cannot become success. Stderr content/hash
+is discarded and never logged or persisted; at most 65,537 stderr bytes are
+retained transiently only to establish overflow.
+
+At timeout or overflow, send SIGTERM to the process group, keep draining for the
+fixed grace, then SIGKILL the group, drain to EOF and reap exactly once. Process-
+group cleanup is hygiene, not confinement; the isolation backend must prevent
+child exec/escape. CPU, file-size and descriptor rlimits may add defense in depth,
+but RSS, swap, Metal/ANE memory and thermal state are measurements, not guaranteed
+limits. A native single-threaded launcher is required for any pre-exec rlimit work;
+Python `preexec_fn` is forbidden.
+
+Do not invent another semantic schema. Exact stdout feeds `bind_observation`; any
+operational failure feeds its captured stdout plus `invocation_failed=true`.
+Existing reason precedence remains `missing_anchor`, `invocation_failure`,
+`malformed_json`, `forbidden_field`, `schema_violation`. A separate closed receipt
+`aegis360.sparse-story-adapter-run-receipt.v1` has exactly `schema_version`,
+`packet_id`, `inputs`, `execution`, `privacy`, `authority`; the exact nested keys,
+types and invariants are frozen below. It contains no stderr, argv, env, path, PID,
+signal, duration, exception or free text and must exact-rebuild as compact sorted
+ASCII JSON.
+
+The child cannot publish evidence. After it exits, the coordinator revalidates
+the retained media tree and all immutable manifests, binds stdout, then exclusively
+fsync-publishes receipt and evidence outside child scope. In every path it closes
+pipes, terminates/reaps live children and descriptor-relatively deletes only
+identity-proven owned scratch and transient input. Publication order is evidence,
+receipt, then aggregate; none is authoritative without the final aggregate. Any
+failure removes every already-published identity-owned peer. Replacements survive.
+Publication or sensitive cleanup failure is `invalid`, not an abstention.
+
+Synthetic coverage must include literal shell metacharacter argv, exact fresh env,
+FD hygiene, cwd identity; stdout empty/invalid UTF-8/duplicate key/NaN/trailing
+bytes and ceiling -1/exact/+1; concurrent pipe pressure; stderr, exit, signal,
+timeout and TERM-ignore cases; child/grandchild containment; actual network and
+forbidden read/write denial; scratch and allowed-input success; mutation and
+replacement cleanup races; invocation cardinality, exact receipt rebuild and two
+fresh byte-identical runs. Runner-operational aggregate precedence is `invalid`
+for trust/isolation, schedule, forbidden-authority or cleanup failure; `reject`
+for a deterministic behavior or repeatability miss; otherwise `pass`. Performance
+completeness belongs only to the separate Stage A/B evaluation.
+
+A pass proves only bounded one-shot local invocation under the tested synthetic
+isolation contract with exact capture and cleanup. It proves no model identity
+beyond manifests, semantic quality, real-output determinism, held-out validity,
+source seeking, renderer correctness, performance suitability, boundary, chapter,
+identity, camera, reorder, highlight or render behavior. No model acquisition or
+real-media execution is authorized by this gate alone.
+
+### Exact subordinate contracts
+
+Runtime, model and prompt/schema assets use
+`aegis360.sparse-story-asset-manifest.v1` with exactly `schema_version`,
+`asset_kind`, `root_tree_sha256`, `entrypoint`, `entries`. `asset_kind` is
+`runtime`, `model`, `prompt_schema` or `synthetic_support`; `entrypoint` is a safe relative path only
+for runtime and null otherwise. `entries` is a bytewise-path-sorted list
+of objects containing exactly string `relative_path`, non-boolean integer `mode`,
+non-boolean integer `size` and lowercase SHA-256 `sha256`. A path has UTF-8 length
+1..1024 and slash-separated segments matching
+`[A-Za-z0-9][A-Za-z0-9._-]{0,127}`, without dot segments. It is nonempty except
+for `synthetic_support`, whose empty form has no leaves and root-tree SHA-256 equal
+to SHA-256 of the empty byte string. Leaves are regular,
+no-follow and link-count one; mode is 0444 except runtime entrypoint 0555. The
+directory set is exactly the root and required proper ancestors, all 0555.
+Retained descriptors prove root/leaf device, inode, size and nanosecond-mtime
+stability. Tree hashing and exclusive publication reuse the media-tree line
+grammar and identity rules. `model_asset_sha256` in semantic evidence is SHA-256
+of canonical model-manifest bytes, not its content-tree digest.
+
+Runner policy `aegis360.sparse-story-runner-policy.v1` is path-free canonical JSON
+with exactly `schema_version`, `backend_manifest_sha256`,
+`timeout_ns=120000000000`, `termination_grace_ns=2000000000`,
+`stdout_limit_bytes=65536`, `stderr_limit_bytes=65536`, `environment_template`
+exactly `{"LANG":"C","LC_ALL":"C","TZ":"UTC","NO_COLOR":"1","HOME":"$PRIVATE_HOME","TMPDIR":"$PRIVATE_TMPDIR"}`, and
+`capability_matrix_id=sparse-story-isolation-matrix-v1`. Its hash never contains
+resolved HOME/TMPDIR or asset paths. A transient single-use capability token binds
+that hash, launcher and compiled-policy bytes, uid/gid and retained root
+device/inodes; it expires after one batch or any identity change.
+
+Canonical stdin schema `aegis360.sparse-story-adapter-request.v1` has exactly
+`schema_version`, `packet_id`, `projection`, `media`, `prompt_schema`, `model`.
+The packet ID matches `packet-[0-9a-f]{20}` and projection exact-validates. `media`
+is exactly six objects in projection row order containing only `media_ref` and
+bundle-relative `path`, equal to that ref. Prompt/schema and model contain only
+`manifest_sha256` and transient canonical absolute `root_path`; `prompt_schema`
+also contains exact `prompt_path=prompt.txt` and
+`schema_path=raw-observation-schema.json`, both validated manifest leaves. Each absolute
+handle must resolve beneath its retained allowlisted root and exists only in stdin,
+never stdout-derived or durable artifacts.
+
+Capability receipt `aegis360.sparse-story-isolation-capability.v1` has exactly
+`schema_version`, `backend_manifest_sha256`, `compiled_policy_sha256`,
+`runner_policy_sha256`, `matrix`. `matrix` has exactly these boolean keys, all
+true: `allowed_bundle_read`, `allowed_model_read`, `allowed_prompt_read`,
+`allowed_scratch_write`, `denied_repository_read`, `denied_protocol_read`,
+`denied_neighbor_packet_read`, `denied_result_read`, `denied_outside_write`,
+`denied_process_fork`, `denied_process_exec`, `denied_ipv4`, `denied_ipv6`,
+`denied_unix_socket`. Denial is an actual EACCES or EPERM; allow requires exact
+sentinel bytes/action. The bound adapter runtime implements a closed
+`--aegis-isolation-probe` mode; probes and inference invoke that same entrypoint
+through the same launcher, uid/gid and byte-identical compiled policy over the
+same batch roots. The policy hash is bound in the token. Confinement is installed
+before the one authorized entrypoint starts; subsequent fork and exec are denied
+while threads remain allowed. Probe mode emits only a raw transcript. The trusted
+coordinator constructs every boolean from exact sentinel bytes, EACCES/EPERM and
+unchanged file/process/socket state; a child-printed `true` has no authority. Probe
+mode cannot emit semantic output and does not count as an adapter inference invocation. Missing, skipped,
+unavailable or erroneous probes are always `invalid` with zero adapter calls.
+
+The run receipt's exact `inputs` keys are `adapter_projection_sha256`,
+`sanitized_media_result_sha256`, `runtime_manifest_sha256`,
+`model_manifest_sha256`, `prompt_schema_manifest_sha256`, `runner_policy_sha256`,
+all lowercase SHA-256. `execution` contains exactly non-boolean integer
+`invocation_count=1`, boolean `stdout_present`, lowercase `stdout_sha256`, boolean
+`invocation_failed`; empty output hashes the empty byte string. `privacy` contains
+exactly false `contains_source_path`, `contains_pixels`, `contains_audio`,
+`contains_identity`, `contains_source_time`, `contains_free_text`. `authority`
+contains exactly true `isolated_adapter_invocation` and false
+`semantic_observation`, `exact_boundary`, `chapter_map`, `camera`, `reorder`,
+`render`. Trust failure before spawn publishes no receipt/evidence and cannot be
+downgraded because its aggregate row records invocation zero and `invalid`.
+
+Final aggregate `aegis360.sparse-story-adapter-run-result.v1` has exactly
+`schema_version`, `run_kind`, `inputs`, `packets`, `runner_outcome`, `privacy`,
+`authority`. `run_kind` is `synthetic_gate`, `stage_a_smoke`, `stage_a_run_1`,
+`stage_a_run_2` or `stage_b`; expected ordered packet counts are 1, 1, 6, 6 and 24.
+`inputs` contains required lowercase hashes `schedule_sha256`,
+`backend_manifest_sha256`, `runner_policy_sha256`, nullable
+`compiled_policy_sha256`, nullable `capability_receipt_sha256`, nullable
+`synthetic_adapter_manifest_sha256`, nullable `synthetic_case_manifest_sha256` and
+nullable `synthetic_case_result_sha256`; the latter three are non-null only for
+`synthetic_gate`. Inputs also contain `failure_stage`, exactly one of `none`,
+`preflight`, `policy_compile`, `capability`, `invocation`, `publication`, `cleanup`.
+Compiled-policy and capability hashes are non-null exactly after their respective
+steps succeed; `failure_stage` names the earliest failure. For `synthetic_gate`,
+adapter/case manifest hashes become non-null after their respective validation;
+case-result hash becomes non-null only after every case and repeat completes.
+`pass` or `reject` requires all three; early `invalid` requires every not-yet-
+completed value null. Non-synthetic runs require all three null. Each ordered packet row contains exactly `packet_id`,
+non-boolean integer `invocation_count` zero-or-one, and nullable lowercase
+`receipt_sha256`, `evidence_sha256`. Count zero requires both null. Count one has
+both hashes after complete publication, or both null only when publication/cleanup
+is invalid and every owned partial peer was removed. `runner_outcome` is exactly
+`invalid`, `reject` or `pass`. Privacy equals receipt privacy. Authority contains exactly true
+`isolated_adapter_gate_result` and false `semantic_observation`, `exact_boundary`,
+`chapter_map`, `camera`, `reorder`, `render`. This is runner-operational conformance
+only; separate closed Stage A/B artifacts own semantic/scientific outcomes.
+
+Synthetic fixture adapter uses the same closed runtime-manifest contract and its
+canonical hash is the aggregate's `synthetic_adapter_manifest_sha256`. Direct argv
+is exactly `[entrypoint,"--aegis-synthetic-case",case_id,"--",...stimulus.argv]`;
+every string is passed literally without a shell and the suffix may be empty.
+Normal invocation never accepts this option. Case selection is coordinator-owned. Synthetic case manifest
+`aegis360.sparse-story-runner-cases.v1` contains exactly `schema_version`,
+`synthetic_adapter_manifest_sha256`, `cases`, `repeat_packet_id`; each case contains
+exactly `case_id`, `expected_result`, `stimulus`. `stimulus` is canonical JSON with
+exact `argv`, `stdin_sha256`, `support_manifest_sha256`; the last value is SHA-256
+of canonical `synthetic_support` manifest bytes, including the defined empty form.
+Referenced stdin and support-tree bytes are hash-bound and validated before execution. `cases` follows
+the exact ordered `case_id`/`expected_result` sequence frozen below. Result
+`aegis360.sparse-story-runner-case-result.v1` contains exactly `schema_version`,
+`case_manifest_sha256`, `cases`, `repeatability`. Each ordered case contains only
+`case_id`, `expected_result`, `observed_result`, `passed`; IDs/order/expected values
+must exactly equal the manifest, `observed_result` uses the same closed enum, and
+`passed` is exact equality. `repeatability` contains only `packet_id`,
+`first_stdout_sha256`, `second_stdout_sha256`, `equal`; `equal` is hash equality.
+The result hash is bound by the synthetic aggregate and its packet ID equals both
+the manifest repeat ID and synthetic schedule packet.
+
+The closed result enum is `success`, `malformed_json`, `forbidden_field`,
+`schema_violation`, `invocation_failure`, `isolation_denied`,
+`isolation_allowed`, `trust_invalid`, `replacement_preserved`, `exact_rebuild`.
+The exact ordered manifest is:
+
+```text
+argv_literal:success, environment_exact:success, fd_hygiene:success,
+cwd_identity:success, stdout_empty:invocation_failure,
+stdout_invalid_utf8:malformed_json, stdout_duplicate_key:malformed_json,
+stdout_nan:malformed_json, stdout_trailing_bytes:malformed_json,
+stdout_forbidden_field:forbidden_field, stdout_extra_field:forbidden_field,
+stdout_limit_minus_one:success, stdout_limit_exact:success,
+stdout_limit_plus_one:invocation_failure, concurrent_pipe_pressure:success,
+stderr_nonempty:invocation_failure, nonzero_exit:invocation_failure,
+signal_exit:invocation_failure, wall_timeout:invocation_failure,
+term_ignore_kill:invocation_failure, grandchild_containment:isolation_denied,
+network_ipv4_denied:isolation_denied, network_ipv6_denied:isolation_denied,
+unix_socket_denied:isolation_denied, repository_read_denied:isolation_denied,
+protocol_read_denied:isolation_denied,
+neighbor_packet_read_denied:isolation_denied,
+result_read_denied:isolation_denied, outside_write_denied:isolation_denied,
+bundle_read_allowed:isolation_allowed, model_read_allowed:isolation_allowed,
+prompt_read_allowed:isolation_allowed, scratch_write_allowed:isolation_allowed,
+bundle_mutation:trust_invalid, replacement_race:replacement_preserved,
+single_invocation:exact_rebuild, receipt_rebuild:exact_rebuild
+```
+
+Aggregate derivation is total: invalid trust/lineage/media/manifest/policy,
+capability miss, schedule/cardinality error, forbidden authority, partial
+publication or sensitive cleanup failure is `invalid`; any deterministic fixture
+or byte-repeat miss is `reject`; otherwise `pass`. Measurement completeness is
+owned only by separate Stage A/B artifacts. The
+synthetic schedule is one valid packet; negative cases produce only their in-memory
+case rows and no per-case run artifact. Every scheduled batch publishes one final
+aggregate when its destination is usable. A batch-wide trust/capability failure
+records all scheduled rows with invocation zero, null hashes and `invalid`; failure
+to publish that aggregate is an externally reported invalid operation, never an
+inconclusive artifact. Stage A is
+one separate one-packet smoke followed by two complete runs of six serial one-
+packet invocations, each in a fresh process group: 13 calls overall, only the
+latter 12 entering correctness and repeatability.
+
 ## Stage A: bounded feasibility
 
 Freeze exactly six known-label diagnostic packets: Old Ghost 205.6-second story
@@ -347,21 +623,24 @@ model runtime and an opaque output destination; it has no repository, protocol,
 conversation history, label key, prior output or network access. Freeze packet
 set, neutral schedule, model asset and prompt/schema before inference.
 
-Run one packet as an operational smoke only, then run the complete six-packet
-set serially twice in independent fresh worker processes. The smoke does not
-count toward either complete run. Freeze exactly 12 per-packet raw-output hashes
+Run one packet in one fresh process as an operational smoke only, then run two
+independent complete six-packet runs. Each complete run is serial and each packet
+uses its own fresh process group, for exactly 12 complete-run invocations. The
+smoke does not count toward either complete run. Freeze exactly 12 raw-output hashes
 for the two complete runs. Record wall time, process RSS, MLX peak memory, swap
 and thermal state on the M4 MacBook Air with 16 GB. The complete runs must
 produce byte-identical closed output per matching packet. Malformed output,
-missing anchors, any forbidden field or model failure follows the operational-
+any forbidden field or model failure follows the operational-
 failure contract and becomes a failure-bound abstention.
 
 There are exactly two story, three no-change and one artifact cases. Both story
 cases, all three no-change cases and the artifact must be correct; abstain or
 model failure counts incorrect. Outcome precedence is total: invalid lineage,
 packet/key composition mismatch, label leakage into adapter-visible input or
-forbidden downstream authority yields `invalid`; missing required outputs or
-performance measurements yields `inconclusive`; otherwise non-identical reruns
+forbidden downstream authority, missing/partial runner receipt or evidence yields
+`invalid`; after complete valid runner artifacts, missing required non-security
+performance measurements yields `inconclusive`; missing/empty model stdout follows
+invocation failure and counts incorrect. Otherwise non-identical reruns
 or any incorrect case yields `reject`; otherwise the result is `pass`. No
 outcome permits prompt edits on these packets. This stage cannot support
 generalization.

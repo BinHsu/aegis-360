@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T15:16:51+08:00
+Updated: 2026-09-06T16:20:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5e011f5
-Remote status: `origin/main` at `5e011f5`
-Working tree at checkpoint: audited synthetic media-tree implementation
+Baseline commit: 32eac92
+Remote status: `origin/main` at `32eac92`
+Working tree at checkpoint: audited isolated-runner protocol ready to commit
 
 ## Objective
 
@@ -22,8 +22,9 @@ causal-sampling and vertical-contract audits. It fixes a six-packet known-label
 Stage A, a deterministic four-source/24-packet blind Stage B, sanitized adapter
 projections, a closed observation/binder contract, failure-bound abstention and
 total result precedence. No model, media or score has been acquired. The
-schema/binder and sanitized projection implementations now pass independent
-re-audits; the next authority is a synthetic closed media-tree/PNG gate only.
+schema/binder, sanitized projection and closed media-tree implementations pass
+independent re-audits. The exact isolated-runner protocol also passes causal and
+vertical audits; its implementation and production isolation remain absent.
 
 The prior structural replication remains durable negative evidence:
 
@@ -56,8 +57,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `5e011f5`.
-- Expected dirty files: media-tree implementation, tests and milestone docs.
+- Expected branch/remote before checkpoint: `main` at `32eac92`.
+- Expected dirty files: handoff and sparse-story successor protocol only.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
 - Full suite: 578 tests pass after sparse-story media-tree integration.
@@ -76,8 +77,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Design and synthetically test the isolated adapter-runner contract; do not
-  invoke or acquire a model or real-media renderer yet.
+- Implement bounded synthetic runner schemas/capture behind an injected backend
+  that cannot claim production isolation.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
@@ -104,10 +105,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. Independent causal and final vertical reviews
-  passed after the media-tree trust gaps were closed.
-- Main agent owns integration and the isolated-runner design; no model, real
-  media or score acquisition is allowed.
+- No delegated work is active. Causal and vertical runner-protocol audits PASS.
+- Main owns integration and the synthetic implementation; no model, real media
+  or score acquisition is allowed.
 
 ## Safety and claims
 
