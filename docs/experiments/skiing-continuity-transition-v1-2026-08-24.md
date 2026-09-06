@@ -181,3 +181,36 @@ Authoritative artifact SHA-256 values:
 - candidate utility: `e7f359ab859af4dbb673ba8a872935b4cbdc5f2b1e2527f494b27dfb9c8b72e3`;
 - zero-edge transition utility: `0e4ba4fecc80417d83db722827b18a02ffae05bf5e4a8cf04db208143e085e83`;
 - typed global plan: `9c983a0f00a9708e6a594d08f76ac167efa6e03de69c9d1a09bc6a7d3b604de6`.
+
+## Full-source negative result
+
+The same bounded-memory acquisition was run once over the complete 616.392
+seconds rather than concatenating windows. It emits 2,465 normalized rows and
+the frozen policy reduces 415 above-high samples to seven sustained candidates
+at 76.75, 327.25, 386.5, 429.75, 499.75, 506.25 and 565.25 seconds.
+
+Each candidate was rendered through the exact-validating transient onset
+runner as five four-cardinal composites. Independent reviews agree: six are
+`no_semantic_change`; 327.25 is a stitch/stretch `capture_artifact`. The nearby
+TRAILS CROSSING sign at 506.25 is real parallax but does not begin a new story
+state. No candidate authorizes a boundary, so the typed timeline becomes one
+616.392-second segment.
+
+The segment's 20/50/80% samples locally favor cardinal 0 but cannot support a
+whole-segment observed claim. They leave roughly 123 seconds unseen at each end
+and 185 seconds between samples, while the known source includes lift, skiing
+and other-skier episodes. Relevance therefore abstains; the final plan retains
+cardinal 0 at objective zero and is not production eligible. This rejects
+frame-difference onset as the sole chapter detector. It remains useful as a
+motion-peak/corroboration signal; future segmentation needs an additional
+low-cost chapter proposal source.
+
+Full-source artifact SHA-256 values:
+
+- frame-difference samples: `4b234059251cce8af1a0b55fff5a969f910c735d478f5230769be8d8d622565f`;
+- onset candidates: `92ca4a507a09ace83c49aa64fcd7f4cc0aabea7bbdcb09dd6f208753b70f0a35`;
+- typed boundaries: `4644be5becd9dd8f82fba9fca3268e7335bbd67984ddc08499393209cbe4f57c`;
+- typed timeline: `30f325d835154e6d837d7d9367823181b982af8a6fee23b3b9215657614d8398`;
+- abstained relevance: `82288e4727c3714b48fc858fb029ce45a55f0b1fa2f8f04543e3235f5c88352c`;
+- neutral utility: `5e31172e2f1b818e5a62c3825aadd273fff769d0c98411fa79800d254a26dd4d`;
+- fail-closed plan: `b3f16984eee07d6ed0ba7cb50037d5434b859f0d521b946af61482ac9452a64f`.

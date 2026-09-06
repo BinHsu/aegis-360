@@ -191,6 +191,12 @@ story-change, capture-artifact, no-change or abstain observations. Even a
 complete story-change observation emits no boundary, view or render authority;
 a deterministic typed-boundary adapter remains a separate gate.
 
+`run_continuous_onset_semantic_review.py` is the transient media boundary for
+that packet. It exact-validates onset, samples, grid and packet before decoding;
+renders at most five silent four-cardinal composites; exposes only a path-free
+relative-file index to an argv adapter; and deletes its temporary directory on
+success or adapter failure.
+
 `aegis360.typed-segment-boundaries.v1` is that deterministic adapter. It covers
 every onset proposal in order, exact-validates its packet/evidence, and emits
 authorized, rejected or abstained dispositions. Authorization alone uses the

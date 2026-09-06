@@ -1,21 +1,17 @@
 # Project status
 
-Status: typed continuous-onset planning is fail-closed; Skiing coverage remains bounded
+Status: full-source motion-onset segmentation rejected as sole chapter signal
 
 ## Current conclusion
 
 The repository has an executable offline analysis-to-render architecture for
 monoscopic equirectangular input on the M4/16 GB reference machine. It now
 includes typed continuous-onset segmentation and a persistent numeric global
-planner. The latest real Skiing replay correctly produces no cut and no render:
-motion evidence at 386.25–386.75 seconds is not a semantic story change, while
-observed 380–415 candidate-view evidence selects the existing cardinal-0
-baseline, making another identical render unnecessary.
-
-The complete 380–415 window now has observed candidate-view relevance and a
-production-eligible plan. It retains the already preferred fixed-forward view,
-so no redundant render is produced. This is a bounded directing pass, not a
-whole-source result.
+planner. A 380–415 replay is production eligible and correctly retains the
+existing cardinal-0 baseline. The complete 616.392-second replay then exposes
+the limiting assumption: all seven motion onsets are non-story events, leaving
+one segment whose three samples cannot support a whole-film view claim. The
+full-source plan therefore abstains and remains non-production.
 
 ## Accepted evidence
 
@@ -58,6 +54,12 @@ whole-source result.
   transition or cost. `production_eligible=true` and
   `renderer_command_emitted=false`; rendering is skipped because this is
   decision-identical to the fixed-forward baseline.
+- Full-source acquisition emits 2,465 rows and seven onset candidates. Two
+  independent reviews classify six `no_semantic_change` and one
+  `capture_artifact`; zero story boundaries are authorized.
+- The resulting single 616.392-second segment has 123-second uncovered ends
+  and roughly 185-second gaps between its three samples. Relevance abstains;
+  the final objective is zero and `production_eligible=false`.
 
 The exact artifact hashes are recorded in
 `docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`.
@@ -84,7 +86,8 @@ version; they must not be silently reinterpreted.
 
 ## Current limitations
 
-- Typed evidence covers 380–415, not the full 616.392-second Skiing source.
+- Motion onset has full-source evidence but does not recover gradual story
+  chapters; it cannot remain the sole segmentation proposal source.
 - The rejected 386-second onset demonstrates one false positive class, not a
   calibrated general onset detector.
 - No real benchmark proves identity through occlusion, view handoff or an ERP
@@ -99,10 +102,11 @@ version; they must not be silently reinterpreted.
 
 ## Active acceptance gate
 
-Scale the same continuous acquisition contract to the full Skiing source, then
-measure onset count before committing to semantic review volume. Preserve one
-continuous hysteresis state; do not concatenate independently classified
-windows. Only complete observed segment evidence may reach the renderer gate.
+Add a low-cost chapter-proposal signal for gradual activity/context changes.
+Keep frame-difference onset as motion-peak corroboration rather than the sole
+boundary source. Evaluate proposals sparsely against the known lift → own
+skiing → other-skiers sequence before rebuilding typed boundaries. Only
+complete observed segment evidence may reach the renderer gate.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -110,14 +114,13 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests -q`: 498 tests pass.
+- `python3 -m unittest discover -s tests -q`: 508 tests pass.
 - Typed packet/relevance/utility/continuity/planner integration: 53 tests pass.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Checkpoint and push the complete 380–415 replay and zero-candidate CLI/review
-runner wiring. Then run a bounded-cost full-source onset-count acquisition;
-do not render unless the resulting plan differs materially from an existing
-validated baseline.
+Checkpoint and push the full-source negative result and transient onset review
+runner. Then design the smallest offline chapter-proposal experiment that can
+recover gradual context/activity changes without per-frame VLM inference.

@@ -1,84 +1,86 @@
 # Current handoff
 
-Updated: 2026-09-06T10:05:00+08:00
+Updated: 2026-09-06T10:45:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: de10b29
-Remote status: `origin/main` at `de10b29` before this checkpoint
-Working tree at checkpoint: complete 380–415 replay, zero-candidate CLI and typed review-runner wiring
+Baseline commit: ad1508b
+Remote status: `origin/main` at `ad1508b` before this checkpoint
+Working tree at checkpoint: full-source negative evidence, dedicated transient onset runner and current docs
 
 ## Objective
 
-Build an offline 360-video auto-director for ordinary viewers on a fanless
-MacBook Air M4 with 16 GB unified memory. The current gate is scaling the typed
-continuous-onset route beyond one bounded Skiing interval without creating
-review or render work unsupported by evidence.
+Build an offline 360-video auto-director for ordinary viewers on a fanless M4
+MacBook Air with 16 GB unified memory. The next gate is a low-cost source of
+gradual story/activity chapter proposals; frame-difference onset remains only a
+motion-peak/corroboration signal.
 
 ## Last completed milestone
 
-The previous pushed commit `de10b29` completed typed packet/relevance,
-zero-edge causal continuity and strict numeric global-planner integration. This
-checkpoint extends the real evidence window from 380–395 to a continuous
-380–415 acquisition and closes observed segment-view relevance.
+Commit `ad1508b` completed a production-eligible 380–415 Skiing typed replay.
+It correctly retains cardinal 0 and skips a redundant fixed-forward render.
 
-The frame-difference runner emits 139 normalized rows. The frozen uncalibrated
-policy finds only the prior 386.25–386.75 motion burst. Its five semantic rows
-are byte-identical to the independently reviewed bounded packet core, so
-`no_semantic_change` is re-bound to the new source/window lineage. Zero typed
-boundaries produce one complete 35-second segment.
+This checkpoint runs the identical acquisition contract over the complete
+616.392-second source. It emits 2,465 normalized rows; the frozen uncalibrated
+policy reduces 415 above-high rows to seven sustained candidates at 76.75,
+327.25, 386.5, 429.75, 499.75, 506.25 and 565.25 seconds.
 
-Typed packet v2 schedules 387/397.5/408-second four-cardinal composites. Main
-and independent agent review agree cardinal 0 is clear/primary/stable. The
-other candidates are lower-value or changing. Utility scores are c0=3.5,
-c1=2.0, c2=0.5, c3=-1.0. The plan retains c0 with no edge, switch or cost and
-objective 3.5. It is production eligible but emits no renderer command.
+A new dedicated transient runner exact-validates onset/samples/grid/packet,
+renders at most five silent 2x2 cardinal composites, passes a path-free index
+to an argv adapter, and deletes its temporary directory after success or
+failure. All seven onset packets were reviewed with no retained pixels.
 
-No video was rendered: the selected view is identical to the existing fixed
-cardinal-0 baseline, so another file would add no directing evidence. All
-transient review pixels were deleted.
+Independent reviews agree: six candidates are `no_semantic_change`; 327.25 is
+a stitch/stretch `capture_artifact`. The 506.25 TRAILS CROSSING sign is real
+foreground parallax, not a chapter start. Typed boundaries authorize zero
+rows, producing one 616.392-second segment.
 
-Two vertical CLI gaps were closed:
+The segment packet's 20/50/80% samples locally favor cardinal 0 but leave about
+123 seconds unseen at both ends and 185 seconds between samples. They cannot
+support one whole-segment primary or temporal-consistency claim. Relevance
+therefore abstains. The global plan retains cardinal 0 at objective zero,
+sets `production_eligible=false`, and emits no renderer command.
 
-- zero-onset windows may call the typed-boundary CLI with no packet/evidence
-  flags; both lists still must have equal length;
-- transient story review explicitly accepts packet v2 at both runner and
-  render-job layers, retains exactly three composites and mandatory cleanup.
+This is a useful negative result: motion difference detects movement and
+capture discontinuity, not the known lift → own skiing → other-skiers story
+structure. Do not lower thresholds to manufacture chapters.
 
 ## Repository state
 
-- Expected branch: `main`; baseline/remote before checkpoint: `de10b29`.
-- Dirty files should be only the CLI/review wiring, tests and current docs.
-- External evidence is untracked under the configured data root.
+- Expected branch: `main`; baseline/remote before checkpoint: `ad1508b`.
+- New code should be the dedicated runner and its tests only.
+- External full-source artifacts remain untracked.
 
 ## Verified
 
-- The authoritative 380–415 plan SHA is
-  `9c983a0f00a9708e6a594d08f76ac167efa6e03de69c9d1a09bc6a7d3b604de6`.
-- The authoritative typed timeline SHA is
-  `299bcf9a54a329a13350e6c1ed3953f552a431a6ce493fb12bb01e74c47c7543`.
-- Packet/job and zero-candidate targeted tests pass.
-- Full suite: 498 tests pass; handoff checker and diff check pass.
-- No temporary review pixels remain.
+- Frame-difference samples SHA:
+  `4b234059251cce8af1a0b55fff5a969f910c735d478f5230769be8d8d622565f`.
+- Onset candidates SHA:
+  `92ca4a507a09ace83c49aa64fcd7f4cc0aabea7bbdcb09dd6f208753b70f0a35`.
+- Typed timeline SHA:
+  `30f325d835154e6d837d7d9367823181b982af8a6fee23b3b9215657614d8398`.
+- Fail-closed plan SHA:
+  `b3f16984eee07d6ed0ba7cb50037d5434b859f0d521b946af61482ac9452a64f`.
+- Dedicated runner focused suite: 27 tests pass before integration.
+- Full suite: 508 tests pass; handoff and diff checks pass.
+- Onset and full-segment temporary pixels were deleted and absence verified.
 
 ## Rejected
 
-- Do not merge independently classified 380–395 and 395–415 windows: that
-  resets hysteresis and treats the join as an implicit semantic boundary.
-- The legacy hand-authored 390-second split is pilot edit timing, not source
-  story-boundary evidence.
-- The 386-second motion burst is not a story change.
-- A production-eligible plan does not require a redundant render when its
-  decision is identical to an already validated baseline.
-- Segment composition evidence does not prove subject identity or tracking.
+- Frame-difference onset as the sole story-boundary detector.
+- Treating zero authorized motion onsets as proof of one coherent story state.
+- Labeling a 616-second segment from three isolated stills.
+- Concatenating independently classified windows and resetting hysteresis.
+- The legacy hand-authored 390-second pilot split as source evidence.
+- Redundant renders that are decision-identical to an existing baseline.
 
 ## Pending
 
-- Run full-source Skiing frame-difference acquisition under the same v2 config
-  and measure onset count before expanding semantic review.
-- Keep one continuous hysteresis state across the source.
-- Review only emitted sparse onset packets and resulting typed segments.
-- Render only if a complete observed plan materially differs from an existing
-  validated baseline.
+- Inventory existing cheap scene/context signals before writing a new detector.
+- Define a path-free chapter-proposal contract that schedules sparse semantic
+  review but grants no boundary by itself.
+- Test it against the known Skiing sequence and negative motion-onset result.
+- Keep VLM use sparse; do not sample every second or make user review a runtime
+  dependency.
 
 ## Next commands
 
@@ -90,33 +92,29 @@ git diff --check
 git status --short
 ```
 
-After pushing, run `scripts/run_ffmpeg_frame_difference.py` on the full
-616.392-second Skiing source with
-`config/skiing-continuous-onset-acquisition-v2.json`. Store output externally,
-then run `scripts/build_continuous_onset_candidates.py` with the frozen Skiing
-policy. Stop expansion only if the sparse review count itself creates a real
-cost/quality decision.
+After checkpointing, read ADR 0010 and the current event/story signal modules.
+Prefer reusing low-cadence color/scene, audio, detector-presence or motion-state
+summaries before adding a model. Record why each signal can detect gradual
+chapter changes that raw frame difference missed.
 
 ## External artifacts
 
-Set `AEGIS_DATA_DIR` locally. Authoritative artifacts are under
-`outputs/continuous-onset/skiing-t380-t415-v1/`. Exact hashes are recorded in
-`docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`. The separate
-`skiing-t395-t415-v1` directory is diagnostic only. Never commit either.
+Set `AEGIS_DATA_DIR` locally. Full-source artifacts are under
+`outputs/continuous-onset/skiing-full-v1/`; exact hashes and classifications
+are in `docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`.
+Never commit media, JSON evidence or review pixels from that directory.
 
 ## Active agents
 
-No delegated work remains active. The independent visual review completed
-without editing repository files.
+No delegated work remains active. Implementation and both independent visual
+reviews have returned completion packets.
 
 ## Safety and claims
 
-- Never commit media, frames, audio, model weights, identity embeddings or
-  absolute local source paths.
+- Never commit media, frames, audio, model weights, identities or absolute
+  local source paths.
 - Analysis/rendering remain offline; downloads require explicit authority.
-- Keep queues and memory bounded for the 16 GB unified-memory machine.
+- Keep decode queues and memory bounded for 16 GB unified memory.
 - Geometry, faces and mouth motion do not establish identity or speech.
-- Policy v1 uses destination-segment duration as dwell and applies minimum
-  advantage before transition costs; do not silently change these semantics.
 - Git history is the archive; status and handoff contain current state only.
 - Stop only for a real user decision, new authority or external dependency.
