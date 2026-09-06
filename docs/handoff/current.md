@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T23:10:00+08:00
+Updated: 2026-09-06T23:35:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f987da1
-Remote status: `origin/main` at `f987da1`
-Working tree at checkpoint: synthetic-only schedule implementation delegation
+Baseline commit: 931997b
+Remote status: `origin/main` at `931997b`
+Working tree at checkpoint: synthetic schedule/review integration
 
 ## Objective
 
@@ -45,11 +45,12 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `8f7cb37`.
-- Expected dirty files: selection proof implementation, CLI, tests and handoff.
+- Expected branch/remote before checkpoint: `main` at `931997b`.
+- Expected dirty files: structural schedule/review modules, schedule CLI, tests
+  and handoff.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 543 tests pass after selection implementation integration.
+- Full suite: 551 tests pass after schedule/review integration.
 
 ## Verified
 
@@ -65,8 +66,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Implement and synthetically test the frozen selection-proof-bound private
-  schedule, public projection and reviewer-result contract.
+- Implement and synthetically test the exact renderer/bundle-tree contract.
+- Add a coordinator CLI that hashes raw schedule, bundle, review and score files
+  before invoking the pure joined-evaluation API.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -90,11 +92,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- `structural_contrast_impl`: implement private/public schedule, exact rebuild,
-  CLI and synthetic tests from frozen config; no renderer or external data.
-- `causal_signal_audit`: implement closed reviewer artifact and joined gate with
-  synthetic tests only; no schedule/renderer edits or external data.
-- Main agent owns integration and renderer adaptation after both contracts land.
+- No delegated work is active. The main agent owns renderer and coordinator
+  integration; no real review media or structural score has been acquired.
 
 ## Safety and claims
 
