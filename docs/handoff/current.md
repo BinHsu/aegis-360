@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T17:42:00+08:00
+Updated: 2026-09-06T17:03:27+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: e42f3ad
-Remote status: `origin/main` at `e42f3ad`
-Working tree at checkpoint: audited retained asset-tree proof ready to commit
+Baseline commit: 5f21ab6
+Remote status: `origin/main` expected at `5f21ab6`; verify before mutation
+Working tree at checkpoint: feasibility harness, tests and current-only docs
 
 ## Objective
 
@@ -17,14 +17,31 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
+Three independent backend-feasibility reviews reject signed App Sandbox and a
+bare VM as frozen-v1 backends and permit only a non-authoritative Seatbelt
+synthetic spike. The protocol now fixes policy-input hashing, finite system-read
+scope, one native-Mach-O bootstrap plus forbidden-exec sentinel semantics, live
+filesystem-AF_UNIX connect evidence and compound outside-write pre/post evidence.
+This is design authority only; no production isolation or capability authority
+exists.
+
+The audited synthetic harness subsequently reached `feasible` on the reference
+host with exact literal dyld startup allowances and candidate policy SHA-256
+`5f2a954eed7c0b9e3911c4e1495437f365d0d089ff2b677d3329d8deb9b1098f`.
+All 21 operation rows, listener, side-effect and process-group checks closed.
+This remains primitive feasibility only because backend schema and retained
+native-Mach-O enforcement are absent.
+
 The model-neutral sparse story semantic successor protocol passed independent
 causal-sampling and vertical-contract audits. It fixes a six-packet known-label
 Stage A, a deterministic four-source/24-packet blind Stage B, sanitized adapter
 projections, a closed observation/binder contract, failure-bound abstention and
 total result precedence. No model, media or score has been acquired. The
-schema/binder, sanitized projection and closed media-tree implementations pass
-independent re-audits. The exact isolated-runner protocol also passes causal and
-vertical audits; its implementation and production isolation remain absent.
+schema/binder, sanitized projection, closed media-tree and retained asset-tree
+implementations pass independent re-audits. The non-authoritative isolated
+process capture foundation also passes its bounded tests. The exact
+isolated-runner protocol passes causal and vertical audits; production
+isolation and coordinator-owned capability authority remain absent.
 
 The prior structural replication remains durable negative evidence:
 
@@ -57,17 +74,19 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `e42f3ad`.
-- Expected dirty files: handoff, protocol, asset-proof implementation/tests.
+- Expected branch/remote before checkpoint: `main` at `5f21ab6`.
+- Expected dirty file after checkpoint refresh: this handoff only.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 609 tests pass after retained asset-tree integration.
+- Full suite: 624 tests pass after the Seatbelt feasibility harness integration.
 
 ## Verified
 
 - Frozen source/config/fixture and four evidence lineages exact-validate.
 - Primary structural ordinal gate and all eight synthetic episode gates pass.
 - Result artifact is path-free and grants no production authority.
+- Host Seatbelt candidate primitive matrix is `feasible`; independent causal
+  and vertical reviews constrain that fact to the exact synthetic host run.
 
 ## Rejected
 
@@ -77,8 +96,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Implement coordinator-owned raw capability proofs and authoritative derivation
-  without adding a production backend or model invocation.
+- Freeze the backend-manifest and canonical policy-renderer schema, then enforce
+  a retained host-native Mach-O entrypoint before implementing coordinator-owned
+  capability authority.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
@@ -105,10 +125,12 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. Retained asset proof passed causal and vertical
-  audits after exact bounds and node-specific identity were frozen.
+- Three bounded backend reviews completed. App Sandbox and VM are not protocol-fit;
+  the host-bound Seatbelt primitive feasibility milestone passed both audits.
+- No delegated work is active. Main owns backend-schema and retained-Mach-O
+  design; no capability authority, model, real media or score acquisition.
 - Main owns integration and capability-coordinator design. No model, real media
-  or score acquisition.
+  or score acquisition is authorized.
 
 ## Safety and claims
 

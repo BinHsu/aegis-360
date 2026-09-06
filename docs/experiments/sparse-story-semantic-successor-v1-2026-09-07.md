@@ -384,7 +384,8 @@ variables are absent. Another variable requires a new frozen policy version.
 An isolation backend is mandatory and must capability-test its installed policy
 before every execution batch. Default deny must demonstrably allow only exact
 system/runtime/model/prompt/sanitized inputs for read and the private scratch for
-write, while denying network inbound/outbound, child process execution, repository
+write, while denying the frozen IPv4, IPv6 and filesystem-AF_UNIX connect
+operations, unauthorized process execution, repository
 and protocol reads, other packet/result reads and every outside write. Probes use
 actual operations and sentinels, not command inspection. A skipped probe, policy
 installation error, unexpected allow or unavailable backend is `invalid` with
@@ -393,6 +394,59 @@ temporary cwd or `shell=false` is not isolation evidence and never authorizes an
 unsandboxed fallback. A finite probe proves only the frozen matrix plus inspection
 of its default-deny policy, not universal confinement. The deprecated Seatbelt CLI remains only a candidate until
 this exact capability gate passes on the execution host.
+
+The 2026-09-06 backend-feasibility audit fixes four ambiguities without granting
+backend authority. `compiled_policy_sha256` is a legacy field name for the SHA-256
+of the exact canonical enforcement-policy input bytes installed for the batch;
+it does not claim access to opaque kernel-compiled policy. A backend manifest must
+separately bind the backend executable, launcher, OS build and the canonical rule
+for those bytes. The finite system-read base is an explicit, sorted set of
+OS-owned allowlisted literal/subpath rules in that manifest, not an `allow default`
+or an unbounded `system` category. Every non-system retained root remains an exact
+batch path. This scopes policy access and does not claim content identity or
+immutability for system files. The single initial direct exec of the bound runtime entrypoint is the
+bootstrap exception; `denied_process_exec` means an attempted exec of the separate
+coordinator-owned forbidden executable sentinel returns EACCES or EPERM and causes
+no sentinel side effect. Re-exec of the exact allowlisted runtime image is not
+claimed denied, remains under the same inherited confinement, and cannot create a
+child because fork is independently denied. `denied_unix_socket` means connect to
+a live coordinator-owned filesystem AF_UNIX listener returns EACCES or EPERM and
+the listener accepts zero connections. `denied_outside_write` requires all of:
+failed create in an existing forbidden directory, failed overwrite/truncate of an
+existing sentinel, failed rename of a coordinator-owned scratch source sentinel
+into that directory and failed unlink of the existing sentinel. Each requires
+EACCES or EPERM; the scratch rename source and forbidden destination retain exact
+pre/post name, type, device/inode, mode, size and content, and both parent name maps
+remain unchanged. These definitions narrow
+the receipt to observable operations; they do not claim universal syscall denial.
+
+The next Seatbelt spike is feasibility-only. It may retain raw operation names,
+errno values, exact sentinel pre/post facts, host/tool identity and candidate
+profile bytes, but it must not construct a backend manifest, runner policy,
+single-use token, capability receipt, run receipt/result, aggregate, or any
+protocol `pass`/`reject` outcome. Its only terminal vocabulary is `feasible` or
+`not_feasible`, neither of which grants authority. Backend schema and native
+Mach-O retained-proof enforcement remain later gates even if every primitive is
+feasible.
+
+The synthetic Seatbelt spike ran in the host context on macOS 26.5.2
+(`25F84`, arm64). The initial finite system-read candidate aborted in dyld before
+`main`. A single-variable retry adding exact `file-read-metadata` for literal
+`/tmp` removed that denial but retained an exact `file-read-data /` denial and
+the same abort; its path-bound candidate policy SHA-256 was
+`f41c62c20393c160c6a9a0a59dfec8a7794fbeae85fe3967fd9141838babd2d0`.
+The next and final candidate added exact `file-read-data` for literal `/`, never
+a root or temporary subpath. Its path-bound policy SHA-256 was
+`5f2a954eed7c0b9e3911c4e1495437f365d0d089ff2b677d3329d8deb9b1098f` and the
+harness classified it `feasible`: exact allowed reads and scratch write
+succeeded; every frozen forbidden read, compound outside write, fork,
+forbidden-exec and connect operation returned EPERM; all three sockets were
+created; all listeners accepted zero connections; exact sentinels, private
+directories and process-group state passed their pre/post checks; exit was zero
+with empty stderr. Temporary resolved paths and candidate bytes were destroyed
+by design, so these hashes identify those executions but are not independently
+reconstructible manifests. This is host-specific primitive feasibility only and
+creates no capability or production-backend authority.
 
 Drain stdout and stderr concurrently as binary pipes. Do not merge, incrementally
 decode, trim, normalize, extract fenced JSON or accept a valid prefix. Success
@@ -409,8 +463,10 @@ retained transiently only to establish overflow.
 
 At timeout or overflow, send SIGTERM to the process group, keep draining for the
 fixed grace, then SIGKILL the group, drain to EOF and reap exactly once. Process-
-group cleanup is hygiene, not confinement; the isolation backend must prevent
-child exec/escape. CPU, file-size and descriptor rlimits may add defense in depth,
+group cleanup is hygiene, not confinement; the isolation backend must deny fork,
+the tested forbidden-exec operation must fail, and any permitted same-image
+re-exec must remain confined without increasing process cardinality. CPU,
+file-size and descriptor rlimits may add defense in depth,
 but RSS, swap, Metal/ANE memory and thermal state are measurements, not guaranteed
 limits. A native single-threaded launcher is required for any pre-exec rlimit work;
 Python `preexec_fn` is forbidden.
@@ -466,7 +522,10 @@ non-boolean integer `size` and lowercase SHA-256 `sha256`. A path has UTF-8 leng
 for `synthetic_support`, whose empty form has no leaves and root-tree SHA-256 equal
 to SHA-256 of the empty byte string. Leaves are regular,
 no-follow and link-count one; mode is 0444 except runtime entrypoint 0555. The
-directory set is exactly the root and required proper ancestors, all 0555.
+runtime entrypoint is additionally a directly executable native Mach-O for the
+host architecture; scripts and interpreter-mediated entrypoints are invalid
+before spawn. The directory set is exactly the root and required proper
+ancestors, all 0555.
 Retained descriptors preserve every node's device/inode identity and each leaf's
 size/timestamp evidence through the tree decision. Tree hashing reuses the media-tree line
 grammar and identity rules. `model_asset_sha256` in semantic evidence is SHA-256
@@ -491,7 +550,7 @@ with exactly `schema_version`, `backend_manifest_sha256`,
 exactly `{"LANG":"C","LC_ALL":"C","TZ":"UTC","NO_COLOR":"1","HOME":"$PRIVATE_HOME","TMPDIR":"$PRIVATE_TMPDIR"}`, and
 `capability_matrix_id=sparse-story-isolation-matrix-v1`. Its hash never contains
 resolved HOME/TMPDIR or asset paths. A transient single-use capability token binds
-that hash, launcher and compiled-policy bytes, uid/gid and retained root
+that hash, launcher and exact enforcement-policy input bytes, uid/gid and retained root
 device/inodes; it expires after one batch or any identity change.
 
 Canonical stdin schema `aegis360.sparse-story-adapter-request.v1` has exactly
@@ -515,10 +574,11 @@ true: `allowed_bundle_read`, `allowed_model_read`, `allowed_prompt_read`,
 `denied_unix_socket`. Denial is an actual EACCES or EPERM; allow requires exact
 sentinel bytes/action. The bound adapter runtime implements a closed
 `--aegis-isolation-probe` mode; probes and inference invoke that same entrypoint
-through the same launcher, uid/gid and byte-identical compiled policy over the
+through the same launcher, uid/gid and byte-identical enforcement-policy input over the
 same batch roots. The policy hash is bound in the token. Confinement is installed
-before the one authorized entrypoint starts; subsequent fork and exec are denied
-while threads remain allowed. Probe mode emits only a raw transcript. The trusted
+before the one authorized entrypoint starts; subsequent fork is denied and exec
+of the forbidden sentinel is denied, while threads and same-image re-exec remain outside
+the denial claim as fixed above. Probe mode emits only a raw transcript. The trusted
 coordinator constructs every boolean from exact sentinel bytes, EACCES/EPERM and
 unchanged file/process/socket state; a child-printed `true` has no authority. Probe
 mode cannot emit semantic output and does not count as an adapter inference invocation. Missing, skipped,

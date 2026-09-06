@@ -35,39 +35,6 @@ Blind review rejects both while independently detecting one control transition.
   separate checksummed authorities.
 - Chronology remains the fallback. Temporal reordering is not authorized.
 
-## Latest Skiing evidence
-
-- The bounded acquisition covers source seconds 380–395 at 4 fps, 320-pixel
-  grayscale proxy width and two FFmpeg threads: 59 normalized difference rows.
-- A benchmark-only uncalibrated hysteresis policy proposes one review onset:
-  uncertainty 386.25–386.5, support 386.5–386.75 seconds.
-- Five exact four-cardinal samples show the same ski area, lift, slope and
-  nearby skiers. The burst is relative motion/near-object/stitch-band change,
-  classified `no_semantic_change`.
-- The typed-boundary adapter rejects the onset with null effective time and
-  authorizes zero boundaries.
-- The typed 380–395 timeline therefore contains one complete segment.
-- The authoritative continuous 380–415 acquisition contains 139 rows and
-  preserves hysteresis across 395 seconds. It emits only the same rejected
-  motion onset and forms one 35-second typed segment.
-- Review packet v2 samples 387, 397.5 and 408 seconds. Independent review finds
-  cardinal 0 clear/primary/stable; all other directions score lower.
-- A one-segment timeline has zero adjacency edges. Continuity evidence and
-  transition utility correctly contain empty edge lists.
-- Typed global planning retains `context:cardinal:0` at objective 3.5 with no
-  transition or cost. `production_eligible=true` and
-  `renderer_command_emitted=false`; rendering is skipped because this is
-  decision-identical to the fixed-forward baseline.
-- Full-source acquisition emits 2,465 rows and seven onset candidates. Two
-  independent reviews classify six `no_semantic_change` and one
-  `capture_artifact`; zero story boundaries are authorized.
-- The resulting single 616.392-second segment has 123-second uncovered ends
-  and roughly 185-second gaps between its three samples. Relevance abstains;
-  the final objective is zero and `production_eligible=false`.
-- The active 10 fps/320-pixel scene-score replay completes over the whole
-  source and emits zero events above 0.25. It also fails to recover gradual
-  chapters; the threshold is not retuned after observing the result.
-
 ## Canonical analysis proxy
 
 - The closed config fixes Matroska/FFV1, 960x480, yuv420p, 10 fps CFR, SAR 1:1,
@@ -184,17 +151,38 @@ evidence rather than semantic evidence.
 The audited runner now has non-authoritative codecs, bounded capture and retained
 asset proof, but no backend/coordinator or process-isolation/model-invocation claim.
 
+Three independent macOS backend reviews reject signed App Sandbox and a bare VM
+for the frozen v1 contract. App Sandbox exposes no canonical compiled-policy
+artifact, permits broader container writes and does not provide the exact
+post-bootstrap fork/exec boundary; a VM alone does not deny guest fork, exec or
+AF_UNIX. Deprecated Seatbelt remains a host-bound feasibility candidate only.
+The clarified operation-level contract hashes exact policy-input bytes rather
+than claiming opaque kernel bytes, enumerates system-read rules, defines live
+socket and compound write sentinels, and limits exec denial to a separate
+forbidden executable after one native-Mach-O bootstrap. No capability authority
+is granted by these clarifications.
+
+The synthetic Seatbelt harness now classifies the final host candidate
+`feasible` on macOS 26.5.2/arm64 after two exact dyld-log-driven literal read
+allowances. All allowed, forbidden, socket, side-effect and process-group checks
+close; policy SHA-256 is `5f2a954e…1098f`. This is deliberately not a capability
+receipt or production-backend result. The backend schema and retained native
+Mach-O enforcement are still absent.
+
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full suite: 609 tests pass after retained asset-tree integration.
+- Full suite: 624 tests pass after the Seatbelt feasibility harness integration.
 - Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Implement coordinator-owned capability proofs; acquire no model or real media.
+Freeze the exact Seatbelt backend schema and implement retained host-native
+Mach-O entrypoint enforcement before coordinator-owned capability derivation.
+Acquire no model or real media and construct no capability authority until both
+gates pass independent audit.
