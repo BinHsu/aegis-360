@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T21:10:00+08:00
+Updated: 2026-09-06T22:10:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 011d8b8
-Remote status: `origin/main` at `011d8b8`
-Working tree at checkpoint: blind selection-policy freeze
+Baseline commit: 8f7cb37
+Remote status: `origin/main` at `8f7cb37`
+Working tree at checkpoint: clean after selection implementation milestone
 
 ## Objective
 
@@ -45,11 +45,11 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `011d8b8`.
-- Expected dirty files: selection config, replication doc/index and handoff.
+- Expected branch/remote before checkpoint: `main` at `8f7cb37`.
+- Expected dirty files: selection proof implementation, CLI, tests and handoff.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 538 tests pass before result-document integration.
+- Full suite: 543 tests pass after selection implementation integration.
 
 ## Verified
 
@@ -65,8 +65,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Commit and push selection policy SHA `c4a1f411…f2e6cb`.
-- Implement its exact 26-entry self-proving selection artifact.
+- Build the exact 26-entry metadata-only selection proof once against the
+  frozen timeline, context grid and legacy lineage packets.
+- Record its checksum and selected identities before any pixels are rendered.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -89,8 +90,8 @@ commit external artifacts.
 
 ## Active agents
 
-None. Independent pre-score audit passes the selection policy. The main agent
-owns its freeze checkpoint and self-proving builder delegation.
+- No delegated work is active. The main agent owns the one metadata-only real
+  proof build and its integration.
 
 ## Safety and claims
 
