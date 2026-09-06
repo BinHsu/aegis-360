@@ -157,6 +157,7 @@ readonly/restricted APFS vnode facts and does not claim cryptographic SSV
 attestation or eliminate the pathname-exec gap. Its private retained proof now
 passes independent ABI/parser/identity audit. A private launcher/backend binding
 also passes lifecycle/provenance audit but public authority APIs remain closed.
+A registry-backed facade creates both proofs internally without caller-provided facts.
 
 Three independent macOS backend reviews reject signed App Sandbox and a bare VM
 for the frozen v1 contract. App Sandbox exposes no canonical compiled-policy
@@ -185,7 +186,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full suite: 673 tests pass with seven explicit host-only gates skipped.
+- Full suite: 681 tests pass with eight explicit host-only gates skipped.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 - OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 - Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
@@ -194,6 +195,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Freeze whether the audited private binding may open proof-requiring backend
-authority APIs, then implement coordinator spawn/cleanup separately. Acquire no
-model or real media and construct no capability receipt or token yet.
+Implement coordinator spawn/timeout/process-group cleanup behind the audited
+facade. Keep backend authority APIs closed; acquire no model or real media and
+construct no capability receipt or token yet.

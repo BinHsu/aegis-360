@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T18:17:00+08:00
+Updated: 2026-09-06T18:29:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 683e835
-Remote status: push confirmed `origin/main` advanced to `683e835`
-Working tree at checkpoint: private coordinator binding ready to commit
+Baseline commit: 42351fb
+Remote status: push confirmed `origin/main` advanced to `42351fb`
+Working tree at checkpoint: conservative coordinator facade ready to commit
 
 ## Objective
 
@@ -89,12 +89,11 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `683e835`.
-- Expected dirty files: this handoff, private backend binding module/tests, and
-  audited proof noncopyability/provenance updates.
+- Expected branch/remote before checkpoint: `main` at `42351fb`.
+- Expected dirty files: this handoff plus audited coordinator facade and tests.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 673 tests pass with seven explicit host-only gates skipped.
+- Full suite: 681 tests pass with eight explicit host-only gates skipped.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 - OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 
@@ -114,9 +113,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Freeze whether the audited private binding may open proof-requiring backend
-  authority APIs, then implement coordinator spawn/cleanup without a capability
-  receipt or token.
+- Keep proof-accepting backend authority APIs closed. Implement coordinator
+  spawn/timeout/process-group cleanup behind the audited facade, without a
+  capability receipt or token.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
@@ -155,6 +154,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 - Private launcher/backend binding passed independent provenance, noncopyability,
   canonical-revalidation and close-lifecycle audit. Public authority APIs remain
   `AuthorityUnavailable`.
+- Registry-backed coordinator facade passed forgery, method-shadow, lifecycle,
+  cleanup and path-leakage audit; it accepts only launcher root and precommitted
+  manifest and creates both retained proofs internally.
 
 ## Safety and claims
 

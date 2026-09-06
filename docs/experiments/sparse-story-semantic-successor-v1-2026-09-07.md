@@ -605,6 +605,16 @@ retained host suites pass 42 tests outside the enclosing sandbox. All three publ
 backend authority APIs remain closed, and this milestone creates no invocation or
 capability authority.
 
+A conservative public coordinator facade now accepts only a launcher root and
+its precommitted manifest, creates both retained proofs internally, and keeps the
+binding solely in a module-private weak-key registry. The public facade has no
+assignable authority state; forged, copied, pickled, subclassed, shadowed, closed
+or unregistered objects cannot expose bytes. Independent audit reproduced and
+closed an earlier slotted-binding replacement flaw. The ordinary suite passes
+681 tests with eight host-only skips, and the facade host gate passes all eight
+tests outside the enclosing sandbox. Runner-contract backend authority APIs
+remain closed; this facade grants no policy or execution capability.
+
 The bounded launcher implementation subsequently passed independent C bounds,
 argv, FD and build review. The ordinary complete suite passes 648 tests with one
 explicit host-only gate skipped; that gate passes all 11 tests outside the
