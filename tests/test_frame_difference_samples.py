@@ -135,6 +135,35 @@ class FrameDifferenceSamplesTests(unittest.TestCase):
                          {"start_seconds": 380.5, "end_seconds": 380.75})
         self.assertFalse(result["planner_authority"]["story_boundary_emitted"])
 
+    def test_v2_exactly_binds_filter_acquisition_and_rebuilds(self):
+        config = {
+            "schema_version": "aegis360.frame-difference-acquisition-config.v2",
+            "config_id": "probe-v2", "pts_origin": "interval_local",
+            "metadata_key": "lavfi.signalstats.YAVG",
+            "normalization_divisor": 255.0, "sample_fps": 4.0,
+            "proxy_width": 320, "difference_mode": "absolute_difference",
+            "filter_order": ["fps", "scale", "format_gray",
+                             "tblend_difference", "signalstats", "metadata_print"],
+            "filter_contract_version": "ffmpeg-frame-difference-v1",
+            "ffmpeg_threads": 2,
+            "calibration_status": "benchmark_poc_not_calibrated",
+        }
+        artifact = self.build(config=config, config_sha256=digest(config))
+        self.assertEqual(artifact["schema_version"],
+                         "aegis360.frame-difference-samples.v2")
+        self.assertEqual(artifact["acquisition"]["difference_mode"],
+                         "absolute_difference")
+        self.assertEqual(artifact["acquisition"]["sample_fps"], 4.0)
+        validate_frame_difference_samples(
+            artifact, source_id="skiing:t380-t390", window=self.window,
+            source_sha256="a" * 64, config=config,
+            config_sha256=digest(config), metadata_text=self.metadata,
+        )
+        broken = copy.deepcopy(config)
+        broken["filter_order"][2:4] = reversed(broken["filter_order"][2:4])
+        with self.assertRaises(ValueError):
+            self.build(config=broken, config_sha256=digest(broken))
+
 
 if __name__ == "__main__":
     unittest.main()

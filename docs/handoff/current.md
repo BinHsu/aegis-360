@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T08:39:43+08:00
+Updated: 2026-09-06T08:47:38+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 224f520
-Remote status: `origin/main` is 224f520 before planner v2
-Working tree at checkpoint: planner v2, CLI, tests and current evidence docs only
+Baseline commit: f3be378
+Remote status: `origin/main` is f3be378 before the bounded FFmpeg runner
+Working tree at checkpoint: acquisition v2, runner, tests, policy and evidence docs only
 
 ## Objective
 
@@ -177,7 +177,7 @@ in the benchmark manifest and experiment record.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 435 tests pass.
+- `python3 -m unittest discover -s tests -q`: 438 tests pass.
 - Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
@@ -201,8 +201,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Add the bounded FFmpeg frame-difference runner, then typed semantic review;
-  do not let review-only candidates segment or render.
+- Build bounded typed semantic review around the 386.25–386.5 onset interval;
+  review-only candidates still must not segment or render.
 
 ## Next commands
 

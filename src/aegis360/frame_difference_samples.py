@@ -10,6 +10,8 @@ from typing import Mapping
 
 SCHEMA = "aegis360.frame-difference-samples.v1"
 CONFIG_SCHEMA = "aegis360.frame-difference-acquisition-config.v1"
+SCHEMA_V2 = "aegis360.frame-difference-samples.v2"
+CONFIG_SCHEMA_V2 = "aegis360.frame-difference-acquisition-config.v2"
 SHA256 = re.compile(r"[0-9a-f]{64}")
 SAFE_ID = re.compile(r"^[A-Za-z0-9._:/+-]+$")
 FRAME = re.compile(r"^frame:\d+\s+pts:\S+\s+pts_time:(\S+)$")
@@ -24,6 +26,40 @@ def _finite_number(value: object, label: str) -> float:
 
 
 def _validate_config(config: Mapping[str, object]) -> None:
+    if not isinstance(config, Mapping):
+        raise ValueError("frame-difference acquisition config is invalid")
+    if config.get("schema_version") == CONFIG_SCHEMA_V2:
+        if (set(config) != {
+                "schema_version", "config_id", "pts_origin", "metadata_key",
+                "normalization_divisor", "sample_fps", "proxy_width",
+                "difference_mode", "filter_order", "filter_contract_version",
+                "ffmpeg_threads", "calibration_status",
+        } or not isinstance(config.get("config_id"), str)
+                or SAFE_ID.fullmatch(config["config_id"]) is None
+                or config.get("pts_origin") != "interval_local"
+                or config.get("metadata_key") != "lavfi.signalstats.YAVG"
+                or config.get("difference_mode") != "absolute_difference"
+                or config.get("filter_order") != [
+                    "fps", "scale", "format_gray", "tblend_difference",
+                    "signalstats", "metadata_print",
+                ]
+                or config.get("filter_contract_version") !=
+                "ffmpeg-frame-difference-v1"
+                or config.get("calibration_status") !=
+                "benchmark_poc_not_calibrated"):
+            raise ValueError("frame-difference acquisition config is invalid")
+        divisor = _finite_number(config["normalization_divisor"],
+                                 "normalization divisor")
+        fps = _finite_number(config["sample_fps"], "sample fps")
+        if (divisor != 255.0 or not 0 < fps <= 60
+                or isinstance(config["proxy_width"], bool)
+                or not isinstance(config["proxy_width"], int)
+                or not 16 <= config["proxy_width"] <= 4096
+                or isinstance(config["ffmpeg_threads"], bool)
+                or not isinstance(config["ffmpeg_threads"], int)
+                or not 1 <= config["ffmpeg_threads"] <= 8):
+            raise ValueError("frame-difference acquisition config bounds are invalid")
+        return
     if (not isinstance(config, Mapping) or set(config) != {
         "schema_version", "config_id", "pts_origin", "metadata_key",
         "normalization_divisor",
@@ -36,6 +72,13 @@ def _validate_config(config: Mapping[str, object]) -> None:
     divisor = _finite_number(config["normalization_divisor"], "normalization divisor")
     if divisor != 255.0:
         raise ValueError("frame-difference normalization divisor must be 255")
+
+
+def validate_frame_difference_acquisition_config(
+    config: Mapping[str, object],
+) -> None:
+    """Validate v1 or v2 acquisition config without requiring media output."""
+    _validate_config(config)
 
 
 def parse_frame_difference_metadata(
@@ -117,8 +160,25 @@ def build_frame_difference_samples(
         metadata_text, window_start_seconds=start,
         window_duration_seconds=duration,
     )
+    is_v2 = config["schema_version"] == CONFIG_SCHEMA_V2
+    acquisition = {
+        "config_id": config["config_id"],
+        "pts_origin": "interval_local",
+        "metadata_key": "lavfi.signalstats.YAVG",
+        "normalization_divisor": 255.0,
+    }
+    if is_v2:
+        acquisition.update({
+            "sample_fps": float(config["sample_fps"]),
+            "proxy_width": config["proxy_width"],
+            "difference_mode": config["difference_mode"],
+            "filter_order": list(config["filter_order"]),
+            "filter_contract_version": config["filter_contract_version"],
+            "ffmpeg_threads": config["ffmpeg_threads"],
+            "calibration_status": config["calibration_status"],
+        })
     return {
-        "schema_version": SCHEMA,
+        "schema_version": SCHEMA_V2 if is_v2 else SCHEMA,
         "source_id": source_id,
         "window": {"start_seconds": start, "duration_seconds": duration},
         "inputs": {
@@ -126,18 +186,15 @@ def build_frame_difference_samples(
             "acquisition_config_sha256": config_sha256,
             "metadata_sha256": hashlib.sha256(metadata_text.encode("utf-8")).hexdigest(),
         },
-        "acquisition": {
-            "config_id": config["config_id"],
-            "pts_origin": "interval_local",
-            "metadata_key": "lavfi.signalstats.YAVG",
-            "normalization_divisor": 255.0,
-        },
+        "acquisition": acquisition,
         "samples": samples,
         "privacy": {"contains_source_path": False, "contains_pixels": False,
                     "contains_audio": False, "contains_identity": False},
         "limitations": [
             "normalized frame difference is acquisition evidence, not editorial utility",
-            "the future runner must define the exact upstream difference-filter contract",
+            ("the exact upstream difference-filter contract is checksummed"
+             if is_v2 else
+             "the future runner must define the exact upstream difference-filter contract"),
         ],
     }
 

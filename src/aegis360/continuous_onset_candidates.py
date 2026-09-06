@@ -8,7 +8,8 @@ from typing import Mapping
 
 
 SCHEMA = "aegis360.continuous-onset-candidates.v1"
-INPUT_SCHEMA = "aegis360.frame-difference-samples.v1"
+INPUT_SCHEMAS = {"aegis360.frame-difference-samples.v1",
+                 "aegis360.frame-difference-samples.v2"}
 POLICY_SCHEMA = "aegis360.continuous-onset-candidate-policy.v1"
 SHA256 = re.compile(r"[0-9a-f]{64}")
 SAFE_ID = re.compile(r"^[A-Za-z0-9._:+-]+$")
@@ -34,7 +35,7 @@ def build_continuous_onset_candidates(
     if (not isinstance(samples, Mapping)
             or set(samples) != {"schema_version", "source_id", "window", "inputs",
                                 "acquisition", "samples", "privacy", "limitations"}
-            or samples.get("schema_version") != INPUT_SCHEMA
+            or samples.get("schema_version") not in INPUT_SCHEMAS
             or not isinstance(samples.get("source_id"), str)
             or SAFE_ID.fullmatch(samples["source_id"]) is None):
         raise ValueError("frame-difference sample input is invalid")
@@ -52,9 +53,15 @@ def build_continuous_onset_candidates(
                    for value in inputs.values())):
         raise ValueError("frame-difference sample lineage is invalid")
     acquisition = samples["acquisition"]
+    expected_acquisition = {"config_id", "pts_origin", "metadata_key",
+                            "normalization_divisor"}
+    if samples["schema_version"] == "aegis360.frame-difference-samples.v2":
+        expected_acquisition |= {
+            "sample_fps", "proxy_width", "difference_mode", "filter_order",
+            "filter_contract_version", "ffmpeg_threads", "calibration_status",
+        }
     if (not isinstance(acquisition, Mapping)
-            or set(acquisition) != {"config_id", "pts_origin", "metadata_key",
-                                    "normalization_divisor"}
+            or set(acquisition) != expected_acquisition
             or not isinstance(acquisition["config_id"], str)
             or SAFE_ID.fullmatch(acquisition["config_id"]) is None
             or acquisition["pts_origin"] != "interval_local"
@@ -63,6 +70,25 @@ def build_continuous_onset_candidates(
             or not isinstance(samples["limitations"], list)
             or any(not isinstance(value, str) for value in samples["limitations"])):
         raise ValueError("frame-difference acquisition contract is invalid")
+    if (samples["schema_version"] == "aegis360.frame-difference-samples.v2"
+            and (acquisition["difference_mode"] != "absolute_difference"
+                 or acquisition["filter_order"] != [
+                     "fps", "scale", "format_gray", "tblend_difference",
+                     "signalstats", "metadata_print",
+                 ]
+                 or acquisition["filter_contract_version"] !=
+                 "ffmpeg-frame-difference-v1"
+                 or acquisition["calibration_status"] !=
+                 "benchmark_poc_not_calibrated"
+                 or not _finite_number(acquisition["sample_fps"])
+                 or not 0 < acquisition["sample_fps"] <= 60
+                 or isinstance(acquisition["proxy_width"], bool)
+                 or not isinstance(acquisition["proxy_width"], int)
+                 or not 16 <= acquisition["proxy_width"] <= 4096
+                 or isinstance(acquisition["ffmpeg_threads"], bool)
+                 or not isinstance(acquisition["ffmpeg_threads"], int)
+                 or not 1 <= acquisition["ffmpeg_threads"] <= 8)):
+        raise ValueError("frame-difference v2 acquisition contract is invalid")
     required_policy = {
         "schema_version", "policy_id", "baseline_window_samples",
         "high_threshold", "release_threshold", "minimum_consecutive",

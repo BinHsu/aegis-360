@@ -171,8 +171,10 @@ artifact applies no transition cost and selects no candidate or transition.
 `aegis360.frame-difference-samples.v1` binds normalized FFmpeg YAVG metadata to
 the exact source, acquisition config, raw metadata and interval-local-to-source
 timestamp mapping. It contains no media path or pixels. The deterministic
-parser and exact validator are acquisition boundaries; the FFmpeg runner is
-still separate.
+parser and exact validator are acquisition boundaries. V2 additionally binds
+fps, proxy width, gray/difference filter order, thread cap and calibration
+status; the bounded runner hashes the complete source before and after FFmpeg
+and publishes atomically without recording its runtime path.
 
 `aegis360.continuous-onset-candidates.v1` is a separate review-only proposal
 for continuous changes that hard-cut scores miss. It consumes checksummed,

@@ -1,0 +1,11 @@
+{
+  "baseline_window_samples": 4,
+  "high_threshold": 0.044,
+  "maximum_sample_cadence_seconds": 0.26,
+  "maximum_uncertainty_window_seconds": 0.26,
+  "minimum_consecutive": 2,
+  "minimum_sample_cadence_seconds": 0.24,
+  "policy_id": "skiing-benchmark-poc-not-calibrated-v1",
+  "release_threshold": 0.035,
+  "schema_version": "aegis360.continuous-onset-candidate-policy.v1"
+}

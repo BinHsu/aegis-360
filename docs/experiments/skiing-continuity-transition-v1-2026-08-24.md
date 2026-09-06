@@ -85,3 +85,20 @@ The upstream frame-difference artifact/parser now normalizes YAVG by 255 and
 maps interval-local PTS into the source window. A direct producer-to-consumer
 contract test passes without a field adapter. Real acquisition remains absent,
 so the diagnostic shell output is not yet promoted to closed evidence.
+
+## Closed continuous-onset acquisition
+
+The v2 runner acquired 59 normalized 4 fps samples over 380–395 seconds with
+a 320-pixel gray proxy, absolute frame difference and two FFmpeg threads. The
+sample artifact SHA is
+`868bee4e9791f96848474ec4c73c71a3018fbfa142611777fea6da7a05e6fde5`.
+The first policy replay emitted no candidate because thresholds copied from the
+earlier non-gray diagnostic used a different measurement scale; that rejected
+artifact is retained externally rather than overwritten.
+
+The benchmark-only, explicitly uncalibrated same-contract policy uses high
+0.044 and release 0.035. It emits one review candidate with quiet-baseline max
+0.02805, sustained min 0.04509, uncertainty 386.25–386.5 and support
+386.5–386.75 seconds. Artifact SHA is
+`25596e81094e42f73c81293b551bf7922d61f0970dcbd4f1df3cb5a9a4c0a5a2`.
+It still emits no story boundary and authorizes no render.

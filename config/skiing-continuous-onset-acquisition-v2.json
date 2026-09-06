@@ -1,0 +1,21 @@
+{
+  "calibration_status": "benchmark_poc_not_calibrated",
+  "config_id": "skiing-frame-difference-probe-v2",
+  "difference_mode": "absolute_difference",
+  "ffmpeg_threads": 2,
+  "filter_contract_version": "ffmpeg-frame-difference-v1",
+  "filter_order": [
+    "fps",
+    "scale",
+    "format_gray",
+    "tblend_difference",
+    "signalstats",
+    "metadata_print"
+  ],
+  "metadata_key": "lavfi.signalstats.YAVG",
+  "normalization_divisor": 255.0,
+  "proxy_width": 320,
+  "pts_origin": "interval_local",
+  "sample_fps": 4.0,
+  "schema_version": "aegis360.frame-difference-acquisition-config.v2"
+}

@@ -106,6 +106,18 @@ class ContinuousOnsetCandidateTests(unittest.TestCase):
         value = self.samples([.1, .1, .1, .8, .9])
         value["source_id"] = "/private/source.webm"
         mutations.append(value)
+        value = self.samples([.1, .1, .1, .8, .9])
+        value["schema_version"] = "aegis360.frame-difference-samples.v2"
+        value["acquisition"].update({
+            "sample_fps": True, "proxy_width": 320,
+            "difference_mode": "absolute_difference",
+            "filter_order": ["fps", "scale", "format_gray", "tblend_difference",
+                             "signalstats", "metadata_print"],
+            "filter_contract_version": "ffmpeg-frame-difference-v1",
+            "ffmpeg_threads": 2,
+            "calibration_status": "benchmark_poc_not_calibrated",
+        })
+        mutations.append(value)
         for mutation in mutations:
             self.input = mutation
             with self.assertRaises(ValueError):
@@ -123,6 +135,23 @@ class ContinuousOnsetCandidateTests(unittest.TestCase):
                 result, self.input, self.policy,
                 samples_sha256=digest(self.input), policy_sha256=digest(self.policy),
             )
+
+    def test_structurally_valid_v2_artifact_is_accepted(self):
+        self.input["schema_version"] = "aegis360.frame-difference-samples.v2"
+        self.input["acquisition"].update({
+            "sample_fps": 4.0, "proxy_width": 320,
+            "difference_mode": "absolute_difference",
+            "filter_order": ["fps", "scale", "format_gray",
+                             "tblend_difference", "signalstats", "metadata_print"],
+            "filter_contract_version": "ffmpeg-frame-difference-v1",
+            "ffmpeg_threads": 2,
+            "calibration_status": "benchmark_poc_not_calibrated",
+        })
+        result = self.build()
+        self.assertEqual(len(result["candidates"]), 1)
+        self.input["acquisition"]["difference_mode"] = "subtract"
+        with self.assertRaises(ValueError):
+            self.build()
 
 
 if __name__ == "__main__":
