@@ -1,0 +1,10 @@
+{
+  "config_id": "old-ghost-road-structural-chapter-blind-selection-v1",
+  "development_exclusion": {"comparison": "absolute-distance-strictly-less-than", "minimum_seconds": 8, "times": [{"denominator": 1, "numerator": 53}, {"denominator": 5, "numerator": 423}, {"denominator": 2, "numerator": 327}, {"denominator": 5, "numerator": 842}, {"denominator": 1, "numerator": 222}]},
+  "descriptor_contract": {"canonical_json": "utf8-ascii-ensure-sorted-keys-compact-no-newline", "subset_fields": ["acquisition", "descriptor", "sample_offsets_seconds", "score"], "subset_sha256": "7f8b05656986030715f226f9c9c33fc375e1afe3e361fc37b54651851a8aa5cd", "source_config_sha256": "8baf66a00a008625cd91292aaa8ac0a8794d9fb20338e0acfab054b3a2f7f7a2"},
+  "proof_packet_contract": {"context_view_grid_sha256": "26b869dd733a9b201c6a37526d37af7bdd08e4c316fefc650ede7876efbfbf1f", "sampling": {"boundary_offset_seconds": 0.25, "far_context_seconds": 15.0, "maximum_composite_frames": 6, "maximum_source_viewports": 24, "near_context_seconds": 3.0, "policy_id": "exact_scene_signal_six_anchor_cardinal_v1"}},
+  "schema_version": "aegis360.structural-chapter-blind-selection-config.v1",
+  "selection": {"hash_preimage": "source_sha256|timeline_sha256|structural-blind-replication-v1|event_id|signal_id", "hash_preimage_encoding": "utf-8-no-newline-exact-lowercase-fields", "minimum_selected_separation_comparison": "greater-than-or-equal", "minimum_selected_separation_seconds": 8, "ordered_tie_break": "event-id-then-signal-id-ascending", "packet_count": 8, "require_global_event_signal_pair_uniqueness": true, "require_global_signal_id_uniqueness": true, "rule": "digest-ascending-greedy-stop-at-cap-fail-if-under-cap-no-backfill"},
+  "source": {"id": "old_ghost_road_360", "sha256": "4b1264a6c5965742bf70517560dc59a7818c4d9c6e210a260c70d8b19385fafc"},
+  "timeline": {"expected_scene_signal_count": 26, "event_id_pattern": "event:multi:NNNN", "sha256": "f850a8a54e29d6f828f52b353af536d8a0aec55f67534026fb3d0391281a7ee1", "signal_id_pattern": "event:scene-change:NNNN", "universe": "all-exact-scene-signals-in-timeline"}
+}

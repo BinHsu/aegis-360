@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T20:25:00+08:00
+Updated: 2026-09-06T21:10:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 7a9fb10
-Remote status: `origin/main` at `7a9fb10`
-Working tree at checkpoint: one frozen structural contrast result
+Baseline commit: 011d8b8
+Remote status: `origin/main` at `011d8b8`
+Working tree at checkpoint: blind selection-policy freeze
 
 ## Objective
 
@@ -45,8 +45,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `7a9fb10`.
-- Expected dirty files: structural experiment result, status and this handoff.
+- Expected branch/remote before checkpoint: `main` at `011d8b8`.
+- Expected dirty files: selection config, replication doc/index and handoff.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
 - Full suite: 538 tests pass before result-document integration.
@@ -65,9 +65,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Commit and push the frozen labeled-contrast result.
-- Freeze a blinded within-source replication over unused Old Ghost events. Its
-  selection must not use the four development labels or their scores.
+- Commit and push selection policy SHA `c4a1f411…f2e6cb`.
+- Implement its exact 26-entry self-proving selection artifact.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -90,7 +89,8 @@ commit external artifacts.
 
 ## Active agents
 
-None. The main agent owns result integration and blind-replication design.
+None. Independent pre-score audit passes the selection policy. The main agent
+owns its freeze checkpoint and self-proving builder delegation.
 
 ## Safety and claims
 
