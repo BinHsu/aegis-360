@@ -165,11 +165,13 @@ version; they must not be silently reinterpreted.
 - A separately audited structural contrast is frozen before acquisition. Its
   primary gate compares pre-existing Old Ghost event 0008 against 0005; the
   correlated 0018/0019 pair is report-only, not independent evidence.
+- Its closed implementation passes synthetic descriptor, exact episode,
+  privacy, mutation and atomic-publication gates without external access.
 
 ## Active acceptance gate
 
-Implement the frozen structural contrast and synthetic episode contract, then
-run it once without changing config `8baf66a…f7f7a2`.
+Checkpoint the frozen structural implementation, then run it once without
+changing config `8baf66a…f7f7a2`.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a

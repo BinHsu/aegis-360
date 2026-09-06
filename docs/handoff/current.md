@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T19:20:00+08:00
+Updated: 2026-09-06T20:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 3797f4c
-Remote status: `origin/main` at `3797f4c` before this checkpoint
-Working tree at checkpoint: structural successor pre-acquisition freeze
+Baseline commit: 6e358e8
+Remote status: `origin/main` at `6e358e8`
+Working tree at checkpoint: structural successor implementation complete
 
 ## Objective
 
@@ -86,9 +86,8 @@ Set `AEGIS_DATA_DIR` locally. The full proxy is under
 
 ## Active agents
 
-None. Independent pre-acquisition audit passes the corrected structural
-ranking/episode protocol. The main agent owns the freeze commit before any
-decode. Rejected proposal execution must not be rerun or retuned.
+None. Structural implementation is complete without external access. The main
+agent owns its checkpoint and single real execution.
 
 ## Safety and claims
 
@@ -143,5 +142,6 @@ decode. Rejected proposal execution must not be rerun or retuned.
   `3cd1cc5360c61035adac8c15c7cfda103d0ced31c34cc712d702ff271eee4913`.
 - Primary ordinal contrast is non-overlapping event 0005 versus 0008. The
   adjacent 0018/0019 pair is correlated and report-only.
-- Acquisition remains blocked until this config/doc/fixture checkpoint is
-  committed and pushed.
+- Checkpoint `6e358e8` is pushed; deterministic implementation is authorized,
+  and synthetic/full-suite gates pass. Real acquisition waits for the
+  implementation checkpoint.
