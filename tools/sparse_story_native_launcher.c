@@ -160,6 +160,17 @@ int main(int argc, char **argv) {
             cwd_after.st_dev != cwd_before.st_dev || cwd_after.st_ino != cwd_before.st_ino)
         fail("launcher:cwd");
 
+    if (setsid() != getpid() || getpgrp() != getpid()) fail("launcher:session");
+    (void)umask(077);
+    struct rlimit core = {0, 0};
+    if (setrlimit(RLIMIT_CORE, &core) != 0) fail("launcher:rlimit");
+    sigset_t empty;
+    if (sigemptyset(&empty) != 0 || sigprocmask(SIG_SETMASK, &empty, NULL) != 0)
+        fail("launcher:signal");
+    for (int sig = 1; sig < NSIG; ++sig)
+        if (sig != SIGKILL && sig != SIGSTOP && signal(sig, SIG_DFL) == SIG_ERR && errno != EINVAL)
+            fail("launcher:signal");
+
     size_t policy_size = (size_t)policy_size64;
     unsigned char prefix_bytes[8];
     size_t prefix_offset = 0;
@@ -206,16 +217,6 @@ int main(int argc, char **argv) {
     for (int i = 15; i < argc; ++i) child[(size_t)i - 11] = argv[i];
     child[child_count - 1] = NULL;
 
-    if (setsid() != getpid() || getpgrp() != getpid()) fail("launcher:session");
-    (void)umask(077);
-    struct rlimit core = {0, 0};
-    if (setrlimit(RLIMIT_CORE, &core) != 0) fail("launcher:rlimit");
-    sigset_t empty;
-    if (sigemptyset(&empty) != 0 || sigprocmask(SIG_SETMASK, &empty, NULL) != 0)
-        fail("launcher:signal");
-    for (int sig = 1; sig < NSIG; ++sig)
-        if (sig != SIGKILL && sig != SIGSTOP && signal(sig, SIG_DFL) == SIG_ERR && errno != EINVAL)
-            fail("launcher:signal");
     if (close(policy_fd) != 0 || close(cwd_fd) != 0) fail("launcher:fd");
     struct rlimit nofile;
     if (getrlimit(RLIMIT_NOFILE, &nofile) != 0 || nofile.rlim_cur == RLIM_INFINITY ||

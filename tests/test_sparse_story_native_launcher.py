@@ -30,7 +30,7 @@ class NativeLauncherTests(unittest.TestCase):
                                 capture_output=True, text=True)
         cls.launcher = Path(result.stdout.strip())
         source = cls.base / "observer.c"
-        source.write_text("""#include <stdio.h>\n#include <unistd.h>\nint main(int c,char**v){printf(\"pid=%ld pgid=%ld cwd=\",(long)getpid(),(long)getpgrp());char b[4096];puts(getcwd(b,sizeof b));for(int i=1;i<c;i++)printf(\"arg=%s\\n\",v[i]);return 0;}\n""")
+        source.write_text("""#include <fcntl.h>\n#include <stdio.h>\n#include <unistd.h>\nint main(int c,char**v){if(c==3&&v[1][0]=='-'&&v[1][2]=='m'){int f=open(v[2],O_WRONLY|O_CREAT|O_EXCL,0600);if(f>=0)close(f);}printf(\"pid=%ld pgid=%ld cwd=\",(long)getpid(),(long)getpgrp());char b[4096];puts(getcwd(b,sizeof b));for(int i=1;i<c;i++)printf(\"arg=%s\\n\",v[i]);return 0;}\n""")
         cls.adapter = cls.base / "adapter"
         subprocess.run(["/usr/bin/xcrun", "clang", "-arch", "arm64",
                         "-mmacosx-version-min=15.0", str(source), "-o", str(cls.adapter)],
@@ -157,6 +157,65 @@ class NativeLauncherTests(unittest.TestCase):
         result = self.invoke(declared_size=65537)
         self.assertEqual((result.returncode, result.stdout), (70, b""))
         self.assertEqual(result.stderr, b"launcher:argv\n")
+
+    def test_session_exists_before_any_policy_byte(self):
+        read_fd, write_fd = os.pipe()
+        cwd_fd = os.open(self.cwd, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+        cwd_stat, runtime_stat = self.cwd.stat(), self.adapter.stat()
+        marker = self.base / "runtime-was-reached"
+        argv = [str(self.launcher), f"--policy-fd={read_fd}", "--policy-size=1",
+                f"--policy-sha256={hashlib.sha256(b'x').hexdigest()}",
+                f"--cwd-fd={cwd_fd}", f"--cwd-dev={cwd_stat.st_dev}",
+                f"--cwd-ino={cwd_stat.st_ino}", f"--uid={os.getuid()}",
+                f"--gid={os.getgid()}", f"--home={self.home}",
+                f"--tmpdir={self.tmp}", f"--runtime-dev={runtime_stat.st_dev}",
+                f"--runtime-ino={runtime_stat.st_ino}",
+                f"--runtime-size={runtime_stat.st_size}", "--", str(self.adapter),
+                "--marker", str(marker)]
+        env = {"LANG": "C", "LC_ALL": "C", "TZ": "UTC", "NO_COLOR": "1",
+               "HOME": str(self.home), "TMPDIR": str(self.tmp)}
+        process = subprocess.Popen(argv, pass_fds=(read_fd, cwd_fd), env=env,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            close_fds=True, start_new_session=False)
+        os.close(read_fd); os.close(cwd_fd)
+        polling_failure = None
+        writer_closed = False
+        stdout = stderr = b""
+        try:
+            deadline = __import__("time").monotonic() + 2
+            while True:
+                if process.poll() is not None:
+                    polling_failure = "launcher exited before establishing its process group"
+                    break
+                try:
+                    if os.getpgid(process.pid) == process.pid:
+                        break
+                except ProcessLookupError:
+                    polling_failure = "launcher disappeared during process-group observation"
+                    break
+                if __import__("time").monotonic() >= deadline:
+                    polling_failure = "launcher did not establish its process group"
+                    break
+                __import__("time").sleep(0.005)
+            marker_before_release = marker.exists()
+            os.close(write_fd)
+            writer_closed = True
+        finally:
+            if not writer_closed:
+                try: os.close(write_fd)
+                except OSError: pass
+            try:
+                stdout, stderr = process.communicate(timeout=2)
+            except subprocess.TimeoutExpired:
+                try: process.kill()
+                except ProcessLookupError: pass
+                stdout, stderr = process.communicate(timeout=2)
+        if polling_failure is not None:
+            self.fail(f"{polling_failure}; stderr={stderr!r}")
+        self.assertFalse(marker_before_release)
+        self.assertEqual((process.returncode, stdout, stderr),
+                         (70, b"", b"launcher:policy-prefix\n"))
+        self.assertFalse(marker.exists())
 
     def test_extra_environment_fails_closed(self):
         result = self.invoke(extra_env={"PATH": "/bin"})

@@ -615,6 +615,14 @@ closed an earlier slotted-binding replacement flaw. The ordinary suite passes
 tests outside the enclosing sandbox. Runner-contract backend authority APIs
 remain closed; this facade grants no policy or execution capability.
 
+Before coordinator transport, the launcher now establishes its session/process
+group, umask, zero core limit and signal state before reading any policy byte. A
+blocked empty-pipe test observes `PGID==PID` while the runtime marker remains
+absent, then closes the writer and reaps the launcher through its exact prefix
+failure. Independent review closed a test cleanup race that had assumed the PGID
+property under test. The complete local suite passes 682 tests; macOS-only path
+tests are explicitly isolated from the Ubuntu portable job.
+
 The bounded launcher implementation subsequently passed independent C bounds,
 argv, FD and build review. The ordinary complete suite passes 648 tests with one
 explicit host-only gate skipped; that gate passes all 11 tests outside the

@@ -180,6 +180,12 @@ data.
   opaque session identifier, product-specific memory, or agent UI.
 - Run `python3 scripts/check_handoff.py` before declaring a milestone complete.
   Core repository changes without a matching handoff update fail CI.
+- After pushing a milestone, verify every required CI check for that exact commit
+  reaches success. A successful local suite or Git push is not release evidence,
+  and the milestone is not complete while CI is missing, pending, cancelled or
+  red. Do not begin the next milestone until it is green. On failure, stop scope
+  expansion, inspect the remote log, fix or explicitly document the blocker,
+  update the handoff, push a new commit and verify that new exact SHA.
 - Before asking the owner to review rendered videos, run the repository's
   pre-review gate against the actual renderer representation, not only the
   planner camera path. Fixed and auto review peers must use the same encoder

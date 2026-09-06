@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T18:29:00+08:00
+Updated: 2026-09-06T18:40:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 42351fb
-Remote status: push confirmed `origin/main` advanced to `42351fb`
-Working tree at checkpoint: conservative coordinator facade ready to commit
+Baseline commit: aea4453
+Remote status: push confirmed `origin/main` advanced to `aea4453`
+Working tree at checkpoint: portable-CI and pre-policy session fixes ready to commit
 
 ## Objective
 
@@ -89,11 +89,12 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `42351fb`.
-- Expected dirty files: this handoff plus audited coordinator facade and tests.
+- Expected branch/remote before checkpoint: `main` at `aea4453`.
+- Expected dirty files: this handoff, launcher ordering/test, and two portable-CI
+  test isolation fixes.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 681 tests pass with eight explicit host-only gates skipped.
+- Full suite: 682 tests pass with eight explicit host-only gates skipped.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 - OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 
@@ -157,6 +158,10 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 - Registry-backed coordinator facade passed forgery, method-shadow, lifecycle,
   cleanup and path-leakage audit; it accepts only launcher root and precommitted
   manifest and creates both retained proofs internally.
+- Launcher establishes PGID/session and runtime limits before reading policy;
+  blocked-policy ordering and cleanup passed independent audit. GitHub's Ubuntu
+  job exposed four harness tests that did not bypass the host availability guard
+  and one fixed-macOS-path test; these are now explicitly isolated for portable CI.
 
 ## Safety and claims
 

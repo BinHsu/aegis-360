@@ -162,6 +162,8 @@ class OSBackendParserTests(unittest.TestCase):
             self.assertEqual(proof._manifest_facts(),
                 ("25F84", "a" * 64, 123, "b" * 64))
 
+    @unittest.skipUnless(sys.platform == "darwin" and os.uname().machine == "arm64",
+                         "retained fixed OS paths require Darwin arm64")
     def test_retained_opens_are_nofollow_cloexec_and_native_build_must_match(self):
         plist = plistlib.loads(Path(
             "/System/Library/CoreServices/SystemVersion.plist").read_bytes())

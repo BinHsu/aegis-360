@@ -186,7 +186,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full suite: 681 tests pass with eight explicit host-only gates skipped.
+- Full suite: 682 tests pass with eight explicit host-only gates skipped.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 - OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 - Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
@@ -195,6 +195,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Implement coordinator spawn/timeout/process-group cleanup behind the audited
+After portable CI confirms green, implement coordinator spawn/cleanup behind the
 facade. Keep backend authority APIs closed; acquire no model or real media and
 construct no capability receipt or token yet.

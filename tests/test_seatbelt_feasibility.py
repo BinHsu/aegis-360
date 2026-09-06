@@ -112,6 +112,7 @@ class SeatbeltFeasibilityTests(unittest.TestCase):
 
         with mock.patch.object(seatbelt.platform, "system", return_value="Darwin"), \
              mock.patch.object(seatbelt.platform, "machine", return_value="arm64"), \
+             mock.patch.object(Path, "is_file", return_value=True), \
              mock.patch.object(seatbelt, "_compile_fixture", side_effect=timeout):
             classification, diagnostic = seatbelt.run()
         self.assertEqual(classification, "not_feasible")
@@ -121,6 +122,7 @@ class SeatbeltFeasibilityTests(unittest.TestCase):
         secret = "/private/secret/asset"
         with mock.patch.object(seatbelt.platform, "system", return_value="Darwin"), \
              mock.patch.object(seatbelt.platform, "machine", return_value="arm64"), \
+             mock.patch.object(Path, "is_file", return_value=True), \
              mock.patch.object(seatbelt.tempfile, "TemporaryDirectory",
                                side_effect=OSError(secret)):
             classification, diagnostic = seatbelt.run()
@@ -154,6 +156,7 @@ class SeatbeltFeasibilityTests(unittest.TestCase):
 
         with mock.patch.object(seatbelt.platform, "system", return_value="Darwin"), \
              mock.patch.object(seatbelt.platform, "machine", return_value="arm64"), \
+             mock.patch.object(Path, "is_file", return_value=True), \
              mock.patch.object(seatbelt, "_compile_fixture", side_effect=fixture), \
              mock.patch.object(seatbelt, "_listener",
                                side_effect=[listener, OSError(97, "synthetic")]):
@@ -179,6 +182,7 @@ class SeatbeltFeasibilityTests(unittest.TestCase):
         output = StringIO()
         with mock.patch.object(seatbelt.platform, "system", return_value="Darwin"), \
              mock.patch.object(seatbelt.platform, "machine", return_value="arm64"), \
+             mock.patch.object(Path, "is_file", return_value=True), \
              mock.patch.object(seatbelt, "_capture", return_value=captured), \
              redirect_stdout(output):
             returncode = seatbelt.main()
