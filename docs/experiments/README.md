@@ -100,6 +100,9 @@ privacy-safe summaries when results exist.
   gates using exact pre-existing Old Ghost Road evidence.
 - `structural-chapter-blind-replication-v1-2026-09-06.md`: staged, label-free
   within-source replication beginning with a self-proving selection policy.
+- `sparse-story-semantic-successor-v1-2026-09-07.md`: model-neutral closed
+  activity/context observations, deterministic nuisance-aware binding, bounded
+  feasibility and four-source held-out gates after structural-score rejection.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

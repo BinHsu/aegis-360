@@ -40,6 +40,7 @@ not invent a resolution.
 | Change interest scoring, candidate shots, or planning | ADR 0006 |
 | Change event timeline, semantic review packets, or human-review role | ADR 0010, then ADR 0006 |
 | Change event/story semantic output or evidence-to-utility mapping | `docs/design/event-semantic-evidence.md`, `docs/experiments/scene-story-context-v1-2026-08-23.md`, ADR 0010, then ADR 0006 |
+| Resume nuisance-aware sparse story semantics | `docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md`, ADR 0010, then `docs/design/event-semantic-evidence.md` |
 | Change chronology, chapter mapping, or foreshadow behavior | ADR 0011, ADR 0002, `docs/design/event-semantic-evidence.md`, then ADR 0010 |
 | Change segment-scoped candidate relevance | `docs/experiments/story-segment-view-relevance-v1-2026-08-23.md`, `docs/design/event-semantic-evidence.md`, ADR 0006 |
 | Change numeric persistent story planning or transition costs | `docs/design/event-semantic-evidence.md`, ADR 0006, ADR 0010 |

@@ -1,20 +1,30 @@
 # Current handoff
 
-Updated: 2026-09-07T02:30:00+08:00
+Updated: 2026-09-06T14:06:54+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f94a389
-Remote status: `origin/main` at `f94a389`
-Working tree at checkpoint: transient review material cleanup documentation
+Baseline commit: 272ae8b
+Remote status: `origin/main` at `272ae8b`
+Working tree at checkpoint: audited semantic successor protocol, pending commit
 
 ## Objective
 
 Build an offline 360-video auto-director for ordinary viewers on a fanless M4
-MacBook Air with 16 GB unified memory. The first Skiing chapter-proposal policy
-is rejected; a color-independent structural successor now requires blind
-replication after one bounded labeled contrast.
+MacBook Air with 16 GB unified memory. The Skiing RGB proposal policy and the
+color-independent structural successor are both rejected. The next bounded
+direction is cheap-signal scheduling followed by sparse, closed semantic
+observations without per-frame VLM inference.
 
 ## Last completed milestone
+
+The model-neutral sparse story semantic successor protocol passed independent
+causal-sampling and vertical-contract audits. It fixes a six-packet known-label
+Stage A, a deterministic four-source/24-packet blind Stage B, sanitized adapter
+projections, a closed observation/binder contract, failure-bound abstention and
+total result precedence. No model, media or score has been acquired; the next
+authority is synthetic schema/binder implementation only.
+
+The prior structural replication remains durable negative evidence:
 
 The frozen Old Ghost Road contrast config SHA is
 `8baf66a00a008625cd91292aaa8ac0a8794d9fb20338e0acfab054b3a2f7f7a2`.
@@ -45,8 +55,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `f94a389`.
-- Expected dirty files: result documentation and handoff only.
+- Expected branch/remote before checkpoint: `main` at `272ae8b`.
+- Expected dirty files: semantic successor protocol, indexes, status and handoff.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
 - Full suite: 560 tests pass after label-free scorer integration.
@@ -65,8 +75,10 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Design a semantic sparse-event successor that uses cheap whole-film signals
-  for recall and bounded semantic review for meaning.
+- Implement and synthetically test the closed semantic observation schema,
+  operational-failure artifact and deterministic binder.
+- Do not acquire a model or real-media packets until that implementation gate
+  is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
@@ -91,8 +103,10 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. Transient review pixels and `/tmp` copies are
-  deleted; frozen coordinator metadata remains on the external data volume.
+- No delegated work is active. `causal_signal_audit` and
+  `vertical_freeze_review` both returned PASS on the frozen protocol.
+- Main agent owns the synthetic implementation milestone; no model, media or
+  score acquisition is allowed.
 
 ## Safety and claims
 

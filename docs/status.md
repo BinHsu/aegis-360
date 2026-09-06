@@ -68,9 +68,6 @@ Blind review rejects both while independently detecting one control transition.
   source and emits zero events above 0.25. It also fails to recover gradual
   chapters; the threshold is not retuned after observing the result.
 
-The exact artifact hashes are recorded in
-`docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`.
-
 ## Canonical analysis proxy
 
 - The closed config fixes Matroska/FFV1, 960x480, yuv420p, 10 fps CFR, SAR 1:1,
@@ -84,9 +81,6 @@ The exact artifact hashes are recorded in
   bytes. Acquisition took 249.783 seconds; two decoded-frame digest runs match.
 - The proxy contains external pixels and is never committed. It grants no
   semantic, story-boundary, camera-path or render authority.
-
-Exact commands, hashes, the initial duration-metadata failure and the corrected
-result are in `docs/experiments/analysis-proxy-60s-protocol.md`.
 
 ## Visual-state and proposal freeze
 
@@ -176,6 +170,11 @@ packets and supply adequate 6:2 story/no-change classes, but minimum story score
 0.04363508 is below maximum no-change score 0.06806761. This descriptor is not a
 monotonic story-change ranker and grants no boundary, camera or render authority.
 
+The model-neutral sparse story semantic successor protocol is frozen for
+implementation after independent causal-sampling and vertical-contract audits
+both passed. No model or media has been acquired and neither Stage A nor Stage B
+has run, so this is a protocol milestone rather than semantic evidence.
+
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
@@ -192,5 +191,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Design a semantic sparse-event successor; do not retune this visual descriptor,
+Implement and synthetically verify the successor's closed observation schema,
+operational-failure artifact and deterministic binder before acquiring a model
+or producing real-media packets. Do not retune the rejected visual descriptor,
 infer boundaries from it or render production video.
