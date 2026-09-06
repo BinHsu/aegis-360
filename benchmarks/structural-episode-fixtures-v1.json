@@ -1,0 +1,14 @@
+{
+  "cases": [
+    {"candidates": [{"after": {"denominator": 1, "numerator": 1}, "before": {"denominator": 1, "numerator": 0}, "candidate_id": "e0", "time_seconds": 0}, {"after": {"denominator": 1, "numerator": 0}, "before": {"denominator": 1, "numerator": 1}, "candidate_id": "x0", "time_seconds": 40}], "case_id": "true_a_b_a", "expected_pairs": [["e0", "x0"]]},
+    {"candidates": [{"after": {"denominator": 1, "numerator": 1}, "before": {"denominator": 1, "numerator": 0}, "candidate_id": "e0", "time_seconds": 0}], "case_id": "persistent_a_b", "expected_pairs": []},
+    {"candidates": [{"after": {"denominator": 1, "numerator": 1}, "before": {"denominator": 1, "numerator": 0}, "candidate_id": "e0", "time_seconds": 0}, {"after": {"denominator": 1, "numerator": 2}, "before": {"denominator": 1, "numerator": 1}, "candidate_id": "x0", "time_seconds": 40}], "case_id": "a_b_c", "expected_pairs": []},
+    {"candidates": [{"after": {"denominator": 1, "numerator": 1}, "before": {"denominator": 1, "numerator": 0}, "candidate_id": "e0", "time_seconds": 0}, {"after": {"denominator": 5, "numerator": 2}, "before": {"denominator": 10, "numerator": 9}, "candidate_id": "x0", "time_seconds": 40}], "case_id": "noisy_outer_a", "expected_pairs": []},
+    {"candidates": [{"after": {"denominator": 1, "numerator": 1}, "before": {"denominator": 1, "numerator": 0}, "candidate_id": "e0", "time_seconds": 0}, {"after": {"denominator": 1, "numerator": 0}, "before": {"denominator": 1, "numerator": 1}, "candidate_id": "x0", "time_seconds": 61}], "case_id": "return_over_60_seconds", "expected_pairs": []},
+    {"candidates": [{"after": {"denominator": 1, "numerator": 1}, "before": {"denominator": 1, "numerator": 0}, "candidate_id": "e0", "time_seconds": 0}, {"after": {"denominator": 4, "numerator": 1}, "before": {"denominator": 4, "numerator": 3}, "candidate_id": "x0", "time_seconds": 40}], "case_id": "equality_boundary", "expected_pairs": [["e0", "x0"]]},
+    {"candidates": [{"after": {"denominator": 1, "numerator": 0}, "before": {"denominator": 1, "numerator": 0}, "candidate_id": "e0", "time_seconds": 0}, {"after": {"denominator": 1, "numerator": 0}, "before": {"denominator": 1, "numerator": 1}, "candidate_id": "x0", "time_seconds": 40}], "case_id": "zero_transition", "expected_pairs": []},
+    {"candidates": [{"after": {"denominator": 1, "numerator": 1}, "before": {"denominator": 1, "numerator": 0}, "candidate_id": "e0", "time_seconds": 0}, {"after": {"denominator": 10, "numerator": 1}, "before": {"denominator": 10, "numerator": 9}, "candidate_id": "x0", "time_seconds": 30}, {"after": {"denominator": 1, "numerator": 0}, "before": {"denominator": 1, "numerator": 1}, "candidate_id": "x1", "time_seconds": 40}], "case_id": "competing_exits", "expected_pairs": [["e0", "x1"]]}
+  ],
+  "distance": "absolute-difference-of-exact-rational-scalars",
+  "schema_version": "aegis360.structural-episode-fixtures.v1"
+}

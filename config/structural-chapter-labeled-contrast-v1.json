@@ -1,0 +1,57 @@
+{
+  "acquisition": {
+    "analysis_grid": {"origin_seconds": {"denominator": 1, "numerator": 0}, "rate_fps": 2, "selection": "nearest-grid-point-earlier-tie"},
+    "ffmpeg_filter_order": ["fps=fps=2:start_time=0:round=near", "scale=160:80:flags=area", "format=gray"],
+    "hash_source_after": true,
+    "hash_source_before": true,
+    "maximum_nominal_to_grid_error_seconds": {"denominator": 4, "numerator": 1},
+    "pixel_format": "gray8",
+    "threads": 2
+  },
+  "config_id": "old-ghost-road-structural-chapter-labeled-contrast-v1",
+  "descriptor": {
+    "border_rule": "horizontal-wrap-vertical-reflect",
+    "color_features_forbidden": true,
+    "component_distance": {"combined": "(Dmag+Dori)/2", "magnitude": "sum-32-abs-differences/32", "orientation": "sum-32-(sum-8-abs-differences/2)/32"},
+    "component_weights": {"mean_magnitude": {"denominator": 2, "numerator": 1}, "orientation_occupancy": {"denominator": 2, "numerator": 1}},
+    "discrete_horizontal_alignment": {"apply_to": "after-state-center-only-shared-by-both-components", "candidate_tile_shifts": [0, 1, 2, 3, 4, 5, 6, 7], "selection": "argmin-combined-D-before-center-vs-shifted-after-center", "tie_rule": "smallest-nonnegative-shift"},
+    "gradient": {
+      "grayscale_range": [0, 255],
+      "gx_kernel": [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],
+      "gy_kernel": [[-1, -2, -1], [0, 0, 0], [1, 2, 1]],
+      "magnitude": "abs-gx-plus-abs-gy-divided-by-2040",
+      "orientation": {"bin_count": 8, "boundary_rule": "lower-inclusive-upper-exclusive", "formula": "atan2(gy,gx)-modulo-pi-into-[0,pi)", "zero_gradient_rule": "zero-weight-all-bins"}
+    },
+    "orientation_occupancy": "per-tile-magnitude-weighted-bin-mass-normalized-to-sum-one-or-all-zero",
+    "rounding": {"digits": 8, "stage": "final-recorded-scalars-only-half-even"},
+    "spatial_tiles": {"columns": 8, "rows": 4},
+    "state_center": "componentwise-arithmetic-mean-of-four-native-coordinate-frame-descriptors",
+    "vertical_reflect_index_examples": {"minus_one_maps_to": 1, "height_maps_to": "height-minus-2"},
+    "window_dispersion": "arithmetic-mean-of-exactly-four-native-coordinate-frame-to-own-state-center-combined-D-no-cyclic-alignment"
+  },
+  "episode_audit": {
+    "fixture_sha256": "3cd1cc5360c61035adac8c15c7cfda103d0ced31c34cc712d702ff271eee4913",
+    "maximum_entry_exit_separation_seconds": 60,
+    "middle_consistency_ratio": {"denominator": 2, "numerator": 1},
+    "outer_return_ratio": {"denominator": 2, "numerator": 1},
+    "pairing": "chronological-entry; eligible-exit-minimizes-rA-plus-rB-then-earliest; rA=D(A0,A1)/min(entry,exit); rB=D(B0,B1)/min(entry,exit); require-entry-and-exit-positive-separation-at-most-60-rA-at-most-half-rB-at-most-half; chosen-pairs-disjoint",
+    "schema_version": "aegis360.structural-episode-fixtures.v1",
+    "synthetic_only": true,
+    "zero_transition_rule": "not-pairable"
+  },
+  "evaluation_points": [
+    {"center_source_time": {"denominator": 1, "numerator": 53}, "event_id": "event:multi:0005", "expected": {"change_type": "hard_cut", "narrative_function": "action_continuation", "status": "observed", "structural_role": "within_chapter_cut"}, "label_config_sha256": "7a693f3cd326c2ef4a03bd6a8e9f393b278e94bdd4b45499a05efb2121498910", "packet_sha256": "18b2f591f1fa59300c7ff0d879db3672725ef7a2bc7e1086a374bd0f7e5ecdc8", "semantic_evidence_sha256": "5fa143b6f1acc6f99a38169f10b37a792019bc7b14d1cdc8b51de45c3eeceb0a", "set": "primary"},
+    {"center_source_time": {"denominator": 5, "numerator": 423}, "event_id": "event:multi:0008", "expected": {"change_type": "hard_cut", "narrative_function": "activity_transition", "status": "observed", "structural_role": "chapter_boundary"}, "label_config_sha256": "df98e7baa4e755686ca494963a92cea1be9a19dc58710aed2bb431ad17ce2452", "packet_sha256": "3f0452d4f707a6bdb864834dd60d1864d8464efb73cf55bb979a098c13e91f4a", "semantic_evidence_sha256": "4047943c16b3806e1b8da77bb5f818a091d768e1b769459a40bc97b69d83bbbf", "set": "primary"},
+    {"center_source_time": {"denominator": 2, "numerator": 327}, "event_id": "event:multi:0018", "expected": {"change_type": "hard_cut", "narrative_function": "action_continuation", "status": "observed", "structural_role": "within_chapter_cut"}, "label_config_sha256": "7a693f3cd326c2ef4a03bd6a8e9f393b278e94bdd4b45499a05efb2121498910", "packet_sha256": "6f4255ca34ab2efb4a4efc6016662adb2981a70d803fff05d8b1ef0e193f018d", "semantic_evidence_sha256": "107f6a80b3f9083c5e048368dea7cb39338c2c1e3255914f02da156e6445e11f", "set": "secondary_correlated"},
+    {"center_source_time": {"denominator": 5, "numerator": 842}, "event_id": "event:multi:0019", "expected": {"change_type": "hard_cut", "narrative_function": "activity_transition", "status": "observed", "structural_role": "chapter_boundary"}, "label_config_sha256": "df98e7baa4e755686ca494963a92cea1be9a19dc58710aed2bb431ad17ce2452", "packet_sha256": "332fdd3d27c90498023d3cd9b0e50a21b767d3e41e98f7580d870e4a17045788", "semantic_evidence_sha256": "57c3f29a81e24bf3a26cf754f3564e45587392cb2eedf1a9b77155c7a92af261", "set": "secondary_correlated"}
+  ],
+  "gates": {
+    "primary": "score-event-multi-0008-strictly-greater-than-score-event-multi-0005-after-eight-decimal-rounding",
+    "secondary": "report-order-only-no-pass-authority",
+    "success_authority": "blind-replication-design-only"
+  },
+  "sample_offsets_seconds": [{"denominator": 4, "numerator": -15}, {"denominator": 4, "numerator": -13}, {"denominator": 4, "numerator": -11}, {"denominator": 4, "numerator": -9}, {"denominator": 4, "numerator": 9}, {"denominator": 4, "numerator": 11}, {"denominator": 4, "numerator": 13}, {"denominator": 4, "numerator": 15}],
+  "schema_version": "aegis360.structural-chapter-labeled-contrast-config.v1",
+  "score": "max-zero-combined-state-distance-minus-before-dispersion-minus-after-dispersion",
+  "source": {"id": "old_ghost_road_360", "sha256": "4b1264a6c5965742bf70517560dc59a7818c4d9c6e210a260c70d8b19385fafc"}
+}

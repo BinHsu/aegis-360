@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T18:30:00+08:00
+Updated: 2026-09-06T19:20:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 26e9870
-Remote status: `origin/main` at `26e9870` before this checkpoint
-Working tree at checkpoint: blind negative result and transient renderer
+Baseline commit: 3797f4c
+Remote status: `origin/main` at `3797f4c` before this checkpoint
+Working tree at checkpoint: structural successor pre-acquisition freeze
 
 ## Objective
 
@@ -86,9 +86,9 @@ Set `AEGIS_DATA_DIR` locally. The full proxy is under
 
 ## Active agents
 
-None. The read-only numeric audit is complete. The main agent owns independent
-evidence selection and the successor-hypothesis freeze. Proposal execution must
-not be rerun or retuned.
+None. Independent pre-acquisition audit passes the corrected structural
+ranking/episode protocol. The main agent owns the freeze commit before any
+decode. Rejected proposal execution must not be rerun or retuned.
 
 ## Safety and claims
 
@@ -135,3 +135,13 @@ not be rerun or retuned.
   justified fix. No threshold or policy was changed.
 - Successor hypothesis: color-independent tilewise structural occupancy plus
   explicit episode/return reasoning, precommitted before separate evidence.
+
+## Successor freeze
+
+- Config SHA: `8baf66a00a008625cd91292aaa8ac0a8794d9fb20338e0acfab054b3a2f7f7a2`.
+- Synthetic fixture SHA:
+  `3cd1cc5360c61035adac8c15c7cfda103d0ced31c34cc712d702ff271eee4913`.
+- Primary ordinal contrast is non-overlapping event 0005 versus 0008. The
+  adjacent 0018/0019 pair is correlated and report-only.
+- Acquisition remains blocked until this config/doc/fixture checkpoint is
+  committed and pushed.

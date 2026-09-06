@@ -162,11 +162,14 @@ version; they must not be silently reinterpreted.
 - Numeric audit shows RGB palette shifts dominate 46/297 while the station-to-
   slope change at 200 has weak coarse structure. The reciprocal 297/337 peaks
   are one A→B→A visual excursion, which separation does not model.
+- A separately audited structural contrast is frozen before acquisition. Its
+  primary gate compares pre-existing Old Ghost event 0008 against 0005; the
+  correlated 0018/0019 pair is report-only, not independent evidence.
 
 ## Active acceptance gate
 
-Precommit a color-independent spatial-structure and A→B→A episode hypothesis,
-then test it on separate human-labeled evidence before any typed boundary.
+Implement the frozen structural contrast and synthetic episode contract, then
+run it once without changing config `8baf66a…f7f7a2`.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -184,6 +187,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Checkpoint and push the causal failure diagnosis. Then select independent
-existing human-labeled evidence and freeze the successor experiment before
-feature acquisition. Do not infer boundaries or render video.
+Checkpoint and push the successor freeze before decoding. Then implement its
+closed validators/acquisition and run the labeled contrast once. Do not infer
+boundaries or render video.

@@ -95,6 +95,9 @@ privacy-safe summaries when results exist.
 - `skiing-gradual-chapter-proposals-v1-2026-09-06.md`: pre-data freeze hashes,
   the single frozen proposal result, deterministic controls and the semantic
   review boundary.
+- `structural-chapter-labeled-contrast-v1-2026-09-06.md`: precommitted
+  color-independent structural ordinal contrast and synthetic A→B→A episode
+  gates using exact pre-existing Old Ghost Road evidence.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.
