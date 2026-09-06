@@ -170,10 +170,11 @@ packets and supply adequate 6:2 story/no-change classes, but minimum story score
 0.04363508 is below maximum no-change score 0.06806761. This descriptor is not a
 monotonic story-change ranker and grants no boundary, camera or render authority.
 
-The model-neutral sparse story semantic successor protocol is frozen for
-implementation after independent causal-sampling and vertical-contract audits
-both passed. No model or media has been acquired and neither Stage A nor Stage B
-has run, so this is a protocol milestone rather than semantic evidence.
+The model-neutral sparse story semantic successor protocol and synthetic
+schema/binder implementation passed independent audits. Strict raw-byte binding,
+closed operational failures and failure-bound abstention now have executable
+coverage. No model or media has been acquired and neither Stage A nor Stage B
+has run, so this remains contract evidence rather than semantic evidence.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -181,8 +182,8 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests`: 560 tests pass after label-free
-  structural scorer integration.
+- `python3 -m unittest discover -s tests`: 568 tests pass after sparse-story
+  semantic contract integration.
 - Visual-state suite: 6 tests pass after the real FFmpeg count fix.
 - Chapter-proposal suite: 8 tests pass.
 - Typed packet/relevance/utility/continuity/planner integration: 53 tests pass.
@@ -191,7 +192,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Implement and synthetically verify the successor's closed observation schema,
-operational-failure artifact and deterministic binder before acquiring a model
-or producing real-media packets. Do not retune the rejected visual descriptor,
-infer boundaries from it or render production video.
+Design and synthetically verify the sanitized adapter-visible packet projection
+before acquiring a model or producing real-media packets. Do not retune the
+rejected visual descriptor, infer boundaries from it or render production video.

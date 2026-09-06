@@ -1,6 +1,18 @@
 # Sparse story semantic successor v1
 
-Status: pre-implementation protocol draft; no model or media acquired
+Status: protocol frozen; synthetic schema/binder implemented; no model or media acquired
+
+## Synthetic implementation checkpoint
+
+`aegis360.sparse_story_semantics` implements the exact closed raw observation,
+ordered binder, strict stdout-byte parsing, operational-failure precedence and
+failure-bound canonical abstention. Its public success path computes the raw
+output hash from strict-parsed bytes; its failure path rebuilds the artifact
+from captured bytes and operational flags before binding it. Opaque packet IDs
+are restricted to `packet-[0-9a-f]{20}`. Independent implementation audit passed
+after raw-hash and failure-state bypasses found in earlier drafts were closed.
+Eight focused tests and the complete 568-test suite pass. This checkpoint uses
+synthetic JSON only and adds no semantic, model, media or performance evidence.
 
 ## Question and claim boundary
 

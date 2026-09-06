@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T14:06:54+08:00
+Updated: 2026-09-06T14:22:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 272ae8b
-Remote status: `origin/main` at `272ae8b`
-Working tree at checkpoint: audited semantic successor protocol, pending commit
+Baseline commit: a0f9dbe
+Remote status: `origin/main` at `a0f9dbe`
+Working tree at checkpoint: audited synthetic successor implementation
 
 ## Objective
 
@@ -21,8 +21,9 @@ The model-neutral sparse story semantic successor protocol passed independent
 causal-sampling and vertical-contract audits. It fixes a six-packet known-label
 Stage A, a deterministic four-source/24-packet blind Stage B, sanitized adapter
 projections, a closed observation/binder contract, failure-bound abstention and
-total result precedence. No model, media or score has been acquired; the next
-authority is synthetic schema/binder implementation only.
+total result precedence. No model, media or score has been acquired. The
+schema/binder implementation and independent implementation re-audit now pass;
+the next authority is a synthetic sanitized adapter-projection gate only.
 
 The prior structural replication remains durable negative evidence:
 
@@ -55,11 +56,11 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `272ae8b`.
-- Expected dirty files: semantic successor protocol, indexes, status and handoff.
+- Expected branch/remote before checkpoint: `main` at `a0f9dbe`.
+- Expected dirty files: synthetic implementation, tests and milestone docs.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 560 tests pass after label-free scorer integration.
+- Full suite: 568 tests pass after sparse-story semantic contract integration.
 
 ## Verified
 
@@ -75,8 +76,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Implement and synthetically test the closed semantic observation schema,
-  operational-failure artifact and deterministic binder.
+- Design and synthetically test the sanitized adapter-visible projection from a
+  private packet without exposing source, event, time, signal or geometry.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
@@ -103,9 +104,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. `causal_signal_audit` and
-  `vertical_freeze_review` both returned PASS on the frozen protocol.
-- Main agent owns the synthetic implementation milestone; no model, media or
+- No delegated work is active. `vertical_freeze_review` returned PASS after the
+  third-round fail-closed correction.
+- Main agent owns integration and the next projection design; no model, media or
   score acquisition is allowed.
 
 ## Safety and claims
