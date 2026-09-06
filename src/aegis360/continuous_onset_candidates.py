@@ -32,18 +32,37 @@ def build_continuous_onset_candidates(
            for value in (samples_sha256, policy_sha256)):
         raise ValueError("continuous-onset checksums are invalid")
     if (not isinstance(samples, Mapping)
-            or set(samples) != {"schema_version", "source_id", "window",
-                                "samples", "privacy"}
+            or set(samples) != {"schema_version", "source_id", "window", "inputs",
+                                "acquisition", "samples", "privacy", "limitations"}
             or samples.get("schema_version") != INPUT_SCHEMA
             or not isinstance(samples.get("source_id"), str)
             or SAFE_ID.fullmatch(samples["source_id"]) is None):
         raise ValueError("frame-difference sample input is invalid")
     privacy = samples["privacy"]
     if (not isinstance(privacy, Mapping)
-            or set(privacy) != {"contains_source_path", "contains_pixels"}
-            or privacy["contains_source_path"] is not False
-            or privacy["contains_pixels"] is not False):
+            or set(privacy) != {"contains_source_path", "contains_pixels",
+                                "contains_audio", "contains_identity"}
+            or any(value is not False for value in privacy.values())):
         raise ValueError("frame-difference samples must be path-free and pixel-free")
+    inputs = samples["inputs"]
+    if (not isinstance(inputs, Mapping)
+            or set(inputs) != {"source_sha256", "acquisition_config_sha256",
+                               "metadata_sha256"}
+            or any(not isinstance(value, str) or SHA256.fullmatch(value) is None
+                   for value in inputs.values())):
+        raise ValueError("frame-difference sample lineage is invalid")
+    acquisition = samples["acquisition"]
+    if (not isinstance(acquisition, Mapping)
+            or set(acquisition) != {"config_id", "pts_origin", "metadata_key",
+                                    "normalization_divisor"}
+            or not isinstance(acquisition["config_id"], str)
+            or SAFE_ID.fullmatch(acquisition["config_id"]) is None
+            or acquisition["pts_origin"] != "interval_local"
+            or acquisition["metadata_key"] != "lavfi.signalstats.YAVG"
+            or acquisition["normalization_divisor"] != 255.0
+            or not isinstance(samples["limitations"], list)
+            or any(not isinstance(value, str) for value in samples["limitations"])):
+        raise ValueError("frame-difference acquisition contract is invalid")
     required_policy = {
         "schema_version", "policy_id", "baseline_window_samples",
         "high_threshold", "release_threshold", "minimum_consecutive",
@@ -91,16 +110,21 @@ def build_continuous_onset_candidates(
     values = []
     for row in rows:
         if (not isinstance(row, Mapping)
-                or set(row) != {"timestamp_seconds", "frame_difference"}
-                or not _finite_number(row["timestamp_seconds"])
-                or not _finite_number(row["frame_difference"])
-                or row["frame_difference"] < 0):
+                or set(row) != {"interval_pts_seconds", "pts_seconds",
+                                "normalized_difference"}
+                or not _finite_number(row["interval_pts_seconds"])
+                or not _finite_number(row["pts_seconds"])
+                or not _finite_number(row["normalized_difference"])
+                or not 0 <= row["normalized_difference"] <= 1
+                or not math.isclose(row["pts_seconds"],
+                                    window_start + row["interval_pts_seconds"],
+                                    rel_tol=0, abs_tol=1e-9)):
             raise ValueError("frame-difference sample is invalid")
-        timestamp = float(row["timestamp_seconds"])
+        timestamp = float(row["pts_seconds"])
         if not window_start <= timestamp <= window_end:
             raise ValueError("frame-difference sample is outside the window")
         timestamps.append(timestamp)
-        values.append(float(row["frame_difference"]))
+        values.append(float(row["normalized_difference"]))
     if any(right <= left for left, right in zip(timestamps, timestamps[1:])):
         raise ValueError("frame-difference timestamps must increase uniquely")
     cadences = [right - left for left, right in zip(timestamps, timestamps[1:])]

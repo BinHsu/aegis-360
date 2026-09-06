@@ -35,10 +35,19 @@ class ContinuousOnsetCandidateTests(unittest.TestCase):
             "schema_version": "aegis360.frame-difference-samples.v1",
             "source_id": "fixture",
             "window": {"start_seconds": 385.0, "duration_seconds": 2.0},
-            "samples": [{"timestamp_seconds": 385.0 + index * 0.25,
-                         "frame_difference": value}
+            "inputs": {"source_sha256": "a" * 64,
+                       "acquisition_config_sha256": "b" * 64,
+                       "metadata_sha256": "c" * 64},
+            "acquisition": {"config_id": "fixture", "pts_origin": "interval_local",
+                            "metadata_key": "lavfi.signalstats.YAVG",
+                            "normalization_divisor": 255.0},
+            "samples": [{"interval_pts_seconds": index * 0.25,
+                         "pts_seconds": 385.0 + index * 0.25,
+                         "normalized_difference": value}
                         for index, value in enumerate(values)],
-            "privacy": {"contains_source_path": False, "contains_pixels": False},
+            "privacy": {"contains_source_path": False, "contains_pixels": False,
+                        "contains_audio": False, "contains_identity": False},
+            "limitations": ["fixture"],
         }
 
     def build(self):
@@ -71,22 +80,22 @@ class ContinuousOnsetCandidateTests(unittest.TestCase):
     def test_nan_bool_order_duplicate_bounds_and_cadence_fail_closed(self):
         mutations = []
         value = self.samples([.1, .1, .1, .8, .9])
-        value["samples"][1]["frame_difference"] = float("nan")
+        value["samples"][1]["normalized_difference"] = float("nan")
         mutations.append(value)
         value = self.samples([.1, .1, .1, .8, .9])
-        value["samples"][1]["frame_difference"] = True
+        value["samples"][1]["normalized_difference"] = True
         mutations.append(value)
         value = self.samples([.1, .1, .1, .8, .9])
-        value["samples"][2]["timestamp_seconds"] = 385.1
+        value["samples"][2]["pts_seconds"] = 385.1
         mutations.append(value)
         value = self.samples([.1, .1, .1, .8, .9])
-        value["samples"][2]["timestamp_seconds"] = value["samples"][1]["timestamp_seconds"]
+        value["samples"][2]["pts_seconds"] = value["samples"][1]["pts_seconds"]
         mutations.append(value)
         value = self.samples([.1, .1, .1, .8, .9])
-        value["samples"][0]["timestamp_seconds"] = 384.9
+        value["samples"][0]["pts_seconds"] = 384.9
         mutations.append(value)
         value = self.samples([.1, .1, .1, .8, .9])
-        value["samples"][2]["timestamp_seconds"] = 386.0
+        value["samples"][2]["pts_seconds"] = 386.0
         mutations.append(value)
         value = self.samples([.1, .1, .1, .8, .9])
         value["privacy"]["contains_source_path"] = True

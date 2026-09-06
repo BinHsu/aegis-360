@@ -80,3 +80,8 @@ The repository now has a pure, closed continuous-onset candidate contract for
 this class of signal. Synthetic tests cover sustained onset, hysteresis, single
 spikes, ordering, cadence, privacy and exact rebuild. It has no media runner or
 calibrated Skiing policy yet and cannot alter the timeline.
+
+The upstream frame-difference artifact/parser now normalizes YAVG by 255 and
+maps interval-local PTS into the source window. A direct producer-to-consumer
+contract test passes without a field adapter. Real acquisition remains absent,
+so the diagnostic shell output is not yet promoted to closed evidence.

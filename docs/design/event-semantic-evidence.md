@@ -168,6 +168,12 @@ preservation applies only when IDs match; cross-candidate preservation is zero
 because it was not observed. Abstention emits a complete zero matrix. This
 artifact applies no transition cost and selects no candidate or transition.
 
+`aegis360.frame-difference-samples.v1` binds normalized FFmpeg YAVG metadata to
+the exact source, acquisition config, raw metadata and interval-local-to-source
+timestamp mapping. It contains no media path or pixels. The deterministic
+parser and exact validator are acquisition boundaries; the FFmpeg runner is
+still separate.
+
 `aegis360.continuous-onset-candidates.v1` is a separate review-only proposal
 for continuous changes that hard-cut scores miss. It consumes checksummed,
 path-free frame-difference samples plus a versioned hysteresis policy and emits
