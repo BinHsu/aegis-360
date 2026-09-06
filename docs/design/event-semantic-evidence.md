@@ -183,3 +183,10 @@ an uncertainty interval only after a quiet baseline followed by sustained high
 values. It explicitly emits neither a hard-cut claim nor a story boundary and
 is never production eligible. Semantic corroboration and a new typed timeline
 remain separate future authorities.
+
+`aegis360.continuous-onset-semantic-packet.v1` binds one onset to five exact
+acquisition rows and all four grid views; a missing trailing row is explicit,
+not invented. `aegis360.continuous-onset-semantic-evidence.v1` permits closed
+story-change, capture-artifact, no-change or abstain observations. Even a
+complete story-change observation emits no boundary, view or render authority;
+a deterministic typed-boundary adapter remains a separate gate.

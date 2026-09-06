@@ -102,3 +102,13 @@ The benchmark-only, explicitly uncalibrated same-contract policy uses high
 386.5–386.75 seconds. Artifact SHA is
 `25596e81094e42f73c81293b551bf7922d61f0970dcbd4f1df3cb5a9a4c0a5a2`.
 It still emits no story boundary and authorizes no render.
+
+Five exact four-cardinal composites at 386.0/386.25/386.5/386.75/387.0 were
+independently reviewed. They retain the same ski area, lift infrastructure,
+slope and nearby skiers; motion, a near object and stitch-band changes explain
+the frame-difference burst. Closed evidence therefore records
+`no_semantic_change`, not a story transition or pure capture artifact. Evidence
+SHA is `a472aff7ca25ed5708d2f1477ee12af8668a26a04fe77dbe3399b1df80fb30d0`.
+Temporary review pixels were deleted. The earlier claim that 390 seconds was a
+proven late boundary is withdrawn; segment 0000 remains an honest relevance
+abstention because its composition changes substantially within the segment.
