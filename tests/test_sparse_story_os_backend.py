@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from aegis360.sparse_story_os_backend import (  # noqa: E402
     _CPU_SUBTYPE_ARM64E_RAW, _DarwinNative, _MountFacts, _OSBackendProof,
     _check_nodes, _check_records, _identity, _observe_os_backend,
+    _observe_test_os_backend,
     _validate_universal_backend,
 )
 
@@ -149,7 +150,17 @@ class OSBackendParserTests(unittest.TestCase):
     def test_proof_constructor_is_opaque(self):
         with self.assertRaises(TypeError):
             _OSBackendProof(None, native=None, records=[], mounts=[], backend_hash="",
-                            system_hash="", os_build="")
+                            backend_size=0, system_hash="", os_build="")
+
+    def test_manifest_facts_return_size_frozen_with_hash(self):
+        proof = _OSBackendProof.__new__(_OSBackendProof)
+        proof._os_build = "25F84"; proof._backend_hash = "a" * 64
+        proof._backend_size = 123; proof._system_hash = "b" * 64
+        proof.revalidate = mock.Mock()
+        with mock.patch("aegis360.sparse_story_os_backend.os.fstat",
+                        side_effect=AssertionError("fresh fstat is forbidden")):
+            self.assertEqual(proof._manifest_facts(),
+                ("25F84", "a" * 64, 123, "b" * 64))
 
     def test_retained_opens_are_nofollow_cloexec_and_native_build_must_match(self):
         plist = plistlib.loads(Path(
@@ -161,13 +172,14 @@ class OSBackendParserTests(unittest.TestCase):
             return real_open(path, selected_flags, *args, **kwargs)
         with mock.patch("aegis360.sparse_story_os_backend.os.open",
                         side_effect=observed):
-            with _observe_os_backend(native=FakeNative(plist["ProductBuildVersion"])) as proof:
+            with _observe_test_os_backend(
+                    native=FakeNative(plist["ProductBuildVersion"])) as proof:
                 proof.revalidate()
         self.assertEqual(len(flags), 4)
         self.assertTrue(all(value & os.O_NOFOLLOW and value & os.O_CLOEXEC
                             for value in flags))
         with self.assertRaisesRegex(ValueError, "kernel build"):
-            _observe_os_backend(native=FakeNative("wrong-build"))
+            _observe_test_os_backend(native=FakeNative("wrong-build"))
 
     def test_node_predicates_reject_nonregular_and_bad_mount_or_ownership(self):
         def fact(mode=stat.S_IFREG | 0o444, uid=0, gid=0, nlink=1, flags=0x80000):

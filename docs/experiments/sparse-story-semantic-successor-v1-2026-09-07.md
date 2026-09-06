@@ -594,6 +594,17 @@ read-only APFS facts, fat32 rows and the exact arm64e executable slice are
 revalidated. The proof has no public fact getter or authority derivation. Its
 test-native injection must never be accepted later as production authority.
 
+The next private coordinator binding also passed independent provenance and
+lifecycle audit. Production and injected OS observations now yield distinct exact
+proof types; retained asset, OS and binding proofs reject copying and pickling.
+The binding requires a precommitted launcher-manifest SHA, owns both live proofs,
+revalidates and exact-rebuilds path-free canonical backend bytes on every access,
+and closes launcher before OS while preserving the first cleanup error. The
+ordinary suite passes 673 tests with seven explicit host-only skips; the combined
+retained host suites pass 42 tests outside the enclosing sandbox. All three public
+backend authority APIs remain closed, and this milestone creates no invocation or
+capability authority.
+
 The bounded launcher implementation subsequently passed independent C bounds,
 argv, FD and build review. The ordinary complete suite passes 648 tests with one
 explicit host-only gate skipped; that gate passes all 11 tests outside the

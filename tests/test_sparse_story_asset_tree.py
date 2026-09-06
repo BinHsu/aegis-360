@@ -1,5 +1,7 @@
 import errno
+import copy
 import os
+import pickle
 import struct
 import sys
 import tempfile
@@ -99,6 +101,14 @@ class SparseStoryAssetTreeTests(unittest.TestCase):
             _AssetTreeProof(None, root=root, parent_fd=-1, root_fd=-1,
                             root_frozen=(), directories=[], leaves=[], children={},
                             asset_kind="model", entrypoint=None)
+
+    def test_retained_proof_cannot_be_copied_or_pickled(self):
+        root = self.base / "noncopyable"
+        root.mkdir(); (root / "value").write_bytes(b"value"); seal(root)
+        manifest = self.precommit(root)
+        with validate_asset_tree(manifest=manifest, root=root) as proof:
+            for operation in (copy.copy, copy.deepcopy, pickle.dumps):
+                with self.assertRaises(TypeError): operation(proof)
 
     def test_runtime_entrypoint_and_empty_support_use_precommit(self):
         runtime = self.base / "runtime"

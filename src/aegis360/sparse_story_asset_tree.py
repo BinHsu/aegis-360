@@ -222,6 +222,15 @@ class _AssetTreeProof:
     def __exit__(self, *_):
         self.close()
 
+    def __copy__(self):
+        raise TypeError("asset tree proofs cannot be copied")
+
+    def __deepcopy__(self, _memo):
+        raise TypeError("asset tree proofs cannot be copied")
+
+    def __reduce__(self):
+        raise TypeError("asset tree proofs cannot be pickled")
+
 
 def _proper_parents(path: PurePosixPath):
     parent = path.parent

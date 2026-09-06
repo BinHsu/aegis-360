@@ -194,13 +194,14 @@ def _hash_fd(fd: int, maximum: int) -> tuple[int, str, bytes]:
 
 class _OSBackendProof:
     def __init__(self, token, *, native, records, mounts, backend_hash,
-                 system_hash, os_build):
+                 backend_size, system_hash, os_build):
         if token is not _TOKEN:
             raise TypeError("OS backend proofs cannot be constructed by callers")
         self._native = native
         self._records = records
         self._mounts = mounts
         self._backend_hash = backend_hash
+        self._backend_size = backend_size
         self._system_hash = system_hash
         self._os_build = os_build
         self._closed = False
@@ -232,6 +233,24 @@ class _OSBackendProof:
 
     def __exit__(self, *_):
         self.close()
+
+    def __copy__(self):
+        raise TypeError("OS backend proofs cannot be copied")
+
+    def __deepcopy__(self, _memo):
+        raise TypeError("OS backend proofs cannot be copied")
+
+    def __reduce__(self):
+        raise TypeError("OS backend proofs cannot be pickled")
+
+    def _manifest_facts(self):
+        self.revalidate()
+        return (self._os_build, self._backend_hash,
+                self._backend_size, self._system_hash)
+
+
+class _TestOSBackendProof(_OSBackendProof):
+    """Permanently non-production proof type for injected test facts."""
 
 
 def _check_nodes(native, records, frozen_mounts):
@@ -290,10 +309,7 @@ def _open_pair(parent: Path, leaf: str, parent_mode: int, leaf_mode: int):
             (leaf, leaf_fd, _identity(leaf_value), parent_fd, leaf_mode, False)]
 
 
-def _observe_os_backend(*, native=None, backend_path: Path = _BACKEND,
-                        system_version_path: Path = _SYSTEM_VERSION) -> _OSBackendProof:
-    """Observe fixed OS facts without deriving any manifest or capability."""
-    native = _DarwinNative() if native is None else native
+def _observe_backend(native, backend_path, system_version_path, proof_type):
     if backend_path.name != "sandbox-exec" or system_version_path.name != "SystemVersion.plist":
         raise ValueError("OS backend paths are invalid")
     records = []
@@ -302,7 +318,7 @@ def _observe_os_backend(*, native=None, backend_path: Path = _BACKEND,
         records.extend(_open_pair(system_version_path.parent, system_version_path.name,
                                   0o755, 0o444))
         mounts = tuple(native.fstatfs(record[1]) for record in records)
-        _, backend_hash, _ = _hash_fd(records[1][1], _MAX_BACKEND)
+        backend_size, backend_hash, _ = _hash_fd(records[1][1], _MAX_BACKEND)
         _, system_hash, plist_bytes = _hash_fd(records[3][1], _MAX_PLIST)
         try:
             plist = plistlib.loads(plist_bytes)
@@ -311,8 +327,9 @@ def _observe_os_backend(*, native=None, backend_path: Path = _BACKEND,
         os_build = plist.get("ProductBuildVersion") if isinstance(plist, dict) else None
         if not isinstance(os_build, str):
             raise ValueError("SystemVersion build is invalid")
-        proof = _OSBackendProof(_TOKEN, native=native, records=records, mounts=mounts,
-            backend_hash=backend_hash, system_hash=system_hash, os_build=os_build)
+        proof = proof_type(_TOKEN, native=native, records=records, mounts=mounts,
+            backend_hash=backend_hash, backend_size=backend_size,
+            system_hash=system_hash, os_build=os_build)
         proof.revalidate()
         return proof
     except BaseException:
@@ -322,3 +339,16 @@ def _observe_os_backend(*, native=None, backend_path: Path = _BACKEND,
             except OSError:
                 pass
         raise
+
+
+def _observe_os_backend() -> _OSBackendProof:
+    """Observe only the fixed production OS objects."""
+    return _observe_backend(_DarwinNative(), _BACKEND, _SYSTEM_VERSION,
+                            _OSBackendProof)
+
+
+def _observe_test_os_backend(*, native, backend_path: Path = _BACKEND,
+                             system_version_path: Path = _SYSTEM_VERSION):
+    """Return a distinct proof type which production binding always rejects."""
+    return _observe_backend(native, backend_path, system_version_path,
+                            _TestOSBackendProof)

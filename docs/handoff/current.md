@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T18:04:00+08:00
+Updated: 2026-09-06T18:17:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: aa9a5c9
-Remote status: push confirmed `origin/main` advanced to `aa9a5c9`
-Working tree at checkpoint: retained OS-backend proof ready to commit
+Baseline commit: 683e835
+Remote status: push confirmed `origin/main` advanced to `683e835`
+Working tree at checkpoint: private coordinator binding ready to commit
 
 ## Objective
 
@@ -89,11 +89,12 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `aa9a5c9`.
-- Expected dirty files: this handoff plus the retained OS-backend module and tests.
+- Expected branch/remote before checkpoint: `main` at `683e835`.
+- Expected dirty files: this handoff, private backend binding module/tests, and
+  audited proof noncopyability/provenance updates.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 662 tests pass with two explicit host-only gates skipped.
+- Full suite: 673 tests pass with seven explicit host-only gates skipped.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 - OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 
@@ -113,8 +114,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Design the private coordinator binding between genuine retained launcher/backend
-  proofs and a non-authoritative manifest candidate without emitting a capability
+- Freeze whether the audited private binding may open proof-requiring backend
+  authority APIs, then implement coordinator spawn/cleanup without a capability
   receipt or token.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
@@ -151,6 +152,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 - Retained OS-backend proof passed independent ABI/parser/identity audit and
   real-host observation; it still exposes no manifest derivation or authority
   artifact.
+- Private launcher/backend binding passed independent provenance, noncopyability,
+  canonical-revalidation and close-lifecycle audit. Public authority APIs remain
+  `AuthorityUnavailable`.
 
 ## Safety and claims
 
