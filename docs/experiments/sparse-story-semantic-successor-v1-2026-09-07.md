@@ -1,6 +1,6 @@
 # Sparse story semantic successor v1
 
-Status: protocol frozen; synthetic schema/binder implemented; no model or media acquired
+Status: protocol frozen; synthetic schema/binder, projection and media-tree gates implemented; no model or real media acquired
 
 ## Synthetic implementation checkpoint
 
@@ -21,6 +21,16 @@ anonymous projections and exact rebuild. Four focused tests plus the complete
 572-test suite pass after independent audit caught and closed boolean row-number
 acceptance and same-packet ID/order HMAC collision. It does not yet validate a
 media tree or execution isolation.
+
+`aegis360.sparse_story_media_tree` implements the closed synthetic PNG and
+published-tree gate below. It validates and deterministically strips PNGs,
+publishes an exact descriptor-validated read-only tree through Darwin's atomic
+no-replace rename, retains the original open snapshot through result publication,
+and proves every published leaf from the canonical index and original payloads.
+Six focused tests and the complete 578-test suite pass. Independent causal and
+vertical audits passed after closing snapshot-reopen, self-consistent forged-tree,
+mutation-cleanup and result-mode bypasses. This grants only sanitized transient
+media-input authority; it invokes neither a renderer nor a model.
 
 ## Question and claim boundary
 
@@ -229,6 +239,99 @@ opaque-ID collisions all fail closed. This gate grants projection
 and adapter-input authority only. PNG sanitization, closed media-tree proof,
 minimal process environment, repository/filesystem isolation, network denial,
 stdout capture and model invocation remain separate runner gates.
+
+## Closed media-tree synthetic gate
+
+Before a real renderer or adapter runs, build a temporary bundle only from a
+validated adapter index and caller-supplied synthetic PNG bytes. The bundle root
+has `adapter-index.json` plus every unique declared `media_ref` as its only file
+leaves. Its exact directory set is the root plus only the unique proper ancestors
+required by those leaves: `media/` and each declared opaque packet directory.
+Empty/extra directories, symlinks and every other node type are forbidden.
+`adapter-index.json` is the exact canonical index bytes and matches its supplied
+SHA-256. Every ref has exactly one caller-supplied immutable `bytes` payload;
+missing, duplicate and extra refs fail. The builder records every input digest
+before sanitization, never edits caller buffers/files in place, then requires
+the same ordered ref/digest list after completion.
+
+Each row image is exactly 960x540, PNG bit depth 8, truecolor RGB or RGBA,
+non-interlaced, with standard compression and filter methods. Every chunk type
+is four ASCII letters with its reserved third letter uppercase. The sanitizer
+verifies signature, chunk length/order/CRC, one IHDR, one or more consecutive
+IDATs, one terminal IEND and no trailing bytes. It rejects every other critical
+chunk, including PLTE; ancillary chunks are discarded. Concatenated original
+IDAT payloads must form exactly one zlib stream reaching EOF with no unused data,
+unconsumed tail or second stream. It expands to exactly
+`height * (1 + width * bytes_per_pixel)` bytes and has filter byte 0–4 at each
+scanline boundary. Output contains the original IHDR, one IDAT whose payload is
+the byte-for-byte concatenation of all original IDAT payloads, and IEND, with
+recomputed CRCs. Malformed, mismatched or undecodable PNG fails closed.
+
+Publication uses a same-filesystem sibling staging directory created mode 0700
+under an explicit owner-only umask; it is the only writer. Directories start
+0700 and leaves 0600 through no-follow, exclusive descriptor-relative opens.
+Each completed leaf is fsynced, chmod 0444 and fsynced again. Required
+directories are sealed bottom-up to 0555 and fsynced, followed by the staging
+root and destination parent. The one publication operation is macOS
+`renamex_np(..., RENAME_EXCL)` or a proven equivalent no-replace syscall;
+unsupported platforms fail instead of falling back to exists-then-rename.
+After a successful exclusive rename, the destination parent is fsynced again
+before any success or result is reported.
+
+Validation opens the root and every path component descriptor-relatively with
+no-follow semantics, compares actual names/types to the exact file/directory
+sets, and retains descriptors through the tree decision. Every leaf `fstat` is
+regular with link count one; device, inode, size and nanosecond mtime remain
+stable around hashing. The retained descriptors produce the frozen digest,
+remain valid across same-filesystem rename, and reproduce it afterward; the
+destination path must resolve to the recorded root device/inode. A post-publish
+mismatch removes the destination only if that root identity still matches the
+owned published root. A pre-existing/replacement target is never removed, and
+pre-publication failure removes only the owned staging directory.
+
+The canonical tree digest is SHA-256 over UTF-8 lines
+`<lowercase-hex-SHA256(file bytes)><two ASCII spaces><relative_posix_path><LF>`
+for every expected file
+in bytewise path order, including `adapter-index.json`; the digest is external
+and not embedded, and the last line also ends in LF.
+
+The closed result outside the bundle has schema
+`aegis360.sparse-story-sanitized-media-result.v1` and exactly the top-level keys
+`schema_version`, `inputs`, `outputs`, `privacy`, `authority`. `inputs` contains
+exactly lowercase-hex `adapter_index_sha256`, string `sanitizer_contract_id`
+equal to `sparse-story-png-rgb-rgba-960x540-v1`, and `input_payloads`.
+`input_payloads` is a unique list exactly matching all index refs, sorted by
+bytewise `media_ref`, whose rows contain only safe string `media_ref` and its
+lowercase-hex input-bytes `sha256`. `outputs` contains only integer
+`media_file_count`, integer `total_file_count` and lowercase-hex
+`bundle_tree_sha256`; booleans are not integers, media count equals the unique
+ref count, and total count equals media count plus `adapter-index.json`.
+`privacy` is exactly `contains_source_path=false`, `contains_pixels=false`,
+`contains_audio=false`, `contains_identity=false`,
+`contains_source_time=false`, `contains_free_text=false`. `authority` is exactly
+`sanitized_transient_media_input=true`, `semantic_observation=false`,
+`exact_boundary=false`, `chapter_map=false`, `camera=false`, `reorder=false`,
+`render=false`, `model_invocation=false`. It uses sorted
+compact ASCII-escaped UTF-8 JSON without newline, is hashed externally, and must
+exact-rebuild from the index, original bytes and published tree.
+
+The bundle publisher returns canonical result bytes only after post-rename tree
+verification; it does not publish the external result. A separate caller-owned
+writer persists those bytes using sibling staging, file fsync, exclusive no-
+replace rename and parent fsync, then revalidates exact bytes/hash. Bundle and
+result are explicitly not one atomic transaction. The coordinator treats the
+gate incomplete until result persistence revalidates; if it fails, it removes
+the bundle only while the recorded root device/inode still proves ownership.
+
+The synthetic gate must prove deterministic sanitized bytes/tree digest; exact
+scope; rejection of extra/missing/reordered refs, path traversal, symlink and
+hardlink entries; metadata/unknown-critical/truncated/CRC/zlib/scanline/filter/
+dimension failures; no overwrite including a destination created immediately
+before publication; pre/post tree identity; bounded owned cleanup; exact result
+rebuild; and source-byte immutability.
+It grants sanitized transient-media input authority only. Real FFmpeg rendering,
+source-time seeking, process environment, repository/filesystem isolation,
+network denial, adapter stdout and post-invocation deletion remain later gates.
 
 ## Stage A: bounded feasibility
 

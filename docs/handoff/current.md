@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T14:39:00+08:00
+Updated: 2026-09-06T15:16:51+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 32f71f3
-Remote status: `origin/main` at `32f71f3`
-Working tree at checkpoint: audited sanitized projection implementation
+Baseline commit: 5e011f5
+Remote status: `origin/main` at `5e011f5`
+Working tree at checkpoint: audited synthetic media-tree implementation
 
 ## Objective
 
@@ -56,11 +56,11 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `32f71f3`.
-- Expected dirty files: projection implementation, tests and milestone docs.
+- Expected branch/remote before checkpoint: `main` at `5e011f5`.
+- Expected dirty files: media-tree implementation, tests and milestone docs.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 572 tests pass after sparse-story projection integration.
+- Full suite: 578 tests pass after sparse-story media-tree integration.
 
 ## Verified
 
@@ -76,8 +76,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Design and synthetically test a closed media tree with exact sanitized PNGs;
-  do not invoke a model or real-media renderer.
+- Design and synthetically test the isolated adapter-runner contract; do not
+  invoke or acquire a model or real-media renderer yet.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
@@ -104,10 +104,10 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. `vertical_freeze_review` returned PASS after the
-  projection edge corrections.
-- Main agent owns integration and the next synthetic media-tree design; no model,
-  real media or score acquisition is allowed.
+- No delegated work is active. Independent causal and final vertical reviews
+  passed after the media-tree trust gaps were closed.
+- Main agent owns integration and the isolated-runner design; no model, real
+  media or score acquisition is allowed.
 
 ## Safety and claims
 

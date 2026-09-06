@@ -174,9 +174,12 @@ The model-neutral sparse story semantic successor protocol and synthetic
 schema/binder implementation passed independent audits. Strict raw-byte binding,
 closed operational failures and failure-bound abstention now have executable
 coverage. The sanitized private-to-public projection also passes its synthetic
-gate with complete-set binding and salted role-neutral ordering. No model or
-media has been acquired and neither Stage A nor Stage B has run, so this remains
-contract evidence rather than semantic evidence.
+gate with complete-set binding and salted role-neutral ordering. The closed
+synthetic media-tree gate now passes too: sanitized PNG leaves are input-derived,
+published atomically without replacement, continuously descriptor-bound through
+result publication and fail closed under mutation. No model or real media has
+been acquired and neither Stage A nor Stage B has run, so this remains contract
+evidence rather than semantic evidence.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -184,16 +187,14 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests`: 572 tests pass after sparse-story
-  semantic and projection contract integration.
-- Visual-state suite: 6 tests pass after the real FFmpeg count fix.
-- Chapter-proposal suite: 8 tests pass.
-- Typed packet/relevance/utility/continuity/planner integration: 53 tests pass.
+- `python3 -m unittest discover -s tests`: 578 tests pass after sparse-story
+  semantic, projection and closed media-tree contract integration.
+- Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Design and synthetically verify the closed media-tree and sanitized-PNG gate
-before acquiring a model or producing real-media packets. Do not retune the
-rejected visual descriptor, infer boundaries from it or render production video.
+Design and synthetically verify the isolated adapter-runner gate: minimal
+environment, no repository/network, exact stdout and bounded cleanup. Until its
+independent review, acquire no model or real media and render no video.
