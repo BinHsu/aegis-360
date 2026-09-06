@@ -10,6 +10,9 @@ privacy-safe summaries when results exist.
 
 ## Experiment index
 
+- `analysis-proxy-60s-protocol.md`: lossless 960x480/10-fps FFV1 bundle
+  contract, bounded direct-source pixel equivalence, full Skiing acquisition,
+  timestamp lineage, atomic publication, and external-pixel lifecycle.
 - `geometry-validation.md`: coordinate, seam, pole, FOV and interpolation
   correctness.
 - `ffmpeg-v360-dynamic-path.md`: installed `v360` command semantics, quality,

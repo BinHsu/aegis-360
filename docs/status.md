@@ -1,17 +1,16 @@
 # Project status
 
-Status: full-source motion-onset segmentation rejected as sole chapter signal
+Status: canonical full-source analysis proxy accepted
 
 ## Current conclusion
 
 The repository has an executable offline analysis-to-render architecture for
-monoscopic equirectangular input on the M4/16 GB reference machine. It now
-includes typed continuous-onset segmentation and a persistent numeric global
-planner. A 380–415 replay is production eligible and correctly retains the
-existing cardinal-0 baseline. The complete 616.392-second replay then exposes
-the limiting assumption: all seven motion onsets are non-story events, leaving
-one segment whose three samples cannot support a whole-film view claim. The
-full-source plan therefore abstains and remains non-production.
+monoscopic equirectangular input on the M4/16 GB reference machine. Full-source
+motion onset and the active scene threshold both fail to recover the gradual
+Skiing story states, so neither may remain the sole chapter signal. A canonical
+lossless 960x480/10-fps FFV1 proxy now avoids paying the 5K VP9 decode cost for
+each new low-cost signal. It preserves the declared analysis pixels exactly in
+the bounded direct-source gate and has complete source/config/proxy lineage.
 
 ## Accepted evidence
 
@@ -67,6 +66,23 @@ full-source plan therefore abstains and remains non-production.
 The exact artifact hashes are recorded in
 `docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`.
 
+## Canonical analysis proxy
+
+- The closed config fixes Matroska/FFV1, 960x480, yuv420p, 10 fps CFR, SAR 1:1,
+  video-only output, two threads and exact filter order.
+- The atomic builder refuses overwrite, checks the source before and after,
+  validates whole-container stream count, records rational timeline mapping,
+  validates the exact manifest, and only then renames the bundle into place.
+- The 380–440-second gate is 60.000 seconds and 85,943,004 bytes. Two proxy
+  decodes and a direct-source decode match frame for frame.
+- The full Skiing proxy is 616.400 seconds, 6,164 frames and 1,003,334,254
+  bytes. Acquisition took 249.783 seconds; two decoded-frame digest runs match.
+- The proxy contains external pixels and is never committed. It grants no
+  semantic, story-boundary, camera-path or render authority.
+
+Exact commands, hashes, the initial duration-metadata failure and the corrected
+result are in `docs/experiments/analysis-proxy-60s-protocol.md`.
+
 ## Planner contract
 
 `aegis360.typed-global-story-plan.v1` accepts only the typed timeline route and
@@ -102,16 +118,17 @@ version; they must not be silently reinterpreted.
   shake versus intentional motion still requires segment-aware treatment.
 - The numeric planner emits decisions, not renderer commands. A separate
   validated adapter remains required before any production render.
+- Proxy RSS, swap and thermal behavior were not measured; only elapsed time,
+  bytes, metadata, hashes and decoded-pixel equivalence are established.
 
 ## Active acceptance gate
 
-Create one reusable checksummed low-resolution proxy, then add a low-cost
-visual-state signal for gradual activity/context changes without repeatedly
-decoding the 5K VP9 source.
-Keep frame-difference onset as motion-peak corroboration rather than the sole
-boundary source. Evaluate proposals sparsely against the known lift → own
-skiing → other-skiers sequence before rebuilding typed boundaries. Only
-complete observed segment evidence may reach the renderer gate.
+Add a low-cost visual-state signal over the canonical proxy for gradual
+activity/context changes. It must emit a separate path-free proposal contract,
+use persistence/hysteresis, and grant no boundary by itself. Freeze a blind,
+sparse review protocol before observing its Skiing proposals. Keep
+frame-difference onset as motion-peak corroboration. Only complete observed
+segment evidence may reach the renderer gate.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -119,13 +136,15 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests -q`: 508 tests pass.
+- `python3 -m unittest discover -s tests -q`: 512 tests pass before final
+  documentation integration.
+- Proxy-focused suite: 4 tests pass after the real Matroska-duration fix.
 - Typed packet/relevance/utility/continuity/planner integration: 53 tests pass.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Checkpoint and push the full-source negative result and transient onset review
-runner. Then design the smallest offline chapter-proposal experiment that can
-recover gradual context/activity changes without per-frame VLM inference.
+Checkpoint and push the canonical proxy contract and evidence. Then implement
+the smallest deterministic coarse visual-state feature stream over that proxy;
+do not change existing scene/onset schemas and do not render.
