@@ -1,25 +1,24 @@
 # Current handoff
 
-Updated: 2026-09-06T17:10:00+08:00
+Updated: 2026-09-06T18:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 00f9c76
-Remote status: `origin/main` at `00f9c76` before this checkpoint
-Working tree at checkpoint: proposal result and blind review schedule contract
+Baseline commit: 26e9870
+Remote status: `origin/main` at `26e9870` before this checkpoint
+Working tree at checkpoint: blind negative result and transient renderer
 
 ## Objective
 
 Build an offline 360-video auto-director for ordinary viewers on a fanless M4
 MacBook Air with 16 GB unified memory. The proposal policy has run exactly once;
-the next gate is a neutral private/public review schedule and transient packets.
+the first blind review is complete and rejects that policy as a chapter detector.
 
 ## Last completed milestone
 
-Commit `00f9c76` freezes the visual-state feature stream, proposal policy and
-blind protocol before real feature inspection. The one permitted execution
-emits review-only proposals at seconds 46 and 297; a qualified second-337 peak
-is separation-suppressed. Frozen hash-lattice controls are 200, 140 and 460.
-No rule was retuned, and no proposal has semantic or boundary authority.
+Commit `26e9870` records the frozen proposal result and exact private/public
+schedule contract. The one permitted execution emits review-only proposals at
+seconds 46 and 297; frozen hash-lattice controls are 200, 140 and 460. No rule
+was retuned, and no proposal has semantic or boundary authority.
 
 This checkpoint adds an exact private schedule/public neutral projection
 contract. A 64-hex private salt is file-only; salted opaque IDs and order are
@@ -30,9 +29,9 @@ yaw/FOV, scores, hashes, candidate/control labels and source rationales.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `00f9c76`.
-- Expected dirty files are the schedule config/module/CLI/test, proposal-result
-  experiment record, documentation index, status and this handoff.
+- Expected branch/remote before checkpoint: `main` at `26e9870`.
+- Expected dirty files are renderer module/CLI/test, the updated proposal-result
+  experiment record, status and this handoff.
 - External proxy, feature/proposal JSON, private key/salt and review pixels stay
   untracked.
 
@@ -41,9 +40,10 @@ yaw/FOV, scores, hashes, candidate/control labels and source rationales.
 - Proposal artifact SHA:
   `eeddadd92e86478aea79d4659b0ed8edb0fbcc92e74ddc57b7f051a29fa146f3`.
 - Policy/protocol hashes are recorded in the proposal experiment document.
-- Schedule focused suite: 5 tests pass; full suite: 531 tests pass.
+- Renderer focused suite: 3 tests pass; full suite: 534 tests pass.
 - Exact rebuild rejects private HMAC/ID/order and public bundle-ID mutations.
-- Schedule implementation and audits did not inspect external artifacts.
+- Renderer separates lineage/source and proxy hashes, uses proxy time, strips
+  PNG metadata, validates exact refs and publishes atomically.
 
 ## Rejected
 
@@ -53,13 +53,14 @@ yaw/FOV, scores, hashes, candidate/control labels and source rationales.
   proposals.
 - Treating proposal coverage as sufficient segment-evidence coverage.
 - Requiring the owner to label proposal packets.
+- The frozen persistent-state policy as a chapter detector: both proposals are
+  observed negatives and one of three controls exposes a miss.
 
 ## Pending
 
-- Commit and push the proposal result and review-schedule contract.
-- Create a separate external salt, then generate and hash both schedules.
-- Implement an exact-validated transient four-cardinal packet renderer.
-- Run two independent fresh-context reviews before any typed boundary.
+- Commit and push the renderer and blind negative result.
+- Audit descriptor values around 46/200/297 without retuning the frozen policy.
+- Precommit a successor signal hypothesis and evaluate it on separate evidence.
 - Chapters longer than about 90 seconds or evidence gaps over 30 seconds must
   receive denser segment review or abstain. No video awaits owner review.
 
@@ -73,9 +74,9 @@ git diff --check
 git status --short
 ```
 
-After checkpointing, create the private salt and exact schedules. Freeze their
-hashes before implementing/rendering the neutral packets. Do not modify old
-scene/onset schemas and do not infer boundaries from proposal times.
+After checkpointing, inspect why RGB/persistence descriptors favor the two
+observed negatives over the second-200 transition. Do not retune the frozen
+policy or infer boundaries from proposal times.
 
 ## External artifacts
 
@@ -85,9 +86,9 @@ Set `AEGIS_DATA_DIR` locally. The full proxy is under
 
 ## Active agents
 
-None. Schedule implementation and independent leakage audit are complete. The
-main agent owns external schedule generation, packet rendering and review
-dispatch. Proposal execution must not be rerun or retuned.
+None. Two fresh no-history reviewers completed independently with exact outcome
+agreement. The main agent owns integration and causal failure analysis;
+proposal execution must not be rerun or retuned.
 
 ## Safety and claims
 
@@ -99,3 +100,26 @@ dispatch. Proposal execution must not be rerun or retuned.
 - The 0.08 proposal floor is a pre-data hypothesis, not a probability.
 - Proposals cannot create semantics, boundaries, camera paths or renders.
 - Git history is the archive; status and handoff contain current state only.
+
+## Frozen review schedules
+
+- Private schedule SHA:
+  `7f09f628c30575ddd9934816e2e2af32c219fb2b494ef91d14bccc8d81b81463`.
+- Public reviewer-index SHA:
+  `dd26f02b347467628aad92504070fd6399a1f00a8bc753ce3a49a239f7cad0b4`.
+- The external salt is mode 0600 and its raw value is neither logged nor
+  committed. Five packets were published atomically.
+- Public transient bundle: five packets and 30 sanitized 960x540 RGB PNGs;
+  path-independent tree SHA
+  `7163a4f54c6daf919a40465dad785050ba0b12061da790b6a33096114c461159`.
+
+## Blind result
+
+- Both reviewers: packet 2 `story_change`; packets 1/3/4/5
+  `no_semantic_change`.
+- Post-review mapping: packet 2 is the second-200 control; packets 1 and 4 are
+  proposals at seconds 297 and 46. Controls 140 and 460 are observed negatives.
+- The policy therefore emits two observed negatives and misses one observed
+  control transition. This rejects promotion but is not a calibrated rate.
+- Next: read-only descriptor audit at 46/200/297, then precommit a successor
+  signal hypothesis on separate evidence. No production video is authorized.

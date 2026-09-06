@@ -1,6 +1,6 @@
 # Project status
 
-Status: frozen chapter proposals emitted; neutral blind review scheduling next
+Status: first gradual chapter policy rejected by blind control experiment
 
 ## Current conclusion
 
@@ -15,6 +15,7 @@ A deterministic 1-fps visual-state stream derives 616 path-free compact rows
 from the full proxy in 22.93 seconds. Its values remained uninspected until the
 persistent-state proposal policy and blind review protocol were frozen. The
 policy then ran once, emitted two review-only proposals and was not retuned.
+Blind review rejects both while independently detecting one control transition.
 
 ## Accepted evidence
 
@@ -108,12 +109,11 @@ result are in `docs/experiments/analysis-proxy-60s-protocol.md`.
   297. A qualified peak at 337 is suppressed by the 45-second separation rule.
 - Deterministic unlabeled controls resolve to seconds 200, 140 and 460 without
   pixel, feature, label or hidden-key inspection.
-- The private schedule/public neutral projection contract derives salted opaque
-  packet IDs, exact ordering and four anonymous views. The public projection
-  contains no absolute time, cardinal direction, score, hash or source role.
-- The exact coordinator validator rebuilds both outputs and detects identifier,
-  order, HMAC and public bundle mutations before atomic publication. Shared
-  workspace reviewer isolation remains procedural, not a filesystem boundary.
+- Two fresh-context reviewers agree on all five outcomes: both proposals are
+  `no_semantic_change`; the second-200 control alone is `story_change` from a
+  populated lift/station area to an open slope.
+- The exact private/public projection and sanitized transient renderer expose
+  no time, cardinal geometry, score, proof hash or proposal/control role.
 
 ## Planner contract
 
@@ -156,14 +156,15 @@ version; they must not be silently reinterpreted.
   is bounded, but arbitrary-duration constant-memory JSON is not established.
 - The absolute proposal score floor of 0.08 is a pre-data hypothesis, not a
   calibrated probability or accepted chapter threshold.
+- The frozen persistent-state proposal policy misses the observed second-200
+  change and emits two observed negatives. It is rejected as a chapter detector;
+  this five-packet result is not a calibrated precision/recall estimate.
 
 ## Active acceptance gate
 
-Freeze and publish the private schedule plus exact public neutral projection,
-then package transient four-view pixels without private metadata. Keep
-frame-difference onset as evaluation-only hard negatives. Proposals require two
-independent fresh-context reviews before any typed boundary; only complete
-observed segment evidence may reach the renderer gate.
+Explain why the frozen descriptors rank 46/297 above the observed second-200
+transition without retuning this policy. A replacement signal hypothesis must
+be precommitted and tested on separate evidence before any typed boundary.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -171,7 +172,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests -q`: 531 tests pass before final
+- `python3 -m unittest discover -s tests -q`: 534 tests pass before final
   documentation integration.
 - Visual-state suite: 6 tests pass after the real FFmpeg count fix.
 - Chapter-proposal suite: 8 tests pass.
@@ -181,6 +182,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Checkpoint and push the proposal result and blind schedule contract. Then
-create the private salt externally, build and hash the private/public schedule,
-and implement the transient neutral packet renderer. Do not infer boundaries.
+Checkpoint and push the blind negative result plus renderer contract. Then run
+a read-only causal signal audit around 46/200/297 and design a separate
+precommitted successor hypothesis. Do not infer boundaries or render video.

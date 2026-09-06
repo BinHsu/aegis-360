@@ -1,6 +1,6 @@
 # Skiing gradual chapter proposals v1
 
-Status: frozen proposal run complete; semantic review not started
+Status: blind review complete; proposal policy rejected as chapter detector
 
 ## Freeze boundary
 
@@ -55,9 +55,46 @@ missed-proposal probes, not assumed negative ground truth.
 
 ## Next gate
 
-Create a salted private schedule and an exact public neutral projection using
-the separately tested schedule contract. Freeze both artifact hashes before
-rendering. Reviewers receive only the standalone public bundle in fresh
-no-history contexts. The current result grants review scheduling only: no
+A salted private schedule and exact public neutral projection were generated
+once using the separately tested schedule contract. The private schedule SHA
+is `7f09f628c30575ddd9934816e2e2af32c219fb2b494ef91d14bccc8d81b81463`;
+the public reviewer-index SHA is
+`dd26f02b347467628aad92504070fd6399a1f00a8bc753ce3a49a239f7cad0b4`.
+The raw salt remains external with owner-only permissions and is not recorded.
+
+Render a standalone transient public bundle whose media references exactly
+match the public projection. Reviewers receive only that bundle in fresh
+no-history contexts. The current result grants packet rendering only: no
 semantic label, typed boundary, candidate selection, production eligibility,
-camera command or render command exists.
+camera command or production render command exists.
+
+## Blind review result
+
+The exact public bundle contains five packets and 30 sanitized 960x540 RGB
+PNGs. Its path-independent tree SHA is
+`7163a4f54c6daf919a40465dad785050ba0b12061da790b6a33096114c461159`.
+Two fresh no-history reviewers independently inspected only the public index
+and its declared media. Their five categorical outcomes agree exactly:
+
+- packet 1: `no_semantic_change`;
+- packet 2: `story_change`;
+- packet 3: `no_semantic_change`;
+- packet 4: `no_semantic_change`;
+- packet 5: `no_semantic_change`.
+
+Both describe packet 2 as a sustained change from a populated lift/station
+area to an open snow slope. Both note ordinary continuous travel in the other
+packets and a single-row projection/capture artifact in packet 1.
+
+Only after both reviews were fixed was the coordinator mapping opened. Packet
+2 is the second-200 control. Packets 1 and 4 are the second-297 and second-46
+proposals respectively; packets 3 and 5 are controls at seconds 140 and 460.
+Thus both emitted proposals are observed negatives while one of three
+unlabeled controls exposes a miss. The hidden key confirms only the coarse
+ordered progression lift/transport → own skiing/terrain → other skiers and
+explicitly contains no exact transition time.
+
+This is a bounded rejection, not a calibrated precision/recall estimate. The
+policy must not be threshold-tuned on this result or promoted to typed-boundary
+authority. Next, inspect why the persistent visual descriptors favor 46/297
+over 200 and design a new precommitted signal hypothesis on separate evidence.
