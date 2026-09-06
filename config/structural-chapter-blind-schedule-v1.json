@@ -1,0 +1,102 @@
+{
+  "cardinal_candidates": [
+    {"candidate_id": "context:cardinal:0", "horizontal_fov_degrees": 110.0, "order": 0, "pitch_degrees": 0.0, "yaw_degrees": 0.0},
+    {"candidate_id": "context:cardinal:1", "horizontal_fov_degrees": 110.0, "order": 1, "pitch_degrees": 0.0, "yaw_degrees": 90.0},
+    {"candidate_id": "context:cardinal:2", "horizontal_fov_degrees": 110.0, "order": 2, "pitch_degrees": 0.0, "yaw_degrees": -180.0},
+    {"candidate_id": "context:cardinal:3", "horizontal_fov_degrees": 110.0, "order": 3, "pitch_degrees": 0.0, "yaw_degrees": -90.0}
+  ],
+  "config_id": "old-ghost-road-structural-chapter-blind-schedule-v1",
+  "isolation": {
+    "reviewer_may_access_conversation_history": false,
+    "reviewer_may_access_network": false,
+    "reviewer_may_access_other_review": false,
+    "reviewer_may_access_repository": false,
+    "reviewer_receives": ["sanitized-bundle", "public-reviewer-index"]
+  },
+  "presentation": {
+    "algorithm": "HMAC-SHA256",
+    "bundle_hmac_preimage": "bundle|selection_proof_sha256|schedule_config_sha256",
+    "bundle_id": "review-plus-first-20-lowercase-hex-of-bundle-hmac",
+    "center_rational": "reduced-fraction-positive-denominator-base10-numerator-slash-base10-denominator",
+    "collision_rule": "reject-full-order-hmac-or-truncated-identifier-collision",
+    "hmac_message_encoding": "exact-utf8-no-newline",
+    "packet_id": "packet-plus-first-20-lowercase-hex-of-id-hmac",
+    "packet_hmac_preimage": "selection_proof_sha256|schedule_config_sha256|packet-v1|event_id|signal_id|packet_sha256|center-numerator/center-denominator",
+    "salt_file": "exactly-one-lowercase-64-hex-line-owner-only",
+    "salt_serialization": "private-artifact-contains-sha256-of-raw-32-byte-salt-only-never-raw-salt-or-path",
+    "sort_hmac_preimage_prefix": "order|",
+    "identifier_hmac_preimage_prefix": "id|"
+  },
+  "public_projection": {
+    "anonymous_views": [
+      {"layout_position": "top_left", "view_id": "view:00"},
+      {"layout_position": "top_right", "view_id": "view:01"},
+      {"layout_position": "bottom_left", "view_id": "view:02"},
+      {"layout_position": "bottom_right", "view_id": "view:03"}
+    ],
+    "forbidden_fields": ["absolute_time", "source_id", "event_id", "signal_id", "lineage_packet_sha256", "selection_proof_sha256", "selection_digest", "selection_rank", "score", "expected_class", "yaw_degrees", "pitch_degrees", "horizontal_fov_degrees", "candidate_id"],
+    "media_reference": "media/packet-opaque-id/row-NN.png",
+    "row_roles": ["early_far", "early_near", "transition_before", "transition_after", "late_near", "late_far"]
+  },
+  "render": {
+    "atomic_publish": "sibling-stage-directory-then-rename-no-overwrite",
+    "panel_height": 270,
+    "panel_width": 480,
+    "png_chunks_allowed": ["IHDR", "IDAT", "IEND"],
+    "source_edge_rule": "fail-never-clamp-duplicate-or-invent"
+  },
+  "review": {
+    "classification_consistency": {
+      "capture_artifact": "artifact_evidence-present",
+      "no_semantic_change": "persistent_difference-not_persistent-and-artifact_evidence-absent-and-both-persistence-fields-not-unclear",
+      "story_change": "both-persistence-fields-observed-and-persistent_difference-persistent-and-transition_support-not-contradicts-and-artifact_evidence-absent",
+      "otherwise": "abstain"
+    },
+    "outcomes": ["story_change", "capture_artifact", "no_semantic_change", "abstain"],
+    "packet_count": 8,
+    "questions": [
+      {"field": "early_persistence", "outcomes": ["observed", "not_observed", "unclear"], "question": "Across early_far and early_near, is the visible spatial structure consistent enough to describe one sustained early state?"},
+      {"field": "late_persistence", "outcomes": ["observed", "not_observed", "unclear"], "question": "Across late_near and late_far, is the visible spatial structure consistent enough to describe one sustained late state?"},
+      {"field": "persistent_difference", "outcomes": ["persistent", "not_persistent", "unclear"], "question": "Comparing the sustained early and late rows, is there a spatial-structure difference that persists on both sides?"},
+      {"field": "transition_support", "outcomes": ["supports", "contradicts", "insufficient"], "question": "Do transition_before and transition_after support the same comparison, contradict it, or provide insufficient evidence?"},
+      {"field": "artifact_evidence", "outcomes": ["present", "absent", "unclear"], "question": "Could seam distortion, blur, exposure, occlusion, projection, or another capture effect account for the apparent difference?"},
+      {"field": "classification", "outcomes": ["story_change", "capture_artifact", "no_semantic_change", "abstain"], "question": "Choose the most conservative closed outcome supported by the six rows."}
+    ],
+    "result_artifact": {
+      "authority": "blind-observation-only-no-semantic-boundary-camera-or-render-authority",
+      "completeness": "exactly-one-response-for-each-of-the-eight-public-packet-ids-in-public-presentation-order-no-missing-extra-or-duplicate",
+      "inputs": ["public-index-sha256", "bundle-tree-sha256", "schedule-config-sha256"],
+      "privacy": "no-principal-identity-source-time-signal-score-peer-result-path-pixel-or-free-text",
+      "response_fields": ["packet_id", "early_persistence", "late_persistence", "persistent_difference", "transition_support", "artifact_evidence", "classification"],
+      "reviewer_slot_id": "reviewer-plus-20-lowercase-hex-opaque-coordinator-assignment",
+      "schema_version": "aegis360.structural-chapter-blind-review.v1",
+      "top_level_fields": ["schema_version", "reviewer_slot_id", "inputs", "responses", "privacy", "authority"]
+    },
+    "reviewer_count": 2,
+    "reviewers_must_be_distinct": "two-distinct-reviewer-slot-ids-plus-coordinator-private-distinct-principal-attestation",
+    "reveal_order": "freeze-both-exact-review-artifact-sha256-values-before-private-mapping-or-structural-score-access"
+  },
+  "review_rows": [
+    {"relative_offset_seconds": {"denominator": 4, "numerator": -15}, "row_role": "early_far"},
+    {"relative_offset_seconds": {"denominator": 4, "numerator": -9}, "row_role": "early_near"},
+    {"relative_offset_seconds": {"denominator": 4, "numerator": -1}, "row_role": "transition_before"},
+    {"relative_offset_seconds": {"denominator": 4, "numerator": 1}, "row_role": "transition_after"},
+    {"relative_offset_seconds": {"denominator": 4, "numerator": 9}, "row_role": "late_near"},
+    {"relative_offset_seconds": {"denominator": 4, "numerator": 15}, "row_role": "late_far"}
+  ],
+  "schema_version": "aegis360.structural-chapter-blind-schedule-config.v1",
+  "selection": {
+    "packet_count": 8,
+    "selection_proof_sha256": "ad6f29b1cf34374ad3130afa3bd2535ac81676fdb4300a2891fb5c6c8712a567",
+    "source_sha256": "4b1264a6c5965742bf70517560dc59a7818c4d9c6e210a260c70d8b19385fafc"
+  },
+  "evaluation": {
+    "adequate_classes": "at-least-two-unanimous-story_change-and-at-least-two-unanimous-no_semantic_change-with-all-eight-unanimous-in-those-two-classes",
+    "inconclusive": ["reviewer-disagreement", "capture_artifact", "abstain", "class-imbalance"],
+    "no_backfill": true,
+    "ordering_gate": "minimum-story-score-strictly-greater-than-maximum-no-semantic-change-score",
+    "ordering_failure": "reject",
+    "ordering_success": "replicated-within-source-no-boundary-camera-or-render-authority",
+    "score_contract_sha256": "7f8b05656986030715f226f9c9c33fc375e1afe3e361fc37b54651851a8aa5cd"
+  }
+}

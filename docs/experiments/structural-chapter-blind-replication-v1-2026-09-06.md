@@ -1,12 +1,15 @@
 # Structural chapter blind replication v1
 
-Status: selection proof frozen; no new score or pixel
+Status: selection proof and anonymous review schedule frozen; no new score or pixel
 
 Selection-policy SHA-256:
 `c4a1f411e26de8061c46f49e7db43474b4aeb75839d7d7f140cc38bd5df2e6cb`.
 
 Selection-proof SHA-256:
 `ad6f29b1cf34374ad3130afa3bd2535ac81676fdb4300a2891fb5c6c8712a567`.
+
+Anonymous-schedule config SHA-256:
+`561ece66e9b90cdb4e78703b3beb214298589d817518dbf25930d79eb926445f`.
 
 ## Claim boundary and staged lineage
 
@@ -69,6 +72,13 @@ handling, HMAC packet/order IDs, exact public projection, PNG metadata stripping
 and atomic no-overwrite publication. Public data may expose only neutral row
 roles, anonymous view slots and safe relative refs—not time, IDs, score, digest,
 direction, selection rank or development proximity.
+
+The frozen schedule now does so for exactly eight packets and six chronological
+rows at ±3.75, ±2.25 and ±0.25 seconds. Reviewer artifacts use opaque slots,
+closed observations and bind only the public-index, bundle-tree and schedule-
+config hashes. Reviewers receive an isolated sanitized bundle with no repository,
+network, conversation history or peer result. The reproducibility mapping above
+therefore stays coordinator-side; any reviewer access to it invalidates the run.
 
 Two fresh reviewers work independently. Only unanimous `story_change` and
 unanimous `no_semantic_change` packets enter ranking; at least two of each are

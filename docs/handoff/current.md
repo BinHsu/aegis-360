@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T22:25:00+08:00
+Updated: 2026-09-06T23:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: af27aca
-Remote status: `origin/main` at `af27aca`
-Working tree at checkpoint: selection-proof result documentation
+Baseline commit: 228b98c
+Remote status: `origin/main` at `228b98c`
+Working tree at checkpoint: anonymous schedule config freeze
 
 ## Objective
 
@@ -65,8 +65,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Design and freeze the selection-proof-bound private schedule and salted
-  public index before any pixels or structural scores are acquired.
+- Implement and synthetically test the frozen selection-proof-bound private
+  schedule, public projection and reviewer-result contract.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -90,8 +90,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. The main agent owns the one metadata-only real
-  proof build and its integration.
+- No delegated work is active. Independent schedule and review-contract audits
+  passed; implementation may proceed without external artifact access.
 
 ## Safety and claims
 

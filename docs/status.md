@@ -168,10 +168,10 @@ version; they must not be silently reinterpreted.
 
 ## Active acceptance gate
 
-The 26-row structural selection proof is frozen at
-`ad6f29b1…2a567`: eight selected, nine development-excluded, four separation-
-rejected and five after cap. Freeze its proof-bound anonymous schedule before
-acquiring any review pixel or structural score.
+The 26-row structural selection proof is frozen at `ad6f29b1…2a567`; its exact
+eight-packet anonymous schedule is frozen at `561ece66…6445f`. Implement and
+synthetically validate private/public exact rebuild before acquiring any review
+pixel or structural score.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -189,5 +189,5 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Design and freeze the proof-bound private/public salted review schedule.
+Implement the proof-bound private/public salted review schedule and its tests.
 selection over unused Old Ghost events. Do not infer boundaries or render video.
