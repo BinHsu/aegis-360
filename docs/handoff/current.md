@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T17:43:00+08:00
+Updated: 2026-09-06T18:04:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: d8058a3
-Remote status: push confirmed `origin/main` advanced to `d8058a3`
-Working tree at checkpoint: native-launcher milestone ready to commit
+Baseline commit: aa9a5c9
+Remote status: push confirmed `origin/main` advanced to `aa9a5c9`
+Working tree at checkpoint: retained OS-backend proof ready to commit
 
 ## Objective
 
@@ -89,13 +89,13 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `d8058a3`.
-- Expected dirty files: current docs, backend-shape/harness/tests, and the bounded
-  native-launcher source/build/test milestone while it is integrated.
+- Expected branch/remote before checkpoint: `main` at `aa9a5c9`.
+- Expected dirty files: this handoff plus the retained OS-backend module and tests.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 648 tests pass with one explicit host-only launcher gate skipped.
+- Full suite: 662 tests pass with two explicit host-only gates skipped.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
+- OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 
 ## Verified
 
@@ -113,8 +113,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Implement and audit the retained readonly/restricted OS-backend proof without
-  emitting a capability receipt or token.
+- Design the private coordinator binding between genuine retained launcher/backend
+  proofs and a non-authoritative manifest candidate without emitting a capability
+  receipt or token.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
@@ -147,6 +148,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
   audit and host integration. Main integrated the path-free SystemVersion hash and
   exact claim boundary. No capability token/receipt, model, real media or score
   acquisition is authorized.
+- Retained OS-backend proof passed independent ABI/parser/identity audit and
+  real-host observation; it still exposes no manifest derivation or authority
+  artifact.
 
 ## Safety and claims
 

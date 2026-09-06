@@ -583,6 +583,17 @@ described as eliminating TOCTOU. Expanding to a hostile same-UID host process
 requires a proven Darwin retained-object execution mechanism or a different
 backend architecture.
 
+The private retained OS-backend implementation subsequently passed independent
+Darwin ABI, binary-parser and identity-lifetime audit. The ordinary complete
+suite passes 662 tests with two explicit host-only gates skipped; the OS-backend
+host gate passes all 14 tests outside the enclosing sandbox. Four no-follow,
+close-on-exec descriptors retain the backend and system-version parents/leaves;
+bounded hashes, plist/kernel build equality, exact root UID/GID/modes, regular
+leaf types, link counts, restricted flags, effective non-writability, same-fsid
+read-only APFS facts, fat32 rows and the exact arm64e executable slice are
+revalidated. The proof has no public fact getter or authority derivation. Its
+test-native injection must never be accepted later as production authority.
+
 The bounded launcher implementation subsequently passed independent C bounds,
 argv, FD and build review. The ordinary complete suite passes 648 tests with one
 explicit host-only gate skipped; that gate passes all 11 tests outside the

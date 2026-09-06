@@ -150,11 +150,12 @@ evidence rather than semantic evidence.
 
 The audited runner now has non-authoritative codecs, bounded capture and retained
 asset proof, but no backend/coordinator or process-isolation/model-invocation claim.
-The next launcher contract uses a bounded length-prefixed pipe and locally hashes
+The native launcher uses a bounded length-prefixed pipe and locally hashes
 the exact policy bytes before `sandbox-exec -p`; the unchanged synthetic matrix
 passed this transport on the host. The OS backend proof is explicitly limited to
 readonly/restricted APFS vnode facts and does not claim cryptographic SSV
-attestation or eliminate the pathname-exec gap.
+attestation or eliminate the pathname-exec gap. Its private retained proof now
+passes independent ABI/parser/identity audit; it derives no manifest authority.
 
 Three independent macOS backend reviews reject signed App Sandbox and a bare VM
 for the frozen v1 contract. App Sandbox exposes no canonical compiled-policy
@@ -183,14 +184,15 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full suite: 648 tests pass with one explicit host-only launcher gate skipped.
+- Full suite: 662 tests pass with two explicit host-only gates skipped.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
+- OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 - Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Implement and audit the retained readonly/restricted OS-backend proof. Acquire no
-model or real media and construct no capability receipt or token until that gate
-and the later coordinator gate pass independent audit.
+Design the private coordinator binding between genuine retained launcher/backend
+proofs and a non-authoritative manifest candidate. Acquire no model or real media
+and construct no capability receipt or token before independent audit.
