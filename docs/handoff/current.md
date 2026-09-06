@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T17:05:00+08:00
+Updated: 2026-09-06T17:42:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 288d063
-Remote status: `origin/main` at `288d063`
-Working tree at checkpoint: audited runner codecs/capture ready to commit
+Baseline commit: e42f3ad
+Remote status: `origin/main` at `e42f3ad`
+Working tree at checkpoint: audited retained asset-tree proof ready to commit
 
 ## Objective
 
@@ -57,11 +57,11 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `288d063`.
-- Expected dirty files: handoff, runner codecs/capture and their tests.
+- Expected branch/remote before checkpoint: `main` at `e42f3ad`.
+- Expected dirty files: handoff, protocol, asset-proof implementation/tests.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 600 tests pass after runner codecs/capture integration.
+- Full suite: 609 tests pass after retained asset-tree integration.
 
 ## Verified
 
@@ -105,10 +105,10 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. The two-module trust audit PASS is scoped to
-  non-authoritative codecs and factual capture only.
-- Main owns integration and the next coordinator proof layer. No model, real
-  media or score acquisition.
+- No delegated work is active. Retained asset proof passed causal and vertical
+  audits after exact bounds and node-specific identity were frozen.
+- Main owns integration and capability-coordinator design. No model, real media
+  or score acquisition.
 
 ## Safety and claims
 

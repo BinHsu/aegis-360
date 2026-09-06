@@ -38,7 +38,9 @@ aggregate schemas and synthetic case matrix are design authority only; no runner
 production isolation PASS exists yet. Non-authoritative structural codecs and a
 descriptor-bound, selector-driven capture primitive now pass 22 focused tests and
 independent trust audit. Every authority-bearing derivation still fails closed;
-the production backend, coordinator, asset proof and publisher remain absent.
+the production backend, coordinator and publisher remain absent. The retained
+asset-tree proof now independently derives a precommitted manifest through bounded
+descriptor-relative traversal and passes 9 focused tests plus causal/vertical audit.
 
 ## Question and claim boundary
 
@@ -465,10 +467,22 @@ for `synthetic_support`, whose empty form has no leaves and root-tree SHA-256 eq
 to SHA-256 of the empty byte string. Leaves are regular,
 no-follow and link-count one; mode is 0444 except runtime entrypoint 0555. The
 directory set is exactly the root and required proper ancestors, all 0555.
-Retained descriptors prove root/leaf device, inode, size and nanosecond-mtime
-stability. Tree hashing and exclusive publication reuse the media-tree line
+Retained descriptors preserve every node's device/inode identity and each leaf's
+size/timestamp evidence through the tree decision. Tree hashing reuses the media-tree line
 grammar and identity rules. `model_asset_sha256` in semantic evidence is SHA-256
 of canonical model-manifest bytes, not its content-tree digest.
+
+Asset-tree traversal is bounded before hashing: at most 4,096 leaves and path depth
+at most 16 segments. Every manifest size and matching leaf `fstat` size is at most
+16 GiB, the declared and observed sums are each at most 64 GiB, and each leaf's
+two sizes must equal; booleans are not sizes. All nodes share the root device and
+recheck no-follow parent/name binding, type, `st_uid` equal to the coordinator's
+effective UID, exact mode, device and inode. Leaves additionally recheck
+`st_nlink=1`, declared size, frozen ctime/mtime and content SHA. Directories re-list
+their exact child name/type/inode set; their size, nlink and timestamps are not
+identity fields. Duplicate retained inodes and leaf/ancestor prefix conflicts fail.
+These POSIX facts prove exact tree identity only; sandbox write denial, not 0444/
+0555 or absence/presence of ACLs/xattrs, owns runtime immutability.
 
 Runner policy `aegis360.sparse-story-runner-policy.v1` is path-free canonical JSON
 with exactly `schema_version`, `backend_manifest_sha256`,

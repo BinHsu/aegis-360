@@ -181,8 +181,8 @@ result publication and fail closed under mutation. No model or real media has
 been acquired and neither Stage A nor Stage B has run, so this remains contract
 evidence rather than semantic evidence.
 
-The audited runner now has non-authoritative codecs and bounded capture, but no
-backend/coordinator authority; no process-isolation or model-invocation claim exists.
+The audited runner now has non-authoritative codecs, bounded capture and retained
+asset proof, but no backend/coordinator or process-isolation/model-invocation claim.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -190,7 +190,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full suite: 600 tests pass after runner codecs/capture integration.
+- Full suite: 609 tests pass after retained asset-tree integration.
 - Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
