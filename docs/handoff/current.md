@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-07T00:35:00+08:00
+Updated: 2026-09-07T01:05:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: c0e0a3d
-Remote status: `origin/main` at `c0e0a3d`
-Working tree at checkpoint: frozen sanitized bundle documentation
+Baseline commit: 492c09e
+Remote status: `origin/main` at `492c09e`
+Working tree at checkpoint: frozen blind-review result documentation
 
 ## Objective
 
@@ -45,7 +45,7 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `c0e0a3d`.
+- Expected branch/remote before checkpoint: `main` at `492c09e`.
 - Expected dirty files: result documentation and handoff only.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
@@ -65,10 +65,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Copy the closed bundle to an opaque transient path, assign two fresh isolated
-  reviewers, and freeze both exact review hashes.
-- Do not acquire structural scores or reveal the private mapping before both
-  reviews freeze.
+- Implement and synthetically test a label-free score artifact adapter using
+  only the already frozen descriptor subset and proof-selected rational times.
+- Keep review classifications unopened until the score artifact hash freezes.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -92,8 +91,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active yet. The next two agents must use `fork_turns=none`,
-  access only the opaque bundle path, and never access repo/network/peer output.
+- No delegated work is active. Both fresh isolated reviewer artifacts are
+  frozen and exact-validate; neither classification set has been aggregated.
 
 ## Safety and claims
 

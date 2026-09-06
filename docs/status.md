@@ -172,7 +172,9 @@ The 26-row structural selection proof is frozen at `ad6f29b1…2a567`; its exact
 eight-packet anonymous schedule is frozen at `3964162f…0d8ba`. Its private/
 public exact rebuild, renderer, canonical bundle-tree and joined review gate pass
 synthetic tests. The exact 48-image bundle is frozen at `4f55b456…3c000`.
-Assign two fresh isolated reviewers and freeze both result hashes before scores.
+Two fresh isolated reviews are frozen at `71998fe5…7930` and
+`37a87a20…8eed`. Implement the already frozen label-free score adapter without
+opening their classifications, then run the raw-byte coordinator once.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -190,5 +192,5 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Run two independent isolated blind reviews; do not acquire structural scores yet.
+Implement and test the frozen label-free structural-score artifact adapter.
 selection over unused Old Ghost events. Do not infer boundaries or render video.

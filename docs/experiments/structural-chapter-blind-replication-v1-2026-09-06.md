@@ -90,6 +90,17 @@ canonical closed-tree SHA is
 an independent mechanical pass confirmed exact refs, dimensions, metadata-free
 chunks, index byte identity, no symlinks and no extras.
 
+Two fresh isolated reviewers each inspected all 48 images before either result
+was opened or any structural score was acquired. Frozen review artifact SHAs are
+`71998fe544b413d38c4c93dbc947afe292bc6ef7889a8ace3b98941408fe7930` and
+`37a87a207de81e4641392aa1717f39806c4361b5a96d0de0eb07108ac0648eed`.
+Both closed schemas exact-validate with eight ordered responses and distinct
+opaque slots. The coordinator-private, identity-free distinct-principal
+attestation SHA is
+`0efe10192a4441f75910932992f2a8c0c0613f4fcade078860d575428cae4bd6`.
+Review classifications remain unopened while the already frozen label-free
+score adapter is implemented and tested.
+
 Two fresh reviewers work independently. Only unanimous `story_change` and
 unanimous `no_semantic_change` packets enter ranking; at least two of each are
 required. `min(story score) > max(no-change score)` passes. Adequate balance
