@@ -1,0 +1,5 @@
+{
+  "effective_timestamp_rule": "first_sustained_high",
+  "policy_id": "continuous-onset-first-sustained-high-v1",
+  "schema_version": "aegis360.typed-segment-boundary-policy.v1"
+}

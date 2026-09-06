@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T08:58:56+08:00
+Updated: 2026-09-06T09:05:34+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 9a9a36b
-Remote status: `origin/main` is 9a9a36b before typed onset semantics
-Working tree at checkpoint: typed semantic packet/evidence, CLIs, tests and docs only
+Baseline commit: f650337
+Remote status: `origin/main` is f650337 before typed boundary rejection
+Working tree at checkpoint: typed boundary adapter, CLI, policy, tests and docs only
 
 ## Objective
 
@@ -177,7 +177,7 @@ in the benchmark manifest and experiment record.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 443 tests pass.
+- `python3 -m unittest discover -s tests -q`: 452 tests pass.
 - Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
@@ -201,8 +201,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Add a deterministic typed-boundary rejection artifact for the semantic
-  no-change result; do not alter the v1 timeline or render.
+- Audit whether one-sample release gaps truncate continuous-onset support;
+  calibrate on held-out evidence before changing the policy contract.
 
 ## Next commands
 

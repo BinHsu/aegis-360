@@ -112,3 +112,9 @@ SHA is `a472aff7ca25ed5708d2f1477ee12af8668a26a04fe77dbe3399b1df80fb30d0`.
 Temporary review pixels were deleted. The earlier claim that 390 seconds was a
 proven late boundary is withdrawn; segment 0000 remains an honest relevance
 abstention because its composition changes substantially within the segment.
+
+The deterministic typed-boundary adapter maps this negative observation to
+`rejected` with a null effective timestamp and zero authorized boundaries. Its
+artifact SHA is
+`4d8e7050ebeb535eec1886b933ad17f49e33be90ab8ab53ef48a3ecd15117542`.
+No timeline, plan or render is changed.

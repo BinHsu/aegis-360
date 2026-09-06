@@ -190,3 +190,9 @@ not invented. `aegis360.continuous-onset-semantic-evidence.v1` permits closed
 story-change, capture-artifact, no-change or abstain observations. Even a
 complete story-change observation emits no boundary, view or render authority;
 a deterministic typed-boundary adapter remains a separate gate.
+
+`aegis360.typed-segment-boundaries.v1` is that deterministic adapter. It covers
+every onset proposal in order, exact-validates its packet/evidence, and emits
+authorized, rejected or abstained dispositions. Authorization alone uses the
+closed `first_sustained_high` rule; rejected and abstained rows must have a null
+effective timestamp. Boundary authority never grants a camera choice or render.

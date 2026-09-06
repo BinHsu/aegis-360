@@ -197,4 +197,4 @@ Skiing A scores `1 / partial_focus`, then loses pairwise preference to baseline.
 Baseline's lift/skier cues and smoother transition are stronger; A is slightly
 abrupt. Numeric persistent story DP now rejects no-gain/cost-deficient switches,
 requires complete utility; closed narrative edges bind adjacent packets/candidates without utility;
-Skiing v2 keeps c0/c0. The 386.25–386.5 motion onset is semantically no-change; segment 0000 abstains and no new boundary/render is authorized.
+Skiing v2 keeps c0/c0. The 386.25–386.5 motion onset is semantically rejected; typed boundary count is zero and no timeline/render changes.
