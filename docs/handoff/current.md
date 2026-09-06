@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-07T00:15:00+08:00
+Updated: 2026-09-07T00:35:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 87783d5
-Remote status: `origin/main` at `87783d5`
-Working tree at checkpoint: renderer/coordinator integration
+Baseline commit: c0e0a3d
+Remote status: `origin/main` at `c0e0a3d`
+Working tree at checkpoint: frozen sanitized bundle documentation
 
 ## Objective
 
@@ -45,9 +45,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `87783d5`.
-- Expected dirty files: structural renderer/coordinator modules, CLIs, tests and
-  handoff.
+- Expected branch/remote before checkpoint: `main` at `c0e0a3d`.
+- Expected dirty files: result documentation and handoff only.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
 - Full suite: 557 tests pass after renderer/coordinator integration.
@@ -66,9 +65,10 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Render the exact 48-image sanitized review bundle from the frozen source and
-  schedule; freeze its canonical tree hash before assigning reviewers.
-- Do not acquire structural scores until both independent review hashes freeze.
+- Copy the closed bundle to an opaque transient path, assign two fresh isolated
+  reviewers, and freeze both exact review hashes.
+- Do not acquire structural scores or reveal the private mapping before both
+  reviews freeze.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -92,8 +92,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. The main agent owns the one real renderer run;
-  no review has been assigned and no structural score has been acquired.
+- No delegated work is active yet. The next two agents must use `fork_turns=none`,
+  access only the opaque bundle path, and never access repo/network/peer output.
 
 ## Safety and claims
 

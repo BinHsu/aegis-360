@@ -171,7 +171,8 @@ version; they must not be silently reinterpreted.
 The 26-row structural selection proof is frozen at `ad6f29b1…2a567`; its exact
 eight-packet anonymous schedule is frozen at `3964162f…0d8ba`. Its private/
 public exact rebuild, renderer, canonical bundle-tree and joined review gate pass
-synthetic tests. Render and freeze the isolated bundle before assigning reviewers.
+synthetic tests. The exact 48-image bundle is frozen at `4f55b456…3c000`.
+Assign two fresh isolated reviewers and freeze both result hashes before scores.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -189,5 +190,5 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Render and freeze the exact sanitized structural blind-review bundle.
+Run two independent isolated blind reviews; do not acquire structural scores yet.
 selection over unused Old Ghost events. Do not infer boundaries or render video.

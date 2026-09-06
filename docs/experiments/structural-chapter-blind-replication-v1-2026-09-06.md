@@ -80,6 +80,16 @@ config hashes. Reviewers receive an isolated sanitized bundle with no repository
 network, conversation history or peer result. The reproducibility mapping above
 therefore stays coordinator-side; any reviewer access to it invalidates the run.
 
+The one exact schedule build produced private schedule SHA
+`e5e8d27d443829181b1cf61dd04d492f973d9a81043f9ac023ef4addc2dd924f`
+and public-index SHA
+`f107cfb50956fcaf745ea4d003fbc3b7deab0fac4f184806f67f92d0c913bf59`.
+The one exact renderer run produced all 48 sanitized 960x540 RGB PNGs. Its
+canonical closed-tree SHA is
+`4f55b456dc6d6fa9df58a7f9806b1656ce46934f50bc4e8e045db8b6d4b3c000`;
+an independent mechanical pass confirmed exact refs, dimensions, metadata-free
+chunks, index byte identity, no symlinks and no extras.
+
 Two fresh reviewers work independently. Only unanimous `story_change` and
 unanimous `no_semantic_change` packets enter ranking; at least two of each are
 required. `min(story score) > max(no-change score)` passes. Adequate balance
