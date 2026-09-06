@@ -38,7 +38,8 @@ class SeatbeltFeasibilityTests(unittest.TestCase):
             manifest = seatbelt.build_seatbelt_backend_manifest_shape(
                 os_build="25F84", architecture="arm64",
                 backend_executable_sha256="a" * 64, backend_executable_size=123,
-                launcher_runtime_manifest_sha256="b" * 64)
+                launcher_runtime_manifest_sha256="b" * 64,
+                system_version_sha256="c" * 64)
             dynamic = {"runtime_root": str(runtime),
                 "runtime_executable": str(executable),
                 "forbidden_executable": str(forbidden_executable),

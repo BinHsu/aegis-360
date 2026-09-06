@@ -458,6 +458,28 @@ policy SHA-256 was
 `847d44bfd2f09ffba0fcc71951e7604866ecbbae3a0397e8fc45e4bfacf38c91`.
 This closes renderer consistency only, not retained backend/launcher authority.
 
+A subsequent host-only transport check passed the unchanged 21-operation matrix
+when the sole renderer's bytes were supplied through `sandbox-exec -p` rather
+than a named `-f` policy file. This establishes behavioral transport feasibility
+only: `sandbox-exec` exposes no receipt for the bytes it parsed or installed.
+The profile temporarily appears as one argv element and is not confidential.
+The native launcher transport is therefore frozen as a length-prefixed inherited
+pipe carrying 1..65,536 exact ASCII bytes, with no NUL and one final LF. The
+launcher reads the declared length, requires immediate EOF, hashes those exact
+bytes against the coordinator-supplied SHA-256, and performs no normalization or
+re-encoding before constructing the sole `-p` argv element. Invalid input fails
+before backend or runtime execution. This removes a mutable named-policy-file
+input but does not prove a compiled or installed policy or grant authority.
+
+The repo-owned launcher is frozen as single-threaded C11 thin ARM64_ALL Mach-O,
+ad-hoc signed, with macOS 15.0 deployment target and no checked-in binary. It
+uses no shell, path search, plugin, discovery or fallback. It consumes only the
+retained policy and cwd descriptors, closes all descriptors above stderr before
+exec, starts a fresh session/process group, sets umask 077 and core rlimit zero,
+and directly execs the fixed OS backend with `-p`, `--`, the exact runtime path
+and literal arguments. Current host diagnostics confirm `sandbox-exec` accepts
+`--` and preserves its PID when it execs the runtime; these remain host gates.
+
 Drain stdout and stderr concurrently as binary pipes. Do not merge, incrementally
 decode, trim, normalize, extract fenced JSON or accept a valid prefix. Success
 requires spawn success, no timeout or overflow, normal exit code zero, exactly zero
@@ -524,7 +546,8 @@ Seatbelt backend shape `aegis360.sparse-story-seatbelt-backend-manifest.v1`
 has exactly `schema_version`,
 `renderer_version=aegis360.seatbelt-policy-renderer.v1`, `host`, `backend`,
 `launcher`, `system_rules`. `host` is exactly
-`{operating_system:macOS,os_build,architecture:arm64}`; `os_build` is a
+`{operating_system:macOS,os_build,architecture:arm64,system_version_sha256}`;
+`os_build` is a
 1..128-byte ASCII token matching `[A-Za-z0-9][A-Za-z0-9._-]*`. `backend` is
 exactly `{logical_identity:com.apple.sandbox-exec,executable_sha256,
 executable_size}` where size is a non-boolean integer 1..16 GiB. It describes
@@ -533,6 +556,41 @@ the OS-owned tool by content, never path. `launcher` is exactly
 that separate runtime asset manifest and retained native proof own the
 repo-controlled launcher's leaf sizes and identity. Neither fact may reuse the
 asset proof's root-oriented `backend_identity()` name.
+`system_version_sha256` binds the exact retained `SystemVersion.plist` bytes
+from which the build is derived; the live proof must also require that build to
+equal native `kern.osversion`. Paths, inode/device, mount IDs and vnode flags
+remain private transient proof facts.
+
+The smallest honest OS-backend predicate is named
+`readonly_restricted_system_volume`: retained backend, `/usr/bin` and system
+version objects are root-owned, non-writable, restricted vnodes on the same
+read-only APFS filesystem, with identities and hashes stable across bounded
+reads. It does not claim independent verification of Apple's cryptographic SSV
+seal, resistance to root/kernel compromise or an OS-update/remount race. With
+no assumed retained-FD exec primitive, immediate pre-spawn and post-exit checks
+detect but cannot eliminate the pathname reopen gap; any mismatch invalidates
+all output.
+
+The same limitation applies when `sandbox-exec` later opens the repo-owned
+runtime pathname. The frozen v1 threat boundary excludes a separate malicious
+process already running as the coordinator's same UID and racing launch-time
+pathnames. The launcher nevertheless performs a final name/open/full-identity
+check immediately before exec, while the coordinator retains the precommitted
+runtime tree and revalidates it after exit; any accidental or adversarial change
+that those checks observe makes the run invalid and suppresses publication.
+This detects many mutations but is not retained-object execution and must not be
+described as eliminating TOCTOU. Expanding to a hostile same-UID host process
+requires a proven Darwin retained-object execution mechanism or a different
+backend architecture.
+
+The bounded launcher implementation subsequently passed independent C bounds,
+argv, FD and build review. The ordinary complete suite passes 648 tests with one
+explicit host-only gate skipped; that gate passes all 11 tests outside the
+enclosing sandbox. Its build seals the launcher, `bin` and runtime root to 0555,
+the resulting tree passes the retained runtime-asset proof, and a second build
+refuses overwrite without changing the launcher hash. This remains source/build
+and behavioral evidence only; no coordinator, backend authority, token or receipt
+exists.
 
 `system_rules` exact-rebuilds only this ordered list: `file-read*` subpaths
 `/System/Library`, `/private/var/db/dyld`, `/usr/lib`; `file-read-data` literal

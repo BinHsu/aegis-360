@@ -52,14 +52,15 @@ EXPECTED_OPERATIONS = frozenset(ALLOWED_BYTES) | {
 
 def _candidate_backend_shape(sandbox_exec: Path):
     """Build non-authoritative renderer input from current host content facts."""
-    with Path("/System/Library/CoreServices/SystemVersion.plist").open("rb") as stream:
-        os_build = plistlib.load(stream)["ProductBuildVersion"]
+    system_version = Path("/System/Library/CoreServices/SystemVersion.plist").read_bytes()
+    os_build = plistlib.loads(system_version)["ProductBuildVersion"]
     value = sandbox_exec.stat()
     return build_seatbelt_backend_manifest_shape(
         os_build=os_build, architecture="arm64",
         backend_executable_sha256=hashlib.sha256(sandbox_exec.read_bytes()).hexdigest(),
         backend_executable_size=value.st_size,
-        launcher_runtime_manifest_sha256=SYNTHETIC_LAUNCHER_MANIFEST_SHA256)
+        launcher_runtime_manifest_sha256=SYNTHETIC_LAUNCHER_MANIFEST_SHA256,
+        system_version_sha256=hashlib.sha256(system_version).hexdigest())
 
 
 def parse_probe_stdout(value: bytes) -> dict[str, dict[str, object]]:

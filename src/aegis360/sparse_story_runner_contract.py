@@ -202,17 +202,19 @@ def _beneath(path, root):
 
 def build_seatbelt_backend_manifest_shape(*, os_build: str, architecture: str,
         backend_executable_sha256: str, backend_executable_size: int,
-        launcher_runtime_manifest_sha256: str):
+        launcher_runtime_manifest_sha256: str, system_version_sha256: str):
     _closed_token(os_build, "OS build")
     if (architecture != "arm64" or not _is_sha(backend_executable_sha256)
             or type(backend_executable_size) is not int
             or not 1 <= backend_executable_size <= MAX_BACKEND_EXECUTABLE_BYTES
-            or not _is_sha(launcher_runtime_manifest_sha256)):
+            or not _is_sha(launcher_runtime_manifest_sha256)
+            or not _is_sha(system_version_sha256)):
         raise ValueError("backend host or hashes are invalid")
     return {"schema_version": BACKEND_MANIFEST_SCHEMA,
         "renderer_version": SEATBELT_RENDERER_VERSION,
         "host": {"operating_system": "macOS", "os_build": os_build,
-                 "architecture": architecture},
+                 "architecture": architecture,
+                 "system_version_sha256": system_version_sha256},
         "backend": {"logical_identity": SEATBELT_BACKEND_IDENTITY,
                     "executable_sha256": backend_executable_sha256,
                     "executable_size": backend_executable_size},
@@ -229,7 +231,8 @@ def validate_seatbelt_backend_manifest_shape(value):
             or value.get("schema_version") != BACKEND_MANIFEST_SCHEMA
             or value.get("renderer_version") != SEATBELT_RENDERER_VERSION
             or not isinstance(value.get("host"), Mapping)
-            or set(value["host"]) != {"operating_system", "os_build", "architecture"}
+            or set(value["host"]) != {"operating_system", "os_build", "architecture",
+                                      "system_version_sha256"}
             or value["host"].get("operating_system") != "macOS"
             or not isinstance(value.get("backend"), Mapping)
             or set(value["backend"]) != {"logical_identity", "executable_sha256",
@@ -243,7 +246,8 @@ def validate_seatbelt_backend_manifest_shape(value):
         os_build=value["host"]["os_build"], architecture=value["host"]["architecture"],
         backend_executable_sha256=value["backend"]["executable_sha256"],
         backend_executable_size=value["backend"]["executable_size"],
-        launcher_runtime_manifest_sha256=value["launcher"]["runtime_manifest_sha256"])
+        launcher_runtime_manifest_sha256=value["launcher"]["runtime_manifest_sha256"],
+        system_version_sha256=value["host"]["system_version_sha256"])
     if value != rebuilt:
         raise ValueError("backend manifest must exactly rebuild")
 

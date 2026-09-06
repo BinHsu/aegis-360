@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T17:36:09+08:00
+Updated: 2026-09-06T17:43:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5ea976e
-Remote status: push confirmed `origin/main` advanced to `5ea976e`
-Working tree at checkpoint: clean before this handoff refresh
+Baseline commit: d8058a3
+Remote status: push confirmed `origin/main` advanced to `d8058a3`
+Working tree at checkpoint: native-launcher milestone ready to commit
 
 ## Objective
 
@@ -33,6 +33,19 @@ All 21 operation rows, listener, side-effect and process-group checks closed.
 This remains primitive feasibility only. The exact backend shape/renderer and
 retained native-Mach-O format gate are implemented but do not yet own backend,
 launcher, installed-policy or invocation authority.
+
+Three bounded follow-up reviews froze the next honest boundary. The unchanged
+21-operation matrix passes through `sandbox-exec -p`; policy transport is exact,
+length-prefixed, ASCII/LF, at most 65,536 bytes and launcher-hash-checked, but is
+temporarily argv-visible and proves no installed bytes. The launcher is thin
+arm64 C11/ad-hoc signed with macOS 15.0 deployment target. The retained OS proof
+may claim only readonly/restricted same-APFS vnode facts, not Apple's
+cryptographic SSV seal, and must bind retained `SystemVersion.plist` bytes to
+native `kern.osversion`.
+Darwin provides no assumed retained-FD exec for either backend or runtime. V1
+explicitly excludes a separately running malicious same-UID host process;
+immediate pre-exec plus coordinator post-exit identity checks detect changes and
+suppress publication but do not eliminate the pathname reopen gap.
 
 The model-neutral sparse story semantic successor protocol passed independent
 causal-sampling and vertical-contract audits. It fixes a six-packet known-label
@@ -76,11 +89,13 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `5ea976e`.
-- Expected dirty file after checkpoint refresh: this handoff only.
+- Expected branch/remote before checkpoint: `main` at `d8058a3`.
+- Expected dirty files: current docs, backend-shape/harness/tests, and the bounded
+  native-launcher source/build/test milestone while it is integrated.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 637 tests pass after the Mach-O audit remediation.
+- Full suite: 648 tests pass with one explicit host-only launcher gate skipped.
+- Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 
 ## Verified
 
@@ -98,8 +113,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Implement coordinator-owned retained backend/launcher derivation and installed
-  canonical-policy proofs without emitting a capability receipt or token.
+- Implement and audit the retained readonly/restricted OS-backend proof without
+  emitting a capability receipt or token.
 - Do not acquire a model or real-media packets until that implementation gate
   is reviewed and frozen.
 - Do not retune either rejected visual descriptor or render production video.
@@ -128,9 +143,10 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 - Three bounded backend reviews completed. App Sandbox and VM are not protocol-fit;
   the host-bound Seatbelt primitive feasibility milestone passed both audits.
-- Main is preparing three bounded reviews for the native launcher, retained OS
-  backend proof and installed-policy proof. No capability token/receipt, model,
-  real media or score acquisition is authorized.
+- Native launcher source/build/test milestone passed independent C bounds/argv/FD
+  audit and host integration. Main integrated the path-free SystemVersion hash and
+  exact claim boundary. No capability token/receipt, model, real media or score
+  acquisition is authorized.
 
 ## Safety and claims
 

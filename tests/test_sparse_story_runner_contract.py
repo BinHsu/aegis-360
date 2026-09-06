@@ -62,7 +62,7 @@ class SparseStoryRunnerContractTests(unittest.TestCase):
         return build_seatbelt_backend_manifest_shape(os_build="25F84",
             architecture="arm64", backend_executable_sha256=H("a"),
             backend_executable_size=12345,
-            launcher_runtime_manifest_sha256=H("b"))
+            launcher_runtime_manifest_sha256=H("b"), system_version_sha256=H("c"))
 
     def seatbelt_roots(self):
         return {"runtime_root": "/private/tmp/runtime",
@@ -82,6 +82,7 @@ class SparseStoryRunnerContractTests(unittest.TestCase):
         self.assertEqual(manifest["launcher"], {
             "logical_identity": "aegis360.native-process-launcher",
             "runtime_manifest_sha256": H("b")})
+        self.assertEqual(manifest["host"]["system_version_sha256"], H("c"))
         self.assertEqual(canonical_seatbelt_backend_manifest_shape_bytes(manifest),
                          canonical_bytes(manifest))
         for function in (canonical_seatbelt_backend_manifest_bytes,
@@ -106,16 +107,20 @@ class SparseStoryRunnerContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_seatbelt_backend_manifest_shape(os_build="25 F84", architecture="arm64",
                 backend_executable_sha256=H("a"), backend_executable_size=1,
-                launcher_runtime_manifest_sha256=H("b"))
+                launcher_runtime_manifest_sha256=H("b"), system_version_sha256=H("c"))
         with self.assertRaises(ValueError):
             build_seatbelt_backend_manifest_shape(os_build="25F84", architecture="x86_64",
                 backend_executable_sha256=H("a"), backend_executable_size=1,
-                launcher_runtime_manifest_sha256=H("b"))
+                launcher_runtime_manifest_sha256=H("b"), system_version_sha256=H("c"))
         for size in (True, 0, MAX_BACKEND_EXECUTABLE_BYTES + 1):
             with self.subTest(size=size), self.assertRaises(ValueError):
                 build_seatbelt_backend_manifest_shape(os_build="25F84", architecture="arm64",
                     backend_executable_sha256=H("a"), backend_executable_size=size,
-                    launcher_runtime_manifest_sha256=H("b"))
+                    launcher_runtime_manifest_sha256=H("b"), system_version_sha256=H("c"))
+        with self.assertRaises(ValueError):
+            build_seatbelt_backend_manifest_shape(os_build="25F84", architecture="arm64",
+                backend_executable_sha256=H("a"), backend_executable_size=1,
+                launcher_runtime_manifest_sha256=H("b"), system_version_sha256="invalid")
 
     def test_seatbelt_policy_bytes_are_exact_deterministic_and_default_deny(self):
         manifest = self.seatbelt_backend(); roots = self.seatbelt_roots()
