@@ -118,3 +118,9 @@ The deterministic typed-boundary adapter maps this negative observation to
 artifact SHA is
 `4d8e7050ebeb535eec1886b933ad17f49e33be90ab8ab53ef48a3ecd15117542`.
 No timeline, plan or render is changed.
+
+A typed timeline over the bounded 380–395 acquisition/grid window therefore
+contains exactly one 15-second segment with null left/right boundaries. Its SHA
+is `63d9473bafed1058df520e9244e85c9144853f4febc05cbff84afa6692b576bb`.
+This removes the unsupported 390-second split only inside that bounded window;
+it does not claim coverage of 395–415 or modify the legacy timeline.

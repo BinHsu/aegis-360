@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T09:05:34+08:00
+Updated: 2026-09-06T09:11:06+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f650337
-Remote status: `origin/main` is f650337 before typed boundary rejection
-Working tree at checkpoint: typed boundary adapter, CLI, policy, tests and docs only
+Baseline commit: f03fac1
+Remote status: `origin/main` is f03fac1 before typed story timeline
+Working tree at checkpoint: typed timeline, CLI, tests and current docs only
 
 ## Objective
 
@@ -177,7 +177,7 @@ in the benchmark manifest and experiment record.
 
 ## Verified
 
-- `python3 -m unittest discover -s tests -q`: 452 tests pass.
+- `python3 -m unittest discover -s tests -q`: 461 tests pass.
 - Bounded planner/render targeted tests: 6 pass.
 - Scene-boundary renderer contract test: 1 pass.
 - Gaudeamus v4 and accepted v6 decoded video/audio hashes match exactly;
@@ -201,8 +201,8 @@ in the benchmark manifest and experiment record.
 
 ## Pending
 
-- Audit whether one-sample release gaps truncate continuous-onset support;
-  calibrate on held-out evidence before changing the policy contract.
+- Add explicit planner support for a typed timeline with zero boundaries;
+  do not reinterpret it as legacy scene-event evidence.
 
 ## Next commands
 

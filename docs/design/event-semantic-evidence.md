@@ -196,3 +196,9 @@ every onset proposal in order, exact-validates its packet/evidence, and emits
 authorized, rejected or abstained dispositions. Authorization alone uses the
 closed `first_sustained_high` rule; rejected and abstained rows must have a null
 effective timestamp. Boundary authority never grants a camera choice or render.
+
+`aegis360.typed-story-segment-timeline.v1` consumes only authorized typed
+boundary rows. Rejected and abstained rows cannot split; zero authorized rows
+produce one full segment over the exact grid window. It retains typed origin
+and uncertainty on real boundaries while granting no camera or render authority.
+Legacy scene-based timelines remain unchanged.
