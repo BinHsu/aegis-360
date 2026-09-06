@@ -1,6 +1,6 @@
 # Project status
 
-Status: visual-state acquisition accepted; blind proposal policy frozen
+Status: frozen chapter proposals emitted; neutral blind review scheduling next
 
 ## Current conclusion
 
@@ -11,9 +11,10 @@ Skiing story states, so neither may remain the sole chapter signal. A canonical
 lossless 960x480/10-fps FFV1 proxy now avoids paying the 5K VP9 decode cost for
 each new low-cost signal. It preserves the declared analysis pixels exactly in
 the bounded direct-source gate and has complete source/config/proxy lineage.
-A deterministic 1-fps visual-state stream now derives 616 path-free compact
-rows from the full proxy in 22.93 seconds. Its values remained uninspected while
-the persistent-state proposal policy and blind review protocol were frozen.
+A deterministic 1-fps visual-state stream derives 616 path-free compact rows
+from the full proxy in 22.93 seconds. Its values remained uninspected until the
+persistent-state proposal policy and blind review protocol were frozen. The
+policy then ran once, emitted two review-only proposals and was not retuned.
 
 ## Accepted evidence
 
@@ -103,6 +104,16 @@ result are in `docs/experiments/analysis-proxy-60s-protocol.md`.
   separation. Every peak retains an explainable rejection/emission audit.
 - The blind protocol and numeric policy were fixed before any real feature
   value, peak or timestamp was inspected. A proposal grants review scope only.
+- The one frozen execution emits review-only proposals at proxy seconds 46 and
+  297. A qualified peak at 337 is suppressed by the 45-second separation rule.
+- Deterministic unlabeled controls resolve to seconds 200, 140 and 460 without
+  pixel, feature, label or hidden-key inspection.
+- The private schedule/public neutral projection contract derives salted opaque
+  packet IDs, exact ordering and four anonymous views. The public projection
+  contains no absolute time, cardinal direction, score, hash or source role.
+- The exact coordinator validator rebuilds both outputs and detects identifier,
+  order, HMAC and public bundle mutations before atomic publication. Shared
+  workspace reviewer isolation remains procedural, not a filesystem boundary.
 
 ## Planner contract
 
@@ -148,12 +159,11 @@ version; they must not be silently reinterpreted.
 
 ## Active acceptance gate
 
-Hash and checkpoint the feature stream, proposal policy and blind protocol,
-then execute the proposal policy exactly once over the Skiing artifact. Resolve
-three controls from the frozen hash-ordered lattice without feature or label
-inspection. Keep frame-difference onset as evaluation-only hard negatives.
-Proposals require two independent fresh-context reviews before any typed
-boundary; only complete observed segment evidence may reach the renderer gate.
+Freeze and publish the private schedule plus exact public neutral projection,
+then package transient four-view pixels without private metadata. Keep
+frame-difference onset as evaluation-only hard negatives. Proposals require two
+independent fresh-context reviews before any typed boundary; only complete
+observed segment evidence may reach the renderer gate.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -161,7 +171,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests -q`: 526 tests pass before final
+- `python3 -m unittest discover -s tests -q`: 531 tests pass before final
   documentation integration.
 - Visual-state suite: 6 tests pass after the real FFmpeg count fix.
 - Chapter-proposal suite: 8 tests pass.
@@ -171,6 +181,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Checkpoint and push the frozen acquisition, policy and protocol. Then create
-the hidden coarse key externally, record all freeze hashes, execute one Skiing
-proposal run, and resolve the three deterministic controls. Do not render.
+Checkpoint and push the proposal result and blind schedule contract. Then
+create the private salt externally, build and hash the private/public schedule,
+and implement the transient neutral packet renderer. Do not infer boundaries.

@@ -1,0 +1,27 @@
+{
+  "cardinal_candidates": [
+    {"candidate_id": "context:cardinal:0", "horizontal_fov_degrees": 110.0, "order": 0, "pitch_degrees": 0.0, "yaw_degrees": 0.0},
+    {"candidate_id": "context:cardinal:1", "horizontal_fov_degrees": 110.0, "order": 1, "pitch_degrees": 0.0, "yaw_degrees": 90.0},
+    {"candidate_id": "context:cardinal:2", "horizontal_fov_degrees": 110.0, "order": 2, "pitch_degrees": 0.0, "yaw_degrees": -180.0},
+    {"candidate_id": "context:cardinal:3", "horizontal_fov_degrees": 110.0, "order": 3, "pitch_degrees": 0.0, "yaw_degrees": -90.0}
+  ],
+  "config_id": "skiing-blind-chapter-review-schedule-v1",
+  "control_count": 3,
+  "control_lattice": {"end_seconds": 580, "start_seconds": 30, "step_seconds": 10},
+  "control_minimum_separation_seconds": 45,
+  "control_order_string": "source_sha256|proposal_policy_sha256|protocol_sha256|control-v1|timestamp-one-decimal",
+  "hard_negative_minimum_separation_seconds": 30,
+  "hard_negative_proxy_times_seconds": [76.75, 327.25, 386.5, 429.75, 499.75, 506.25, 565.25],
+  "maximum_proposals": 6,
+  "neutral_order_string": "HMAC-SHA256(private-256-bit-salt,domain|source_sha256|proposal_policy_sha256|protocol_sha256|packet-v1|role|timestamp-one-decimal)",
+  "proposal_minimum_separation_seconds": 45,
+  "review_rows": [
+    {"relative_offset_seconds": -30, "row_role": "early_far"},
+    {"relative_offset_seconds": -10, "row_role": "early_near"},
+    {"relative_offset_seconds": -2, "row_role": "transition_before"},
+    {"relative_offset_seconds": 2, "row_role": "transition_after"},
+    {"relative_offset_seconds": 10, "row_role": "late_near"},
+    {"relative_offset_seconds": 30, "row_role": "late_far"}
+  ],
+  "schema_version": "aegis360.blind-chapter-review-schedule-config.v1"
+}

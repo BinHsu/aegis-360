@@ -1,59 +1,49 @@
 # Current handoff
 
-Updated: 2026-09-06T16:20:00+08:00
+Updated: 2026-09-06T17:10:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 26ee87f
-Remote status: `origin/main` at `26ee87f` before this checkpoint
-Working tree at checkpoint: frozen visual-state, proposal and blind protocol
+Baseline commit: 00f9c76
+Remote status: `origin/main` at `00f9c76` before this checkpoint
+Working tree at checkpoint: proposal result and blind review schedule contract
 
 ## Objective
 
 Build an offline 360-video auto-director for ordinary viewers on a fanless M4
-MacBook Air with 16 GB unified memory. Visual-state acquisition is accepted and
-the proposal policy is frozen; the next gate is its one blind Skiing execution.
+MacBook Air with 16 GB unified memory. The proposal policy has run exactly once;
+the next gate is a neutral private/public review schedule and transient packets.
 
 ## Last completed milestone
 
-Commit `26ee87f` provides the canonical lossless 960x480/10-fps FFV1 proxy. The
-full Skiing proxy has 6,164 frames over 616.400 seconds, exact source/config/
-proxy lineage, deterministic decoded pixels and no semantic authority.
+Commit `00f9c76` freezes the visual-state feature stream, proposal policy and
+blind protocol before real feature inspection. The one permitted execution
+emits review-only proposals at seconds 46 and 297; a qualified second-337 peak
+is separation-suppressed. Frozen hash-lattice controls are 200, 140 and 460.
+No rule was retuned, and no proposal has semantic or boundary authority.
 
-This checkpoint adds `visual-state-features.v1`: 1-fps 96x48 RGB sampling with
-luma, 4x2 spatial luma, RGB histogram, edge and five/15-second descriptors.
-Decoded-frame memory is bounded to the current frame plus 16 history frames.
-The full Skiing acquisition emits 616 rows in 859,874 bytes. A repeat takes
-22.93 seconds and is byte-identical. The initial real run safely exposed and
-fixed the FFmpeg near-rounded sample-count rule. No feature value, peak or
-timestamp was inspected while the proposal policy was designed.
-
-The separate `chapter-proposal-candidates.v1` policy compares complete
-half-open 20-sample before/after states around a 20-second guard, subtracts
-both within-state dispersions, and requires `max(0.08, median + 3*MAD)`. It
-uses a 10-second local radius, earliest plateaus and 45-second separation,
-never backfills, caps at six, audits every local maximum and grants review
-authority only. The blind protocol fixes fresh-context two-reviewer packets
-and a deterministic hash-ordered control procedure.
+This checkpoint adds an exact private schedule/public neutral projection
+contract. A 64-hex private salt is file-only; salted opaque IDs and order are
+recomputed before atomic publication. The public projection contains ordinal,
+qualitative row roles, neutral media references, four anonymous view slots and
+questions only. It excludes absolute times, offsets, cardinal directions,
+yaw/FOV, scores, hashes, candidate/control labels and source rationales.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `26ee87f`.
-- Expected dirty files are two configs, four modules/CLIs, two test files, two
-  experiment records, documentation indexes, status and this handoff.
-- External proxy, feature JSON and future review pixels remain untracked.
+- Expected branch/remote before checkpoint: `main` at `00f9c76`.
+- Expected dirty files are the schedule config/module/CLI/test, proposal-result
+  experiment record, documentation index, status and this handoff.
+- External proxy, feature/proposal JSON, private key/salt and review pixels stay
+  untracked.
 
 ## Verified
 
-- Visual-state artifact SHA:
-  `81c92d89cc51190145e89fd5d02a95c5e480794fa22e0127dafd84b9391b2c91`.
-- Visual-state repeat: byte-identical; 22.93 seconds wall time.
-- Visual-state focused suite: 6 tests pass after the real count fix.
-- Proposal focused suite: 8 tests pass.
-- Full suite before documentation integration: 526 tests pass.
-- Proposal synthetic gates: constant and transient emit zero; persistent and
-  separated family changes emit bounded ordered proposals.
-- Proposal config and protocol were completed without external artifact access.
-- RSS, swap and thermals were not measured and are not claimed.
+- Proposal artifact SHA:
+  `eeddadd92e86478aea79d4659b0ed8edb0fbcc92e74ddc57b7f051a29fa146f3`.
+- Policy/protocol hashes are recorded in the proposal experiment document.
+- Schedule focused suite: 5 tests pass; full suite: 531 tests pass.
+- Exact rebuild rejects private HMAC/ID/order and public bundle-ID mutations.
+- Schedule implementation and audits did not inspect external artifacts.
 
 ## Rejected
 
@@ -66,11 +56,9 @@ and a deterministic hash-ordered control procedure.
 
 ## Pending
 
-- Commit and push this pre-proposal freeze point.
-- Create a separate external hidden coarse key and record its checksum.
-- Record committed proposal-policy and protocol hashes.
-- Execute the frozen proposal CLI once; never retune it on this result.
-- Resolve three controls using the frozen 10-second hash-ordered lattice.
+- Commit and push the proposal result and review-schedule contract.
+- Create a separate external salt, then generate and hash both schedules.
+- Implement an exact-validated transient four-cardinal packet renderer.
 - Run two independent fresh-context reviews before any typed boundary.
 - Chapters longer than about 90 seconds or evidence gaps over 30 seconds must
   receive denser segment review or abstain. No video awaits owner review.
@@ -85,24 +73,21 @@ git diff --check
 git status --short
 ```
 
-After checkpointing, hash the committed protocol/policy/key, run the proposal
-CLI once against the existing visual-state artifact, then resolve controls.
-Do not modify old scene/onset schemas and do not render.
+After checkpointing, create the private salt and exact schedules. Freeze their
+hashes before implementing/rendering the neutral packets. Do not modify old
+scene/onset schemas and do not infer boundaries from proposal times.
 
 ## External artifacts
 
 Set `AEGIS_DATA_DIR` locally. The full proxy is under
-`outputs/analysis-proxies/skiing-full-ffv1-v1/`; the feature artifact is
-`outputs/visual-state/skiing-full-1fps-v1.json`. Exact acquisition evidence is
-in `docs/experiments/analysis-proxy-60s-protocol.md` and
-`docs/experiments/skiing-visual-state-features-v1-2026-09-06.md`. Never commit
-the external artifacts.
+`outputs/analysis-proxies/skiing-full-ffv1-v1/`; proposal material is under
+`outputs/chapter-proposals/skiing-blind-v1/`. Never commit external artifacts.
 
 ## Active agents
 
-No delegated work remains active. Three agents completed feature acquisition,
-proposal implementation and independent blind-protocol audit without inspecting
-external feature values. The main agent owns the freeze commit and execution.
+None. Schedule implementation and independent leakage audit are complete. The
+main agent owns external schedule generation, packet rendering and review
+dispatch. Proposal execution must not be rerun or retuned.
 
 ## Safety and claims
 

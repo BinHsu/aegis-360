@@ -92,6 +92,9 @@ privacy-safe summaries when results exist.
 - `skiing-gradual-chapter-blind-protocol-2026-09-06.md`: frozen blind protocol
   for low-cost gradual chapter proposals, precommitted controls and prior
   Skiing motion-onset hard negatives.
+- `skiing-gradual-chapter-proposals-v1-2026-09-06.md`: pre-data freeze hashes,
+  the single frozen proposal result, deterministic controls and the semantic
+  review boundary.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.
