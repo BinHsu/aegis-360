@@ -1,81 +1,79 @@
 # Current handoff
 
-Updated: 2026-09-06T15:35:00+08:00
+Updated: 2026-09-06T16:20:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: b3f4a89
-Remote status: `origin/main` at `b3f4a89` before this checkpoint
-Working tree at checkpoint: canonical analysis-proxy implementation and evidence
+Baseline commit: 26ee87f
+Remote status: `origin/main` at `26ee87f` before this checkpoint
+Working tree at checkpoint: frozen visual-state, proposal and blind protocol
 
 ## Objective
 
 Build an offline 360-video auto-director for ordinary viewers on a fanless M4
-MacBook Air with 16 GB unified memory. The next gate is a low-cost gradual
-visual-state signal over the canonical proxy; it may propose sparse semantic
-review but cannot grant a story boundary by itself.
+MacBook Air with 16 GB unified memory. Visual-state acquisition is accepted and
+the proposal policy is frozen; the next gate is its one blind Skiing execution.
 
 ## Last completed milestone
 
-Commit `b3f4a89` records that full-source frame-difference onset and the active
-scene-score threshold both fail to recover the known gradual Skiing chapters.
-Do not retune either signal after seeing those results.
+Commit `26ee87f` provides the canonical lossless 960x480/10-fps FFV1 proxy. The
+full Skiing proxy has 6,164 frames over 616.400 seconds, exact source/config/
+proxy lineage, deterministic decoded pixels and no semantic authority.
 
-This checkpoint adds an atomic, checksummed, path-free reusable analysis proxy:
-Matroska/FFV1, 960x480, yuv420p, 10 fps CFR, SAR 1:1, video-only, two FFmpeg
-threads. The filter order is frozen as fps, scale, format, setsar, setpts.
-Bounded start/duration arguments are exact rationals and must appear together.
-The manifest records source, config and proxy hashes plus a rational affine
-mapping from proxy PTS to the source timeline. It refuses overwrite, rechecks
-the source hash, validates the completed manifest before same-filesystem rename,
-and removes owned staging directories on encode or validation failure.
+This checkpoint adds `visual-state-features.v1`: 1-fps 96x48 RGB sampling with
+luma, 4x2 spatial luma, RGB histogram, edge and five/15-second descriptors.
+Decoded-frame memory is bounded to the current frame plus 16 history frames.
+The full Skiing acquisition emits 616 rows in 859,874 bytes. A repeat takes
+22.93 seconds and is byte-identical. The initial real run safely exposed and
+fixed the FFmpeg near-rounded sample-count rule. No feature value, peak or
+timestamp was inspected while the proposal policy was designed.
 
-A real 380–440-second Skiing gate exposed and fixed one false assumption:
-Matroska may omit stream duration while retaining container duration. The
-corrected 60-second proxy matches a direct source decode frame for frame. The
-full proxy then completed with 6,164 frames over 616.400 seconds.
+The separate `chapter-proposal-candidates.v1` policy compares complete
+half-open 20-sample before/after states around a 20-second guard, subtracts
+both within-state dispersions, and requires `max(0.08, median + 3*MAD)`. It
+uses a 10-second local radius, earliest plateaus and 45-second separation,
+never backfills, caps at six, audits every local maximum and grants review
+authority only. The blind protocol fixes fresh-context two-reviewer packets
+and a deterministic hash-ordered control procedure.
 
 ## Repository state
 
-- Expected branch and remote before checkpoint: `main` at `b3f4a89`.
-- Expected dirty files are the proxy config, builder, CLI, tests, experiment
-  record, documentation indexes, status and this handoff.
-- External proxies and manifests remain untracked under the configured data
-  root; no media or absolute path belongs in Git.
+- Expected branch/remote before checkpoint: `main` at `26ee87f`.
+- Expected dirty files are two configs, four modules/CLIs, two test files, two
+  experiment records, documentation indexes, status and this handoff.
+- External proxy, feature JSON and future review pixels remain untracked.
 
 ## Verified
 
-- Focused proxy suite: 4 tests pass after the real-media fix.
-- Full suite before documentation integration: 512 tests pass.
-- 60-second proxy SHA:
-  `bb56bf3298f3bb3f9b1cd34a48426860f906d0aad047edb7e51f25403e5c3b8c`.
-- Direct and two proxy decodes share framemd5-file SHA:
-  `87884c442c952d84f5b32d5434782f1018446b04de3569d5c07d1dd205aa0f63`.
-- Full proxy SHA:
-  `493f68f31c8946cad785ffed49565276b0b96d897f5c5dcee548accaeaa30f20`.
-- Full proxy: 616.400 seconds, 6,164 frames, 1,003,334,254 bytes,
-  249.783-second acquisition; repeat framemd5 digest matches.
-- Source SHA remains
-  `d21e871c0428d22e8d71f5b4be24f7eb7a9ca925dcbcba9e3c912b74ae64827b`.
+- Visual-state artifact SHA:
+  `81c92d89cc51190145e89fd5d02a95c5e480794fa22e0127dafd84b9391b2c91`.
+- Visual-state repeat: byte-identical; 22.93 seconds wall time.
+- Visual-state focused suite: 6 tests pass after the real count fix.
+- Proposal focused suite: 8 tests pass.
+- Full suite before documentation integration: 526 tests pass.
+- Proposal synthetic gates: constant and transient emit zero; persistent and
+  separated family changes emit bounded ordered proposals.
+- Proposal config and protocol were completed without external artifact access.
 - RSS, swap and thermals were not measured and are not claimed.
 
 ## Rejected
 
-- Repeatedly decoding 5K VP9 independently for every low-cost signal.
-- VideoToolbox H.264 as the canonical analysis artifact; it remains suitable
-  only for previews because it is lossy and does not provide this pixel gate.
-- Assuming Matroska always exposes duration at stream level.
 - Frame-difference onset or active scene score as the sole chapter detector.
-- Treating a proposal signal as an authorized story boundary.
+- Looking at Skiing feature values before freezing the proposal policy.
+- Top-six selection, family quotas or threshold relaxation that backfill weak
+  proposals.
+- Treating proposal coverage as sufficient segment-evidence coverage.
+- Requiring the owner to label proposal packets.
 
 ## Pending
 
-- Define a checksummed coarse visual-state feature stream over the full proxy.
-- Introduce a separate path-free `chapter-proposal-candidates` contract with
-  persistence, hysteresis, a frozen candidate cap, and no boundary authority.
-- Freeze the blind Skiing review protocol before observing new proposals.
-- Require two independent reviewers and precommitted negative/control packets.
-- Only after observed semantic evidence may typed boundaries and the global
-  planner be rebuilt. No video is awaiting owner review.
+- Commit and push this pre-proposal freeze point.
+- Create a separate external hidden coarse key and record its checksum.
+- Record committed proposal-policy and protocol hashes.
+- Execute the frozen proposal CLI once; never retune it on this result.
+- Resolve three controls using the frozen 10-second hash-ordered lattice.
+- Run two independent fresh-context reviews before any typed boundary.
+- Chapters longer than about 90 seconds or evidence gaps over 30 seconds must
+  receive denser segment review or abstain. No video awaits owner review.
 
 ## Next commands
 
@@ -87,28 +85,32 @@ git diff --check
 git status --short
 ```
 
-After checkpointing, implement the smallest deterministic gradual visual-state
-feature stream over the canonical full proxy. Do not modify old scene/onset
-schemas and do not render.
+After checkpointing, hash the committed protocol/policy/key, run the proposal
+CLI once against the existing visual-state artifact, then resolve controls.
+Do not modify old scene/onset schemas and do not render.
 
 ## External artifacts
 
-Set `AEGIS_DATA_DIR` locally. Canonical proxy bundles are under
-`outputs/analysis-proxies/skiing-t380-t440-ffv1-v1/` and
-`outputs/analysis-proxies/skiing-full-ffv1-v1/`. Exact hashes and commands are
-in `docs/experiments/analysis-proxy-60s-protocol.md`. Never commit these files.
+Set `AEGIS_DATA_DIR` locally. The full proxy is under
+`outputs/analysis-proxies/skiing-full-ffv1-v1/`; the feature artifact is
+`outputs/visual-state/skiing-full-1fps-v1.json`. Exact acquisition evidence is
+in `docs/experiments/analysis-proxy-60s-protocol.md` and
+`docs/experiments/skiing-visual-state-features-v1-2026-09-06.md`. Never commit
+the external artifacts.
 
 ## Active agents
 
-No delegated work remains active. Proxy design, implementation, hardening and
-review packets have returned; the main agent integrated and ran real media.
+No delegated work remains active. Three agents completed feature acquisition,
+proposal implementation and independent blind-protocol audit without inspecting
+external feature values. The main agent owns the freeze commit and execution.
 
 ## Safety and claims
 
 - Never commit media, frames, audio, model weights, identities or absolute
   local source paths.
 - Analysis remains offline; downloads require explicit authority.
-- Keep queues and memory bounded for 16 GB unified memory.
-- Geometry, faces and mouth motion do not establish identity or speech.
+- Frame memory is bounded; compact JSON rows grow at one row per second and do
+  not establish arbitrary-duration constant memory.
+- The 0.08 proposal floor is a pre-data hypothesis, not a probability.
+- Proposals cannot create semantics, boundaries, camera paths or renders.
 - Git history is the archive; status and handoff contain current state only.
-- Stop only for a real user decision, new authority or external dependency.

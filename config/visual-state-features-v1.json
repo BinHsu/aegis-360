@@ -1,0 +1,21 @@
+{
+  "baseline_offsets_seconds": [5, 15],
+  "color_bins_per_channel": 4,
+  "config_id": "visual-state-1fps-96x48-grid4x2-v1",
+  "decoder_threads": 2,
+  "edge_operator": "mean-absolute-4-neighbour-luma-difference",
+  "feature_round_digits": 8,
+  "filter_order": [
+    "fps",
+    "scale",
+    "format_rgb24"
+  ],
+  "frame_height": 48,
+  "frame_width": 96,
+  "luma_coefficients_q8": [77, 150, 29],
+  "sample_fps": 1,
+  "scale_flags": "area",
+  "schema_version": "aegis360.visual-state-features-config.v1",
+  "spatial_grid_columns": 4,
+  "spatial_grid_rows": 2
+}

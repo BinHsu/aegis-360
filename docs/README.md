@@ -36,6 +36,7 @@ not invent a resolution.
 | Choose storage, compute, or Apple-specific acceleration | ADR 0004, ADR 0005 |
 | Change proxy, caching, or memory behavior | ADR 0005 |
 | Reuse the canonical low-resolution analysis proxy | `docs/experiments/analysis-proxy-60s-protocol.md`, then ADR 0005 |
+| Change gradual chapter proposals or visual-state features | `docs/experiments/skiing-gradual-chapter-blind-protocol-2026-09-06.md`, `docs/experiments/skiing-visual-state-features-v1-2026-09-06.md`, ADR 0010, then ADR 0005 |
 | Change interest scoring, candidate shots, or planning | ADR 0006 |
 | Change event timeline, semantic review packets, or human-review role | ADR 0010, then ADR 0006 |
 | Change event/story semantic output or evidence-to-utility mapping | `docs/design/event-semantic-evidence.md`, `docs/experiments/scene-story-context-v1-2026-08-23.md`, ADR 0010, then ADR 0006 |

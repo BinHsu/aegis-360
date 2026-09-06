@@ -1,0 +1,42 @@
+{
+  "absolute_minimum_score": 0.08,
+  "absolute_minimum_score_hypothesis": "a persistent normalized family shift below 0.08 is too weak for generic review",
+  "after_window_offsets_seconds": [10, 30],
+  "before_window_offsets_seconds": [-30, -10],
+  "config_id": "chapter-proposals-persistent-state-v1",
+  "distance_aggregation": "equal-component-mean",
+  "dominant_family_order": ["global", "spatial_luma", "rgb_histogram"],
+  "dominant_family_diversity_rule": "record-only-no-quota-no-backfill-family-order-resolves-dominant-score-ties",
+  "edge_scope": "global-family-edge-strength-component",
+  "family_distance_definitions": {
+    "global": "mean absolute distance over luma-mean,luma-stddev,edge-strength; each range [0,1]",
+    "rgb_histogram": "mean per-channel total-variation distance; each channel range [0,1]",
+    "spatial_luma": "mean absolute distance over eight 4x2 luma cells; each range [0,1]"
+  },
+  "family_equal_component_weights": {
+    "global": [0.3333333333333333, 0.3333333333333333, 0.3333333333333333],
+    "rgb_histogram_channels": [0.3333333333333333, 0.3333333333333333, 0.3333333333333333],
+    "spatial_luma": [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]
+  },
+  "family_score_aggregation": "maximum",
+  "feature_families": ["global", "spatial_luma", "rgb_histogram"],
+  "feature_round_digits": 8,
+  "local_maximum_radius_seconds": 10,
+  "local_plateau_rule": "earliest",
+  "hard_negative_role": "evaluation-only-not-generator-input",
+  "maximum_candidates": 6,
+  "minimum_temporal_separation_seconds": 45,
+  "persistence_dispersion_penalty_multiplier": 1.0,
+  "persistence_score_rule": "clip(state-distance-(before-dispersion+after-dispersion),0,1)",
+  "robust_threshold_mad_multiplier": 3.0,
+  "robust_threshold_rule": "max-absolute-minimum-and-median-plus-scaled-mad",
+  "schema_version": "aegis360.chapter-proposal-candidates-config.v1",
+  "selection_rule": "qualified-local-maxima-score-descending-with-temporal-separation",
+  "state_center_rule": "component-wise-arithmetic-mean",
+  "tie_break_rule": "score-descending-then-time-ascending",
+  "threshold_comparison": "greater-than-or-equal",
+  "uncertainty_radius_seconds": 10,
+  "within_window_dispersion_rule": "mean-family-distance-to-window-state-center",
+  "window_interval_semantics": "half-open",
+  "zero_mad_rule": "threshold-is-max-of-absolute-floor-and-median"
+}

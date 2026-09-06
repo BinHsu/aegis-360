@@ -13,6 +13,9 @@ privacy-safe summaries when results exist.
 - `analysis-proxy-60s-protocol.md`: lossless 960x480/10-fps FFV1 bundle
   contract, bounded direct-source pixel equivalence, full Skiing acquisition,
   timestamp lineage, atomic publication, and external-pixel lifecycle.
+- `skiing-visual-state-features-v1-2026-09-06.md`: deterministic 1-fps
+  low-cost visual-state acquisition, real FFmpeg count correction, byte-stable
+  full Skiing output, and proposal-policy blindness boundary.
 - `geometry-validation.md`: coordinate, seam, pole, FOV and interpolation
   correctness.
 - `ffmpeg-v360-dynamic-path.md`: installed `v360` command semantics, quality,
@@ -86,6 +89,9 @@ privacy-safe summaries when results exist.
   contamination handling and hidden-key scoring.
 - `skiing-continuity-transition-v1-2026-08-24.md`: packet-bound narrative
   association and transition utility for the rejected Skiing A.
+- `skiing-gradual-chapter-blind-protocol-2026-09-06.md`: frozen blind protocol
+  for low-cost gradual chapter proposals, precommitted controls and prior
+  Skiing motion-onset hard negatives.
 - `semantic-lifecycle-planning-gate-2026-08-02.md`: multi-lifecycle candidate
   timeline, termination/fallback contract, renderer-aware planning-only pose
   differentiation and the forward-context FOV false-positive correction.

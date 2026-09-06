@@ -1,6 +1,6 @@
 # Project status
 
-Status: canonical full-source analysis proxy accepted
+Status: visual-state acquisition accepted; blind proposal policy frozen
 
 ## Current conclusion
 
@@ -11,6 +11,9 @@ Skiing story states, so neither may remain the sole chapter signal. A canonical
 lossless 960x480/10-fps FFV1 proxy now avoids paying the 5K VP9 decode cost for
 each new low-cost signal. It preserves the declared analysis pixels exactly in
 the bounded direct-source gate and has complete source/config/proxy lineage.
+A deterministic 1-fps visual-state stream now derives 616 path-free compact
+rows from the full proxy in 22.93 seconds. Its values remained uninspected while
+the persistent-state proposal policy and blind review protocol were frozen.
 
 ## Accepted evidence
 
@@ -83,6 +86,24 @@ The exact artifact hashes are recorded in
 Exact commands, hashes, the initial duration-metadata failure and the corrected
 result are in `docs/experiments/analysis-proxy-60s-protocol.md`.
 
+## Visual-state and proposal freeze
+
+- `aegis360.visual-state-features.v1` streams 96x48 RGB frames with a fixed
+  16-frame history and emits luma, spatial, color, edge and five/15-second
+  descriptors. It retains no decoded pixels.
+- The real artifact contains 616 rows, is 859,874 bytes, and has SHA-256
+  `81c92d89cc51190145e89fd5d02a95c5e480794fa22e0127dafd84b9391b2c91`.
+  An independent repeat is byte-identical.
+- A real run corrected the FFmpeg `fps=1` count oracle from ceil to frozen
+  near-rounding semantics. The rejected attempt published no artifact.
+- The proposal config compares complete half-open 20-sample states on either
+  side of a 20-second guard, subtracts within-state dispersion, and requires
+  `max(0.08, median + 3*MAD)`. It never backfills to six.
+- Local maxima use a 10-second radius, earliest plateaus and 45-second greedy
+  separation. Every peak retains an explainable rejection/emission audit.
+- The blind protocol and numeric policy were fixed before any real feature
+  value, peak or timestamp was inspected. A proposal grants review scope only.
+
 ## Planner contract
 
 `aegis360.typed-global-story-plan.v1` accepts only the typed timeline route and
@@ -120,15 +141,19 @@ version; they must not be silently reinterpreted.
   validated adapter remains required before any production render.
 - Proxy RSS, swap and thermal behavior were not measured; only elapsed time,
   bytes, metadata, hashes and decoded-pixel equivalence are established.
+- Compact visual-state rows grow linearly at one row per second. Frame memory
+  is bounded, but arbitrary-duration constant-memory JSON is not established.
+- The absolute proposal score floor of 0.08 is a pre-data hypothesis, not a
+  calibrated probability or accepted chapter threshold.
 
 ## Active acceptance gate
 
-Add a low-cost visual-state signal over the canonical proxy for gradual
-activity/context changes. It must emit a separate path-free proposal contract,
-use persistence/hysteresis, and grant no boundary by itself. Freeze a blind,
-sparse review protocol before observing its Skiing proposals. Keep
-frame-difference onset as motion-peak corroboration. Only complete observed
-segment evidence may reach the renderer gate.
+Hash and checkpoint the feature stream, proposal policy and blind protocol,
+then execute the proposal policy exactly once over the Skiing artifact. Resolve
+three controls from the frozen hash-ordered lattice without feature or label
+inspection. Keep frame-difference onset as evaluation-only hard negatives.
+Proposals require two independent fresh-context reviews before any typed
+boundary; only complete observed segment evidence may reach the renderer gate.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -136,15 +161,16 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests -q`: 512 tests pass before final
+- `python3 -m unittest discover -s tests -q`: 526 tests pass before final
   documentation integration.
-- Proxy-focused suite: 4 tests pass after the real Matroska-duration fix.
+- Visual-state suite: 6 tests pass after the real FFmpeg count fix.
+- Chapter-proposal suite: 8 tests pass.
 - Typed packet/relevance/utility/continuity/planner integration: 53 tests pass.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Checkpoint and push the canonical proxy contract and evidence. Then implement
-the smallest deterministic coarse visual-state feature stream over that proxy;
-do not change existing scene/onset schemas and do not render.
+Checkpoint and push the frozen acquisition, policy and protocol. Then create
+the hidden coarse key externally, record all freeze hashes, execute one Skiing
+proposal run, and resolve the three deterministic controls. Do not render.
