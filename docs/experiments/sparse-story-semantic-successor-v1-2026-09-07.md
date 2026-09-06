@@ -14,6 +14,14 @@ after raw-hash and failure-state bypasses found in earlier drafts were closed.
 Eight focused tests and the complete 568-test suite pass. This checkpoint uses
 synthetic JSON only and adds no semantic, model, media or performance evidence.
 
+`aegis360.sparse_story_projection` now implements the subsequent pure-JSON
+projection gate: exact private structure and canonical hashes, complete 1/6/24
+packet-set binding, domain-separated salted IDs and presentation order, closed
+anonymous projections and exact rebuild. Four focused tests plus the complete
+572-test suite pass after independent audit caught and closed boolean row-number
+acceptance and same-packet ID/order HMAC collision. It does not yet validate a
+media tree or execution isolation.
+
 ## Question and claim boundary
 
 Can one bounded semantic observation per cheap-signal event distinguish a
@@ -105,6 +113,123 @@ abstention and binds both it and `event_class=abstain` to the failure-artifact
 SHA-256. Participant configuration alone never manufactures a story change or
 chapter.
 
+## Sanitized projection synthetic gate
+
+Before any media or model run, implement a pure-JSON projection from a complete
+set of structurally validated private packets to a role-neutral public index.
+This gate proves exact sanitization only. A prior, separate lineage gate must
+prove each private packet from the frozen execution manifest, timeline and grid;
+changing a private hash or time creates a different input and is outside the
+projection gate's authority. The execution manifest freezes only pre-projection
+selection identities and order, never opaque IDs or a public-index hash, so its
+hash cannot depend circularly on the projection.
+
+The private packet schema is `aegis360.sparse-story-private-packet.v1` with
+exact top-level fields `schema_version`, `source_id`, `selection`, `inputs`,
+`center_source_time`, `rows`, `privacy` and `authority`. `selection` contains
+only `role` (`proposal` or `control`), `original_event_id` (string for proposal,
+null for control) and `original_signal_ids` (a non-empty unique string list for
+proposal, empty for control). `inputs` contains exactly the four SHA-256 values
+`execution_manifest_sha256`, `source_sha256`, `event_timeline_sha256` and
+`context_view_grid_sha256`. Center and row source times are reduced positive-
+denominator rational `{numerator, denominator}` objects. `rows` has exactly the
+six numbered roles below in order; each row contains only `row_number`,
+`row_role`, `absolute_source_time` and `cardinal_views`. `cardinal_views` is the
+same ordered four-item list on every row; each item contains exact private
+`candidate_id`, `yaw_degrees`, `pitch_degrees` and
+`horizontal_fov_degrees`. Rows equal center plus the exact rational offsets
+`-15`, `-3`, `-1/4`, `+1/4`, `+3`, `+15` seconds without clamp or deduplication;
+negative row times are invalid. Proposal and control packets have the same
+shape; controls use null event ID and an empty signal list rather than inventing
+a timeline event.
+
+`source_id`, every non-null original event/signal ID and every candidate ID are
+nonempty strings matching `^[A-Za-z0-9._:+/-]+$`. Candidate IDs are unique and
+the exact same ordered four IDs occur on every row. Booleans are not numbers;
+geometry values are finite integers or floats with yaw in `[-180, 180)`, pitch
+in `[-90, 90]` and horizontal FOV in `(0, 180]`. Original signal IDs are unique.
+Every rational is reduced, its denominator is positive, and center/row source
+times are nonnegative.
+
+Private `privacy` is exactly `contains_source_path=false`,
+`contains_pixels=false`, `contains_audio=false`,
+`contains_expected_class=false`, `contains_reviewer_result=false`. Private
+`authority` is exactly `lineage_input=true`, `semantic_observation=false`,
+`exact_boundary=false`, `chapter_map=false`, `camera=false`, `reorder=false`,
+`render=false`. The private packet SHA-256 is over sorted, compact,
+ASCII-escaped JSON encoded as UTF-8 with no trailing newline.
+
+The coordinator accepts an exact 64-character lowercase hexadecimal secret
+salt. The HMAC key is exactly the 32 bytes obtained by decoding that hex, not
+the 64 ASCII characters. For each private packet it computes two full lowercase-
+hex HMAC-SHA256 values over exact UTF-8 messages with no newline:
+`id|successor-packet-v1|execution_manifest_sha256|private_packet_sha256` and
+`order|successor-packet-v1|execution_manifest_sha256|private_packet_sha256`.
+It exposes only `packet-` plus the first 20 ID-HMAC hex characters, sorts the
+complete packet set by full order HMAC with full ID HMAC as tie-break, and
+exposes only the resulting one-based presentation ordinal. Salt and full HMACs
+remain private. The set-level builder rejects any duplicate private-packet hash,
+full HMAC or truncated packet ID. Plain hashes of enumerable event/time values
+are forbidden.
+
+The adapter-visible projection is exactly:
+
+```text
+schema_version: aegis360.sparse-story-adapter-index.v1
+packet_count: exact length of the complete private set
+packets:
+  presentation_ordinal: 1..packet_count
+  projection:
+    schema_version: aegis360.sparse-story-adapter-projection.v1
+    packet_id: packet-[0-9a-f]{20}
+    rows: exactly six rows
+      row_number: 1..6
+      row_role: early_far, early_near, transition_before, transition_after,
+                late_near, late_far
+      media_ref: media/<packet_id>/row-01.png ... row-06.png
+      views: exactly [view-1, view-2, view-3, view-4]
+```
+
+Every projection's `privacy` is exactly these false-valued keys:
+`contains_source_id`, `contains_event_id`, `contains_signal`,
+`contains_source_time`, `contains_position`,
+`contains_proposal_control_role`, `contains_lineage_hash`,
+`contains_signal_evidence`, `contains_score_or_confidence`,
+`contains_expected_class`, `contains_identity`,
+`contains_real_candidate_id`, `contains_geometry`, `contains_chapter_label`,
+`contains_narrative_function`, `contains_prose`, `contains_edit_request`.
+Every projection's `authority` is exactly `semantic_observation_input=true`,
+`exact_boundary=false`, `chapter_map=false`, `camera=false`, `reorder=false`,
+`render=false`. The public index adds no other top-level fields. Each projection
+SHA-256 used by the evidence binder is over that projection's sorted, compact,
+ASCII-escaped JSON encoded as UTF-8 with no trailing newline.
+
+The projection builder must also receive the exact ordered private-packet
+SHA-256 list already emitted by the prior lineage gate. It is nonempty and has
+exactly 1 item for the Stage A smoke, 6 for either complete Stage A run, or 24
+for Stage B. The supplied private packet sequence must match that list exactly,
+and every packet must contain the same `execution_manifest_sha256`; omission,
+addition, duplication or reorder fails. The entire public index uses the same
+sorted compact ASCII-escaped UTF-8 JSON with no trailing newline; its SHA-256 is
+computed externally over those bytes and never embedded in the index.
+
+Rows retain chronology but expose no timestamp or offset. Views retain stable
+within-row slots but expose no candidate identity or direction. Media refs are
+relative, path-normalized, contain only the opaque packet ID and fixed row
+number, and permit no symlink or extra file at the later media-tree gate. Exact
+closed projection equality is the sole leakage rule: no independent substring
+or private-value blacklist is used, because numbers and strings can coincide
+innocently. The set-level validator structurally validates every private packet,
+recomputes its canonical hash, both HMACs, order, IDs and complete public index,
+then requires exact equality.
+
+The synthetic gate passes only when exact rebuild is byte-stable; mutations,
+row reorder/drop/add, unsafe refs, salt/hash mismatch, extra public fields and
+opaque-ID collisions all fail closed. This gate grants projection
+and adapter-input authority only. PNG sanitization, closed media-tree proof,
+minimal process environment, repository/filesystem isolation, network denial,
+stdout capture and model invocation remain separate runner gates.
+
 ## Stage A: bounded feasibility
 
 Freeze exactly six known-label diagnostic packets: Old Ghost 205.6-second story
@@ -160,7 +285,8 @@ a digest tie by numeric timestamp, then greedily accept a point only when its
 distance from every already accepted control is at least 30 seconds, stopping
 after three. Freeze
 the exact timeline, dedup clusters, eligible universes, order keys, exclusions
-and selected packet IDs in an execution manifest. Fewer than three proposals
+and selected proposal event IDs plus selected control timestamps in their pre-
+projection selection order in an execution manifest. Fewer than three proposals
 or controls for any source makes the run `inconclusive`; there is no replacement
 or backfill. The complete set is therefore exactly 24 packets.
 
