@@ -170,8 +170,8 @@ version; they must not be silently reinterpreted.
 
 The 26-row structural selection proof is frozen at `ad6f29b1…2a567`; its exact
 eight-packet anonymous schedule is frozen at `3964162f…0d8ba`. Its private/
-public exact rebuild and joined review gate pass synthetic tests. Implement the
-renderer and canonical bundle-tree hash before acquiring a review pixel or score.
+public exact rebuild, renderer, canonical bundle-tree and joined review gate pass
+synthetic tests. Render and freeze the isolated bundle before assigning reviewers.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -179,8 +179,8 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- `python3 -m unittest discover -s tests`: 551 tests pass after structural blind
-  schedule and review-gate integration.
+- `python3 -m unittest discover -s tests`: 557 tests pass after structural blind
+  renderer and raw-byte coordinator integration.
 - Visual-state suite: 6 tests pass after the real FFmpeg count fix.
 - Chapter-proposal suite: 8 tests pass.
 - Typed packet/relevance/utility/continuity/planner integration: 53 tests pass.
@@ -189,5 +189,5 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Implement the exact structural review renderer and canonical bundle-tree hash.
+Render and freeze the exact sanitized structural blind-review bundle.
 selection over unused Old Ghost events. Do not infer boundaries or render video.

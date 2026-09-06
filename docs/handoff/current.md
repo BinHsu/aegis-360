@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-09-06T23:35:00+08:00
+Updated: 2026-09-07T00:15:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 931997b
-Remote status: `origin/main` at `931997b`
-Working tree at checkpoint: synthetic schedule/review integration
+Baseline commit: 87783d5
+Remote status: `origin/main` at `87783d5`
+Working tree at checkpoint: renderer/coordinator integration
 
 ## Objective
 
@@ -45,12 +45,12 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `931997b`.
-- Expected dirty files: structural schedule/review modules, schedule CLI, tests
-  and handoff.
+- Expected branch/remote before checkpoint: `main` at `87783d5`.
+- Expected dirty files: structural renderer/coordinator modules, CLIs, tests and
+  handoff.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 551 tests pass after schedule/review integration.
+- Full suite: 557 tests pass after renderer/coordinator integration.
 
 ## Verified
 
@@ -66,9 +66,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Implement and synthetically test the exact renderer/bundle-tree contract.
-- Add a coordinator CLI that hashes raw schedule, bundle, review and score files
-  before invoking the pure joined-evaluation API.
+- Render the exact 48-image sanitized review bundle from the frozen source and
+  schedule; freeze its canonical tree hash before assigning reviewers.
+- Do not acquire structural scores until both independent review hashes freeze.
 - Replication must use neutral packets and fresh independent reviewers before
   opening event identities/positions. Do not render production video.
 
@@ -92,8 +92,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- No delegated work is active. The main agent owns renderer and coordinator
-  integration; no real review media or structural score has been acquired.
+- No delegated work is active. The main agent owns the one real renderer run;
+  no review has been assigned and no structural score has been acquired.
 
 ## Safety and claims
 
