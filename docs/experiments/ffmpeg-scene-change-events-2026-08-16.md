@@ -84,3 +84,18 @@ cut. A bounded 10 fps/320-pixel replay detects it at 168.4 seconds with score
 0.272. The active raw-analysis default is therefore 10 fps pending the full
 source replay below; this changes proxy comparison cadence, not the bounded
 streaming or frame-retention contract.
+
+## Full Skiing replay on 2026-09-06
+
+The previously incomplete 616.392-second Skiing source now completes at the
+active 10 fps, 320-pixel and 0.25 threshold settings. It emits zero raw events.
+Artifact SHA-256 is
+`7ba589e2ad86849687c0d4585e159d1f2bf1c92b571f3ae2afe409b95f60db85`.
+
+This is not evidence that the source has one chapter. Combined with the
+separately reviewed frame-difference result, it shows that cut-like scene score
+and adjacent-frame motion do not recover the known gradual lift/skiing/other-
+skier story states. The threshold is not lowered after observing this result.
+The v1 runner hashes the source after decode but lacks the v2 frame-difference
+runner's before/after mutation check; this lineage difference remains a stated
+limitation.

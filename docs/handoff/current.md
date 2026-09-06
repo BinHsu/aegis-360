@@ -5,7 +5,7 @@ Repository: aegis-360
 Branch: main
 Baseline commit: ad1508b
 Remote status: `origin/main` at `ad1508b` before this checkpoint
-Working tree at checkpoint: full-source negative evidence, dedicated transient onset runner and current docs
+Working tree at checkpoint: full-source scene-score negative evidence and current docs
 
 ## Objective
 
@@ -44,10 +44,16 @@ This is a useful negative result: motion difference detects movement and
 capture discontinuity, not the known lift → own skiing → other-skiers story
 structure. Do not lower thresholds to manufacture chapters.
 
+The pre-existing active scene-score contract was then run on the full source at
+10 fps, 320 pixels and threshold 0.25. It completes with zero events, SHA
+`7ba589e2ad86849687c0d4585e159d1f2bf1c92b571f3ae2afe409b95f60db85`.
+Do not lower this threshold after observing the result. Cut-like scene score
+also fails to recover the gradual story states.
+
 ## Repository state
 
 - Expected branch: `main`; baseline/remote before checkpoint: `ad1508b`.
-- New code should be the dedicated runner and its tests only.
+- Dirty files should be only the two experiment records, status and handoff.
 - External full-source artifacts remain untracked.
 
 ## Verified
@@ -67,6 +73,7 @@ structure. Do not lower thresholds to manufacture chapters.
 ## Rejected
 
 - Frame-difference onset as the sole story-boundary detector.
+- Scene score above the active 0.25 threshold as the missing chapter detector.
 - Treating zero authorized motion onsets as proof of one coherent story state.
 - Labeling a 616-second segment from three isolated stills.
 - Concatenating independently classified windows and resetting hysteresis.
@@ -75,7 +82,10 @@ structure. Do not lower thresholds to manufacture chapters.
 
 ## Pending
 
-- Inventory existing cheap scene/context signals before writing a new detector.
+- Build one reusable low-resolution proxy with exact source/proxy/config hashes
+  so additional state signals do not repeatedly decode 5K VP9.
+- Define a coarse visual-state/histogram artifact over that proxy; no such
+  durable contract currently exists.
 - Define a path-free chapter-proposal contract that schedules sparse semantic
   review but grants no boundary by itself.
 - Test it against the known Skiing sequence and negative motion-onset result.
@@ -92,16 +102,18 @@ git diff --check
 git status --short
 ```
 
-After checkpointing, read ADR 0010 and the current event/story signal modules.
-Prefer reusing low-cadence color/scene, audio, detector-presence or motion-state
-summaries before adding a model. Record why each signal can detect gradual
-chapter changes that raw frame difference missed.
+After checkpointing, design a reusable proxy manifest and acquisition gate.
+It must preserve timestamps, exact source/proxy/config hashes, bounded decode,
+atomic output and an explicit external-pixel lifecycle. Then test coarse visual
+state before adding detector or model work.
 
 ## External artifacts
 
 Set `AEGIS_DATA_DIR` locally. Full-source artifacts are under
 `outputs/continuous-onset/skiing-full-v1/`; exact hashes and classifications
 are in `docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`.
+Scene-score evidence is
+`outputs/scene-events/skiing-full-10fps-320-threshold025-v1.json`.
 Never commit media, JSON evidence or review pixels from that directory.
 
 ## Active agents

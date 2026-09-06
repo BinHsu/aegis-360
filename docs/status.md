@@ -60,6 +60,9 @@ full-source plan therefore abstains and remains non-production.
 - The resulting single 616.392-second segment has 123-second uncovered ends
   and roughly 185-second gaps between its three samples. Relevance abstains;
   the final objective is zero and `production_eligible=false`.
+- The active 10 fps/320-pixel scene-score replay completes over the whole
+  source and emits zero events above 0.25. It also fails to recover gradual
+  chapters; the threshold is not retuned after observing the result.
 
 The exact artifact hashes are recorded in
 `docs/experiments/skiing-continuity-transition-v1-2026-08-24.md`.
@@ -102,7 +105,9 @@ version; they must not be silently reinterpreted.
 
 ## Active acceptance gate
 
-Add a low-cost chapter-proposal signal for gradual activity/context changes.
+Create one reusable checksummed low-resolution proxy, then add a low-cost
+visual-state signal for gradual activity/context changes without repeatedly
+decoding the 5K VP9 source.
 Keep frame-difference onset as motion-peak corroboration rather than the sole
 boundary source. Evaluate proposals sparsely against the known lift → own
 skiing → other-skiers sequence before rebuilding typed boundaries. Only

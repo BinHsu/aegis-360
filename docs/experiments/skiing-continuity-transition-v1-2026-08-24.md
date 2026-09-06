@@ -214,3 +214,9 @@ Full-source artifact SHA-256 values:
 - abstained relevance: `82288e4727c3714b48fc858fb029ce45a55f0b1fa2f8f04543e3235f5c88352c`;
 - neutral utility: `5e31172e2f1b818e5a62c3825aadd273fff769d0c98411fa79800d254a26dd4d`;
 - fail-closed plan: `b3f16984eee07d6ed0ba7cb50037d5434b859f0d521b946af61482ac9452a64f`.
+
+The independent active scene-score replay at 10 fps/320 pixels and threshold
+0.25 emits zero events, SHA
+`7ba589e2ad86849687c0d4585e159d1f2bf1c92b571f3ae2afe409b95f60db85`.
+Scene score therefore does not rescue the missing gradual chapters at its
+pre-existing threshold; no post-result threshold tuning is accepted.
