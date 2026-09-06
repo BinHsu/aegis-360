@@ -124,3 +124,26 @@ contains exactly one 15-second segment with null left/right boundaries. Its SHA
 is `63d9473bafed1058df520e9244e85c9144853f4febc05cbff84afa6692b576bb`.
 This removes the unsupported 390-second split only inside that bounded window;
 it does not claim coverage of 395–415 or modify the legacy timeline.
+
+## Typed planner replay
+
+The typed segment packet samples 383/387.5/392 seconds but no candidate-view
+review has been performed, so its closed relevance config abstains. Candidate
+utility is consequently neutral and exposes no eligible alternative. The
+single-segment continuity evidence and transition utility both contain zero
+edges; they do not invent a relationship where no adjacency exists.
+
+The typed global planner retains `context:cardinal:0` for the full 380–395
+window with objective, utility, transition utility and planning cost all zero.
+It emits no renderer command and is explicitly not production eligible. This
+is a successful fail-closed vertical replay, not a directing-quality result;
+395–415 remains uncovered and no render is authorized.
+
+External artifact SHA-256 values:
+
+- review packet v2: `6792ed35cbdbb11600195e562bb92197d076aaeb2fdf792790a1b3ff97a7d339`;
+- abstain relevance: `37f7bb687be6eea19d5ed6d305c77e2b9e91e919453509943e1a3e68ab7874f2`;
+- neutral candidate utility: `e7aa3eb45fd2e986363365c86603b9b45675e75351b1373bdcbbb351051860d4`;
+- zero-edge continuity evidence: `02ba0363ec4116540ce48071fd70a19ae02f08cafe624bfb395aae4751d9898b`;
+- zero-edge transition utility: `3749672e633af1f4f32270f6a9039db4445632abd9dc155793874b7a0d143277`;
+- typed global plan: `29b58c779ad6ae861283da87a669f56ec692cdb510c5205387a28d00a16482a8`.

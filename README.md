@@ -23,12 +23,13 @@ footage come later.
 
 ## Current status
 
-The repository has geometry, perception-adapter, tracking-policy, greedy
-planning, rendering, motion-estimation, and synthetic spherical-stabilization
-gates. The first real-media auto-directed candidate failed its qualitative
-comfort gate, and flat post-warp stabilization was rejected as the primary
-remedy. Work is now focused on gyro-free spherical source-motion estimation
-before another review candidate is rendered.
+The repository has geometry, bounded perception and semantic-evidence
+contracts, typed continuous-onset segmentation, persistent global planning,
+rendering, and mechanical review gates. The latest Skiing replay correctly
+rejects a motion-only onset, retains one unsplit segment, and fail-closes at
+candidate-view abstention without rendering. The next evidence gap is complete
+typed coverage of the remaining source window and observed per-segment view
+relevance—not another speculative render.
 
 See [`docs/README.md`](docs/README.md) for the documentation index and
 [`docs/status.md`](docs/status.md) for the current acceptance gate. Agents and

@@ -20,6 +20,22 @@ RELATIONS = {"establishes_expectation", "continues_activity_or_context",
 ASSESSABILITY = {"clear", "partial"}
 CUE_MATCH = {"present", "absent"}
 PRESERVATION = {"preserves", "partial", "breaks"}
+TIMELINE_SCHEMAS = {
+    "aegis360.story-segment-timeline.v1": {
+        "packet_schema": "aegis360.story-segment-review-packet.v1",
+        "packet_timeline_key": "story_segment_timeline_sha256",
+        "output_timeline_key": "story_segment_timeline_sha256",
+        "output_packet_key": "story_segment_review_packet_sha256s",
+        "minimum_segments": 2,
+    },
+    "aegis360.typed-story-segment-timeline.v1": {
+        "packet_schema": "aegis360.story-segment-review-packet.v2",
+        "packet_timeline_key": "typed_story_segment_timeline_sha256",
+        "output_timeline_key": "typed_story_segment_timeline_sha256",
+        "output_packet_key": "typed_story_segment_review_packet_sha256s",
+        "minimum_segments": 1,
+    },
+}
 
 
 def build_causal_continuity_evidence(
@@ -37,12 +53,14 @@ def build_causal_continuity_evidence(
         raise ValueError("causal-continuity checksums are invalid")
     required = {"schema_version", "reviewer_type", "reviewer_id",
                 "reviewer_asset_sha256", "edges"}
+    timeline_schema = timeline.get("schema_version")
     if (not isinstance(config, Mapping) or set(config) != required
             or config.get("schema_version") != CONFIG_SCHEMA
-            or timeline.get("schema_version") != "aegis360.story-segment-timeline.v1"
+            or timeline_schema not in TIMELINE_SCHEMAS
             or timeline.get("source_id") != grid.get("source_id")
             or timeline.get("window") != grid.get("window")):
         raise ValueError("causal-continuity inputs are invalid")
+    lineage = TIMELINE_SCHEMAS[timeline_schema]
     reviewer_type = config["reviewer_type"]
     reviewer_id = config["reviewer_id"]
     asset_sha = config["reviewer_asset_sha256"]
@@ -56,16 +74,18 @@ def build_causal_continuity_evidence(
         raise ValueError("human or agent continuity reviewer cannot claim a model asset")
 
     segments = timeline.get("segments", [])
-    if (not isinstance(segments, list) or len(segments) < 2
+    if (not isinstance(segments, list)
+            or len(segments) < lineage["minimum_segments"]
             or [packet.get("segment_id") for packet in packets]
             != [segment.get("segment_id") for segment in segments]):
         raise ValueError("continuity packets must cover timeline segments in order")
     candidate_ids = [item["candidate_id"] for item in grid["candidates"]]
     packet_by_segment = {}
     for packet in packets:
-        if (packet.get("schema_version") != "aegis360.story-segment-review-packet.v1"
+        if (packet.get("schema_version") != lineage["packet_schema"]
                 or packet.get("source_id") != grid["source_id"]
-                or packet.get("inputs", {}).get("story_segment_timeline_sha256") != timeline_sha256
+                or packet.get("inputs", {}).get(lineage["packet_timeline_key"])
+                != timeline_sha256
                 or packet.get("inputs", {}).get("context_view_grid_sha256") != grid_sha256
                 or any(sample.get("candidate_ids") != candidate_ids
                        for sample in packet.get("samples", []))):
@@ -140,8 +160,8 @@ def build_causal_continuity_evidence(
     return {
         "schema_version": SCHEMA, "source_id": grid["source_id"],
         "inputs": {"review_config_sha256": config_sha256,
-                   "story_segment_timeline_sha256": timeline_sha256,
-                   "story_segment_review_packet_sha256s": list(packet_sha256s),
+                   lineage["output_timeline_key"]: timeline_sha256,
+                   lineage["output_packet_key"]: list(packet_sha256s),
                    "context_view_grid_sha256": grid_sha256},
         "provenance": {"reviewer_type": reviewer_type, "reviewer_id": reviewer_id,
                        "reviewer_asset_sha256": asset_sha},

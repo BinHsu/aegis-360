@@ -13,6 +13,10 @@ SAFE_ID = re.compile(r"^[A-Za-z0-9._:/+-]+$")
 VISIBILITY = {"clear", "partial", "obstructed", "unknown"}
 RELEVANCE = {"primary", "supporting", "low", "unrelated", "unknown"}
 CONSISTENCY = {"stable", "changing", "unknown"}
+PACKET_SCHEMAS = {
+    "aegis360.story-segment-review-packet.v1",
+    "aegis360.story-segment-review-packet.v2",
+}
 
 
 def _candidate_ids(packet: Mapping[str, object]) -> list[str]:
@@ -33,8 +37,18 @@ def build_segment_view_relevance(
                 "reviewer_asset_sha256", "status", "candidate_observations"}
     if (not isinstance(config, Mapping) or set(config) != required
             or config.get("schema_version") != CONFIG_SCHEMA
-            or packet.get("schema_version") != "aegis360.story-segment-review-packet.v1"):
+            or packet.get("schema_version") not in PACKET_SCHEMAS):
         raise ValueError("segment-view relevance input is invalid")
+    packet_schema = packet["schema_version"]
+    expected_timeline_key = (
+        "story_segment_timeline_sha256" if packet_schema.endswith(".v1")
+        else "typed_story_segment_timeline_sha256")
+    if (not isinstance(packet.get("inputs"), Mapping)
+            or set(packet["inputs"]) != {
+                expected_timeline_key, "context_view_grid_sha256"}
+            or any(not isinstance(value, str) or SHA256.fullmatch(value) is None
+                   for value in packet["inputs"].values())):
+        raise ValueError("segment-view packet lineage is invalid")
     if any(not isinstance(value, str) or SHA256.fullmatch(value) is None
            for value in (config_sha256, packet_sha256)):
         raise ValueError("segment-view relevance checksums are invalid")

@@ -202,3 +202,19 @@ boundary rows. Rejected and abstained rows cannot split; zero authorized rows
 produce one full segment over the exact grid window. It retains typed origin
 and uncertainty on real boundaries while granting no camera or render authority.
 Legacy scene-based timelines remain unchanged.
+
+Typed timelines continue through `aegis360.story-segment-review-packet.v2`,
+which differs from v1 only by its explicit typed-timeline lineage. Segment
+relevance and candidate utility retain their existing schemas and abstention
+semantics. `aegis360.causal-continuity-evidence.v1` likewise accepts the typed
+lineage; a one-segment timeline produces zero adjacency edges rather than a
+fabricated abstention edge.
+
+`aegis360.typed-global-story-plan.v1` is the only numeric planner for this
+typed route. It requires the complete ordered timeline, one closed utility per
+segment, the exact continuity matrix, grid and policy. Segment and edge
+abstention disable production eligibility; no renderer command is emitted.
+In policy v1, chapter and within-chapter labels share one numeric switch gate,
+minimum dwell means destination-segment duration, and minimum advantage is a
+pre-cost local pruning rule. These limitations require a future policy version
+before their semantics change.

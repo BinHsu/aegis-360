@@ -2,7 +2,9 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import sys
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,6 +13,8 @@ from aegis360.causal_continuity_evidence import (build_causal_continuity_evidenc
                                                 validate_causal_continuity_evidence)
 from aegis360.context_views import build_context_view_grid
 from aegis360.story_segment_review_packet import build_story_segment_review_packet
+from aegis360.typed_story_segment_timeline import build_typed_story_segment_timeline
+from tests.test_typed_segment_boundaries import TypedSegmentBoundaryTests
 
 
 def digest(value):
@@ -90,6 +94,14 @@ class CausalContinuityEvidenceTests(unittest.TestCase):
                 grid_sha256=self.grid_sha,
             )
 
+    def test_legacy_digest_and_lineage_are_unchanged(self):
+        value = self.build()
+        self.assertEqual(digest(value),
+                         "88fe091a6385b085a55bfa93d154a3f0e0e004b30f4d6045cb08b37370b8fa77")
+        self.assertEqual(set(value["inputs"]), {
+            "review_config_sha256", "story_segment_timeline_sha256",
+            "story_segment_review_packet_sha256s", "context_view_grid_sha256"})
+
     def test_missing_edge_candidate_or_packet_sample_fails_closed(self):
         self.observe_first()
         cases = []
@@ -109,6 +121,72 @@ class CausalContinuityEvidenceTests(unittest.TestCase):
         model.update(reviewer_type="local_model", reviewer_asset_sha256=None)
         with self.assertRaises(ValueError):
             self.build(model)
+
+    def _typed_single_segment(self):
+        fixture = TypedSegmentBoundaryTests()
+        fixture.setUp()
+        boundaries = fixture.build()
+        row = boundaries["boundaries"][0]
+        row["disposition"] = "rejected"
+        row["effective_timestamp_seconds"] = None
+        row["typed_labels"] = {
+            "classification": "no_semantic_change", "structural_role": "unknown",
+            "change_type": "unknown", "narrative_function": "unknown",
+            "viewer_value": "unknown"}
+        boundaries["boundary_authority"]["authorized_boundary_count"] = 0
+        timeline = build_typed_story_segment_timeline(
+            fixture.grid, boundaries, grid_sha256=digest(fixture.grid),
+            boundaries_sha256=digest(boundaries))
+        timeline_sha = digest(timeline)
+        packet = build_story_segment_review_packet(
+            timeline, fixture.grid, segment_id="segment:typed-story:0000",
+            segment_timeline_sha256=timeline_sha, grid_sha256=digest(fixture.grid))
+        config = {
+            "schema_version": "aegis360.causal-continuity-evidence-config.v1",
+            "reviewer_type": "agent", "reviewer_id": "typed-zero-edge-v1",
+            "reviewer_asset_sha256": None, "edges": []}
+        return fixture.grid, timeline, packet, config
+
+    def test_typed_single_segment_emits_exact_zero_edge_evidence(self):
+        grid, timeline, packet, config = self._typed_single_segment()
+        value = build_causal_continuity_evidence(
+            config, timeline, [packet], grid, config_sha256=digest(config),
+            timeline_sha256=digest(timeline), packet_sha256s=[digest(packet)],
+            grid_sha256=digest(grid))
+        self.assertEqual(value["edges"], [])
+        self.assertEqual(set(value["inputs"]), {
+            "review_config_sha256", "typed_story_segment_timeline_sha256",
+            "typed_story_segment_review_packet_sha256s", "context_view_grid_sha256"})
+        validate_causal_continuity_evidence(
+            value, config, timeline, [packet], grid,
+            config_sha256=digest(config), timeline_sha256=digest(timeline),
+            packet_sha256s=[digest(packet)], grid_sha256=digest(grid))
+
+        wrong = copy.deepcopy(packet)
+        wrong["schema_version"] = "aegis360.story-segment-review-packet.v1"
+        with self.assertRaises(ValueError):
+            build_causal_continuity_evidence(
+                config, timeline, [wrong], grid, config_sha256=digest(config),
+                timeline_sha256=digest(timeline), packet_sha256s=[digest(wrong)],
+                grid_sha256=digest(grid))
+
+    def test_cli_accepts_typed_single_segment_and_no_packet_fabrication(self):
+        grid, timeline, packet, config = self._typed_single_segment()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            paths = {name: root / f"{name}.json" for name in (
+                "grid", "timeline", "packet", "config")}
+            for name, value in (("grid", grid), ("timeline", timeline),
+                                ("packet", packet), ("config", config)):
+                paths[name].write_text(json.dumps(value, sort_keys=True))
+            output = root / "evidence.json"
+            result = subprocess.run([
+                sys.executable, str(ROOT / "scripts/build_causal_continuity_evidence.py"),
+                str(paths["config"]), str(paths["timeline"]), str(paths["grid"]),
+                str(output), "--packet", str(paths["packet"])],
+                capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(output.read_text())["edges"], [])
 
 
 if __name__ == "__main__":

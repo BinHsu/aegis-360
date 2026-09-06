@@ -10,6 +10,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from aegis360.segment_view_relevance import build_segment_view_relevance
 from aegis360.story_segment_review_packet import build_story_segment_review_packet
 from tests.test_story_segment_review_packet import build_segment_packet_fixture, digest
+from aegis360.context_views import build_context_view_grid
+from aegis360.segment_candidate_utility import build_segment_candidate_utility
 
 
 class SegmentViewRelevanceTests(unittest.TestCase):
@@ -68,6 +70,37 @@ class SegmentViewRelevanceTests(unittest.TestCase):
         model["reviewer_type"] = "local_model"
         with self.assertRaises(ValueError):
             self.build(model)
+
+    def test_explicit_packet_v2_abstention_feeds_existing_utility_contract(self):
+        packet = copy.deepcopy(self.packet)
+        packet["schema_version"] = "aegis360.story-segment-review-packet.v2"
+        packet["inputs"] = {
+            "typed_story_segment_timeline_sha256": "a" * 64,
+            "context_view_grid_sha256": "b" * 64}
+        abstain = copy.deepcopy(self.config)
+        abstain["status"] = "abstain"
+        abstain["candidate_observations"] = []
+        relevance = build_segment_view_relevance(
+            abstain, packet, config_sha256=digest(abstain),
+            packet_sha256=digest(packet))
+        self.assertEqual(relevance["schema_version"],
+                         "aegis360.segment-view-relevance.v1")
+        grid = build_context_view_grid(source_id="fixture", start_seconds=0,
+                                       duration_seconds=30)
+        policy = json.loads((ROOT / "config/segment-candidate-utility-policy-v1.json").read_text())
+        utility = build_segment_candidate_utility(
+            relevance, grid, policy, relevance_sha256=digest(relevance),
+            grid_sha256=digest(grid), policy_sha256=digest(policy))
+        self.assertEqual(utility["evidence_status"], "abstain")
+        self.assertFalse(any(item["eligible"] for item in utility["utilities"]))
+
+    def test_arbitrary_packet_schema_is_rejected(self):
+        packet = copy.deepcopy(self.packet)
+        packet["schema_version"] = "aegis360.story-segment-review-packet.v999"
+        with self.assertRaises(ValueError):
+            build_segment_view_relevance(
+                self.config, packet, config_sha256=digest(self.config),
+                packet_sha256=digest(packet))
 
 
 if __name__ == "__main__":

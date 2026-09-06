@@ -9,6 +9,12 @@ from .context_views import validate_context_view_grid
 
 
 SCHEMA = "aegis360.story-segment-review-packet.v1"
+TYPED_SCHEMA = "aegis360.story-segment-review-packet.v2"
+TIMELINE_SCHEMAS = {
+    "aegis360.story-segment-timeline.v1": (SCHEMA, "story_segment_timeline_sha256"),
+    "aegis360.typed-story-segment-timeline.v1": (
+        TYPED_SCHEMA, "typed_story_segment_timeline_sha256"),
+}
 
 
 def build_story_segment_review_packet(
@@ -19,10 +25,26 @@ def build_story_segment_review_packet(
     if any(re.fullmatch(r"[0-9a-f]{64}", value or "") is None
            for value in (segment_timeline_sha256, grid_sha256)):
         raise ValueError("story-segment review checksums are invalid")
-    if (segment_timeline.get("schema_version") != "aegis360.story-segment-timeline.v1"
+    timeline_schema = segment_timeline.get("schema_version")
+    if (timeline_schema not in TIMELINE_SCHEMAS
             or segment_timeline.get("source_id") != grid["source_id"]
             or segment_timeline.get("window") != grid["window"]):
         raise ValueError("story-segment review lineage is invalid")
+    packet_schema, timeline_input_key = TIMELINE_SCHEMAS[timeline_schema]
+    if timeline_schema == "aegis360.typed-story-segment-timeline.v1":
+        if (set(segment_timeline) != {
+                "schema_version", "source_id", "window", "inputs", "segments",
+                "planner_authority", "privacy", "limitations"}
+                or set(segment_timeline.get("inputs", {})) != {
+                    "context_view_grid_sha256", "typed_segment_boundaries_sha256"}
+                or segment_timeline["inputs"].get("context_view_grid_sha256")
+                != grid_sha256
+                or segment_timeline.get("planner_authority") != {
+                    "candidate_selected": False, "renderer_command_emitted": False}
+                or segment_timeline.get("privacy") != {
+                    "contains_source_path": False, "contains_pixels": False,
+                    "contains_identity": False, "contains_free_text": False}):
+            raise ValueError("typed story-segment review lineage is invalid")
     matches = [item for item in segment_timeline["segments"]
                if item["segment_id"] == segment_id]
     if len(matches) != 1:
@@ -40,9 +62,9 @@ def build_story_segment_review_packet(
         "representation": "four_cardinal_contact_sheet", "candidate_ids": ids,
     } for index, (role, fraction) in enumerate(zip(("early", "middle", "late"), fractions))]
     return {
-        "schema_version": SCHEMA, "source_id": segment_timeline["source_id"],
+        "schema_version": packet_schema, "source_id": segment_timeline["source_id"],
         "segment_id": segment_id,
-        "inputs": {"story_segment_timeline_sha256": segment_timeline_sha256,
+        "inputs": {timeline_input_key: segment_timeline_sha256,
                    "context_view_grid_sha256": grid_sha256},
         "segment": dict(segment),
         "sampling_policy": {"policy_id": "segment_interior_quintiles_v1",
