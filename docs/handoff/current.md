@@ -1,11 +1,12 @@
 # Current handoff
 
-Updated: 2026-09-06T18:40:00+08:00
+Updated: 2026-09-09T18:02:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: aea4453
-Remote status: push confirmed `origin/main` advanced to `aea4453`
-Working tree at checkpoint: portable-CI and pre-policy session fixes ready to commit
+Baseline commit: 0a70b26
+Remote status: fetch confirmed `main` and `origin/main` equal at `0a70b26`;
+GitHub Actions `handoff-contract` run 34028812663 succeeded for that exact SHA
+Working tree at checkpoint: clean before this handoff refresh
 
 ## Objective
 
@@ -89,9 +90,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Expected branch/remote before checkpoint: `main` at `aea4453`.
-- Expected dirty files: this handoff, launcher ordering/test, and two portable-CI
-  test isolation fixes.
+- Verified branch/remote before checkpoint: `main` and `origin/main` at `0a70b26`.
+- The portable-CI and pre-policy session fixes are committed and pushed; the
+  working tree was clean before this handoff refresh.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
 - Full suite: 682 tests pass with eight explicit host-only gates skipped.

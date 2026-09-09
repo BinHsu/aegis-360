@@ -195,6 +195,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-After portable CI confirms green, implement coordinator spawn/cleanup behind the
-facade. Keep backend authority APIs closed; acquire no model or real media and
+Implement coordinator spawn/cleanup behind the facade. Portable CI is green for
+`0a70b26`. Keep backend authority APIs closed; acquire no model or real media and
 construct no capability receipt or token yet.
