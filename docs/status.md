@@ -195,6 +195,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Implement coordinator spawn/cleanup behind the facade. Portable CI is green for
-`0a70b26`. Keep backend authority APIs closed; acquire no model or real media and
-construct no capability receipt or token yet.
+Implement private launcher argv/policy-pipe transport behind the facade and
+host-gated process-group timeout evidence. Keep authority APIs closed; acquire
+no model/media and construct no capability receipt/token.

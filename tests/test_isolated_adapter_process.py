@@ -197,7 +197,7 @@ class IsolatedAdapterProcessTests(unittest.TestCase):
         self.assertFalse(result.invocation_failed); self.assertEqual(result.stdout, b'{"closed":true}')
         argv, kwargs = token.kwargs
         self.assertEqual(argv, self.argv); self.assertFalse(kwargs["shell"])
-        self.assertTrue(kwargs["close_fds"]); self.assertTrue(kwargs["start_new_session"])
+        self.assertTrue(kwargs["close_fds"]); self.assertFalse(kwargs["start_new_session"])
         self.assertEqual(kwargs["cwd"], str(self.cwd))
         self.assertEqual(kwargs["env"], {"LANG": "C", "LC_ALL": "C", "TZ": "UTC",
             "NO_COLOR": "1", "HOME": str(self.home), "TMPDIR": str(self.tmp)})

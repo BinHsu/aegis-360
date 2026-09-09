@@ -238,7 +238,10 @@ def capture_adapter_process(*, backend_token: ProbedBackendToken,
             process = backend_token.spawn(invocation, invocation.argv,
                 cwd=invocation.bundle_cwd.path, env=environment,
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                close_fds=True, start_new_session=True, shell=False)
+                # The retained native launcher owns setsid() before it reads the
+                # policy transport.  Asking a backend for another session would
+                # either fail or move that ordering outside the launcher.
+                close_fds=True, start_new_session=False, shell=False)
         except (OSError, subprocess.SubprocessError):
             return ProcessCapture(b"", False, True, "invocation_failure", None,
                                   False, False, False, False, False)

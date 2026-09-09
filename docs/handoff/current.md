@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-09-09T18:02:00+08:00
+Updated: 2026-09-09T18:18:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 0a70b26
-Remote status: fetch confirmed `main` and `origin/main` equal at `0a70b26`;
-GitHub Actions `handoff-contract` run 34028812663 succeeded for that exact SHA
-Working tree at checkpoint: clean before this handoff refresh
+Baseline commit: 0f0cfc3
+Remote status: push confirmed `origin/main` advanced to `0f0cfc3`;
+GitHub Actions `handoff-contract` run 34337714363 succeeded for that exact SHA
+Working tree at checkpoint: launcher-owned session transport fix ready to commit
 
 ## Objective
 
@@ -90,9 +90,9 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Verified branch/remote before checkpoint: `main` and `origin/main` at `0a70b26`.
-- The portable-CI and pre-policy session fixes are committed and pushed; the
-  working tree was clean before this handoff refresh.
+- Verified branch/remote before checkpoint: `main` and `origin/main` at `0f0cfc3`.
+- Expected dirty files: this handoff, status, isolated adapter capture and its
+  exact-spawn test.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
 - Full suite: 682 tests pass with eight explicit host-only gates skipped.
@@ -163,6 +163,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
   blocked-policy ordering and cleanup passed independent audit. GitHub's Ubuntu
   job exposed four harness tests that did not bypass the host availability guard
   and one fixed-macOS-path test; these are now explicitly isolated for portable CI.
+- Generic bounded capture now requests `start_new_session=False`; the native
+  launcher remains the sole owner of pre-policy `setsid()`. The focused 16-test
+  capture suite, full 682-test suite and a pre-fix mutation all discriminate it.
 
 ## Safety and claims
 
