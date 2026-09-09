@@ -186,7 +186,8 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full suite: 682 tests pass with eight explicit host-only gates skipped.
+- Full suite: 704 tests pass with eight explicit host-only gates skipped; the
+  20-test focused facade suite and one-test real-host facade gate also pass.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 - OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 - Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
@@ -195,6 +196,5 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Retain the precommitted forbidden-exec runtime in the facade, then bind canonical
-deny-default policy input to retained batch roots before any spawn. Keep authority
-APIs closed; acquire no model/media and construct no capability receipt/token.
+Bind canonical deny-default policy input to retained batch roots before any spawn;
+keep authority APIs closed and construct no capability receipt/token.

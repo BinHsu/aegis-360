@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-09-09T20:03:00+08:00
+Updated: 2026-09-09T21:20:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 11c08c6
-Remote status: push confirmed `origin/main` advanced to `11c08c6`;
-GitHub Actions `handoff-contract` run 34349930363 succeeded for that exact SHA
-Working tree at checkpoint: native forbidden-exec runtime asset ready to commit
+Baseline commit: 3d888ba
+Remote status: push confirmed `origin/main` advanced to `3d888ba`;
+GitHub Actions `handoff-contract` run 34354939348 succeeded for that exact SHA
+Working tree at checkpoint: three-role retained facade binding ready to commit
 
 ## Objective
 
@@ -90,12 +90,14 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Verified branch/remote before checkpoint: `main` and `origin/main` at `11c08c6`.
-- Expected dirty files: this handoff, status, native forbidden-exec source,
-  sealed external runtime builder and host/adversarial tests.
+- Verified branch/remote before checkpoint: `main` and `origin/main` at `3d888ba`.
+- Expected dirty files: this handoff, status, coordinator facade and its
+  host/adversarial tests.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 698 tests pass with eight explicit host-only gates skipped.
+- Full suite: 704 tests pass with eight explicit host-only gates skipped.
+- Facade focused suite: 20 tests pass with one explicit host-only gate skipped.
+- Facade real-host gate: one test passes outside the enclosing sandbox.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 - OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 
@@ -176,6 +178,12 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
   invalid binaries, duplicate/malformed calls, post-exit mutation, partial-build
   rollback and replacement races fail closed. Ten host tests and the full suite
   pass; no Seatbelt denial or capability authority is claimed.
+- The coordinator facade now retains launcher, adapter and forbidden-exec sentinel
+  runtimes as three pairwise-distinct roles. It rejects equal supplied paths,
+  manifest objects, canonical manifest bytes, retained vnode identities and
+  retained manifest digests before publication. Public bytes remain path-free;
+  successful close order is sentinel, adapter, then backend. Focused, full,
+  real-host and launcher/adapter alias-mutation checks pass.
 
 ## Safety and claims
 
