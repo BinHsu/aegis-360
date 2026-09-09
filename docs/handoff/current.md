@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-09-09T18:18:00+08:00
+Updated: 2026-09-09T19:02:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 0f0cfc3
-Remote status: push confirmed `origin/main` advanced to `0f0cfc3`;
-GitHub Actions `handoff-contract` run 34337714363 succeeded for that exact SHA
-Working tree at checkpoint: launcher-owned session transport fix ready to commit
+Baseline commit: 896f18b
+Remote status: push confirmed `origin/main` advanced to `896f18b`;
+GitHub Actions `handoff-contract` run 34339190696 succeeded for that exact SHA
+Working tree at checkpoint: retained adapter-runtime facade binding ready to commit
 
 ## Objective
 
@@ -90,12 +90,12 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Verified branch/remote before checkpoint: `main` and `origin/main` at `0f0cfc3`.
-- Expected dirty files: this handoff, status, isolated adapter capture and its
-  exact-spawn test.
+- Verified branch/remote before checkpoint: `main` and `origin/main` at `896f18b`.
+- Expected dirty files: this handoff, status, retained adapter-runtime facade and
+  its lifecycle/adversarial tests.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 682 tests pass with eight explicit host-only gates skipped.
+- Full suite: 688 tests pass with eight explicit host-only gates skipped.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 - OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 
@@ -166,6 +166,11 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 - Generic bounded capture now requests `start_new_session=False`; the native
   launcher remains the sole owner of pre-policy `setsid()`. The focused 16-test
   capture suite, full 682-test suite and a pre-fix mutation all discriminate it.
+- The coordinator facade now privately retains a separately precommitted adapter
+  runtime tree and revalidates its sole manifest-declared Mach-O entrypoint before
+  returning existing path-free backend bytes. Registry-publication and close-error
+  paths close adapter then backend exactly once. The focused, full, real-host and
+  pre-fix mutation checks pass; no execution or policy authority is exposed.
 
 ## Safety and claims
 

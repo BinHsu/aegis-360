@@ -195,6 +195,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Implement private launcher argv/policy-pipe transport behind the facade and
-host-gated process-group timeout evidence. Keep authority APIs closed; acquire
-no model/media and construct no capability receipt/token.
+Bind canonical deny-default policy input to the privately retained launcher and
+adapter runtimes before any spawn. Keep authority APIs closed; acquire no
+model/media and construct no capability receipt/token.
