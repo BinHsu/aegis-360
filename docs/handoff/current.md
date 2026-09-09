@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-09-09T19:02:00+08:00
+Updated: 2026-09-09T20:03:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 896f18b
-Remote status: push confirmed `origin/main` advanced to `896f18b`;
-GitHub Actions `handoff-contract` run 34339190696 succeeded for that exact SHA
-Working tree at checkpoint: retained adapter-runtime facade binding ready to commit
+Baseline commit: 11c08c6
+Remote status: push confirmed `origin/main` advanced to `11c08c6`;
+GitHub Actions `handoff-contract` run 34349930363 succeeded for that exact SHA
+Working tree at checkpoint: native forbidden-exec runtime asset ready to commit
 
 ## Objective
 
@@ -90,12 +90,12 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Verified branch/remote before checkpoint: `main` and `origin/main` at `896f18b`.
-- Expected dirty files: this handoff, status, retained adapter-runtime facade and
-  its lifecycle/adversarial tests.
+- Verified branch/remote before checkpoint: `main` and `origin/main` at `11c08c6`.
+- Expected dirty files: this handoff, status, native forbidden-exec source,
+  sealed external runtime builder and host/adversarial tests.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
-- Full suite: 688 tests pass with eight explicit host-only gates skipped.
+- Full suite: 698 tests pass with eight explicit host-only gates skipped.
 - Native launcher host gate: 11 tests pass outside the enclosing sandbox.
 - OS-backend host gate: 14 tests pass outside the enclosing sandbox.
 
@@ -171,6 +171,11 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
   returning existing path-free backend bytes. Registry-publication and close-error
   paths close adapter then backend exactly once. The focused, full, real-host and
   pre-fix mutation checks pass; no execution or policy authority is exposed.
+- A dedicated forbidden-exec sentinel now builds only as a sealed external runtime
+  asset. Its retained-tree host control executes exact marker bytes unsandboxed;
+  invalid binaries, duplicate/malformed calls, post-exit mutation, partial-build
+  rollback and replacement races fail closed. Ten host tests and the full suite
+  pass; no Seatbelt denial or capability authority is claimed.
 
 ## Safety and claims
 

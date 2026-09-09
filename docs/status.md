@@ -195,6 +195,6 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Bind canonical deny-default policy input to the privately retained launcher and
-adapter runtimes before any spawn. Keep authority APIs closed; acquire no
-model/media and construct no capability receipt/token.
+Retain the precommitted forbidden-exec runtime in the facade, then bind canonical
+deny-default policy input to retained batch roots before any spawn. Keep authority
+APIs closed; acquire no model/media and construct no capability receipt/token.
