@@ -1,12 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-09T21:20:00+08:00
+Updated: 2026-09-14T05:49:22+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 3d888ba
-Remote status: push confirmed `origin/main` advanced to `3d888ba`;
-GitHub Actions `handoff-contract` run 34354939348 succeeded for that exact SHA
-Working tree at checkpoint: three-role retained facade binding ready to commit
+Baseline commit: c63a7dd
+Remote status: `main` and `origin/main` are synchronized at `c63a7dd`;
+GitHub Actions `handoff-contract` run 34357122950 succeeded for exact SHA
+`c63a7dd08fa7c16eb395abb92ac845ab6150c8dc`
+Working tree at checkpoint: clean before this handoff-only update
 
 ## Objective
 
@@ -90,9 +91,8 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Verified branch/remote before checkpoint: `main` and `origin/main` at `3d888ba`.
-- Expected dirty files: this handoff, status, coordinator facade and its
-  host/adversarial tests.
+- Verified branch/remote before checkpoint: `main` and `origin/main` at `c63a7dd`.
+- Expected dirty file: this handoff only.
 - External source, numeric artifacts, private key/salt and review pixels stay
   untracked.
 - Full suite: 704 tests pass with eight explicit host-only gates skipped.
