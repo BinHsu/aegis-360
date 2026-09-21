@@ -174,11 +174,8 @@ The synthetic Seatbelt harness now classifies the final host candidate
 `feasible` on macOS 26.5.2/arm64 after two exact dyld-log-driven literal read
 allowances. All allowed, forbidden, socket, side-effect and process-group checks
 close; the sole canonical renderer's host policy SHA-256 is `847d44bf…8c91`.
-This is deliberately not a capability
-receipt or production-backend result. The backend schema and retained native
-Mach-O authority remains absent; its retained format-eligibility gate and the
-non-authoritative backend shape/renderer now have independently audited
-executable coverage.
+This remains primitive feasibility only. Retained runtime/backend proofs and
+the candidate renderer grant no installed-policy or invocation authority.
 
 Before asking the owner to view a result, agent pre-review must establish that
 the planned output differs materially, preserves image quality, and answers a
@@ -186,15 +183,17 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full suite: 704 tests pass with eight explicit host-only gates skipped; the
-  20-test focused facade suite and one-test real-host facade gate also pass.
-- Native launcher host gate: 11 tests pass outside the enclosing sandbox.
-- OS-backend host gate: 14 tests pass outside the enclosing sandbox.
-- Media-tree focused suite: 6 tests pass, including Darwin no-overwrite.
+- Full discovery: 714 tests run, 706 passed and eight host gates skipped.
+- Candidate/facade real-host integration: 30 tests run, all passed.
+- A controlled cached-policy mutation is detected by the extra-leaf regression.
+- Prior native launcher/OS-backend host gates: 11/14 tests passed.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-Bind canonical deny-default policy input to retained batch roots before any spawn;
-keep authority APIs closed and construct no capability receipt/token.
+The private one-packet batch-policy candidate now binds input-derived sanitized
+media, model/prompt trees and scratch to canonical policy bytes, with named-root
+revalidation and no execution authority. Freeze request, uid/gid and private
+HOME/TMPDIR bindings next, then implement bounded coordinator transport. Keep
+authority APIs closed and construct no capability receipt/token.

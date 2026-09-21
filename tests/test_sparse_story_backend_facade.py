@@ -606,6 +606,18 @@ class BackendFacadeHostTests(unittest.TestCase):
                     value = json.loads(payload)
                     self.assertEqual(value["schema_version"],
                                      "aegis360.sparse-story-seatbelt-backend-manifest.v1")
+                    from tests.test_sparse_story_batch_policy import batch_args
+                    from aegis360.sparse_story_batch_policy import _open_batch_policy_candidate
+                    candidate = _open_batch_policy_candidate(**batch_args(base, binding))
+                    try:
+                        self.assertEqual(len(candidate.candidate_sha256()), 64)
+                        binding.close()
+                        with self.assertRaisesRegex(ValueError, "not live"):
+                            candidate.candidate_sha256()
+                    finally:
+                        candidate.close()
+                        for child in ("bundle", "model", "prompt"):
+                            unseal_runtime(base / child)
             finally:
                 (root / "bin").chmod(0o700); root.chmod(0o700)
                 (adapter_root / "bin").chmod(0o700); adapter_root.chmod(0o700)

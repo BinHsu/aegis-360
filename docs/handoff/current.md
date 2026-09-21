@@ -1,13 +1,12 @@
 # Current handoff
 
-Updated: 2026-09-14T05:49:22+08:00
+Updated: 2026-09-21T11:21:54+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: c63a7dd
-Remote status: `main` and `origin/main` are synchronized at `c63a7dd`;
-GitHub Actions `handoff-contract` run 34357122950 succeeded for exact SHA
-`c63a7dd08fa7c16eb395abb92ac845ab6150c8dc`
-Working tree at checkpoint: clean before this handoff-only update
+Baseline commit: b4c444e
+Remote status: local `main` and cached `origin/main` both resolve to `b4c444e`;
+remote was not fetched this session and no current remote CI claim is made.
+Working tree at checkpoint: local batch-policy implementation, tests and documentation are uncommitted
 
 ## Objective
 
@@ -19,64 +18,25 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-Three independent backend-feasibility reviews reject signed App Sandbox and a
-bare VM as frozen-v1 backends and permit only a non-authoritative Seatbelt
-synthetic spike. The protocol now fixes policy-input hashing, finite system-read
-scope, one native-Mach-O bootstrap plus forbidden-exec sentinel semantics, live
-filesystem-AF_UNIX connect evidence and compound outside-write pre/post evidence.
-This is design authority only; no production isolation or capability authority
-exists.
+The private one-packet retained batch-policy candidate is implemented and passed
+an independent read-only audit. It derives exact media leaves from the existing
+sanitizer/lineage gate, retains them with asset-tree named-path and child-map
+checks, retains model/prompt trees and scratch identity, and rebuilds canonical
+policy bytes only after revalidating the borrowed facade and every root.
+Multi-packet execution roots, aliases, overlapping roots, changed content,
+replaced names and extra leaves fail closed. Close releases owned input proofs
+and never closes the borrowed facade or deletes caller assets.
 
-The audited synthetic harness subsequently reached `feasible` on the reference
-host with exact literal dyld startup allowances and least-privilege no-sysctl
-canonical policy SHA-256
-`847d44bfd2f09ffba0fcc71951e7604866ecbbae3a0397e8fc45e4bfacf38c91`.
-All 21 operation rows, listener, side-effect and process-group checks closed.
-This remains primitive feasibility only. The exact backend shape/renderer and
-retained native-Mach-O format gate are implemented but do not yet own backend,
-launcher, installed-policy or invocation authority.
+The candidate grants no spawn, installed-policy, receipt or capability authority.
+Its internal synthetic-support manifest is solely a retention representation;
+the original media result remains the source of input-derived authority.
+Full-set-to-one-packet execution-bundle derivation remains unimplemented.
 
-Three bounded follow-up reviews froze the next honest boundary. The unchanged
-21-operation matrix passes through `sandbox-exec -p`; policy transport is exact,
-length-prefixed, ASCII/LF, at most 65,536 bytes and launcher-hash-checked, but is
-temporarily argv-visible and proves no installed bytes. The launcher is thin
-arm64 C11/ad-hoc signed with macOS 15.0 deployment target. The retained OS proof
-may claim only readonly/restricted same-APFS vnode facts, not Apple's
-cryptographic SSV seal, and must bind retained `SystemVersion.plist` bytes to
-native `kern.osversion`.
-Darwin provides no assumed retained-FD exec for either backend or runtime. V1
-explicitly excludes a separately running malicious same-UID host process;
-immediate pre-exec plus coordinator post-exit identity checks detect changes and
-suppress publication but do not eliminate the pathname reopen gap.
-
-The model-neutral sparse story semantic successor protocol passed independent
-causal-sampling and vertical-contract audits. It fixes a six-packet known-label
-Stage A, a deterministic four-source/24-packet blind Stage B, sanitized adapter
-projections, a closed observation/binder contract, failure-bound abstention and
-total result precedence. No model, media or score has been acquired. The
-schema/binder, sanitized projection, closed media-tree and retained asset-tree
-implementations pass independent re-audits. The non-authoritative isolated
-process capture foundation also passes its bounded tests. The exact
-isolated-runner protocol passes causal and vertical audits; production
-isolation and coordinator-owned capability authority remain absent.
-
-The prior structural replication remains durable negative evidence:
-
-The frozen Old Ghost Road contrast config SHA is
-`8baf66a00a008625cd91292aaa8ac0a8794d9fb20338e0acfab054b3a2f7f7a2`.
-It ran once using direct-source 2-fps 160x80 gray frames, exact rational sample
-mapping, closed label/packet/evidence hashes and source hashes before/after.
-
-- Result artifact SHA:
-  `83ba3f456f1d56b9bc40fef413cbc93009c0fd4c4813c85f9004614fc8843346`.
-- Primary passes: chapter/activity event 0008 scores 0.15776835; within-chapter
-  action event 0005 scores 0.08512510.
-- Correlated secondary reverses: chapter event 0019 scores 0.02279322; within-
-  chapter event 0018 scores 0.03082203. This contrary evidence is report-only
-  by precommit but prevents any general detector claim.
-- All eight exact A→B→A fixtures pass. Source hashes before/after match.
-- Authority is blind-replication design only: no story boundary, camera choice
-  or render.
+The prior retained launcher, adapter and forbidden-exec sentinel facade remains
+in place. Its host integration now also opens a real batch candidate and proves
+that closing the facade invalidates the candidate. The frozen Seatbelt primitive
+matrix remains historical feasibility evidence only; see the sparse story
+successor protocol for its exact scope and backend constraints.
 
 ## Prior Skiing rejection
 
@@ -91,23 +51,18 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Repository state
 
-- Verified branch/remote before checkpoint: `main` and `origin/main` at `c63a7dd`.
-- Expected dirty file: this handoff only.
-- External source, numeric artifacts, private key/salt and review pixels stay
-  untracked.
-- Full suite: 704 tests pass with eight explicit host-only gates skipped.
-- Facade focused suite: 20 tests pass with one explicit host-only gate skipped.
-- Facade real-host gate: one test passes outside the enclosing sandbox.
-- Native launcher host gate: 11 tests pass outside the enclosing sandbox.
-- OS-backend host gate: 14 tests pass outside the enclosing sandbox.
+- Local baseline: `main` and cached `origin/main` at `b4c444e` before this work.
+- Local candidate source/tests, host integration and documentation are uncommitted.
+- No remote publication or current remote CI verification performed.
 
 ## Verified
 
-- Frozen source/config/fixture and four evidence lineages exact-validate.
-- Primary structural ordinal gate and all eight synthetic episode gates pass.
-- Result artifact is path-free and grants no production authority.
-- Host Seatbelt candidate primitive matrix is `feasible`; independent causal
-  and vertical reviews constrain that fact to the exact synthetic host run.
+- Full discovery: 714 tests run, 706 passed, eight explicit host gates skipped.
+- Focused candidate/facade real-host integration: 30 tests run, all passed.
+- Controlled mutation returning cached policy without revalidation causes the
+  extra-neighbor-leaf regression to fail with `ValueError not raised`.
+- Independent audit found no blocker within this non-authoritative boundary.
+- `python3 scripts/check_handoff.py` and `git diff --check` passed.
 
 ## Rejected
 
@@ -117,14 +72,15 @@ mapping, closed label/packet/evidence hashes and source hashes before/after.
 
 ## Pending
 
-- Keep proof-accepting backend authority APIs closed. Implement coordinator
-  spawn/timeout/process-group cleanup behind the audited facade, without a
-  capability receipt or token.
-- Do not acquire a model or real-media packets until that implementation gate
-  is reviewed and frozen.
-- Do not retune either rejected visual descriptor or render production video.
-- Replication must use neutral packets and fresh independent reviewers before
-  opening event identities/positions. Do not render production video.
+- Freeze canonical request/private packet/projection binding and real/effective
+  uid/gid plus private HOME/TMPDIR identity before coordinator transport.
+- Implement coordinator spawn/timeout/process-group cleanup behind the audited
+  facade, without manufacturing a capability receipt or token.
+- Capability probing must use the same entrypoint/policy/roots as inference and
+  known existing leaves; never add sentinel files to closed input bundles.
+- Keep proof-accepting authority APIs closed. Do not acquire models or real-media
+  packets until the implementation gate is reviewed and frozen.
+- No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
 
@@ -146,44 +102,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-- Three bounded backend reviews completed. App Sandbox and VM are not protocol-fit;
-  the host-bound Seatbelt primitive feasibility milestone passed both audits.
-- Native launcher source/build/test milestone passed independent C bounds/argv/FD
-  audit and host integration. Main integrated the path-free SystemVersion hash and
-  exact claim boundary. No capability token/receipt, model, real media or score
-  acquisition is authorized.
-- Retained OS-backend proof passed independent ABI/parser/identity audit and
-  real-host observation; it still exposes no manifest derivation or authority
-  artifact.
-- Private launcher/backend binding passed independent provenance, noncopyability,
-  canonical-revalidation and close-lifecycle audit. Public authority APIs remain
-  `AuthorityUnavailable`.
-- Registry-backed coordinator facade passed forgery, method-shadow, lifecycle,
-  cleanup and path-leakage audit; it accepts only launcher root and precommitted
-  manifest and creates both retained proofs internally.
-- Launcher establishes PGID/session and runtime limits before reading policy;
-  blocked-policy ordering and cleanup passed independent audit. GitHub's Ubuntu
-  job exposed four harness tests that did not bypass the host availability guard
-  and one fixed-macOS-path test; these are now explicitly isolated for portable CI.
-- Generic bounded capture now requests `start_new_session=False`; the native
-  launcher remains the sole owner of pre-policy `setsid()`. The focused 16-test
-  capture suite, full 682-test suite and a pre-fix mutation all discriminate it.
-- The coordinator facade now privately retains a separately precommitted adapter
-  runtime tree and revalidates its sole manifest-declared Mach-O entrypoint before
-  returning existing path-free backend bytes. Registry-publication and close-error
-  paths close adapter then backend exactly once. The focused, full, real-host and
-  pre-fix mutation checks pass; no execution or policy authority is exposed.
-- A dedicated forbidden-exec sentinel now builds only as a sealed external runtime
-  asset. Its retained-tree host control executes exact marker bytes unsandboxed;
-  invalid binaries, duplicate/malformed calls, post-exit mutation, partial-build
-  rollback and replacement races fail closed. Ten host tests and the full suite
-  pass; no Seatbelt denial or capability authority is claimed.
-- The coordinator facade now retains launcher, adapter and forbidden-exec sentinel
-  runtimes as three pairwise-distinct roles. It rejects equal supplied paths,
-  manifest objects, canonical manifest bytes, retained vnode identities and
-  retained manifest digests before publication. Public bytes remain path-free;
-  successful close order is sentinel, adapter, then backend. Focused, full,
-  real-host and launcher/adapter alias-mutation checks pass.
+None. The bounded protocol-boundary review and implementation audit completed.
+The reviewer changed no files and independently ran the eight initial candidate
+checks. Main agent integrated host evidence and added two more checks.
 
 ## Safety and claims
 
