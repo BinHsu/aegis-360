@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-21T11:24:37+08:00
+Updated: 2026-09-21T11:40:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 3de9e81
-Remote status: fetched `origin/main` at `b4c444e`; local `main` at `3de9e81`
-is one implementation commit ahead before this handoff-only update. No push or
-remote CI verification has been performed for the implementation.
-Working tree at checkpoint: this handoff-only update; implementation is committed
+Baseline commit: 9ab838b
+Remote status: fetched local `main` and `origin/main` are synchronized at
+`9ab838b0d1609816fea0afdfea0aba5ba25ca5b7`; GitHub Actions run 35557700243
+succeeded for that exact SHA.
+Working tree at checkpoint: request/environment binding and documentation are uncommitted
 
 ## Objective
 
@@ -19,16 +19,19 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-The private one-packet retained batch-policy candidate is implemented and passed
-an independent read-only audit. It derives exact media leaves from the existing
+The private one-packet retained batch-policy candidate now also freezes the
+canonical adapter request and runner-policy bytes, real/effective uid/gid and
+retained private HOME/TMPDIR identities. HOME and TMPDIR must be distinct,
+nonoverlapping empty directories beneath scratch, so their writes remain inside
+the sole policy write allowance. It derives exact media leaves from the existing
 sanitizer/lineage gate, retains them with asset-tree named-path and child-map
-checks, retains model/prompt trees and scratch identity, and rebuilds canonical
-policy bytes only after revalidating the borrowed facade and every root.
+checks, and rebuilds canonical policy bytes only after revalidating all roots.
 Multi-packet execution roots, aliases, overlapping roots, changed content,
 replaced names and extra leaves fail closed. Close releases owned input proofs
 and never closes the borrowed facade or deletes caller assets.
 
-The candidate grants no spawn, installed-policy, receipt or capability authority.
+Only path-free policy and invocation-binding digests are exposed. The candidate
+grants no spawn, installed-policy, receipt or capability authority.
 Its internal synthetic-support manifest is solely a retention representation;
 the original media result remains the source of input-derived authority.
 Full-set-to-one-packet execution-bundle derivation remains unimplemented.
@@ -52,17 +55,19 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Implementation commit: `3de9e81` on local `main`.
-- Fetched remote `origin/main`: `b4c444e`. Implementation is locally committed;
-  this handoff-only refresh is pending its own local commit.
-- No remote publication or current remote CI verification performed.
+- Published checkpoint: `BinHsu/aegis-360@9ab838b`; local and remote synchronized
+  before the current uncommitted milestone.
+- GitHub Actions `handoff-contract` run 35557700243 succeeded for exact SHA
+  `9ab838b0d1609816fea0afdfea0aba5ba25ca5b7`.
 
 ## Verified
 
-- Full discovery: 714 tests run, 706 passed, eight explicit host gates skipped.
-- Focused candidate/facade real-host integration: 30 tests run, all passed.
+- Full discovery: 718 tests run, 710 passed, eight explicit host gates skipped.
+- Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
+- Controlled mutation removing private-directory emptiness validation causes the
+  nonempty-HOME regression to fail with `ValueError not raised`.
 - Independent audit found no blocker within this non-authoritative boundary.
 - `python3 scripts/check_handoff.py` and `git diff --check` passed.
 
@@ -74,15 +79,6 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Owner publication decision: whether to push the reviewed local implementation
-  and handoff commits to `BinHsu/aegis-360` `origin/main`, then observe required
-  CI for the exact resulting SHA. Current authorization covers local work only.
-- No agents or background processes remain active. On publication approval,
-  recheck remote ancestry before push; do not force-push. On local continuation,
-  the next implementation boundary is listed below.
-
-- Freeze canonical request/private packet/projection binding and real/effective
-  uid/gid plus private HOME/TMPDIR identity before coordinator transport.
 - Implement coordinator spawn/timeout/process-group cleanup behind the audited
   facade, without manufacturing a capability receipt or token.
 - Capability probing must use the same entrypoint/policy/roots as inference and

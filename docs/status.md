@@ -183,17 +183,16 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 714 tests run, 706 passed and eight host gates skipped.
-- Candidate/facade real-host integration: 30 tests run, all passed.
-- A controlled cached-policy mutation is detected by the extra-leaf regression.
+- Full discovery: 718 tests run, 710 passed and eight host gates skipped.
+- Candidate/facade real-host integration: 34 tests run, all passed.
+- Controlled mutations are detected by the extra-leaf and nonempty-HOME regressions.
 - Prior native launcher/OS-backend host gates: 11/14 tests passed.
 - `python3 scripts/check_handoff.py`: passes.
 - `git diff --check`: passes.
 
 ## Next action
 
-The private one-packet batch-policy candidate now binds input-derived sanitized
-media, model/prompt trees and scratch to canonical policy bytes, with named-root
-revalidation and no execution authority. Freeze request, uid/gid and private
-HOME/TMPDIR bindings next, then implement bounded coordinator transport. Keep
-authority APIs closed and construct no capability receipt/token.
+The private one-packet candidate now binds canonical request/runner-policy bytes,
+uid/gid and retained empty HOME/TMPDIR identities in addition to all policy roots.
+Implement bounded coordinator transport next. Keep authority APIs closed and
+construct no capability receipt/token.

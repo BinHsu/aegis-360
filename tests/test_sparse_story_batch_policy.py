@@ -15,11 +15,12 @@ from aegis360.sparse_story_asset_tree import _observe_asset_tree, _observe_asset
 from aegis360.sparse_story_batch_policy import _open_batch_policy_candidate
 from aegis360.sparse_story_media_tree import publish_sanitized_bundle
 from aegis360.sparse_story_runner_contract import (
-    build_seatbelt_backend_manifest_shape, canonical_seatbelt_backend_manifest_shape_bytes,
+    build_runner_policy, build_seatbelt_backend_manifest_shape,
+    canonical_seatbelt_backend_manifest_shape_bytes,
 )
 
 
-def batch_args(base, facade):
+def batch_args(base, facade, backend_bytes=None):
     helper = media_helpers.SparseStoryMediaTreeTests()
     packets, hashes, index = helper.fixture()
     payloads = helper.payloads(index)
@@ -38,11 +39,17 @@ def batch_args(base, facade):
         root.chmod(0o555)
         manifests.append(_observe_asset_manifest_shape(root=root, asset_kind=kind))
     (base / "scratch").mkdir(mode=0o700)
+    (base / "scratch" / "home").mkdir(mode=0o700)
+    (base / "scratch" / "tmp").mkdir(mode=0o700)
+    if backend_bytes is None:
+        backend_bytes = facade.canonical_manifest_bytes()
     return dict(facade=facade, bundle_root=bundle, **gate,
         payloads=payloads, media_result_bytes=result,
         model_root=base / "model", model_manifest=manifests[0],
         prompt_root=base / "prompt", prompt_manifest=manifests[1],
-        scratch_root=base / "scratch")
+        scratch_root=base / "scratch", private_home=base / "scratch" / "home",
+        private_tmpdir=base / "scratch" / "tmp", runner_policy=build_runner_policy(
+            backend_manifest_sha256=hashlib.sha256(backend_bytes).hexdigest()))
 
 class BatchPolicyTests(unittest.TestCase):
     def setUp(self):
@@ -73,7 +80,7 @@ class BatchPolicyTests(unittest.TestCase):
         self.facade_mock = mock.patch("aegis360.sparse_story_batch_policy._require_live",
                                       return_value=self.live)
         self.facade_mock.start(); self.addCleanup(self.facade_mock.stop)
-        self.args = batch_args(self.base, object())
+        self.args = batch_args(self.base, object(), backend)
 
     def candidate(self, **changes):
         result = _open_batch_policy_candidate(**(self.args | changes))
@@ -88,6 +95,9 @@ class BatchPolicyTests(unittest.TestCase):
         self.assertIn(str(self.args["bundle_root"]).encode(), data)
         self.assertNotIn(str(self.base / "launcher").encode(), data)
         self.assertEqual(data, candidate._policy_bytes())
+        self.assertEqual(len(candidate.invocation_binding_sha256()), 64)
+        for private_path in (self.args["private_home"], self.args["private_tmpdir"]):
+            self.assertNotIn(str(private_path).encode(), candidate._binding_bytes())
         self.assertFalse(hasattr(candidate, "spawn"))
         for operation in (copy.copy, copy.deepcopy, pickle.dumps):
             with self.assertRaises(TypeError): operation(candidate)
@@ -156,6 +166,43 @@ class BatchPolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "scratch root identity"):
             candidate.candidate_sha256()
 
+    def test_private_directories_bind_identity_and_must_remain_empty(self):
+        candidate = self.candidate()
+        digest = candidate.invocation_binding_sha256()
+        home = self.args["private_home"]
+        (home / "unexpected").write_bytes(b"x")
+        with self.assertRaisesRegex(ValueError, "not empty"):
+            candidate.invocation_binding_sha256()
+        (home / "unexpected").unlink()
+        self.assertEqual(candidate.invocation_binding_sha256(), digest)
+        tmpdir = self.args["private_tmpdir"]
+        tmpdir.rename(self.base / "old-tmp")
+        tmpdir.mkdir(mode=0o700)
+        with self.assertRaisesRegex(ValueError, "identity"):
+            candidate.invocation_binding_sha256()
+
+    def test_runner_policy_and_effective_identity_are_exact(self):
+        with self.assertRaises(ValueError):
+            self.candidate(runner_policy=self.args["runner_policy"] | {"timeout_ns": 1})
+        candidate = self.candidate()
+        with mock.patch("aegis360.sparse_story_batch_policy.os.geteuid",
+                        return_value=os.geteuid() + 1):
+            with self.assertRaisesRegex(ValueError, "user identity"):
+                candidate.invocation_binding_sha256()
+        with mock.patch("aegis360.sparse_story_batch_policy.os.getegid",
+                        return_value=os.getegid() + 1):
+            with self.assertRaisesRegex(ValueError, "group identity"):
+                candidate.invocation_binding_sha256()
+
+    def test_request_binding_changes_with_projection_and_never_exposes_request(self):
+        candidate = self.candidate()
+        first = candidate.invocation_binding_sha256()
+        changed = copy.deepcopy(self.args["index"])
+        changed["packets"][0]["projection"]["rows"][0]["views"].reverse()
+        with self.assertRaises(ValueError): self.candidate(index=changed)
+        self.assertNotIn(candidate._request_bytes, candidate._binding_bytes())
+        self.assertEqual(first, candidate.invocation_binding_sha256())
+
     def test_alias_and_overlap_rejected(self):
         alias = self.base / "alias"
         alias.symlink_to(self.args["model_root"], target_is_directory=True)
@@ -163,6 +210,10 @@ class BatchPolicyTests(unittest.TestCase):
             self.candidate(model_root=alias)
         with self.assertRaisesRegex(ValueError, "overlap"):
             self.candidate(scratch_root=self.base)
+        outside = self.base / "outside-home"
+        outside.mkdir(mode=0o700)
+        with self.assertRaisesRegex(ValueError, "beneath scratch"):
+            self.candidate(private_home=outside)
 
     def test_closed_facade_and_factory_failure_release_owned_proofs(self):
         candidate = self.candidate()
@@ -180,6 +231,19 @@ class BatchPolicyTests(unittest.TestCase):
             with self.assertRaises(ValueError): self.candidate(scratch_root=self.base)
         self.assertEqual(len(observed), 3)
         self.assertTrue(all(proof._closed for proof in observed))
+
+    def test_factory_failure_closes_private_directories(self):
+        opened = []
+        from aegis360 import sparse_story_batch_policy as module
+        original = module._PrivateDirectory
+        class RecordingDirectory(original):
+            def __init__(self, root):
+                super().__init__(root); opened.append(self)
+        with mock.patch.object(module, "_PrivateDirectory", RecordingDirectory):
+            with self.assertRaisesRegex(ValueError, "not overlap"):
+                self.candidate(private_tmpdir=self.args["private_home"])
+        self.assertEqual(len(opened), 2)
+        self.assertTrue(all(item.closed for item in opened))
 
 
 if __name__ == "__main__":
