@@ -3,11 +3,11 @@
 Updated: 2026-09-22T00:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: eea5881
-Remote status: local `main` at `eea5881` is one local checkpoint ahead of fetched
+Baseline commit: 29a1d79
+Remote status: local `main` at `29a1d79` is two local commits ahead of fetched
 `origin/main` at `edcbe3ae541e1cc6c2a458646e70884390096ab6`; GitHub Actions
 `handoff-contract` run 35558137200 succeeded for exact published SHA `edcbe3a`.
-Working tree at checkpoint: new raw-transcript parser/tests and this handoff are uncommitted
+Working tree at checkpoint: this handoff-only refresh is pending local commit
 
 ## Objective
 
@@ -66,7 +66,8 @@ successor protocol for its exact scope and backend constraints.
   `handoff-contract` run 35558137200 succeeded for exact SHA
   `edcbe3ae541e1cc6c2a458646e70884390096ab6`.
 - Local-only checkpoint `eea5881` records the rejected transport and corrected
-  implementation order. No push is authorized for that later checkpoint yet.
+  implementation order. Local implementation `29a1d79` contains the closed
+  transcript parser; neither local commit has been pushed.
 
 ## Verified
 
@@ -89,6 +90,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
+- Owner publication decision: whether to push the two local commits plus this
+  handoff refresh to `BinHsu/aegis-360` `origin/main`, then verify exact-SHA CI.
+  Existing approval covered only the prior `edcbe3a` push.
 - The rejected transport defects and their disposition are recorded above; do
   not restore its source unchanged or treat its 21 passing tests as authority.
 - Implement the same-entrypoint raw capability-probe transcript and private
