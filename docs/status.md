@@ -194,5 +194,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 The private one-packet candidate now binds canonical request/runner-policy bytes,
 uid/gid and retained empty HOME/TMPDIR identities in addition to all policy roots.
-Implement bounded coordinator transport next. Keep authority APIs closed and
-construct no capability receipt/token.
+An operable raw transport spike was rejected because it could spawn before the
+mandatory probe and had child-lifecycle/timeout cleanup defects. Implement the
+same-entrypoint raw probe and private single-use composition boundary before
+restoring transport; keep public authority APIs closed.

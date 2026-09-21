@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-21T11:40:00+08:00
+Updated: 2026-09-21T12:10:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 9ab838b
 Remote status: fetched local `main` and `origin/main` are synchronized at
 `9ab838b0d1609816fea0afdfea0aba5ba25ca5b7`; GitHub Actions run 35557700243
 succeeded for that exact SHA.
-Working tree at checkpoint: request/environment binding and documentation are uncommitted
+Working tree at checkpoint: this audited sequencing correction is uncommitted
 
 ## Objective
 
@@ -79,8 +79,16 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Implement coordinator spawn/timeout/process-group cleanup behind the audited
-  facade, without manufacturing a capability receipt or token.
+- A private raw transport spike was rejected after independent audit despite 21
+  passing focused tests. It permitted direct spawn before the mandatory capability
+  probe, used weak child ownership, omitted stdio cleanup on failure, could block
+  policy delivery outside the wall timeout, retained signal authority after reap,
+  and lacked post-exit retained-identity revalidation. Its source/tests were never
+  committed and have been removed.
+- Implement the same-entrypoint raw capability-probe transcript and private
+  single-use composition boundary before restoring launcher transport. The next
+  transport must use strong child ownership, bounded nonblocking policy delivery,
+  exact stdio cleanup, lifecycle-based signal revocation and post-exit checks.
 - Capability probing must use the same entrypoint/policy/roots as inference and
   known existing leaves; never add sentinel files to closed input bundles.
 - Keep proof-accepting authority APIs closed. Do not acquire models or real-media
