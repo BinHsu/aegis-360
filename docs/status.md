@@ -183,12 +183,12 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 718 tests run, 710 passed and eight host gates skipped.
+- Full discovery: 722 tests run, 714 passed and eight host gates skipped.
+- Closed raw probe transcript parser: four focused tests pass; operation-order
+  mutation is detected. Parsing alone grants no capability authority.
 - Candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutations are detected by the extra-leaf and nonempty-HOME regressions.
 - Prior native launcher/OS-backend host gates: 11/14 tests passed.
-- `python3 scripts/check_handoff.py`: passes.
-- `git diff --check`: passes.
 
 ## Next action
 

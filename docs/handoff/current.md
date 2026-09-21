@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-21T12:10:00+08:00
+Updated: 2026-09-22T00:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 9ab838b
-Remote status: fetched local `main` and `origin/main` are synchronized at
-`9ab838b0d1609816fea0afdfea0aba5ba25ca5b7`; GitHub Actions run 35557700243
-succeeded for that exact SHA.
-Working tree at checkpoint: this audited sequencing correction is uncommitted
+Baseline commit: eea5881
+Remote status: local `main` at `eea5881` is one local checkpoint ahead of fetched
+`origin/main` at `edcbe3ae541e1cc6c2a458646e70884390096ab6`; GitHub Actions
+`handoff-contract` run 35558137200 succeeded for exact published SHA `edcbe3a`.
+Working tree at checkpoint: new raw-transcript parser/tests and this handoff are uncommitted
 
 ## Objective
 
@@ -19,7 +19,7 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-The private one-packet retained batch-policy candidate now also freezes the
+The last published implementation `edcbe3a` freezes the
 canonical adapter request and runner-policy bytes, real/effective uid/gid and
 retained private HOME/TMPDIR identities. HOME and TMPDIR must be distinct,
 nonoverlapping empty directories beneath scratch, so their writes remain inside
@@ -35,6 +35,13 @@ grants no spawn, installed-policy, receipt or capability authority.
 Its internal synthetic-support manifest is solely a retention representation;
 the original media result remains the source of input-derived authority.
 Full-set-to-one-packet execution-bundle derivation remains unimplemented.
+
+The current local checkpoint `eea5881` records a rejected raw transport spike.
+Its independently audited direct-spawn, weak-child-ownership, blocking-write,
+pipe-cleanup and post-exit-revalidation defects prevent any execution claim.
+The uncommitted successor is a closed raw-transcript parser: it checks the
+exact 21-operation order, ASCII/LF framing, integer/hex bounds and duplicate/
+extra/missing rows. It grants no capability matrix, token or spawn authority.
 
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
 in place. Its host integration now also opens a real batch candidate and proves
@@ -55,14 +62,17 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@9ab838b`; local and remote synchronized
-  before the current uncommitted milestone.
-- GitHub Actions `handoff-contract` run 35557700243 succeeded for exact SHA
-  `9ab838b0d1609816fea0afdfea0aba5ba25ca5b7`.
+- Published implementation: `BinHsu/aegis-360@edcbe3a`; GitHub Actions
+  `handoff-contract` run 35558137200 succeeded for exact SHA
+  `edcbe3ae541e1cc6c2a458646e70884390096ab6`.
+- Local-only checkpoint `eea5881` records the rejected transport and corrected
+  implementation order. No push is authorized for that later checkpoint yet.
 
 ## Verified
 
-- Full discovery: 718 tests run, 710 passed, eight explicit host gates skipped.
+- Full discovery: 722 tests run, 714 passed, eight explicit host gates skipped.
+- Closed raw-transcript parser: four focused tests pass; a controlled mutation of
+  operation order causes the exact-order test to error as intended.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -79,12 +89,8 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- A private raw transport spike was rejected after independent audit despite 21
-  passing focused tests. It permitted direct spawn before the mandatory capability
-  probe, used weak child ownership, omitted stdio cleanup on failure, could block
-  policy delivery outside the wall timeout, retained signal authority after reap,
-  and lacked post-exit retained-identity revalidation. Its source/tests were never
-  committed and have been removed.
+- The rejected transport defects and their disposition are recorded above; do
+  not restore its source unchanged or treat its 21 passing tests as authority.
 - Implement the same-entrypoint raw capability-probe transcript and private
   single-use composition boundary before restoring launcher transport. The next
   transport must use strong child ownership, bounded nonblocking policy delivery,
