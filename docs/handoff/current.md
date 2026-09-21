@@ -1,12 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-21T11:21:54+08:00
+Updated: 2026-09-21T11:24:37+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: b4c444e
-Remote status: local `main` and cached `origin/main` both resolve to `b4c444e`;
-remote was not fetched this session and no current remote CI claim is made.
-Working tree at checkpoint: local batch-policy implementation, tests and documentation are uncommitted
+Baseline commit: 3de9e81
+Remote status: fetched `origin/main` at `b4c444e`; local `main` at `3de9e81`
+is one implementation commit ahead before this handoff-only update. No push or
+remote CI verification has been performed for the implementation.
+Working tree at checkpoint: this handoff-only update; implementation is committed
 
 ## Objective
 
@@ -51,8 +52,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Local baseline: `main` and cached `origin/main` at `b4c444e` before this work.
-- Local candidate source/tests, host integration and documentation are uncommitted.
+- Implementation commit: `3de9e81` on local `main`.
+- Fetched remote `origin/main`: `b4c444e`. Implementation is locally committed;
+  this handoff-only refresh is pending its own local commit.
 - No remote publication or current remote CI verification performed.
 
 ## Verified
@@ -71,6 +73,13 @@ successor protocol for its exact scope and backend constraints.
 - Retuning either frozen experiment after seeing its result.
 
 ## Pending
+
+- Owner publication decision: whether to push the reviewed local implementation
+  and handoff commits to `BinHsu/aegis-360` `origin/main`, then observe required
+  CI for the exact resulting SHA. Current authorization covers local work only.
+- No agents or background processes remain active. On publication approval,
+  recheck remote ancestry before push; do not force-push. On local continuation,
+  the next implementation boundary is listed below.
 
 - Freeze canonical request/private packet/projection binding and real/effective
   uid/gid plus private HOME/TMPDIR identity before coordinator transport.
