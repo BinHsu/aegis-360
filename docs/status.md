@@ -183,18 +183,17 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 722 tests run, 714 passed and eight host gates skipped.
-- Closed raw probe transcript parser: four focused tests pass; operation-order
-  mutation is detected. Parsing alone grants no capability authority.
+- Full discovery: 724 tests run, 716 passed and eight host gates skipped.
+- Native same-entrypoint fixture: two host tests pass for raw probe rows,
+  retained runtime identity and bounded case dispatch; no confinement result.
 - Candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutations are detected by the extra-leaf and nonempty-HOME regressions.
-- Prior native launcher/OS-backend host gates: 11/14 tests passed.
 
 ## Next action
 
 The private one-packet candidate now binds canonical request/runner-policy bytes,
 uid/gid and retained empty HOME/TMPDIR identities in addition to all policy roots.
-An operable raw transport spike was rejected because it could spawn before the
-mandatory probe and had child-lifecycle/timeout cleanup defects. Implement the
-same-entrypoint raw probe and private single-use composition boundary before
-restoring transport; keep public authority APIs closed.
+The synthetic native fixture now emits closed raw probe rows and handles one
+bounded case mode through the same retained executable. Next expand the frozen
+case matrix and bind probe inputs to retained allowed leaves and denial sentinels.
+Keep public authority APIs closed until the mandatory capability gate passes.

@@ -1,13 +1,15 @@
 # Current handoff
 
-Updated: 2026-09-22T00:00:00+08:00
+Updated: 2026-09-24T05:15:19+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 29a1d79
-Remote status: local `main` at `29a1d79` is two local commits ahead of fetched
-`origin/main` at `edcbe3ae541e1cc6c2a458646e70884390096ab6`; GitHub Actions
-`handoff-contract` run 35558137200 succeeded for exact published SHA `edcbe3a`.
-Working tree at checkpoint: this handoff-only refresh is pending local commit
+Baseline commit: 771d65f
+Remote status: local `main` contains this fixture checkpoint one commit ahead
+of cached `origin/main` at `771d65f6d7f85333dcb2a5c8b0a73f4ab9c55912`.
+GitHub Actions `handoff-contract` run 35664824053 succeeded for that published
+SHA; the local fixture checkpoint has no remote CI result yet.
+Working tree at checkpoint: clean after the local commit; verify with
+`git status --short` before resuming.
 
 ## Objective
 
@@ -19,7 +21,7 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-The last published implementation `edcbe3a` freezes the
+The published implementation `edcbe3a` freezes the
 canonical adapter request and runner-policy bytes, real/effective uid/gid and
 retained private HOME/TMPDIR identities. HOME and TMPDIR must be distinct,
 nonoverlapping empty directories beneath scratch, so their writes remain inside
@@ -36,12 +38,18 @@ Its internal synthetic-support manifest is solely a retention representation;
 the original media result remains the source of input-derived authority.
 Full-set-to-one-packet execution-bundle derivation remains unimplemented.
 
-The current local checkpoint `eea5881` records a rejected raw transport spike.
+The published checkpoint `eea5881` records a rejected raw transport spike.
 Its independently audited direct-spawn, weak-child-ownership, blocking-write,
 pipe-cleanup and post-exit-revalidation defects prevent any execution claim.
-The uncommitted successor is a closed raw-transcript parser: it checks the
+The published successor `29a1d79` is a closed raw-transcript parser: it checks the
 exact 21-operation order, ASCII/LF framing, integer/hex bounds and duplicate/
 extra/missing rows. It grants no capability matrix, token or spawn authority.
+
+The new synthetic native fixture compiles as a thin signed arm64 Mach-O outside
+Git. One retained entrypoint accepts the closed 21-row probe mode and a bounded
+`argv_literal` case mode. Host tests verify the manifest before and after both
+modes and reject malformed mode/argv. This is unsandboxed fixture evidence only;
+the case matrix, capability probe, policy installation and coordinator are pending.
 
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
 in place. Its host integration now also opens a real batch candidate and proves
@@ -62,16 +70,15 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published implementation: `BinHsu/aegis-360@edcbe3a`; GitHub Actions
-  `handoff-contract` run 35558137200 succeeded for exact SHA
-  `edcbe3ae541e1cc6c2a458646e70884390096ab6`.
-- Local-only checkpoint `eea5881` records the rejected transport and corrected
-  implementation order. Local implementation `29a1d79` contains the closed
-  transcript parser; neither local commit has been pushed.
+- Published checkpoint: `BinHsu/aegis-360@771d65f`; GitHub Actions
+  `handoff-contract` run 35664824053 succeeded for exact SHA
+  `771d65f6d7f85333dcb2a5c8b0a73f4ab9c55912`.
 
 ## Verified
 
-- Full discovery: 722 tests run, 714 passed, eight explicit host gates skipped.
+- Full discovery: 724 tests run, 716 passed, eight explicit host gates skipped.
+- Native fixture: two host tests pass; a controlled probe-mode name mutation
+  makes the original mode fail with exit 64.
 - Closed raw-transcript parser: four focused tests pass; a controlled mutation of
   operation order causes the exact-order test to error as intended.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
@@ -90,9 +97,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Owner publication decision: whether to push the two local commits plus this
-  handoff refresh to `BinHsu/aegis-360` `origin/main`, then verify exact-SHA CI.
-  Existing approval covered only the prior `edcbe3a` push.
+- Expand the fixture's case mode through the frozen case manifest, then build
+  trusted coordinator probe inputs from existing sealed leaves and separately
+  retained denial sentinels. Raw transcript parsing alone cannot attest denial.
 - The rejected transport defects and their disposition are recorded above; do
   not restore its source unchanged or treat its 21 passing tests as authority.
 - Implement the same-entrypoint raw capability-probe transcript and private
