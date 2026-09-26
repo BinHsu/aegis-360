@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-26T17:40:23+08:00
+Updated: 2026-09-26T19:34:33+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5f500ba
-Remote status: local `main` contains two fixture checkpoints ahead
-of cached `origin/main` at `771d65f6d7f85333dcb2a5c8b0a73f4ab9c55912`.
-GitHub Actions `handoff-contract` run 35664824053 succeeded for that published
-SHA; the local fixture checkpoints have no remote CI result yet.
+Baseline commit: 8ccb68d
+Remote status: local `main` contains this new fixture checkpoint one commit
+ahead of cached `origin/main` at `8ccb68d3c0777509982b3a3ac0e50bb41dd81ce4`.
+GitHub Actions `handoff-contract` run 36239117929 succeeded for that published
+SHA; the new local checkpoint has no remote CI result yet.
 Working tree at checkpoint: clean after the local commit; verify with
 `git status --short` before resuming.
 
@@ -46,10 +46,12 @@ exact 21-operation order, ASCII/LF framing, integer/hex bounds and duplicate/
 extra/missing rows. It grants no capability matrix, token or spawn authority.
 
 The synthetic native fixture compiles as a thin signed arm64 Mach-O outside Git.
-One retained entrypoint accepts the closed 21-row probe mode and eight bounded
-case IDs: literal argv plus seven stdout failure forms. The literal case emits a
-schema-valid abstention. Host tests verify the manifest before and after both
-modes and reject malformed mode/argv. This is unsandboxed fixture evidence only;
+One retained entrypoint accepts the closed 21-row probe mode and 11 bounded
+case IDs: literal argv, seven stdout failure forms, exact environment, descriptor
+hygiene and cwd identity. Positive cases emit a schema-valid abstention. Host
+tests verify the manifest before and after both modes and reject malformed
+mode/argv. Negative tests detect extra/missing/wrong environment entries,
+inherited descriptors and incorrect cwd. This is unsandboxed fixture evidence only;
 the remaining case matrix, capability probe, policy installation and coordinator
 are pending.
 
@@ -72,16 +74,16 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@771d65f`; GitHub Actions
-  `handoff-contract` run 35664824053 succeeded for exact SHA
-  `771d65f6d7f85333dcb2a5c8b0a73f4ab9c55912`.
-- Local-only fixture checkpoints remain unpublished; inspect `git log` for the
-  exact local SHA before a publication decision.
+- Published checkpoint: `BinHsu/aegis-360@8ccb68d`; GitHub Actions
+  `handoff-contract` run 36239117929 succeeded for exact SHA
+  `8ccb68d3c0777509982b3a3ac0e50bb41dd81ce4`.
+- The environment/FD/cwd fixture checkpoint remains local-only; inspect
+  `git log` for its exact SHA before a publication decision.
 
 ## Verified
 
-- Full discovery: 725 tests run, 717 passed, eight explicit host gates skipped.
-- Native fixture: three host tests pass; a controlled probe-mode name mutation
+- Full discovery: 726 tests run, 718 passed, eight explicit host gates skipped.
+- Native fixture: four host tests pass; a controlled probe-mode name mutation
   makes the original mode fail with exit 64.
 - Closed raw-transcript parser: four focused tests pass; a controlled mutation of
   operation order causes the exact-order test to error as intended.

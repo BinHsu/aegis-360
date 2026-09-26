@@ -1,6 +1,7 @@
 /* One native synthetic runtime for raw isolation probes and bounded cases. */
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 /* Reuse the audited operation implementation; only dispatch differs here. */
 #define main aegis_feasibility_probe_main
@@ -19,6 +20,42 @@ static int emit_case_bytes(const char *bytes, size_t length) {
     return fwrite(bytes, 1, length, stdout) == length ? 0 : 74;
 }
 
+extern char **environ;
+
+static int environment_exact(const char *home, const char *tmpdir) {
+    static const char *names[] = {"LANG", "LC_ALL", "TZ", "NO_COLOR", "HOME", "TMPDIR"};
+    const char *values[] = {"C", "C", "UTC", "1", home, tmpdir};
+    size_t count = 0;
+    unsigned int seen = 0;
+    for (char **entry = environ; *entry != NULL; ++entry) {
+        const char *equal = strchr(*entry, '=');
+        if (equal == NULL) return 65;
+        int recognized = 0;
+        for (size_t i = 0; i < sizeof(names) / sizeof(names[0]); ++i) {
+            if ((size_t)(equal - *entry) == strlen(names[i]) &&
+                    strncmp(*entry, names[i], strlen(names[i])) == 0 &&
+                    strcmp(equal + 1, values[i]) == 0 && (seen & (1U << i)) == 0) {
+                seen |= 1U << i;
+                recognized = 1;
+                break;
+            }
+        }
+        if (!recognized) return 65;
+        ++count;
+    }
+    return count == sizeof(names) / sizeof(names[0]) ? 0 : 65;
+}
+
+static int fd_hygiene(void) {
+    int limit = getdtablesize();
+    if (limit < 3) return 65;
+    for (int fd = 3; fd < limit; ++fd) {
+        errno = 0;
+        if (fcntl(fd, F_GETFD) != -1 || errno != EBADF) return 65;
+    }
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc == 20 && strcmp(argv[1], "--aegis-isolation-probe") == 0) {
         char *translated[21];
@@ -34,7 +71,20 @@ int main(int argc, char **argv) {
                 strcmp(argv[4], ";$(touch should-not-run)") == 0 &&
                 strcmp(argv[5], "* ' \" \\") == 0)
             return emit_case_bytes(abstain, sizeof(abstain) - 1U);
+        if (strcmp(case_id, "environment_exact") == 0 && argc == 6) {
+            if (environment_exact(argv[4], argv[5]) != 0) return 65;
+            return emit_case_bytes(abstain, sizeof(abstain) - 1U);
+        }
+        if (strcmp(case_id, "cwd_identity") == 0 && argc == 5) {
+            char cwd[PATH_MAX];
+            if (getcwd(cwd, sizeof(cwd)) == NULL || strcmp(cwd, argv[4]) != 0) return 65;
+            return emit_case_bytes(abstain, sizeof(abstain) - 1U);
+        }
         if (argc != 4) return 64;
+        if (strcmp(case_id, "fd_hygiene") == 0) {
+            if (fd_hygiene() != 0) return 65;
+            return emit_case_bytes(abstain, sizeof(abstain) - 1U);
+        }
         if (strcmp(case_id, "stdout_empty") == 0) return 0;
         if (strcmp(case_id, "stdout_invalid_utf8") == 0) {
             static const char invalid[] = "\xff";

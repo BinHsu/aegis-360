@@ -90,6 +90,47 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
                         invocation_failed=False, raw_output=case.stdout), reason)
             self.assertEqual(proof.manifest(), manifest)
 
+    def test_environment_descriptors_and_cwd_detect_violations(self):
+        home = self.base / "private-home"
+        tmpdir = self.base / "private-tmp"
+        home.mkdir()
+        tmpdir.mkdir()
+        environment = {"LANG": "C", "LC_ALL": "C", "TZ": "UTC", "NO_COLOR": "1",
+                       "HOME": str(home), "TMPDIR": str(tmpdir)}
+        def run(case_id, *args, env=None, cwd=None, pass_fds=()):
+            return subprocess.run([str(self.executable), "--aegis-synthetic-case",
+                case_id, "--", *args], env=env, cwd=cwd, pass_fds=pass_fds,
+                capture_output=True, timeout=5)
+        manifest = _observe_asset_manifest_shape(root=self.runtime, asset_kind="runtime",
+            entrypoint="bin/aegis-synthetic-adapter")
+        with validate_asset_tree(manifest=manifest, root=self.runtime) as proof:
+            for case_id, args in (("environment_exact", (str(home), str(tmpdir))),
+                                  ("fd_hygiene", ()), ("cwd_identity", (str(self.base),))):
+                with self.subTest(case_id=case_id):
+                    result = run(case_id, *args, env=environment, cwd=self.base)
+                    self.assertEqual((result.returncode, result.stderr), (0, b""))
+                    self.assertIsNone(select_failure_reason(missing_anchor=False,
+                        invocation_failed=False, raw_output=result.stdout))
+            contaminated = dict(environment, PATH="/usr/bin")
+            self.assertEqual(run("environment_exact", str(home), str(tmpdir),
+                                 env=contaminated, cwd=self.base).returncode, 65)
+            missing = {key: value for key, value in environment.items() if key != "NO_COLOR"}
+            self.assertEqual(run("environment_exact", str(home), str(tmpdir),
+                                 env=missing, cwd=self.base).returncode, 65)
+            wrong_home = dict(environment, HOME=str(tmpdir))
+            self.assertEqual(run("environment_exact", str(home), str(tmpdir),
+                                 env=wrong_home, cwd=self.base).returncode, 65)
+            self.assertEqual(run("cwd_identity", str(tmpdir), env=environment,
+                                 cwd=self.base).returncode, 65)
+            reader, writer = os.pipe()
+            try:
+                self.assertEqual(run("fd_hygiene", env=environment, cwd=self.base,
+                                     pass_fds=(reader,)).returncode, 65)
+            finally:
+                os.close(reader)
+                os.close(writer)
+            self.assertEqual(proof.manifest(), manifest)
+
     def test_raw_probe_rows_are_exact_order_without_claiming_confinement(self):
         manifest = _observe_asset_manifest_shape(root=self.runtime, asset_kind="runtime",
             entrypoint="bin/aegis-synthetic-adapter")
