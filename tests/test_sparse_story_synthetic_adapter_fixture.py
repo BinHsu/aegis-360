@@ -13,6 +13,9 @@ from aegis360.sparse_story_asset_tree import (  # noqa: E402
 from aegis360.sparse_story_probe_transcript import (  # noqa: E402
     OPERATIONS, parse_isolation_probe_transcript,
 )
+from aegis360.sparse_story_semantics import (  # noqa: E402
+    select_failure_reason,
+)
 
 
 @unittest.skipUnless(os.uname().sysname == "Darwin" and os.uname().machine == "arm64",
@@ -49,16 +52,42 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
             entrypoint="bin/aegis-synthetic-adapter")
         with validate_asset_tree(manifest=manifest, root=self.runtime) as proof:
             case = subprocess.run([str(self.executable), "--aegis-synthetic-case",
-                                   "argv_literal", "--"], capture_output=True, timeout=5)
-            self.assertEqual((case.returncode, case.stdout, case.stderr),
-                (0, b"aegis-synthetic-argv-literal-v1\n", b""))
+                                   "argv_literal", "--", ";$(touch should-not-run)",
+                                   "* ' \" \\"], capture_output=True, timeout=5)
+            self.assertEqual((case.returncode, case.stderr), (0, b""))
+            self.assertIsNone(select_failure_reason(missing_anchor=False,
+                invocation_failed=False, raw_output=case.stdout))
             for suffix in ([], ["--aegis-synthetic-case", "bad", "--"],
                            ["--aegis-isolation-probe"],
-                           ["--aegis-synthetic-case", "argv_literal", "--", "extra"]):
+                           ["--aegis-synthetic-case", "argv_literal", "--", "extra"],
+                           ["--aegis-synthetic-case", "argv_literal", "--"]):
                 wrong = subprocess.run([str(self.executable), *suffix],
                                        capture_output=True, timeout=5)
                 self.assertEqual((wrong.returncode, wrong.stdout, wrong.stderr),
                                  (64, b"", b""))
+            self.assertEqual(proof.manifest(), manifest)
+
+    def test_stdout_failure_cases_have_distinct_raw_bytes(self):
+        expected = {
+            "stdout_empty": (b"", "malformed_json"),
+            "stdout_invalid_utf8": (b"\xff", "malformed_json"),
+            "stdout_duplicate_key": (b'{"status":"abstain","status":"abstain"}', "malformed_json"),
+            "stdout_nan": (b'{"status":NaN}', "malformed_json"),
+            "stdout_trailing_bytes": (b"{}{}", "malformed_json"),
+            "stdout_forbidden_field": (b'{"source_time":0}', "forbidden_field"),
+            "stdout_extra_field": (b'{"unexpected":true}', "forbidden_field"),
+        }
+        manifest = _observe_asset_manifest_shape(root=self.runtime, asset_kind="runtime",
+            entrypoint="bin/aegis-synthetic-adapter")
+        with validate_asset_tree(manifest=manifest, root=self.runtime) as proof:
+            for case_id, (raw, reason) in expected.items():
+                with self.subTest(case_id=case_id):
+                    case = subprocess.run([str(self.executable), "--aegis-synthetic-case",
+                                           case_id, "--"], capture_output=True, timeout=5)
+                    self.assertEqual((case.returncode, case.stdout, case.stderr),
+                                     (0, raw, b""))
+                    self.assertEqual(select_failure_reason(missing_anchor=False,
+                        invocation_failed=False, raw_output=case.stdout), reason)
             self.assertEqual(proof.manifest(), manifest)
 
     def test_raw_probe_rows_are_exact_order_without_claiming_confinement(self):

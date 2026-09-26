@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-24T05:15:19+08:00
+Updated: 2026-09-26T17:40:23+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 771d65f
-Remote status: local `main` contains this fixture checkpoint one commit ahead
+Baseline commit: 5f500ba
+Remote status: local `main` contains two fixture checkpoints ahead
 of cached `origin/main` at `771d65f6d7f85333dcb2a5c8b0a73f4ab9c55912`.
 GitHub Actions `handoff-contract` run 35664824053 succeeded for that published
-SHA; the local fixture checkpoint has no remote CI result yet.
+SHA; the local fixture checkpoints have no remote CI result yet.
 Working tree at checkpoint: clean after the local commit; verify with
 `git status --short` before resuming.
 
@@ -45,11 +45,13 @@ The published successor `29a1d79` is a closed raw-transcript parser: it checks t
 exact 21-operation order, ASCII/LF framing, integer/hex bounds and duplicate/
 extra/missing rows. It grants no capability matrix, token or spawn authority.
 
-The new synthetic native fixture compiles as a thin signed arm64 Mach-O outside
-Git. One retained entrypoint accepts the closed 21-row probe mode and a bounded
-`argv_literal` case mode. Host tests verify the manifest before and after both
+The synthetic native fixture compiles as a thin signed arm64 Mach-O outside Git.
+One retained entrypoint accepts the closed 21-row probe mode and eight bounded
+case IDs: literal argv plus seven stdout failure forms. The literal case emits a
+schema-valid abstention. Host tests verify the manifest before and after both
 modes and reject malformed mode/argv. This is unsandboxed fixture evidence only;
-the case matrix, capability probe, policy installation and coordinator are pending.
+the remaining case matrix, capability probe, policy installation and coordinator
+are pending.
 
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
 in place. Its host integration now also opens a real batch candidate and proves
@@ -73,11 +75,13 @@ successor protocol for its exact scope and backend constraints.
 - Published checkpoint: `BinHsu/aegis-360@771d65f`; GitHub Actions
   `handoff-contract` run 35664824053 succeeded for exact SHA
   `771d65f6d7f85333dcb2a5c8b0a73f4ab9c55912`.
+- Local-only fixture checkpoints remain unpublished; inspect `git log` for the
+  exact local SHA before a publication decision.
 
 ## Verified
 
-- Full discovery: 724 tests run, 716 passed, eight explicit host gates skipped.
-- Native fixture: two host tests pass; a controlled probe-mode name mutation
+- Full discovery: 725 tests run, 717 passed, eight explicit host gates skipped.
+- Native fixture: three host tests pass; a controlled probe-mode name mutation
   makes the original mode fail with exit 64.
 - Closed raw-transcript parser: four focused tests pass; a controlled mutation of
   operation order causes the exact-order test to error as intended.
@@ -97,7 +101,7 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Expand the fixture's case mode through the frozen case manifest, then build
+- Expand the remaining fixture cases through the frozen case manifest, then build
   trusted coordinator probe inputs from existing sealed leaves and separately
   retained denial sentinels. Raw transcript parsing alone cannot attest denial.
 - The rejected transport defects and their disposition are recorded above; do
