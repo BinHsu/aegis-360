@@ -131,6 +131,39 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
                 os.close(writer)
             self.assertEqual(proof.manifest(), manifest)
 
+    def test_stdout_ceiling_stderr_and_termination_cases(self):
+        manifest = _observe_asset_manifest_shape(root=self.runtime, asset_kind="runtime",
+            entrypoint="bin/aegis-synthetic-adapter")
+        def run(case_id):
+            return subprocess.run([str(self.executable), "--aegis-synthetic-case",
+                                   case_id, "--"], capture_output=True, timeout=5)
+        with validate_asset_tree(manifest=manifest, root=self.runtime) as proof:
+            for case_id, size in (("stdout_limit_minus_one", 65535),
+                                  ("stdout_limit_exact", 65536),
+                                  ("stdout_limit_plus_one", 65537)):
+                with self.subTest(case_id=case_id):
+                    result = run(case_id)
+                    self.assertEqual((result.returncode, len(result.stdout), result.stderr),
+                                     (0, size, b""))
+                    self.assertIsNone(select_failure_reason(missing_anchor=False,
+                        invocation_failed=False, raw_output=result.stdout))
+            stderr_case = run("stderr_nonempty")
+            self.assertEqual((stderr_case.returncode, stderr_case.stderr),
+                             (0, b"synthetic-stderr-v1\n"))
+            self.assertIsNone(select_failure_reason(missing_anchor=False,
+                invocation_failed=False, raw_output=stderr_case.stdout))
+            nonzero = run("nonzero_exit")
+            self.assertEqual((nonzero.returncode, nonzero.stderr), (23, b""))
+            self.assertIsNone(select_failure_reason(missing_anchor=False,
+                invocation_failed=False, raw_output=nonzero.stdout))
+            signaled = run("signal_exit")
+            self.assertEqual((signaled.returncode, signaled.stdout, signaled.stderr),
+                             (-15, b"", b""))
+            with self.assertRaises(subprocess.TimeoutExpired):
+                subprocess.run([str(self.executable), "--aegis-synthetic-case",
+                                "wall_timeout", "--"], capture_output=True, timeout=0.2)
+            self.assertEqual(proof.manifest(), manifest)
+
     def test_raw_probe_rows_are_exact_order_without_claiming_confinement(self):
         manifest = _observe_asset_manifest_shape(root=self.runtime, asset_kind="runtime",
             entrypoint="bin/aegis-synthetic-adapter")

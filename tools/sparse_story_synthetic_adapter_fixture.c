@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
+#include <signal.h>
 
 /* Reuse the audited operation implementation; only dispatch differs here. */
 #define main aegis_feasibility_probe_main
@@ -18,6 +19,20 @@ static const char abstain[] =
 
 static int emit_case_bytes(const char *bytes, size_t length) {
     return fwrite(bytes, 1, length, stdout) == length ? 0 : 74;
+}
+
+static int emit_padded_case(size_t total) {
+    char spaces[256];
+    memset(spaces, ' ', sizeof(spaces));
+    size_t written = sizeof(abstain) - 1U;
+    if (total < written || emit_case_bytes(abstain, written) != 0) return 74;
+    while (written < total) {
+        size_t chunk = total - written;
+        if (chunk > sizeof(spaces)) chunk = sizeof(spaces);
+        if (emit_case_bytes(spaces, chunk) != 0) return 74;
+        written += chunk;
+    }
+    return 0;
 }
 
 extern char **environ;
@@ -86,6 +101,27 @@ int main(int argc, char **argv) {
             return emit_case_bytes(abstain, sizeof(abstain) - 1U);
         }
         if (strcmp(case_id, "stdout_empty") == 0) return 0;
+        if (strcmp(case_id, "stdout_limit_minus_one") == 0) return emit_padded_case(65535U);
+        if (strcmp(case_id, "stdout_limit_exact") == 0) return emit_padded_case(65536U);
+        if (strcmp(case_id, "stdout_limit_plus_one") == 0) return emit_padded_case(65537U);
+        if (strcmp(case_id, "stderr_nonempty") == 0) {
+            static const char warning[] = "synthetic-stderr-v1\n";
+            if (fwrite(warning, 1, sizeof(warning) - 1U, stderr) != sizeof(warning) - 1U)
+                return 74;
+            return emit_case_bytes(abstain, sizeof(abstain) - 1U);
+        }
+        if (strcmp(case_id, "nonzero_exit") == 0) {
+            if (emit_case_bytes(abstain, sizeof(abstain) - 1U) != 0) return 74;
+            return 23;
+        }
+        if (strcmp(case_id, "signal_exit") == 0) {
+            raise(SIGTERM);
+            return 75;
+        }
+        if (strcmp(case_id, "wall_timeout") == 0) {
+            pause();
+            return 75;
+        }
         if (strcmp(case_id, "stdout_invalid_utf8") == 0) {
             static const char invalid[] = "\xff";
             return emit_case_bytes(invalid, sizeof(invalid) - 1U);

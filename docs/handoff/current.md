@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-26T19:34:33+08:00
+Updated: 2026-09-26T19:36:49+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 8ccb68d
-Remote status: local `main` contains this new fixture checkpoint one commit
+Baseline commit: 92ef757
+Remote status: local `main` contains two new fixture checkpoints
 ahead of cached `origin/main` at `8ccb68d3c0777509982b3a3ac0e50bb41dd81ce4`.
 GitHub Actions `handoff-contract` run 36239117929 succeeded for that published
-SHA; the new local checkpoint has no remote CI result yet.
+SHA; the new local checkpoints have no remote CI result yet.
 Working tree at checkpoint: clean after the local commit; verify with
 `git status --short` before resuming.
 
@@ -46,9 +46,10 @@ exact 21-operation order, ASCII/LF framing, integer/hex bounds and duplicate/
 extra/missing rows. It grants no capability matrix, token or spawn authority.
 
 The synthetic native fixture compiles as a thin signed arm64 Mach-O outside Git.
-One retained entrypoint accepts the closed 21-row probe mode and 11 bounded
+One retained entrypoint accepts the closed 21-row probe mode and 18 bounded
 case IDs: literal argv, seven stdout failure forms, exact environment, descriptor
-hygiene and cwd identity. Positive cases emit a schema-valid abstention. Host
+hygiene, cwd identity, three stdout ceilings, stderr, nonzero exit, signal exit
+and wall timeout. Positive cases emit a schema-valid abstention. Host
 tests verify the manifest before and after both modes and reject malformed
 mode/argv. Negative tests detect extra/missing/wrong environment entries,
 inherited descriptors and incorrect cwd. This is unsandboxed fixture evidence only;
@@ -77,13 +78,13 @@ successor protocol for its exact scope and backend constraints.
 - Published checkpoint: `BinHsu/aegis-360@8ccb68d`; GitHub Actions
   `handoff-contract` run 36239117929 succeeded for exact SHA
   `8ccb68d3c0777509982b3a3ac0e50bb41dd81ce4`.
-- The environment/FD/cwd fixture checkpoint remains local-only; inspect
-  `git log` for its exact SHA before a publication decision.
+- The environment/FD/cwd and output/exit fixture checkpoints remain local-only;
+  inspect `git log` for their exact SHAs before a publication decision.
 
 ## Verified
 
-- Full discovery: 726 tests run, 718 passed, eight explicit host gates skipped.
-- Native fixture: four host tests pass; a controlled probe-mode name mutation
+- Full discovery: 727 tests run, 719 passed, eight explicit host gates skipped.
+- Native fixture: five host tests pass; a controlled probe-mode name mutation
   makes the original mode fail with exit 64.
 - Closed raw-transcript parser: four focused tests pass; a controlled mutation of
   operation order causes the exact-order test to error as intended.
