@@ -1,6 +1,7 @@
 import os
 import select
 import signal
+import socket
 import subprocess
 import sys
 import tempfile
@@ -194,6 +195,69 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
                 stubborn.stdout.close()
                 stubborn.stderr.close()
             self.assertEqual(proof.manifest(), manifest)
+
+    def test_file_cases_distinguish_existing_reads_and_real_writes(self):
+        with tempfile.TemporaryDirectory(dir=self.base) as temporary:
+            root = Path(temporary)
+            manifest = _observe_asset_manifest_shape(root=self.runtime,
+                asset_kind="runtime", entrypoint="bin/aegis-synthetic-adapter")
+            def run(case_id, *args):
+                return subprocess.run([str(self.executable), "--aegis-synthetic-case",
+                    case_id, "--", *map(str, args)], capture_output=True, timeout=5)
+            with validate_asset_tree(manifest=manifest, root=self.runtime) as proof:
+                for case_id in ("bundle_read_allowed", "model_read_allowed",
+                                "prompt_read_allowed"):
+                    path = root / case_id
+                    path.write_text(case_id)
+                    result = run(case_id, path, case_id)
+                    self.assertEqual((result.returncode, result.stderr), (0, b""))
+                    self.assertIsNone(select_failure_reason(missing_anchor=False,
+                        invocation_failed=False, raw_output=result.stdout))
+                    self.assertEqual(run(case_id, path, "wrong").returncode, 65)
+                for case_id in ("repository_read_denied", "protocol_read_denied",
+                                "neighbor_packet_read_denied", "result_read_denied"):
+                    path = root / case_id
+                    path.write_text(case_id)
+                    result = run(case_id, path)
+                    self.assertEqual((result.returncode, result.stdout, result.stderr),
+                                     (65, b"", b""))
+                    self.assertEqual(path.read_text(), case_id)
+                    self.assertEqual(run(case_id, root / "missing").returncode, 65)
+                scratch = root / "scratch-write"
+                allowed = run("scratch_write_allowed", scratch)
+                self.assertEqual((allowed.returncode, allowed.stderr), (0, b""))
+                self.assertEqual(scratch.read_bytes(), b"synthetic-scratch-write-v1")
+                self.assertEqual(run("scratch_write_allowed", scratch).returncode, 65)
+                outside = root / "outside-write"
+                denied = run("outside_write_denied", outside)
+                self.assertEqual((denied.returncode, denied.stdout, denied.stderr),
+                                 (65, b"", b""))
+                self.assertTrue(outside.is_file())
+                self.assertEqual(proof.manifest(), manifest)
+
+    def test_network_denial_cases_require_real_listeners(self):
+        with tempfile.TemporaryDirectory(dir=self.base) as temporary:
+            root = Path(temporary)
+            manifest = _observe_asset_manifest_shape(root=self.runtime,
+                asset_kind="runtime", entrypoint="bin/aegis-synthetic-adapter")
+            with validate_asset_tree(manifest=manifest, root=self.runtime) as proof:
+                for case_id, family, address in (
+                    ("network_ipv4_denied", socket.AF_INET, "127.0.0.1"),
+                    ("network_ipv6_denied", socket.AF_INET6, "::1"),
+                    ("unix_socket_denied", socket.AF_UNIX, str(root / "live.sock"))):
+                    with self.subTest(case_id=case_id), socket.socket(family,
+                            socket.SOCK_STREAM) as listener:
+                        try:
+                            listener.bind((address, 0) if family != socket.AF_UNIX else address)
+                        except PermissionError as error:
+                            self.skipTest(f"host policy denies local listener bind: {error.errno}")
+                        listener.listen(1)
+                        target = address if family == socket.AF_UNIX else str(listener.getsockname()[1])
+                        case = subprocess.run([str(self.executable), "--aegis-synthetic-case",
+                            case_id, "--", target], capture_output=True, timeout=5)
+                        self.assertEqual((case.returncode, case.stdout, case.stderr),
+                                         (65, b"", b""))
+                self.assertEqual(proof.manifest(), manifest)
 
     def test_raw_probe_rows_are_exact_order_without_claiming_confinement(self):
         manifest = _observe_asset_manifest_shape(root=self.runtime, asset_kind="runtime",

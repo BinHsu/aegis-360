@@ -87,6 +87,75 @@ static int fd_hygiene(void) {
     return 0;
 }
 
+static int read_case(const char *path, const char *expected, int denied) {
+    errno = 0;
+    int fd = open(path, O_RDONLY | O_CLOEXEC | O_NOFOLLOW);
+    if (denied) {
+        if (fd >= 0) { close(fd); return 65; }
+        return errno == EACCES || errno == EPERM
+            ? emit_case_bytes(abstain, sizeof(abstain) - 1U) : 65;
+    }
+    if (fd < 0) return 65;
+    char bytes[129];
+    ssize_t count = read(fd, bytes, sizeof(bytes));
+    int close_result = close(fd);
+    size_t length = strlen(expected);
+    if (close_result != 0 || count < 0 || (size_t)count != length ||
+            memcmp(bytes, expected, length) != 0) return 65;
+    return emit_case_bytes(abstain, sizeof(abstain) - 1U);
+}
+
+static int create_case(const char *path, int denied) {
+    errno = 0;
+    int fd = open(path, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, 0600);
+    if (denied) {
+        if (fd >= 0) { close(fd); return 65; }
+        return errno == EACCES || errno == EPERM
+            ? emit_case_bytes(abstain, sizeof(abstain) - 1U) : 65;
+    }
+    if (fd < 0) return 65;
+    static const char marker[] = "synthetic-scratch-write-v1";
+    ssize_t count = write(fd, marker, sizeof(marker) - 1U);
+    int close_result = close(fd);
+    if (count != (ssize_t)(sizeof(marker) - 1U) || close_result != 0) return 65;
+    return emit_case_bytes(abstain, sizeof(abstain) - 1U);
+}
+
+static int network_case(int family, const char *target) {
+    errno = 0;
+    int fd = socket(family, SOCK_STREAM, 0);
+    if (fd < 0) return errno == EACCES || errno == EPERM
+        ? emit_case_bytes(abstain, sizeof(abstain) - 1U) : 65;
+    int result;
+    if (family == AF_UNIX) {
+        struct sockaddr_un address = {.sun_family = AF_UNIX};
+        if (strlen(target) >= sizeof(address.sun_path)) { close(fd); return 64; }
+        strcpy(address.sun_path, target);
+        result = connect(fd, (struct sockaddr *)&address, sizeof(address));
+    } else {
+        char *end = NULL;
+        errno = 0;
+        long port = strtol(target, &end, 10);
+        if (errno != 0 || end == target || *end != '\0' || port < 1 || port > 65535) {
+            close(fd); return 64;
+        }
+        if (family == AF_INET) {
+            struct sockaddr_in address = {.sin_family = AF_INET,
+                .sin_port = htons((unsigned short)port)};
+            address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+            result = connect(fd, (struct sockaddr *)&address, sizeof(address));
+        } else {
+            struct sockaddr_in6 address = {.sin6_family = AF_INET6,
+                .sin6_port = htons((unsigned short)port), .sin6_addr = IN6ADDR_LOOPBACK_INIT};
+            result = connect(fd, (struct sockaddr *)&address, sizeof(address));
+        }
+    }
+    int error = result < 0 ? errno : 0;
+    close(fd);
+    return result < 0 && (error == EACCES || error == EPERM)
+        ? emit_case_bytes(abstain, sizeof(abstain) - 1U) : 65;
+}
+
 int main(int argc, char **argv) {
     if (argc == 20 && strcmp(argv[1], "--aegis-isolation-probe") == 0) {
         char *translated[21];
@@ -111,6 +180,25 @@ int main(int argc, char **argv) {
             if (getcwd(cwd, sizeof(cwd)) == NULL || strcmp(cwd, argv[4]) != 0) return 65;
             return emit_case_bytes(abstain, sizeof(abstain) - 1U);
         }
+        if (argc == 6 && (strcmp(case_id, "bundle_read_allowed") == 0 ||
+                strcmp(case_id, "model_read_allowed") == 0 ||
+                strcmp(case_id, "prompt_read_allowed") == 0))
+            return read_case(argv[4], argv[5], 0);
+        if (argc == 5 && (strcmp(case_id, "repository_read_denied") == 0 ||
+                strcmp(case_id, "protocol_read_denied") == 0 ||
+                strcmp(case_id, "neighbor_packet_read_denied") == 0 ||
+                strcmp(case_id, "result_read_denied") == 0))
+            return read_case(argv[4], "", 1);
+        if (argc == 5 && strcmp(case_id, "scratch_write_allowed") == 0)
+            return create_case(argv[4], 0);
+        if (argc == 5 && strcmp(case_id, "outside_write_denied") == 0)
+            return create_case(argv[4], 1);
+        if (argc == 5 && strcmp(case_id, "network_ipv4_denied") == 0)
+            return network_case(AF_INET, argv[4]);
+        if (argc == 5 && strcmp(case_id, "network_ipv6_denied") == 0)
+            return network_case(AF_INET6, argv[4]);
+        if (argc == 5 && strcmp(case_id, "unix_socket_denied") == 0)
+            return network_case(AF_UNIX, argv[4]);
         if (argc != 4) return 64;
         if (strcmp(case_id, "fd_hygiene") == 0) {
             if (fd_hygiene() != 0) return 65;
