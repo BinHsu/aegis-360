@@ -1,4 +1,5 @@
 import copy
+from contextlib import ExitStack
 import hashlib
 import json
 import os
@@ -14,11 +15,18 @@ from tests.test_sparse_story_media_tree import local_rename
 from tests.test_sparse_story_backend_facade import seal_runtime, unseal_runtime
 from aegis360.sparse_story_asset_tree import _observe_asset_tree, _observe_asset_manifest_shape
 from aegis360.sparse_story_batch_policy import _open_batch_policy_candidate
+from aegis360.sparse_story_probe_context import _ProbeContext
+from aegis360.sparse_story_probe_listeners import _ProbeListeners
+from aegis360.sparse_story_probe_sentinels import (
+    _OutsideSentinelSnapshot, _ReadDenialSentinel, _ScratchProbeSnapshot,
+)
 from aegis360.sparse_story_media_tree import publish_sanitized_bundle
 from aegis360.sparse_story_runner_contract import (
     build_runner_policy, build_seatbelt_backend_manifest_shape,
     canonical_seatbelt_backend_manifest_shape_bytes,
 )
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def batch_args(base, facade, backend_bytes=None):
@@ -223,6 +231,46 @@ class BatchPolicyTests(unittest.TestCase):
         model.write_bytes(b"tampered")
         model.chmod(0o444)
         with self.assertRaises(ValueError): candidate._allowed_probe_leaves()
+
+    def test_probe_context_binds_exact_args_and_post_execution_facts(self):
+        candidate = self.candidate()
+        outside = self.base / "outside"
+        outside.mkdir(mode=0o700)
+        (outside / "outside-existing").write_bytes(b"outside-existing-sentinel-v1")
+        (outside / "outside-existing").chmod(0o600)
+        scratch = self.args["scratch_root"]
+        (scratch / "rename-source").write_bytes(b"rename-source-v1")
+        (scratch / "rename-source").chmod(0o600)
+        denied = self.base / "denied"
+        denied.mkdir(mode=0o700)
+        for name in ("neighbor", "result"):
+            (denied / name).write_bytes(name.encode())
+            (denied / name).chmod(0o600)
+        listener_root = self.base / "listeners"
+        listener_root.mkdir(mode=0o700)
+        with ExitStack() as stack:
+            reads = [stack.enter_context(_ReadDenialSentinel(path)) for path in (
+                ROOT / "src/aegis360/sparse_story_batch_policy.py",
+                ROOT / "docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md",
+                denied / "neighbor", denied / "result")]
+            outside_proof = stack.enter_context(_OutsideSentinelSnapshot(outside))
+            scratch_proof = stack.enter_context(_ScratchProbeSnapshot(scratch,
+                self.args["private_home"], self.args["private_tmpdir"]))
+            try: listeners = stack.enter_context(_ProbeListeners(listener_root))
+            except PermissionError as error:
+                self.skipTest(f"host policy denies local listener bind: {error.errno}")
+            context = _ProbeContext(candidate=candidate, repository=reads[0],
+                protocol=reads[1], neighbor=reads[2], result=reads[3],
+                outside=outside_proof, scratch=scratch_proof, listeners=listeners)
+            argv = context.argv_suffix()
+            self.assertEqual((len(argv), argv[0], argv[5:9]),
+                (19, "--aegis-isolation-probe", tuple(str(row.path) for row in reads)))
+            self.assertEqual(argv[16], str(listeners.unix_path))
+            (scratch / "scratch-write").write_bytes(b"scratch-write-sentinel-v1")
+            (scratch / "scratch-write").chmod(0o600)
+            context.postvalidate()
+            (denied / "neighbor").write_bytes(b"changed")
+            with self.assertRaises(ValueError): context.postvalidate()
 
     def test_alias_and_overlap_rejected(self):
         alias = self.base / "alias"
