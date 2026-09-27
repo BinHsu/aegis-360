@@ -117,7 +117,7 @@ successor protocol for its exact scope and backend constraints.
 
 ## Verified
 
-- Restricted full discovery: 748 tests run, 729 passed, 19 skips. Six listener
+- Restricted full discovery: 749 tests run, 729 passed, 20 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -135,8 +135,9 @@ successor protocol for its exact scope and backend constraints.
   pass, including successful connections to all three listener families.
 - Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
   disjointness and post-execution neighbor mutation rejection.
-- Escalated launcher-bound raw transport host gate: two tests pass, including
-  21-row provisional evaluation and forced pre-policy timeout.
+- Escalated launcher-bound raw transport host gate: three tests pass, including
+  21-row provisional evaluation, forced pre-policy timeout, and post-exit
+  outside-sentinel mutation rejection.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.

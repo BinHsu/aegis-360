@@ -183,7 +183,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 748 tests run, 729 passed and 19 host/sandbox cases skipped.
+- Full discovery: 749 tests run, 729 passed and 20 host/sandbox cases skipped.
 - Native same-entrypoint fixture: eight host tests cover raw probe rows,
   retained identity and 33 adapter-owned case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests run, all passed.

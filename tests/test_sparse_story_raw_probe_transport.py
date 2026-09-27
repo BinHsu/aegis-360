@@ -107,5 +107,19 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(capture.postcheck_passed)
             self.assertEqual(capture.stdout, b"")
 
+    def test_postexit_sentinel_mutation_invalidates_completed_rows(self):
+        with self.context() as context:
+            original = _ProbeContext.postvalidate
+
+            def mutate_before_validation(probe):
+                (context.outside.root / "outside-existing").write_bytes(b"changed")
+                return original(probe)
+
+            with mock.patch.object(_ProbeContext, "postvalidate",
+                    mutate_before_validation):
+                capture = _run_raw_probe(context)
+            self.assertFalse(capture.completed)
+            self.assertFalse(capture.postcheck_passed)
+
 
 if __name__ == "__main__": unittest.main()
