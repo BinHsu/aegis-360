@@ -1,10 +1,10 @@
 # Current handoff
 
-Updated: 2026-09-27T17:06:57+08:00
+Updated: 2026-09-27T17:12:07+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: a471a31
-Remote status: local `main` contains this new fixture checkpoint one commit
+Baseline commit: 580b254
+Remote status: local `main` contains two local checkpoints
 ahead of cached `origin/main` at `a471a3127a7c845222ef85a3eb1dacacc5bd886f`.
 GitHub Actions `handoff-contract` run 36308232554 succeeded for that published
 SHA; the new local checkpoint has no remote CI result yet.
@@ -59,6 +59,12 @@ inherited descriptors and incorrect cwd. This is unsandboxed fixture evidence on
 the remaining case matrix, capability probe, policy installation and coordinator
 are pending.
 
+The new private allowed-probe selector reads the first request-bound media leaf,
+one model leaf and `prompt.txt` through their retained file descriptors. It
+returns only transient paths and at most 128-byte prefixes after pre/post root
+revalidation. A changed model leaf fails. No denial sentinel, raw transcript
+evaluation, capability token or spawn authority is created.
+
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
 in place. Its host integration now also opens a real batch candidate and proves
 that closing the facade invalidates the candidate. The frozen Seatbelt primitive
@@ -81,16 +87,18 @@ successor protocol for its exact scope and backend constraints.
 - Published checkpoint: `BinHsu/aegis-360@a471a31`; GitHub Actions
   `handoff-contract` run 36308232554 succeeded for exact SHA
   `a471a3127a7c845222ef85a3eb1dacacc5bd886f`.
-- The fork fixture checkpoint remains local-only;
-  inspect `git log` for its exact SHA before a publication decision.
+- The fork fixture and allowed-probe selector checkpoints remain local-only.
+  Inspect `git log` for their exact SHAs before a later publication decision.
 
 ## Verified
 
-- Restricted full discovery: 730 tests run, 719 passed, 11 skips. Three network
+- Restricted full discovery: 731 tests run, 720 passed, 11 skips. Three network
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
 - A controlled probe-mode name mutation makes the original mode fail with exit 64.
+- The allowed-leaf selector returns request-bound paths/byte prefixes; changing
+  a retained model leaf makes its call fail.
 - Closed raw-transcript parser: four focused tests pass; a controlled mutation of
   operation order causes the exact-order test to error as intended.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
@@ -109,8 +117,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Build trusted coordinator probe inputs from existing sealed leaves and separately
-  retained denial sentinels. Raw transcript parsing alone cannot attest denial.
+- Retain coordinator-owned denial sentinels outside policy roots, then bind
+  their exact pre/post state to raw transcript evaluation. Parsing alone cannot
+  attest denial.
 - The rejected transport defects and their disposition are recorded above; do
   not restore its source unchanged or treat its 21 passing tests as authority.
 - Implement the same-entrypoint raw capability-probe transcript and private

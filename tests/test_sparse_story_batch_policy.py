@@ -1,5 +1,6 @@
 import copy
 import hashlib
+import json
 import os
 import pickle
 import tempfile
@@ -202,6 +203,26 @@ class BatchPolicyTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.candidate(index=changed)
         self.assertNotIn(candidate._request_bytes, candidate._binding_bytes())
         self.assertEqual(first, candidate.invocation_binding_sha256())
+
+    def test_allowed_probe_leaves_derive_from_retained_files_and_revalidate(self):
+        candidate = self.candidate()
+        selected = candidate._allowed_probe_leaves()
+        self.assertEqual(len(selected), 3)
+        self.assertTrue(selected[0].path.is_relative_to(self.args["bundle_root"]))
+        self.assertEqual([row.path.parent for row in selected[1:]],
+            [self.args["model_root"], self.args["prompt_root"]])
+        self.assertEqual(selected[2].path.name, "prompt.txt")
+        self.assertEqual(selected[0].path.relative_to(self.args["bundle_root"]).as_posix(),
+                         json.loads(candidate._request_bytes)["media"][0]["path"])
+        for row in selected:
+            self.assertTrue(row.prefix)
+            with row.path.open("rb") as source:
+                self.assertEqual(source.read(128), row.prefix)
+        model = self.args["model_root"] / "weights.bin"
+        model.chmod(0o644)
+        model.write_bytes(b"tampered")
+        model.chmod(0o444)
+        with self.assertRaises(ValueError): candidate._allowed_probe_leaves()
 
     def test_alias_and_overlap_rejected(self):
         alias = self.base / "alias"

@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+from dataclasses import dataclass
 from pathlib import Path
 
 from .isolated_adapter_process import _identity
@@ -22,6 +23,32 @@ from .sparse_story_runner_contract import (
 )
 
 _TOKEN = object()
+
+
+@dataclass(frozen=True)
+class _AllowedProbeLeaf:
+    path: Path
+    prefix: bytes
+
+
+def _selected_probe_leaf(proof, relative):
+    manifest = proof.manifest()
+    entries = manifest["entries"]
+    if relative is None:
+        if not entries:
+            raise ValueError("probe root has no allowed leaf")
+        relative = entries[0]["relative_path"]
+    selected = next((row for row in proof._leaves if row[0] == relative), None)
+    if selected is None:
+        raise ValueError("allowed probe leaf is absent")
+    size = next(row["size"] for row in entries if row["relative_path"] == relative)
+    if size <= 0:
+        raise ValueError("allowed probe leaf must be nonempty")
+    prefix = os.pread(selected[1], min(size, 128), 0)
+    if len(prefix) != min(size, 128):
+        raise ValueError("allowed probe leaf changed while reading")
+    proof.manifest()
+    return _AllowedProbeLeaf(proof._root / relative, prefix)
 
 
 def _canonical_root(root):
@@ -169,6 +196,21 @@ class _BatchPolicyCandidate:
     def invocation_binding_sha256(self):
         """Return a path-free binding digest, never request bytes or authority."""
         return hashlib.sha256(self._binding_bytes()).hexdigest()
+
+    def _allowed_probe_leaves(self):
+        """Internal transient sentinel bytes; no denial or capability authority."""
+        self._binding_bytes()
+        if len(self._proofs) != 3:
+            raise ValueError("allowed probe roots are incomplete")
+        request = json.loads(self._request_bytes)
+        media = request["media"]
+        if len(media) != 6:
+            raise ValueError("probe media request is incomplete")
+        selected = tuple(_selected_probe_leaf(proof, relative)
+            for proof, relative in zip(self._proofs,
+                (media[0]["path"], None, "prompt.txt")))
+        self._binding_bytes()
+        return selected
 
     def close(self):
         if self._closed:
