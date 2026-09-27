@@ -101,12 +101,15 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
         except OSError: pass
 
     def signal_owned(sig):
+        nonlocal cleanup_failed
         if process is None: return
         try:
             if group_verified: os.killpg(process.pid, sig)
             else: os.kill(process.pid, sig)
         except ProcessLookupError:
             pass
+        except PermissionError:
+            cleanup_failed = True
 
     try:
         process = subprocess.Popen(argv, pass_fds=(read_fd, bundle_fd),
@@ -178,18 +181,40 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
                 close_writer()
                 break
         if writer_open: close_writer()
-        remaining = max(0.001, (_TIMEOUT_NS - (time.monotonic_ns() - started)) / 1e9)
-        try: returncode = process.wait(timeout=remaining)
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            signal_owned(signal.SIGTERM)
-            try: returncode = process.wait(timeout=_GRACE_NS / 1e9)
-            except subprocess.TimeoutExpired:
+        # Keep the exited leader unreaped while signalling its process group:
+        # its PID cannot be reused as a different group identifier yet.
+        exited = False
+        while not exited:
+            try:
+                exited = os.waitid(os.P_PID, process.pid,
+                    os.WEXITED | os.WNOWAIT | os.WNOHANG) is not None
+            except ChildProcessError:
+                cleanup_failed = True
+                break
+            if exited: break
+            now = time.monotonic_ns()
+            if now - started >= _TIMEOUT_NS and term_at is None:
+                timed_out = True
+                term_at = now
+                signal_owned(signal.SIGTERM)
+            if term_at is not None and now - term_at >= _GRACE_NS and kill_at is None:
+                kill_at = now
                 signal_owned(signal.SIGKILL)
-                try: returncode = process.wait(timeout=_DRAIN_NS / 1e9)
-                except subprocess.TimeoutExpired:
-                    cleanup_failed = True
-                    returncode = None
+            if kill_at is not None and now - kill_at >= _DRAIN_NS:
+                cleanup_failed = True
+                break
+            time.sleep(0.01)
+        if exited and group_verified:
+            try: os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError: pass
+            except PermissionError:
+                # macOS can reject a group containing only a zombie leader.
+                # The post-reap group-absence check remains mandatory.
+                pass
+        try: returncode = process.wait(timeout=_DRAIN_NS / 1e9)
+        except subprocess.TimeoutExpired:
+            cleanup_failed = True
+            returncode = None
         postcheck_passed = False
         group_gone = False
         if returncode is not None:

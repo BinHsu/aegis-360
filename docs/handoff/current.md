@@ -1,13 +1,12 @@
 # Current handoff
 
-Updated: 2026-09-27T17:30:42+08:00
+Updated: 2026-09-27T17:44:05+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 7ac1585
-Remote status: local `main` contains six local checkpoints
-ahead of cached `origin/main` at `a471a3127a7c845222ef85a3eb1dacacc5bd886f`.
-GitHub Actions `handoff-contract` run 36308232554 succeeded for that published
-SHA; the local checkpoints have no remote CI result yet.
+Baseline commit: d03169d
+Remote status: `main` and fetched `origin/main` match at
+`d03169d148d3357ac08fe2b569f62912295bcfb5`.
+GitHub Actions `handoff-contract` run 36310270836 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -88,6 +87,12 @@ rows and 14 provisional primitive values pass with postvalidation. A forced
 pre-policy timeout emits no adapter output. These are transport/primitive
 observations, not capability authority. Abnormal group-descendant cleanup
 still needs review before claiming full process isolation.
+An attempted unconditional pre-reap `killpg` returned macOS `EPERM` for an
+already-exited leader and was reverted before publication. A revised local
+change keeps the leader unreaped with `waitid(WNOWAIT)`, signals its group,
+tolerates `EPERM` only in that final exited-leader case, and still requires
+post-reap group absence. Three host transport tests pass. A targeted surviving
+descendant test remains necessary before claiming reliable teardown.
 No capability token, receipt or spawn authority is created.
 
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
@@ -109,11 +114,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@a471a31`; GitHub Actions
-  `handoff-contract` run 36308232554 succeeded for exact SHA
-  `a471a3127a7c845222ef85a3eb1dacacc5bd886f`.
-- Six current implementation checkpoints remain local-only.
-  Inspect `git log` for their exact SHAs before a later publication decision.
+- Published checkpoint: `BinHsu/aegis-360@d03169d`; GitHub Actions
+  `handoff-contract` run 36310270836 succeeded for exact SHA
+  `d03169d148d3357ac08fe2b569f62912295bcfb5`.
 
 ## Verified
 
