@@ -7,7 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from aegis360.sparse_story_probe_transcript import (  # noqa: E402
-    MAX_TRANSCRIPT_BYTES, OPERATIONS, parse_isolation_probe_transcript,
+    MAX_TRANSCRIPT_BYTES, OPERATIONS, _check_probe_row_values,
+    parse_isolation_probe_transcript,
 )
 
 
@@ -18,6 +19,37 @@ def transcript(rows=None):
 
 
 class ProbeTranscriptTests(unittest.TestCase):
+    def test_row_values_are_checked_without_side_effect_authority(self):
+        rows = {name: (b"-1", b"1", b"") for name in OPERATIONS}
+        for name, prefix in (("bundle_read", b"bundle"),
+                ("model_read", b"model"), ("prompt_read", b"prompt")):
+            rows[name] = (str(len(prefix)).encode(), b"0", prefix.hex().encode())
+        rows["scratch_write"] = (str(len(b"scratch-write-sentinel-v1")).encode(), b"0", b"")
+        rows["outside_overwrite"] = (b"-1", b"1", b"open".hex().encode())
+        rows["process_fork"] = (b"-1", b"1", b"-1,-1,0".hex().encode())
+        for name in ("ipv4_socket", "ipv6_socket", "unix_socket"):
+            rows[name] = (b"3", b"0", b"")
+        def checked(value):
+            parsed = parse_isolation_probe_transcript(transcript([
+                (name, *value[name]) for name in OPERATIONS]))
+            return _check_probe_row_values(parsed, bundle_prefix=b"bundle",
+                model_prefix=b"model", prompt_prefix=b"prompt")
+        self.assertTrue(all(checked(rows).values()))
+        self.assertEqual(len(checked(rows)), 14)
+        for name, replacement in (("bundle_read", (b"5", b"0", b"")),
+                ("scratch_write", (b"-1", b"1", b"")),
+                ("repository_read", (b"-1", b"2", b"")),
+                ("outside_overwrite", (b"-1", b"1", b"other".hex().encode())),
+                ("process_fork", (b"-1", b"1", b"")),
+                ("ipv4_socket", (b"-1", b"1", b"")),
+                ("forbidden_exec", (b"0", b"0", b""))):
+            with self.subTest(name=name):
+                changed = dict(rows, **{name: replacement})
+                self.assertFalse(all(checked(changed).values()))
+        with self.assertRaises(ValueError):
+            _check_probe_row_values(tuple(), bundle_prefix=b"bundle",
+                model_prefix=b"model", prompt_prefix=b"prompt")
+
     def test_exact_order_and_raw_bytes_parse_without_authority(self):
         rows = [(name, str(number).encode(), b"0", bytes([number]).hex().encode())
                 for number, name in enumerate(OPERATIONS)]

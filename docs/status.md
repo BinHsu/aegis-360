@@ -183,7 +183,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 731 tests run, 720 passed and 11 host/sandbox cases skipped.
+- Full discovery: 735 tests run, 724 passed and 11 host/sandbox cases skipped.
 - Native same-entrypoint fixture: eight host tests cover raw probe rows,
   retained identity and 33 adapter-owned case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests run, all passed.
@@ -194,6 +194,6 @@ specific directing question. No new video is currently awaiting owner review.
 The private one-packet candidate now binds canonical request/runner-policy bytes,
 uid/gid and retained empty HOME/TMPDIR identities in addition to all policy roots.
 The synthetic native fixture emits closed raw probe rows for 33 adapter-owned
-cases. Allowed probe paths and byte prefixes now derive from retained bundle,
-model and prompt proofs; denial sentinels and coordinator checks remain pending.
+cases. Allowed prefixes derive from retained proofs; raw row checks and one
+outside-write snapshot exist. Full coordinator side-effect proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.

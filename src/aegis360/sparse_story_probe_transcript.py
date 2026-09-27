@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import errno
 import re
 from dataclasses import dataclass
 
@@ -56,3 +57,58 @@ def parse_isolation_probe_transcript(value: bytes) -> tuple[ProbeObservation, ..
         observations.append(ProbeObservation(expected, parsed_number, parsed_error,
             data, hashlib.sha256(data).hexdigest()))
     return tuple(observations)
+
+
+def _check_probe_row_values(rows: tuple[ProbeObservation, ...], *,
+        bundle_prefix: bytes, model_prefix: bytes, prompt_prefix: bytes
+        ) -> dict[str, bool]:
+    """Check raw operation values only; side effects and provenance remain unproved."""
+    if (not isinstance(rows, tuple) or len(rows) != len(OPERATIONS)
+            or any(not isinstance(row, ProbeObservation) for row in rows)
+            or tuple(row.operation for row in rows) != OPERATIONS):
+        raise ValueError("probe rows are incomplete or unordered")
+    if any(not isinstance(row.data, bytes)
+           or row.data_sha256 != hashlib.sha256(row.data).hexdigest()
+           for row in rows):
+        raise ValueError("probe row digest is invalid")
+    prefixes = (bundle_prefix, model_prefix, prompt_prefix)
+    if any(not isinstance(prefix, bytes) or not 1 <= len(prefix) <= MAX_DATA_BYTES
+           for prefix in prefixes):
+        raise ValueError("allowed probe prefixes are invalid")
+    by_name = dict(zip(OPERATIONS, rows))
+    denied = lambda row: row.value == -1 and row.errno in (errno.EACCES, errno.EPERM)
+    empty = lambda row: row.data == b""
+    values = {}
+    for key, name, prefix in zip(("allowed_bundle_read", "allowed_model_read",
+            "allowed_prompt_read"), OPERATIONS[:3], prefixes):
+        row = by_name[name]
+        values[key] = row.value == len(prefix) and row.errno == 0 and row.data == prefix
+    scratch = by_name["scratch_write"]
+    values["allowed_scratch_write"] = (scratch.value == len(b"scratch-write-sentinel-v1")
+        and scratch.errno == 0 and empty(scratch))
+    for key, name in (("denied_repository_read", "repository_read"),
+            ("denied_protocol_read", "protocol_read"),
+            ("denied_neighbor_packet_read", "neighbor_read"),
+            ("denied_result_read", "result_read")):
+        row = by_name[name]
+        values[key] = denied(row) and empty(row)
+    outside_expected = {
+        "outside_create": b"", "outside_overwrite": (b"open", b"pwrite"),
+        "outside_truncate": b"", "outside_rename": b"", "outside_unlink": b"",
+    }
+    values["denied_outside_write"] = all(
+        denied(by_name[name]) and by_name[name].data in
+            (expected if isinstance(expected, tuple) else (expected,))
+        for name, expected in outside_expected.items())
+    fork = by_name["process_fork"]
+    values["denied_process_fork"] = denied(fork) and fork.data == b"-1,-1,0"
+    forbidden_exec = by_name["forbidden_exec"]
+    values["denied_process_exec"] = denied(forbidden_exec) and empty(forbidden_exec)
+    for key, socket_name, connect_name in (
+            ("denied_ipv4", "ipv4_socket", "ipv4_connect"),
+            ("denied_ipv6", "ipv6_socket", "ipv6_connect"),
+            ("denied_unix_socket", "unix_socket", "unix_connect")):
+        socket_row, connect_row = by_name[socket_name], by_name[connect_name]
+        values[key] = (socket_row.value >= 0 and socket_row.errno == 0
+            and empty(socket_row) and denied(connect_row) and empty(connect_row))
+    return values

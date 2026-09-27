@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-27T17:12:07+08:00
+Updated: 2026-09-27T17:17:12+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 580b254
-Remote status: local `main` contains two local checkpoints
+Baseline commit: ea12138
+Remote status: local `main` contains three local checkpoints
 ahead of cached `origin/main` at `a471a3127a7c845222ef85a3eb1dacacc5bd886f`.
 GitHub Actions `handoff-contract` run 36308232554 succeeded for that published
-SHA; the new local checkpoint has no remote CI result yet.
+SHA; the local checkpoints have no remote CI result yet.
 Working tree at checkpoint: clean after the local commit; verify with
 `git status --short` before resuming.
 
@@ -62,8 +62,14 @@ are pending.
 The new private allowed-probe selector reads the first request-bound media leaf,
 one model leaf and `prompt.txt` through their retained file descriptors. It
 returns only transient paths and at most 128-byte prefixes after pre/post root
-revalidation. A changed model leaf fails. No denial sentinel, raw transcript
-evaluation, capability token or spawn authority is created.
+revalidation. A changed model leaf fails.
+
+The new private raw-row evaluator checks 21 operation values, errno and data
+against the three allowed prefixes, yielding 14 provisional booleans. It cannot
+prove the process/policy source or absence of side effects. One retained outside
+sentinel tree now checks the existing file and absent create/rename names before
+and after. The unconfined native probe changes that tree and fails revalidation.
+No capability token, receipt or spawn authority is created.
 
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
 in place. Its host integration now also opens a real batch candidate and proves
@@ -87,20 +93,22 @@ successor protocol for its exact scope and backend constraints.
 - Published checkpoint: `BinHsu/aegis-360@a471a31`; GitHub Actions
   `handoff-contract` run 36308232554 succeeded for exact SHA
   `a471a3127a7c845222ef85a3eb1dacacc5bd886f`.
-- The fork fixture and allowed-probe selector checkpoints remain local-only.
+- The fork fixture, allowed-probe selector and outside-sentinel checkpoints remain local-only.
   Inspect `git log` for their exact SHAs before a later publication decision.
 
 ## Verified
 
-- Restricted full discovery: 731 tests run, 720 passed, 11 skips. Three network
+- Restricted full discovery: 735 tests run, 724 passed, 11 skips. Three network
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
 - A controlled probe-mode name mutation makes the original mode fail with exit 64.
 - The allowed-leaf selector returns request-bound paths/byte prefixes; changing
   a retained model leaf makes its call fail.
-- Closed raw-transcript parser: four focused tests pass; a controlled mutation of
-  operation order causes the exact-order test to error as intended.
+- Closed raw-transcript parser and provisional row checks: five focused tests
+  pass; malformed order and altered values are detected.
+- Outside sentinel snapshot: three focused tests detect create, overwrite,
+  truncate, rename, unlink, name replacement and mode change.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -117,9 +125,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Retain coordinator-owned denial sentinels outside policy roots, then bind
-  their exact pre/post state to raw transcript evaluation. Parsing alone cannot
-  attest denial.
+- Connect all coordinator-owned denial sentinels, process and socket pre/post
+  facts to raw checks. The current outside-tree snapshot is only one part;
+  parsing and provisional booleans cannot attest denial.
 - The rejected transport defects and their disposition are recorded above; do
   not restore its source unchanged or treat its 21 passing tests as authority.
 - Implement the same-entrypoint raw capability-probe transcript and private

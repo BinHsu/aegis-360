@@ -14,11 +14,12 @@ from aegis360.sparse_story_asset_tree import (  # noqa: E402
     _observe_asset_manifest_shape, validate_asset_tree,
 )
 from aegis360.sparse_story_probe_transcript import (  # noqa: E402
-    OPERATIONS, parse_isolation_probe_transcript,
+    OPERATIONS, _check_probe_row_values, parse_isolation_probe_transcript,
 )
 from aegis360.sparse_story_semantics import (  # noqa: E402
     select_failure_reason,
 )
+from aegis360.sparse_story_probe_sentinels import _OutsideSentinelSnapshot  # noqa: E402
 
 
 @unittest.skipUnless(os.uname().sysname == "Darwin" and os.uname().machine == "arm64",
@@ -278,17 +279,24 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
             entrypoint="bin/aegis-synthetic-adapter")
         with tempfile.TemporaryDirectory(dir=self.base) as temporary:
             root = Path(temporary)
+            outside = root / "outside"
+            outside.mkdir(mode=0o700)
             paths = [root / name for name in ("bundle", "model", "prompt", "scratch",
                 "repo", "protocol", "neighbor", "result", "outside-create",
                 "outside-existing", "rename-source", "rename-dest", "fork-marker")]
+            paths[8] = outside / "outside-create"
+            paths[9] = outside / "outside-existing"
+            paths[11] = outside / "rename-dest"
             for path in paths[:3]: path.write_bytes(path.name.encode())
-            paths[9].write_bytes(b"outside-existing")
+            paths[9].write_bytes(b"outside-existing-sentinel-v1")
+            paths[9].chmod(0o600)
             paths[10].write_bytes(b"rename-source")
             argv = [str(self.executable), "--aegis-isolation-probe",
                 *map(str, paths[:13]), "0", "0", str(root / "absent.sock"),
                 str(root / "absent-executable"), str(root / "exec-marker")]
             self.assertEqual(len(argv), 20)
-            with validate_asset_tree(manifest=manifest, root=self.runtime) as proof:
+            with (validate_asset_tree(manifest=manifest, root=self.runtime) as proof,
+                  _OutsideSentinelSnapshot(outside) as sentinels):
                 result = subprocess.run(argv, capture_output=True, timeout=5)
                 self.assertEqual((result.returncode, result.stderr), (0, b""))
                 rows = parse_isolation_probe_transcript(result.stdout)
@@ -296,6 +304,14 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
                 self.assertEqual(rows[0].data, b"bundle")
                 self.assertEqual(rows[1].data, b"model")
                 self.assertEqual(rows[2].data, b"prompt")
+                primitive = _check_probe_row_values(rows, bundle_prefix=b"bundle",
+                    model_prefix=b"model", prompt_prefix=b"prompt")
+                self.assertTrue(all(primitive[key] for key in (
+                    "allowed_bundle_read", "allowed_model_read", "allowed_prompt_read",
+                    "allowed_scratch_write")))
+                self.assertFalse(primitive["denied_repository_read"])
+                self.assertFalse(primitive["denied_outside_write"])
+                with self.assertRaises(ValueError): sentinels.revalidate()
                 self.assertEqual(proof.manifest(), manifest)
 
 
