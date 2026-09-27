@@ -1,4 +1,6 @@
 import os
+import select
+import signal
 import subprocess
 import sys
 import tempfile
@@ -162,6 +164,35 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
             with self.assertRaises(subprocess.TimeoutExpired):
                 subprocess.run([str(self.executable), "--aegis-synthetic-case",
                                 "wall_timeout", "--"], capture_output=True, timeout=0.2)
+            pressure = subprocess.run([str(self.executable), "--aegis-synthetic-case",
+                "concurrent_pipe_pressure", "--"], input=b"x" * 60000,
+                capture_output=True, timeout=5)
+            self.assertEqual((pressure.returncode, len(pressure.stdout),
+                              len(pressure.stderr)), (0, 60000, 0))
+            self.assertIsNone(select_failure_reason(missing_anchor=False,
+                invocation_failed=False, raw_output=pressure.stdout))
+            wrong_input = subprocess.run([str(self.executable), "--aegis-synthetic-case",
+                "concurrent_pipe_pressure", "--"], input=b"x" * 59999 + b"y",
+                capture_output=True, timeout=5)
+            self.assertEqual((wrong_input.returncode, wrong_input.stderr), (65, b""))
+            stubborn = subprocess.Popen([str(self.executable), "--aegis-synthetic-case",
+                "term_ignore_kill", "--"], stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, start_new_session=True)
+            try:
+                readable, _, _ = select.select([stubborn.stdout], [], [], 5)
+                self.assertTrue(readable)
+                self.assertEqual(os.read(stubborn.stdout.fileno(), 6), b"ready\n")
+                os.kill(stubborn.pid, signal.SIGTERM)
+                with self.assertRaises(subprocess.TimeoutExpired):
+                    stubborn.wait(timeout=0.2)
+                os.kill(stubborn.pid, signal.SIGKILL)
+                self.assertEqual(stubborn.wait(timeout=5), -signal.SIGKILL)
+            finally:
+                if stubborn.poll() is None:
+                    stubborn.kill()
+                    stubborn.wait(timeout=5)
+                stubborn.stdout.close()
+                stubborn.stderr.close()
             self.assertEqual(proof.manifest(), manifest)
 
     def test_raw_probe_rows_are_exact_order_without_claiming_confinement(self):

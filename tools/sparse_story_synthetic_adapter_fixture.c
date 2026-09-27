@@ -35,6 +35,22 @@ static int emit_padded_case(size_t total) {
     return 0;
 }
 
+static int emit_pipe_pressure(void) {
+    if (emit_padded_case(60000U) != 0) return 74;
+    if (fflush(stdout) != 0) return 74;
+    char buffer[256];
+    size_t received = 0;
+    while (received < 60000U) {
+        size_t chunk = 60000U - received;
+        if (chunk > sizeof(buffer)) chunk = sizeof(buffer);
+        size_t count = fread(buffer, 1, chunk, stdin);
+        if (count == 0) return 65;
+        for (size_t i = 0; i < count; ++i) if (buffer[i] != 'x') return 65;
+        received += count;
+    }
+    return fgetc(stdin) == EOF && !ferror(stdin) ? 0 : 65;
+}
+
 extern char **environ;
 
 static int environment_exact(const char *home, const char *tmpdir) {
@@ -104,6 +120,7 @@ int main(int argc, char **argv) {
         if (strcmp(case_id, "stdout_limit_minus_one") == 0) return emit_padded_case(65535U);
         if (strcmp(case_id, "stdout_limit_exact") == 0) return emit_padded_case(65536U);
         if (strcmp(case_id, "stdout_limit_plus_one") == 0) return emit_padded_case(65537U);
+        if (strcmp(case_id, "concurrent_pipe_pressure") == 0) return emit_pipe_pressure();
         if (strcmp(case_id, "stderr_nonempty") == 0) {
             static const char warning[] = "synthetic-stderr-v1\n";
             if (fwrite(warning, 1, sizeof(warning) - 1U, stderr) != sizeof(warning) - 1U)
@@ -119,6 +136,14 @@ int main(int argc, char **argv) {
             return 75;
         }
         if (strcmp(case_id, "wall_timeout") == 0) {
+            pause();
+            return 75;
+        }
+        if (strcmp(case_id, "term_ignore_kill") == 0) {
+            if (signal(SIGTERM, SIG_IGN) == SIG_ERR) return 75;
+            static const char ready[] = "ready\n";
+            if (emit_case_bytes(ready, sizeof(ready) - 1U) != 0 ||
+                    fflush(stdout) != 0) return 74;
             pause();
             return 75;
         }
