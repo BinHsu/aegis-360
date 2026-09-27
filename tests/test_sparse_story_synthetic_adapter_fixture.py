@@ -259,6 +259,20 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
                                          (65, b"", b""))
                 self.assertEqual(proof.manifest(), manifest)
 
+    def test_grandchild_denial_case_creates_marker_when_unconfined(self):
+        with tempfile.TemporaryDirectory(dir=self.base) as temporary:
+            marker = Path(temporary) / "grandchild-marker"
+            manifest = _observe_asset_manifest_shape(root=self.runtime,
+                asset_kind="runtime", entrypoint="bin/aegis-synthetic-adapter")
+            with validate_asset_tree(manifest=manifest, root=self.runtime) as proof:
+                result = subprocess.run([str(self.executable), "--aegis-synthetic-case",
+                    "grandchild_containment", "--", str(marker)],
+                    capture_output=True, timeout=5)
+                self.assertEqual((result.returncode, result.stdout, result.stderr),
+                                 (65, b"", b""))
+                self.assertEqual(marker.read_bytes(), b"grandchild-created-v1")
+                self.assertEqual(proof.manifest(), manifest)
+
     def test_raw_probe_rows_are_exact_order_without_claiming_confinement(self):
         manifest = _observe_asset_manifest_shape(root=self.runtime, asset_kind="runtime",
             entrypoint="bin/aegis-synthetic-adapter")

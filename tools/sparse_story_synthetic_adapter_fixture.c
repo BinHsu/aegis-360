@@ -156,6 +156,25 @@ static int network_case(int family, const char *target) {
         ? emit_case_bytes(abstain, sizeof(abstain) - 1U) : 65;
 }
 
+static int grandchild_case(const char *marker) {
+    errno = 0;
+    pid_t child = fork();
+    if (child < 0) return errno == EACCES || errno == EPERM
+        ? emit_case_bytes(abstain, sizeof(abstain) - 1U) : 65;
+    if (child == 0) {
+        int fd = open(marker, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, 0600);
+        if (fd >= 0) {
+            static const char value[] = "grandchild-created-v1";
+            (void)write(fd, value, sizeof(value) - 1U);
+            close(fd);
+        }
+        _exit(0);
+    }
+    int status = 0;
+    if (waitpid(child, &status, 0) != child) return 65;
+    return 65;
+}
+
 int main(int argc, char **argv) {
     if (argc == 20 && strcmp(argv[1], "--aegis-isolation-probe") == 0) {
         char *translated[21];
@@ -199,6 +218,8 @@ int main(int argc, char **argv) {
             return network_case(AF_INET6, argv[4]);
         if (argc == 5 && strcmp(case_id, "unix_socket_denied") == 0)
             return network_case(AF_UNIX, argv[4]);
+        if (argc == 5 && strcmp(case_id, "grandchild_containment") == 0)
+            return grandchild_case(argv[4]);
         if (argc != 4) return 64;
         if (strcmp(case_id, "fd_hygiene") == 0) {
             if (fd_hygiene() != 0) return 65;
