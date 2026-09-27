@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from aegis360.sparse_story_probe_sentinels import (
-    _OutsideSentinelSnapshot, _ReadDenialSentinel,
+    _OutsideSentinelSnapshot, _ReadDenialSentinel, _ScratchProbeSnapshot,
 )
 
 
@@ -102,6 +102,44 @@ class ReadDenialSentinelTests(unittest.TestCase):
                 "docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md"):
             with self.subTest(relative=relative), _ReadDenialSentinel(ROOT / relative) as proof:
                 proof.revalidate()
+
+
+class ScratchProbeSnapshotTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name).resolve() / "scratch"
+        self.root.mkdir(mode=0o700)
+        self.home, self.tmpdir = self.root / "home", self.root / "tmp"
+        self.home.mkdir(mode=0o700)
+        self.tmpdir.mkdir(mode=0o700)
+        (self.root / "rename-source").write_bytes(b"rename-source-v1")
+        (self.root / "rename-source").chmod(0o600)
+
+    def test_exact_pre_and_post_probe_state(self):
+        with _ScratchProbeSnapshot(self.root, self.home, self.tmpdir) as proof:
+            proof.prevalidate()
+            self.assertEqual(proof.source_path, self.root / "rename-source")
+            proof.scratch_write_path.write_bytes(b"scratch-write-sentinel-v1")
+            proof.scratch_write_path.chmod(0o600)
+            proof.postvalidate()
+        with self.assertRaisesRegex(ValueError, "closed"): proof.prevalidate()
+
+    def test_source_mutation_and_fork_marker_reject(self):
+        with _ScratchProbeSnapshot(self.root, self.home, self.tmpdir) as proof:
+            proof.source_path.write_bytes(b"changed")
+            with self.assertRaises(ValueError): proof.prevalidate()
+        (self.root / "rename-source").write_bytes(b"rename-source-v1")
+        with _ScratchProbeSnapshot(self.root, self.home, self.tmpdir) as proof:
+            proof.scratch_write_path.write_bytes(b"scratch-write-sentinel-v1")
+            proof.fork_marker_path.write_bytes(b"forked")
+            with self.assertRaises(ValueError): proof.postvalidate()
+
+    def test_private_directory_replacement_rejects(self):
+        with _ScratchProbeSnapshot(self.root, self.home, self.tmpdir) as proof:
+            self.home.rename(self.root / "old-home")
+            self.home.mkdir(mode=0o700)
+            with self.assertRaises(ValueError): proof.prevalidate()
 
 
 if __name__ == "__main__": unittest.main()

@@ -19,7 +19,9 @@ from aegis360.sparse_story_probe_transcript import (  # noqa: E402
 from aegis360.sparse_story_semantics import (  # noqa: E402
     select_failure_reason,
 )
-from aegis360.sparse_story_probe_sentinels import _OutsideSentinelSnapshot  # noqa: E402
+from aegis360.sparse_story_probe_sentinels import (  # noqa: E402
+    _OutsideSentinelSnapshot, _ScratchProbeSnapshot,
+)
 
 
 @unittest.skipUnless(os.uname().sysname == "Darwin" and os.uname().machine == "arm64",
@@ -281,22 +283,32 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
             root = Path(temporary)
             outside = root / "outside"
             outside.mkdir(mode=0o700)
+            scratch_root = root / "scratch-root"
+            scratch_root.mkdir(mode=0o700)
+            home, tmpdir = scratch_root / "home", scratch_root / "tmp"
+            home.mkdir(mode=0o700)
+            tmpdir.mkdir(mode=0o700)
             paths = [root / name for name in ("bundle", "model", "prompt", "scratch",
                 "repo", "protocol", "neighbor", "result", "outside-create",
                 "outside-existing", "rename-source", "rename-dest", "fork-marker")]
+            paths[3] = scratch_root / "scratch-write"
             paths[8] = outside / "outside-create"
             paths[9] = outside / "outside-existing"
+            paths[10] = scratch_root / "rename-source"
             paths[11] = outside / "rename-dest"
+            paths[12] = scratch_root / "fork-marker"
             for path in paths[:3]: path.write_bytes(path.name.encode())
             paths[9].write_bytes(b"outside-existing-sentinel-v1")
             paths[9].chmod(0o600)
-            paths[10].write_bytes(b"rename-source")
+            paths[10].write_bytes(b"rename-source-v1")
+            paths[10].chmod(0o600)
             argv = [str(self.executable), "--aegis-isolation-probe",
                 *map(str, paths[:13]), "0", "0", str(root / "absent.sock"),
-                str(root / "absent-executable"), str(root / "exec-marker")]
+                str(root / "absent-executable"), str(scratch_root / "exec-marker")]
             self.assertEqual(len(argv), 20)
             with (validate_asset_tree(manifest=manifest, root=self.runtime) as proof,
-                  _OutsideSentinelSnapshot(outside) as sentinels):
+                  _OutsideSentinelSnapshot(outside) as sentinels,
+                  _ScratchProbeSnapshot(scratch_root, home, tmpdir) as scratch):
                 result = subprocess.run(argv, capture_output=True, timeout=5)
                 self.assertEqual((result.returncode, result.stderr), (0, b""))
                 rows = parse_isolation_probe_transcript(result.stdout)
@@ -312,6 +324,7 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
                 self.assertFalse(primitive["denied_repository_read"])
                 self.assertFalse(primitive["denied_outside_write"])
                 with self.assertRaises(ValueError): sentinels.revalidate()
+                with self.assertRaises(ValueError): scratch.postvalidate()
                 self.assertEqual(proof.manifest(), manifest)
 
 

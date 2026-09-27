@@ -1,10 +1,10 @@
 # Current handoff
 
-Updated: 2026-09-27T17:20:48+08:00
+Updated: 2026-09-27T17:26:45+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f004fb2
-Remote status: local `main` contains four local checkpoints
+Baseline commit: a8318da
+Remote status: local `main` contains five local checkpoints
 ahead of cached `origin/main` at `a471a3127a7c845222ef85a3eb1dacacc5bd886f`.
 GitHub Actions `handoff-contract` run 36308232554 succeeded for that published
 SHA; the local checkpoints have no remote CI result yet.
@@ -73,6 +73,11 @@ An existing forbidden-read leaf can now be retained with no-follow descriptors,
 bounded full-content digest and pre/post identity checks. Synthetic mutation,
 replacement, unlink and unsafe-mode tests fail; actual repo/protocol files pass
 the non-mutating check. Neighbor/result ownership and integration remain open.
+The scratch snapshot now retains its rename source, requires exactly one allowed
+scratch-write marker after probe and rejects fork/exec markers or private-directory
+replacement. Live IPv4, IPv6 and AF_UNIX listeners check bound addresses, socket
+path identity and zero accepted connections. These are still separate inputs;
+no launcher-bound composition has been established.
 No capability token, receipt or spawn authority is created.
 
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
@@ -97,12 +102,12 @@ successor protocol for its exact scope and backend constraints.
 - Published checkpoint: `BinHsu/aegis-360@a471a31`; GitHub Actions
   `handoff-contract` run 36308232554 succeeded for exact SHA
   `a471a3127a7c845222ef85a3eb1dacacc5bd886f`.
-- Four current implementation checkpoints remain local-only.
+- Five current implementation checkpoints remain local-only.
   Inspect `git log` for their exact SHAs before a later publication decision.
 
 ## Verified
 
-- Restricted full discovery: 739 tests run, 728 passed, 11 skips. Three network
+- Restricted full discovery: 745 tests run, 729 passed, 16 skips. Five listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -115,6 +120,9 @@ successor protocol for its exact scope and backend constraints.
   truncate, rename, unlink, name replacement and mode change.
 - Forbidden-read snapshot: four focused tests cover identity/content mutation,
   symlink/mode rejection and real repo/protocol file retention.
+- Scratch snapshot: three focused tests cover expected write and rejected source,
+  marker and private-directory changes. Escalated listener host gate: three tests
+  pass, including successful connections to all three listener families.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -131,9 +139,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Connect coordinator-owned denial sentinels, process and socket pre/post
-  facts to raw checks. The current outside-tree snapshot is only one part;
-  parsing and provisional booleans cannot attest denial.
+- Connect coordinator-owned file/listener facts and process lifecycle to one
+  launcher-bound raw probe. Separate proofs and provisional booleans cannot
+  attest denial.
 - The rejected transport defects and their disposition are recorded above; do
   not restore its source unchanged or treat its 21 passing tests as authority.
 - Implement the same-entrypoint raw capability-probe transcript and private

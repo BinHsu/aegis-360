@@ -13,6 +13,8 @@ from pathlib import Path
 
 _EXISTING = "outside-existing"
 _EXPECTED = b"outside-existing-sentinel-v1"
+_RENAME_SOURCE = b"rename-source-v1"
+_SCRATCH_WRITE = b"scratch-write-sentinel-v1"
 
 
 def _file_facts(value):
@@ -156,6 +158,115 @@ class _OutsideSentinelSnapshot:
         if self.closed: return
         self.closed = True
         for fd in (self.file_fd, self.root_fd, self.parent_fd):
+            if fd is not None: os.close(fd)
+
+    def __enter__(self): return self
+
+    def __exit__(self, *_): self.close()
+
+
+class _ScratchProbeSnapshot:
+    """Retain scratch rename source and check exact expected probe side effects."""
+
+    def __init__(self, root: Path, home: Path, tmpdir: Path):
+        if (not all(isinstance(path, Path) and path.is_absolute()
+                    and path.resolve(strict=True) == path for path in (root, home, tmpdir))
+                or home.parent != root or tmpdir.parent != root or home == tmpdir):
+            raise ValueError("scratch probe paths are invalid")
+        self.root, self.home, self.tmpdir = root, home, tmpdir
+        self.root_fd = self.source_fd = None
+        self.closed = False
+        try:
+            self.root_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY
+                | os.O_NOFOLLOW | os.O_CLOEXEC)
+            self.source_fd = os.open("rename-source", os.O_RDONLY | os.O_NOFOLLOW
+                | os.O_CLOEXEC, dir_fd=self.root_fd)
+            self.root_frozen = _directory_facts(os.fstat(self.root_fd))
+            self.source_frozen = _file_facts(os.fstat(self.source_fd))
+            self.private_frozen = tuple(_directory_facts(os.stat(path.name,
+                dir_fd=self.root_fd, follow_symlinks=False))
+                for path in (home, tmpdir))
+            self.prevalidate()
+        except BaseException:
+            self.close()
+            raise
+
+    @property
+    def source_path(self): return self.root / "rename-source"
+
+    @property
+    def scratch_write_path(self): return self.root / "scratch-write"
+
+    @property
+    def fork_marker_path(self): return self.root / "fork-marker"
+
+    @property
+    def exec_marker_path(self): return self.root / "exec-marker"
+
+    def _shared(self):
+        if self.closed: raise ValueError("scratch probe snapshot is closed")
+        if (self.root_frozen != _directory_facts(os.fstat(self.root_fd))
+                or self.root_frozen != _directory_facts(os.lstat(self.root))
+                or stat.S_IMODE(self.root_frozen[3]) != 0o700
+                or self.root_frozen[2] != os.getuid()):
+            raise ValueError("scratch probe root changed")
+        named = os.stat("rename-source", dir_fd=self.root_fd, follow_symlinks=False)
+        if (self.source_frozen != _file_facts(os.fstat(self.source_fd))
+                or self.source_frozen != _file_facts(named)
+                or not stat.S_ISREG(named.st_mode) or named.st_nlink != 1
+                or stat.S_IMODE(named.st_mode) != 0o600
+                or os.pread(self.source_fd, len(_RENAME_SOURCE) + 1, 0) != _RENAME_SOURCE):
+            raise ValueError("scratch rename source changed")
+        if self.source_frozen != _file_facts(os.fstat(self.source_fd)):
+            raise ValueError("scratch rename source changed while reading")
+        for directory, frozen in zip((self.home, self.tmpdir), self.private_frozen):
+            named_dir = os.stat(directory.name, dir_fd=self.root_fd,
+                                follow_symlinks=False)
+            if (frozen != _directory_facts(named_dir)
+                    or frozen != _directory_facts(os.lstat(directory))
+                    or not stat.S_ISDIR(named_dir.st_mode)
+                    or stat.S_IMODE(named_dir.st_mode) != 0o700
+                    or named_dir.st_uid != os.getuid()
+                    or os.listdir(directory)):
+                raise ValueError("scratch private directory changed")
+
+    def prevalidate(self):
+        try: self._shared()
+        except OSError as error:
+            raise ValueError("scratch probe state cannot be inspected") from error
+        if set(os.listdir(self.root_fd)) != {self.home.name, self.tmpdir.name,
+                                            "rename-source"}:
+            raise ValueError("scratch pre-probe children changed")
+
+    def postvalidate(self):
+        try: self._shared()
+        except OSError as error:
+            raise ValueError("scratch probe state cannot be inspected") from error
+        if set(os.listdir(self.root_fd)) != {self.home.name, self.tmpdir.name,
+                                            "rename-source", "scratch-write"}:
+            raise ValueError("scratch post-probe children are invalid")
+        fd = os.open("scratch-write", os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                     dir_fd=self.root_fd)
+        try:
+            opened = os.fstat(fd)
+            named = os.stat("scratch-write", dir_fd=self.root_fd,
+                            follow_symlinks=False)
+            if (_file_facts(opened) != _file_facts(named)
+                    or not stat.S_ISREG(opened.st_mode) or opened.st_nlink != 1
+                    or stat.S_IMODE(opened.st_mode) != 0o600
+                    or os.pread(fd, len(_SCRATCH_WRITE) + 1, 0) != _SCRATCH_WRITE):
+                raise ValueError("scratch write sentinel is invalid")
+        finally:
+            os.close(fd)
+        if set(os.listdir(self.root_fd)) != {self.home.name, self.tmpdir.name,
+                                            "rename-source", "scratch-write"}:
+            raise ValueError("scratch children changed while reading")
+        self._shared()
+
+    def close(self):
+        if self.closed: return
+        self.closed = True
+        for fd in (self.source_fd, self.root_fd):
             if fd is not None: os.close(fd)
 
     def __enter__(self): return self
