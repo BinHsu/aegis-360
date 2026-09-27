@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 import stat
+import hashlib
 from pathlib import Path
 
 _EXISTING = "outside-existing"
@@ -21,6 +22,70 @@ def _file_facts(value):
 
 def _directory_facts(value):
     return (value.st_dev, value.st_ino, value.st_uid, value.st_mode)
+
+
+class _ReadDenialSentinel:
+    """Retain one known existing forbidden-read leaf without exposing its bytes."""
+
+    def __init__(self, path: Path):
+        if (not isinstance(path, Path) or not path.is_absolute()
+                or path.resolve(strict=True) != path):
+            raise ValueError("read-denial sentinel path is not canonical")
+        self.path = path
+        self.parent_fd = self.file_fd = None
+        self.closed = False
+        try:
+            self.parent_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY
+                | os.O_NOFOLLOW | os.O_CLOEXEC)
+            self.file_fd = os.open(path.name, os.O_RDONLY | os.O_NOFOLLOW
+                | os.O_CLOEXEC, dir_fd=self.parent_fd)
+            self.frozen = _file_facts(os.fstat(self.file_fd))
+            if (not stat.S_ISREG(self.frozen[3]) or self.frozen[2] != os.getuid()
+                    or self.frozen[4] != 1 or self.frozen[5] < 1
+                    or self.frozen[5] > 16 * 1024 * 1024
+                    or stat.S_IMODE(self.frozen[3]) & 0o022):
+                raise ValueError("read-denial sentinel is not a bounded owned file")
+            self.digest = self._digest()
+            self.revalidate()
+        except BaseException:
+            self.close()
+            raise
+
+    def _digest(self):
+        digest = hashlib.sha256()
+        offset = 0
+        while offset < self.frozen[5]:
+            chunk = os.pread(self.file_fd, min(1024 * 1024, self.frozen[5] - offset), offset)
+            if not chunk: raise ValueError("read-denial sentinel was shortened")
+            digest.update(chunk)
+            offset += len(chunk)
+        return digest.digest()
+
+    def revalidate(self):
+        if self.closed: raise ValueError("read-denial sentinel is closed")
+        named = os.stat(self.path.name, dir_fd=self.parent_fd, follow_symlinks=False)
+        absolute = os.lstat(self.path)
+        if (self.frozen != _file_facts(os.fstat(self.file_fd))
+                or self.frozen != _file_facts(named)
+                or self.frozen != _file_facts(absolute)
+                or not stat.S_ISREG(named.st_mode)):
+            raise ValueError("read-denial sentinel identity changed")
+        if self._digest() != self.digest:
+            raise ValueError("read-denial sentinel bytes changed")
+        if (self.frozen != _file_facts(os.fstat(self.file_fd))
+                or self.frozen != _file_facts(os.stat(self.path.name,
+                    dir_fd=self.parent_fd, follow_symlinks=False))):
+            raise ValueError("read-denial sentinel changed while hashing")
+
+    def close(self):
+        if self.closed: return
+        self.closed = True
+        for fd in (self.file_fd, self.parent_fd):
+            if fd is not None: os.close(fd)
+
+    def __enter__(self): return self
+
+    def __exit__(self, *_): self.close()
 
 
 class _OutsideSentinelSnapshot:

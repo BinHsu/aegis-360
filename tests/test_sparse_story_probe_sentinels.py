@@ -5,7 +5,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from aegis360.sparse_story_probe_sentinels import _OutsideSentinelSnapshot
+from aegis360.sparse_story_probe_sentinels import (
+    _OutsideSentinelSnapshot, _ReadDenialSentinel,
+)
 
 
 class OutsideSentinelSnapshotTests(unittest.TestCase):
@@ -57,6 +59,49 @@ class OutsideSentinelSnapshotTests(unittest.TestCase):
         with _OutsideSentinelSnapshot(self.root) as proof:
             self.root.chmod(0o755)
             with self.assertRaises(ValueError): proof.revalidate()
+
+
+class ReadDenialSentinelTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.path = Path(self.temp.name).resolve() / "forbidden-read"
+        self.path.write_bytes(b"known-existing-v1")
+        self.path.chmod(0o600)
+
+    def test_unchanged_existing_file_revalidates(self):
+        with _ReadDenialSentinel(self.path) as proof:
+            proof.revalidate()
+        with self.assertRaisesRegex(ValueError, "closed"): proof.revalidate()
+
+    def test_content_replacement_and_unlink_reject(self):
+        with _ReadDenialSentinel(self.path) as proof:
+            self.path.write_bytes(b"changed-content")
+            with self.assertRaises(ValueError): proof.revalidate()
+        self.path.write_bytes(b"known-existing-v1")
+        with _ReadDenialSentinel(self.path) as proof:
+            old = self.path.with_name("old-forbidden-read")
+            self.path.rename(old)
+            self.path.write_bytes(b"known-existing-v1")
+            self.path.chmod(0o600)
+            with self.assertRaises(ValueError): proof.revalidate()
+        old.unlink()
+        with _ReadDenialSentinel(self.path) as proof:
+            self.path.unlink()
+            with self.assertRaises(OSError): proof.revalidate()
+
+    def test_symlink_and_group_writable_file_reject(self):
+        alias = self.path.with_name("alias")
+        alias.symlink_to(self.path)
+        with self.assertRaises(ValueError): _ReadDenialSentinel(alias)
+        self.path.chmod(0o620)
+        with self.assertRaises(ValueError): _ReadDenialSentinel(self.path)
+
+    def test_repository_and_protocol_files_are_retained_without_mutation(self):
+        for relative in ("src/aegis360/sparse_story_batch_policy.py",
+                "docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md"):
+            with self.subTest(relative=relative), _ReadDenialSentinel(ROOT / relative) as proof:
+                proof.revalidate()
 
 
 if __name__ == "__main__": unittest.main()
