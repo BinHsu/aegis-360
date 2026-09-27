@@ -183,17 +183,17 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 746 tests run, 729 passed and 17 host/sandbox cases skipped.
+- Full discovery: 748 tests run, 729 passed and 19 host/sandbox cases skipped.
 - Native same-entrypoint fixture: eight host tests cover raw probe rows,
   retained identity and 33 adapter-owned case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutations are detected by the extra-leaf and nonempty-HOME regressions.
+- Launcher-bound host raw probe: 21 rows and 14 provisional primitives pass with
+  retained pre/post inputs. A forced pre-policy timeout produces no adapter output.
 
 ## Next action
 
-The private one-packet candidate now binds canonical request/runner-policy bytes,
-uid/gid and retained empty HOME/TMPDIR identities in addition to all policy roots.
-The synthetic native fixture emits closed raw probe rows for 33 adapter-owned
-cases. A private context binds retained inputs and exact probe argv with pre/post
-checks. Launcher execution and complete coordinator proof remain pending.
+Audit abnormal group-descendant cleanup and compose a private single-use
+capability boundary over retained inputs, exact policy and raw probe rows.
+Coordinator proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.

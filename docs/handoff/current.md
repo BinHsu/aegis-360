@@ -8,7 +8,7 @@ Remote status: local `main` contains six local checkpoints
 ahead of cached `origin/main` at `a471a3127a7c845222ef85a3eb1dacacc5bd886f`.
 GitHub Actions `handoff-contract` run 36308232554 succeeded for that published
 SHA; the local checkpoints have no remote CI result yet.
-Working tree at checkpoint: clean after the local commit; verify with
+Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -82,7 +82,12 @@ The private probe context now assembles exact 19-argument probe mode from the
 batch candidate, four retained denied-read leaves, outside/scratch snapshots
 and live listeners. It checks denial-path disjointness against retained policy
 roots, then revalidates all inputs before and after. A changed neighbor leaf
-fails postvalidation. It still cannot start a process or grant authority.
+fails postvalidation. The new private transport runs one bounded host raw probe
+through the retained launcher, same retained runtime and exact policy. Its 21
+rows and 14 provisional primitive values pass with postvalidation. A forced
+pre-policy timeout emits no adapter output. These are transport/primitive
+observations, not capability authority. Abnormal group-descendant cleanup
+still needs review before claiming full process isolation.
 No capability token, receipt or spawn authority is created.
 
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
@@ -112,7 +117,7 @@ successor protocol for its exact scope and backend constraints.
 
 ## Verified
 
-- Restricted full discovery: 746 tests run, 729 passed, 17 skips. Six listener
+- Restricted full discovery: 748 tests run, 729 passed, 19 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -130,6 +135,8 @@ successor protocol for its exact scope and backend constraints.
   pass, including successful connections to all three listener families.
 - Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
   disjointness and post-execution neighbor mutation rejection.
+- Escalated launcher-bound raw transport host gate: two tests pass, including
+  21-row provisional evaluation and forced pre-policy timeout.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -146,9 +153,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Run one bounded raw probe through the retained launcher and exact policy,
-  then join its process lifecycle with the context's pre/post facts. The
-  assembled arguments and provisional booleans cannot attest denial alone.
+- Audit abnormal group-descendant cleanup, then compose raw rows and context
+  facts into a private single-use capability boundary. Passing provisional
+  booleans cannot attest denial alone.
 - The rejected transport defects and their disposition are recorded above; do
   not restore its source unchanged or treat its 21 passing tests as authority.
 - Implement the same-entrypoint raw capability-probe transcript and private
