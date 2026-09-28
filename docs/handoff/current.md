@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 47b8d76
+Baseline commit: e145060
 Remote status: `main` and fetched `origin/main` match at
-`47b8d762e0bfe8a6ab0d6d7d7b35cfdae117b29e`.
-GitHub Actions `handoff-contract` run 36484486599 succeeded for that exact SHA.
+`e14506081c867ceaaa2e361f594c933923934525`.
+GitHub Actions `handoff-contract` run 36485084166 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -35,11 +35,16 @@ Only path-free policy and invocation-binding digests are exposed. The candidate
 grants no spawn, installed-policy, receipt or capability authority.
 Its internal synthetic-support manifest is solely a retention representation;
 the original media result remains the source of input-derived authority.
-Full-set-to-one-packet execution-bundle publication remains unimplemented.
+Full-set-to-one-packet candidate retention remains unimplemented.
 Validated 6/24-packet projection sets now select a stable one-packet projection
 and copied private packet. A verified full media result and tree yield exactly
 the selected six original payloads; tests publish and validate first/last
 derived bundles. This input selector grants no execution-bundle authority.
+The selected inputs now feed the existing atomic media publisher, producing
+the one-packet bundle and result without replacement. Focused tests validate
+both first and last selected bundles; a repeated publication at the same
+destinations is refused and preserves the first result. The batch candidate
+still needs to retain the resulting selected bundle before capability probing.
 
 The published checkpoint `eea5881` records a rejected raw transport spike.
 Its independently audited direct-spawn, weak-child-ownership, blocking-write,
@@ -132,9 +137,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@47b8d76`; GitHub Actions
-  `handoff-contract` run 36484486599 succeeded for exact SHA
-  `47b8d762e0bfe8a6ab0d6d7d7b35cfdae117b29e`.
+- Published checkpoint: `BinHsu/aegis-360@e145060`; GitHub Actions
+  `handoff-contract` run 36485084166 succeeded for exact SHA
+  `e14506081c867ceaaa2e361f594c933923934525`.
 
 ## Verified
 
@@ -161,7 +166,7 @@ successor protocol for its exact scope and backend constraints.
   owned-descendant teardown, TERM-ignore/KILL and changed request-byte binding.
   Suppressing group KILL fails both relevant lifecycle regressions.
 - Full-set selection: two focused tests pass. Selected first/last packet
-  bundles publish and validate; a changed full-set result is rejected.
+  bundles publish and validate; changed full result and replacement are rejected.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -178,7 +183,7 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Publish/retain a selected one-packet execution bundle, then compose validated
+- Retain the published selected one-packet bundle in a batch candidate, then compose validated
   raw rows and context facts into a private single-use capability
   boundary; audit remaining abnormal process lifecycle cases. Passing
   provisional booleans cannot attest denial alone.

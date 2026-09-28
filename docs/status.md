@@ -188,13 +188,13 @@ specific directing question. No new video is currently awaiting owner review.
   retained identity and 33 adapter-owned case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutations are detected by the extra-leaf and nonempty-HOME regressions.
-- Full-set selection rebuilds first/last one-packet bundles and rejects a changed result.
+- Full-set selection publishes first/last packets; changed inputs and replacement fail.
 - Host raw probe: 21 rows, 14 primitives and lifecycle gates pass; bad rows,
   changed request bytes and omitted group KILL are detected.
 
 ## Next action
 
-Publish and retain the selected one-packet execution bundle, then compose a
+Retain the selected one-packet bundle in a batch candidate, then compose a
 private single-use capability boundary over exact inputs and validated probe rows.
 Coordinator proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.

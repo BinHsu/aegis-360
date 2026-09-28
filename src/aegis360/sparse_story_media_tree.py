@@ -530,3 +530,22 @@ def publish_sanitized_media_gate(*, index: Mapping[str, object],
     finally:
         if gate_snapshot is not None: gate_snapshot.close()
         publisher_snapshot.close()
+
+
+def publish_selected_one_packet_media_gate(*, result_bytes: bytes,
+        index: Mapping[str, object], private_packets: Sequence[Mapping[str, object]],
+        ordered_private_packet_sha256s: Sequence[str], salt_hex: str,
+        payloads: Sequence[tuple[str, bytes]], bundle: Path,
+        presentation_ordinal: int, bundle_destination: Path,
+        result_destination: Path):
+    """Publish one selected bundle from verified full inputs, without invocation authority."""
+    one, selected, selected_hashes, selected_payloads = select_one_packet_media_inputs(
+        result_bytes=result_bytes, index=index, private_packets=private_packets,
+        ordered_private_packet_sha256s=ordered_private_packet_sha256s,
+        salt_hex=salt_hex, payloads=payloads, bundle=bundle,
+        presentation_ordinal=presentation_ordinal)
+    result_sha = publish_sanitized_media_gate(index=one,
+        private_packets=selected, ordered_private_packet_sha256s=selected_hashes,
+        salt_hex=salt_hex, payloads=selected_payloads,
+        bundle_destination=bundle_destination, result_destination=result_destination)
+    return result_sha, one, selected, selected_hashes, selected_payloads

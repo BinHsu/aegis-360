@@ -16,6 +16,7 @@ from aegis360.sparse_story_media_tree import (  # noqa: E402
     PNG, canonical_result_bytes, publish_sanitized_bundle, sanitize_png_bytes,
     validate_closed_tree, validate_result, validate_sanitized_media_gate,
     select_one_packet_media_inputs,
+    publish_selected_one_packet_media_gate,
     publish_sanitized_media_gate, _rename_exclusive, _remove_owned_tree,
     _publish_sanitized_bundle, _write_result_exclusive,
 )
@@ -71,18 +72,37 @@ class SparseStoryMediaTreeTests(unittest.TestCase):
                     index["packets"][ordinal - 1]["projection"])
                 self.assertEqual(len(selected_payloads), 6)
                 destination = root / f"one-{ordinal}"
+                result_path = root / f"one-{ordinal}-result.json"
                 with mock.patch("aegis360.sparse_story_media_tree._rename_exclusive",
                         side_effect=local_rename):
-                    one_result = publish_sanitized_bundle(index=one,
-                        private_packets=selected,
-                        ordered_private_packet_sha256s=selected_hashes,
-                        salt_hex="5" * 64, payloads=selected_payloads,
-                        destination=destination)
-                validate_sanitized_media_gate(result_bytes=one_result,
+                    published = publish_selected_one_packet_media_gate(
+                        result_bytes=full_result,
+                        **self.publish_args(packets, hashes, index),
+                        payloads=payloads, bundle=root / "full",
+                        presentation_ordinal=ordinal,
+                        bundle_destination=destination,
+                        result_destination=result_path)
+                self.assertEqual(published[0],
+                    hashlib.sha256(result_path.read_bytes()).hexdigest())
+                self.assertEqual(published[1:],
+                    (one, selected, selected_hashes, selected_payloads))
+                validate_sanitized_media_gate(result_bytes=result_path.read_bytes(),
                     index=one, private_packets=selected,
                     ordered_private_packet_sha256s=selected_hashes,
                     salt_hex="5" * 64, payloads=selected_payloads,
                     bundle=destination)
+                with mock.patch("aegis360.sparse_story_media_tree._rename_exclusive",
+                        side_effect=local_rename):
+                    with self.assertRaises(ValueError):
+                        publish_selected_one_packet_media_gate(
+                            result_bytes=full_result,
+                            **self.publish_args(packets, hashes, index),
+                            payloads=payloads, bundle=root / "full",
+                            presentation_ordinal=ordinal,
+                            bundle_destination=destination,
+                            result_destination=result_path)
+                self.assertEqual(hashlib.sha256(result_path.read_bytes()).hexdigest(),
+                    published[0])
             with self.assertRaises(ValueError):
                 select_one_packet_media_inputs(result_bytes=full_result + b" ",
                     **self.publish_args(packets, hashes, index),
