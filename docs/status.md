@@ -183,13 +183,13 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 752 tests run, 729 passed and 23 host/sandbox cases skipped.
+- Full discovery: 753 tests run, 729 passed and 24 host/sandbox cases skipped.
 - Native same-entrypoint fixture: eight host tests cover raw probe rows,
   retained identity and 33 adapter-owned case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutations are detected by the extra-leaf and nonempty-HOME regressions.
 - Host raw probe: 21 rows and 14 primitives, timeout, mutation and descendant
-  checks pass. Transport rejects malformed or failed rows; omitted group KILL fails.
+  checks pass. Transport rejects bad rows; omitted group KILL fails in two cases.
 
 ## Next action
 

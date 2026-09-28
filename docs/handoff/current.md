@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 163bd1b
+Baseline commit: 80f0b9f
 Remote status: `main` and fetched `origin/main` match at
-`163bd1bd569c256ae8fe4816633e8941a9468057`.
-GitHub Actions `handoff-contract` run 36483364096 succeeded for that exact SHA.
+`80f0b9fcfcfc1ec1a04f6398dbb97af010d76eca`.
+GitHub Actions `handoff-contract` run 36483708495 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -100,6 +100,9 @@ all 21 rows and all 14 primitive value checks pass. Host tests force malformed
 rows and a false primitive result after an otherwise clean run; both remain
 invalid with return code zero and passing postvalidation. This closes the
 previous gap where tests checked rows separately but the transport did not.
+An owned TERM-ignoring process is now tested under a short timeout and grace:
+the transport returns SIGKILL and confirms group absence. Suppressing group
+SIGKILL makes the test fail; its fixture cleans up the exact process it spawned.
 No capability token, receipt or spawn authority is created.
 
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
@@ -121,13 +124,13 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@163bd1b`; GitHub Actions
-  `handoff-contract` run 36483364096 succeeded for exact SHA
-  `163bd1bd569c256ae8fe4816633e8941a9468057`.
+- Published checkpoint: `BinHsu/aegis-360@80f0b9f`; GitHub Actions
+  `handoff-contract` run 36483708495 succeeded for exact SHA
+  `80f0b9fcfcfc1ec1a04f6398dbb97af010d76eca`.
 
 ## Verified
 
-- Restricted full discovery: 752 tests run, 729 passed, 23 skips. Six listener
+- Restricted full discovery: 753 tests run, 729 passed, 24 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -145,9 +148,10 @@ successor protocol for its exact scope and backend constraints.
   pass, including successful connections to all three listener families.
 - Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
   disjointness and post-execution neighbor mutation rejection.
-- Escalated raw transport host gate: six tests pass, including 21-row
-  evaluation, malformed/false-row rejection, timeout, post-exit mutation and
-  owned-descendant teardown. Suppressing group KILL fails as intended.
+- Escalated raw transport host gate: seven tests pass, including 21-row
+  evaluation, malformed/false-row rejection, timeout, post-exit mutation,
+  owned-descendant teardown and TERM-ignore/KILL. Suppressing group KILL fails
+  both relevant lifecycle regressions.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.

@@ -1,4 +1,5 @@
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -185,6 +186,41 @@ class RawProbeTransportHostTests(unittest.TestCase):
                             os.kill(child_pid, 9)
                     except ProcessLookupError:
                         pass
+
+    def test_term_ignoring_probe_is_killed_after_grace(self):
+        with self.context() as context:
+            script = ("import os,signal,time\n"
+                "signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
+                "os.write(1,b'ready\\n')\n"
+                "time.sleep(30)\n")
+            real_popen = subprocess.Popen
+            owned = []
+
+            def launch_ignore_term(_argv, **_kwargs):
+                process = real_popen([sys.executable, "-c", script],
+                    stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE, close_fds=True,
+                    start_new_session=True)
+                owned.append(process)
+                return process
+
+            try:
+                with mock.patch("aegis360.sparse_story_raw_probe_transport.subprocess.Popen",
+                        side_effect=launch_ignore_term), mock.patch(
+                        "aegis360.sparse_story_raw_probe_transport._TIMEOUT_NS",
+                        500_000_000), mock.patch(
+                        "aegis360.sparse_story_raw_probe_transport._GRACE_NS",
+                        50_000_000):
+                    capture = _run_raw_probe(context)
+                self.assertFalse(capture.completed)
+                self.assertEqual(capture.stdout, b"ready\n")
+                self.assertEqual(capture.returncode, -signal.SIGKILL)
+                with self.assertRaises(ProcessLookupError):
+                    os.killpg(owned[0].pid, 0)
+            finally:
+                if owned and owned[0].returncode is None:
+                    os.kill(owned[0].pid, signal.SIGKILL)
+                    owned[0].wait(timeout=2)
 
 
 if __name__ == "__main__": unittest.main()
