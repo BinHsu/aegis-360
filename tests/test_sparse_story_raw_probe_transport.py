@@ -15,6 +15,7 @@ from aegis360.sparse_story_asset_tree import (  # noqa: E402
     _observe_asset_manifest_shape, validate_asset_tree,
 )
 from aegis360.sparse_story_probe_context import _ProbeContext  # noqa: E402
+from aegis360.sparse_story_probe_denials import _retain_full_set_denials  # noqa: E402
 from aegis360.sparse_story_media_tree import (  # noqa: E402
     publish_sanitized_media_gate, publish_selected_one_packet_media_gate,
 )
@@ -62,8 +63,6 @@ class RawProbeTransportHostTests(unittest.TestCase):
                     payloads=payloads, bundle=full_bundle, presentation_ordinal=6,
                     bundle_destination=selected_bundle,
                     result_destination=selected_result))
-        neighbor_ref = index["packets"][0]["projection"]["rows"][0]["media_ref"]
-        neighbor_path = full_bundle / neighbor_ref
         with ExitStack() as stack:
             launcher_root = base / "real-launcher"
             subprocess.run([str(ROOT / "scripts/build_sparse_story_native_launcher.sh"),
@@ -104,10 +103,16 @@ class RawProbeTransportHostTests(unittest.TestCase):
             (scratch / "rename-source").write_bytes(b"rename-source-v1")
             (scratch / "rename-source").chmod(0o600)
             listener_root = base / "listeners"; listener_root.mkdir(mode=0o700)
-            reads = [stack.enter_context(_ReadDenialSentinel(path)) for path in (
+            static_reads = [stack.enter_context(_ReadDenialSentinel(path)) for path in (
                 ROOT / "src/aegis360/sparse_story_batch_policy.py",
-                ROOT / "docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md",
-                neighbor_path, full_result)]
+                ROOT / "docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md")]
+            neighbor, result = stack.enter_context(_retain_full_set_denials(
+                candidate=candidate, result_bytes=full_result.read_bytes(),
+                index=index, private_packets=packets,
+                ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                payloads=payloads, bundle=full_bundle,
+                result_path=full_result))
+            reads = (*static_reads, neighbor, result)
             context = _ProbeContext(candidate=candidate, repository=reads[0],
                 protocol=reads[1], neighbor=reads[2], result=reads[3],
                 outside=stack.enter_context(_OutsideSentinelSnapshot(outside)),
@@ -151,21 +156,22 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(capture.postcheck_passed)
 
     def test_other_packet_leaf_mutation_invalidates_completed_probe(self):
-        with self.context() as context:
-            original = _ProbeContext.postvalidate
+        with self.assertRaisesRegex(ValueError, "read-denial sentinel identity changed"):
+            with self.context() as context:
+                original = _ProbeContext.postvalidate
 
-            def mutate_neighbor_before_validation(probe):
-                path = probe.reads[2].path
-                path.chmod(0o644)
-                path.write_bytes(b"changed other packet")
-                return original(probe)
+                def mutate_neighbor_before_validation(probe):
+                    path = probe.reads[2].path
+                    path.chmod(0o644)
+                    path.write_bytes(b"changed other packet")
+                    return original(probe)
 
-            with mock.patch.object(_ProbeContext, "postvalidate",
-                    mutate_neighbor_before_validation):
-                capture = _run_raw_probe(context)
-            self.assertEqual(capture.returncode, 0)
-            self.assertFalse(capture.postcheck_passed)
-            self.assertFalse(capture.completed)
+                with mock.patch.object(_ProbeContext, "postvalidate",
+                        mutate_neighbor_before_validation):
+                    capture = _run_raw_probe(context)
+                self.assertEqual(capture.returncode, 0)
+                self.assertFalse(capture.postcheck_passed)
+                self.assertFalse(capture.completed)
 
     def test_failed_primitive_value_invalidates_complete_transport(self):
         with self.context() as context, mock.patch(
@@ -177,19 +183,20 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(capture.completed)
 
     def test_changed_request_bytes_invalidate_completed_probe(self):
-        with self.context() as context:
-            original = _ProbeContext.postvalidate
+        with self.assertRaisesRegex(ValueError, "full-set denial source changed"):
+            with self.context() as context:
+                original = _ProbeContext.postvalidate
 
-            def mutate_request_before_validation(probe):
-                probe.candidate._request_bytes += b" "
-                return original(probe)
+                def mutate_request_before_validation(probe):
+                    probe.candidate._request_bytes += b" "
+                    return original(probe)
 
-            with mock.patch.object(_ProbeContext, "postvalidate",
-                    mutate_request_before_validation):
-                capture = _run_raw_probe(context)
-            self.assertEqual(capture.returncode, 0)
-            self.assertFalse(capture.postcheck_passed)
-            self.assertFalse(capture.completed)
+                with mock.patch.object(_ProbeContext, "postvalidate",
+                        mutate_request_before_validation):
+                    capture = _run_raw_probe(context)
+                self.assertEqual(capture.returncode, 0)
+                self.assertFalse(capture.postcheck_passed)
+                self.assertFalse(capture.completed)
 
     def test_malformed_rows_invalidate_complete_transport(self):
         with self.context() as context, mock.patch(

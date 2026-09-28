@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: e7a258e
+Baseline commit: 70e6a41
 Remote status: `main` and fetched `origin/main` match at
-`e7a258e675ecfed563b7ca375392d23cb7ed886c`.
-GitHub Actions `handoff-contract` run 36486526565 succeeded for that exact SHA.
+`70e6a41848d39e1136877cde705f748e1345f776`.
+GitHub Actions `handoff-contract` run 36487076999 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -91,9 +91,12 @@ through the retained launcher, same retained runtime and exact policy. Its 21
 rows and 14 provisional primitive values pass with postvalidation. A forced
 pre-policy timeout emits no adapter output. These observations do not grant
 capability authority.
-The context now fixes repository/protocol probes to the actual source leaves;
-substitution of another retained file fails. Neighbor/result sentinel
-provenance remains unresolved.
+The context fixes repository/protocol probes to actual source leaves. A new
+private helper retains full-set neighbor/result leaves after validating the
+full media result/tree and selected packet ID; it rechecks the full tree,
+result file and candidate binding at exit. One-packet smoke still lacks a
+distinct neighbor, and coordinator ownership of side-effect sentinels remains
+open. No capability is issued.
 The host fixture now selects packet six from a validated six-packet media set.
 The forbidden neighbor is a real PNG leaf belonging to another packet in the
 full bundle; the forbidden result is the full-set media gate result file.
@@ -126,12 +129,6 @@ after process exit: all rows remain valid, but the binding changes and the
 capture is invalid. The public capability and receipt APIs remain closed.
 No capability token, receipt or spawn authority is created.
 
-The prior retained launcher, adapter and forbidden-exec sentinel facade remains
-in place. Its host integration now also opens a real batch candidate and proves
-that closing the facade invalidates the candidate. The frozen Seatbelt primitive
-matrix remains historical feasibility evidence only; see the sparse story
-successor protocol for its exact scope and backend constraints.
-
 ## Prior Skiing rejection
 
 - Frozen visual-state proposals at 46 and 297 seconds are independently
@@ -145,13 +142,13 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@e7a258e`; GitHub Actions
-  `handoff-contract` run 36486526565 succeeded for exact SHA
-  `e7a258e675ecfed563b7ca375392d23cb7ed886c`.
+- Published checkpoint: `BinHsu/aegis-360@70e6a41`; GitHub Actions
+  `handoff-contract` run 36487076999 succeeded for exact SHA
+  `70e6a41848d39e1136877cde705f748e1345f776`.
 
 ## Verified
 
-- Restricted full discovery: 759 tests run, 732 passed, 27 skips. Six listener
+- Restricted full discovery: 761 tests run, 734 passed, 27 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -178,6 +175,8 @@ successor protocol for its exact scope and backend constraints.
   bundles publish and validate; changed full result and replacement are rejected.
 - Batch candidate integration: packet six selected from a six-packet set is
   retained; policy excludes the full-set root and a changed selected leaf fails.
+- Retained full-set denials: two focused tests pass; changed result bytes/file
+  and a selected packet absent from the full set fail before probe context use.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -194,9 +193,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Prove coordinator ownership of neighbor/result sentinels and cleanup, then
-  compose validated raw rows and retained selected-packet facts into a private
-  single-use capability
+- Provide a one-packet neighbor sentinel and coordinator-owned side-effect
+  cleanup, then compose retained full-set proofs and validated raw rows into a
+  private single-use capability.
   boundary; audit remaining abnormal process lifecycle cases. Passing
   provisional booleans cannot attest denial alone.
 - The rejected transport defects and their disposition are recorded above; do

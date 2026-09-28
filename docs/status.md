@@ -183,7 +183,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 759 tests run, 732 passed and 27 host/sandbox cases skipped.
+- Full discovery: 761 tests run, 734 passed and 27 host/sandbox cases skipped.
 - Native same-entrypoint fixture: eight host tests cover raw probe rows,
   retained identity and 33 adapter-owned case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests run, all passed.
@@ -194,7 +194,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Prove coordinator ownership of neighbor/result sentinels and cleanup, then
-compose a single-use capability over the retained packet and validated probe.
+Handle one-packet neighbor and owned side-effect sentinels, then compose the
+multi-packet retained proofs into a single-use capability gate.
 Coordinator proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.
