@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import time
 import unittest
 from contextlib import ExitStack, contextmanager
 from pathlib import Path
@@ -120,6 +121,52 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 capture = _run_raw_probe(context)
             self.assertFalse(capture.completed)
             self.assertFalse(capture.postcheck_passed)
+
+    def test_exited_leader_does_not_leave_live_descendant(self):
+        with self.context() as context:
+            marker = context.outside.root.parent / "owned-grandchild-pid"
+            script = ("import os,time\n"
+                "child=os.fork()\n"
+                "if child == 0:\n"
+                " os.close(1); os.close(2)\n"
+                " time.sleep(30)\n"
+                " os._exit(0)\n"
+                f"open({str(marker)!r},'w').write(str(child))\n"
+                "time.sleep(0.2)\n"
+                "os._exit(0)\n")
+            real_popen = subprocess.Popen
+            owned = []
+
+            def launch_descendant(_argv, **_kwargs):
+                process = real_popen([sys.executable, "-c", script],
+                    stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE, close_fds=True,
+                    start_new_session=True)
+                owned.append(process)
+                return process
+
+            try:
+                with mock.patch("aegis360.sparse_story_raw_probe_transport.subprocess.Popen",
+                        side_effect=launch_descendant):
+                    capture = _run_raw_probe(context)
+                self.assertFalse(capture.completed)
+                self.assertTrue(marker.exists())
+                child_pid = int(marker.read_text())
+                deadline = time.monotonic() + 2
+                while time.monotonic() < deadline:
+                    try: os.getpgid(child_pid)
+                    except ProcessLookupError: break
+                    time.sleep(0.02)
+                else:
+                    self.fail("probe left a live descendant")
+            finally:
+                if owned and marker.exists():
+                    child_pid = int(marker.read_text())
+                    try:
+                        if os.getpgid(child_pid) == owned[0].pid:
+                            os.kill(child_pid, 9)
+                    except ProcessLookupError:
+                        pass
 
 
 if __name__ == "__main__": unittest.main()

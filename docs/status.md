@@ -183,17 +183,17 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 749 tests run, 729 passed and 20 host/sandbox cases skipped.
+- Full discovery: 750 tests run, 729 passed and 21 host/sandbox cases skipped.
 - Native same-entrypoint fixture: eight host tests cover raw probe rows,
   retained identity and 33 adapter-owned case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutations are detected by the extra-leaf and nonempty-HOME regressions.
-- Launcher-bound host raw probe: 21 rows and 14 provisional primitives pass with
-  retained pre/post inputs. A forced pre-policy timeout produces no adapter output.
+- Host raw probe: 21 rows, 14 provisional primitives, timeout and post-exit
+  mutation checks pass. Owned descendant teardown passes; omitting group KILL fails.
 
 ## Next action
 
-Audit abnormal group-descendant cleanup and compose a private single-use
-capability boundary over retained inputs, exact policy and raw probe rows.
+Compose a private single-use capability boundary over retained inputs, exact
+policy and raw probe rows; audit further abnormal process lifecycle cases.
 Coordinator proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.
