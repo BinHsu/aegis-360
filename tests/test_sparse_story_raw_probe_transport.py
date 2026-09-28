@@ -15,6 +15,9 @@ from aegis360.sparse_story_asset_tree import (  # noqa: E402
     _observe_asset_manifest_shape, validate_asset_tree,
 )
 from aegis360.sparse_story_probe_context import _ProbeContext  # noqa: E402
+from aegis360.sparse_story_media_tree import (  # noqa: E402
+    publish_sanitized_media_gate, publish_selected_one_packet_media_gate,
+)
 from aegis360.sparse_story_probe_listeners import _ProbeListeners  # noqa: E402
 from aegis360.sparse_story_probe_sentinels import (  # noqa: E402
     _OutsideSentinelSnapshot, _ReadDenialSentinel, _ScratchProbeSnapshot,
@@ -24,6 +27,8 @@ from aegis360.sparse_story_probe_transcript import (  # noqa: E402
 )
 from aegis360.sparse_story_raw_probe_transport import _run_raw_probe  # noqa: E402
 from tests import test_sparse_story_batch_policy as batch_policy_tests  # noqa: E402
+from tests import test_sparse_story_projection as projection_tests  # noqa: E402
+from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
 
 
 @unittest.skipUnless(os.uname().sysname == "Darwin" and os.uname().machine == "arm64"
@@ -37,6 +42,28 @@ class RawProbeTransportHostTests(unittest.TestCase):
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
         base = fixture.base
+        packets, hashes, index = projection_tests.SparseStoryProjectionTests().build(6)
+        payloads = media_tests.SparseStoryMediaTreeTests().payloads(index)
+        full_bundle = base / "full-bundle"
+        full_result = base / "full-result.json"
+        selected_bundle = base / "selected-bundle"
+        selected_result = base / "selected-result.json"
+        with mock.patch("aegis360.sparse_story_media_tree._rename_exclusive",
+                side_effect=media_tests.local_rename):
+            publish_sanitized_media_gate(index=index, private_packets=packets,
+                ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                payloads=payloads, bundle_destination=full_bundle,
+                result_destination=full_result)
+            _, one, chosen, chosen_hashes, chosen_payloads = (
+                publish_selected_one_packet_media_gate(
+                    result_bytes=full_result.read_bytes(), index=index,
+                    private_packets=packets,
+                    ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                    payloads=payloads, bundle=full_bundle, presentation_ordinal=6,
+                    bundle_destination=selected_bundle,
+                    result_destination=selected_result))
+        neighbor_ref = index["packets"][0]["projection"]["rows"][0]["media_ref"]
+        neighbor_path = full_bundle / neighbor_ref
         with ExitStack() as stack:
             launcher_root = base / "real-launcher"
             subprocess.run([str(ROOT / "scripts/build_sparse_story_native_launcher.sh"),
@@ -65,22 +92,22 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 manifest=runtime_manifest, root=runtime_root))
             fixture.live._backend_binding._runtime = launcher
             fixture.live._adapter_binding._runtime = runtime
-            candidate = fixture.candidate()
+            candidate = fixture.candidate(bundle_root=selected_bundle, index=one,
+                private_packets=chosen,
+                ordered_private_packet_sha256s=chosen_hashes,
+                payloads=chosen_payloads,
+                media_result_bytes=selected_result.read_bytes())
             outside = base / "outside"; outside.mkdir(mode=0o700)
             (outside / "outside-existing").write_bytes(b"outside-existing-sentinel-v1")
             (outside / "outside-existing").chmod(0o600)
             scratch = fixture.args["scratch_root"]
             (scratch / "rename-source").write_bytes(b"rename-source-v1")
             (scratch / "rename-source").chmod(0o600)
-            denied = base / "denied"; denied.mkdir(mode=0o700)
-            for name in ("neighbor", "result"):
-                (denied / name).write_bytes(name.encode())
-                (denied / name).chmod(0o600)
             listener_root = base / "listeners"; listener_root.mkdir(mode=0o700)
             reads = [stack.enter_context(_ReadDenialSentinel(path)) for path in (
                 ROOT / "src/aegis360/sparse_story_batch_policy.py",
                 ROOT / "docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md",
-                denied / "neighbor", denied / "result")]
+                neighbor_path, full_result)]
             context = _ProbeContext(candidate=candidate, repository=reads[0],
                 protocol=reads[1], neighbor=reads[2], result=reads[3],
                 outside=stack.enter_context(_OutsideSentinelSnapshot(outside)),
@@ -122,6 +149,23 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 capture = _run_raw_probe(context)
             self.assertFalse(capture.completed)
             self.assertFalse(capture.postcheck_passed)
+
+    def test_other_packet_leaf_mutation_invalidates_completed_probe(self):
+        with self.context() as context:
+            original = _ProbeContext.postvalidate
+
+            def mutate_neighbor_before_validation(probe):
+                path = probe.reads[2].path
+                path.chmod(0o644)
+                path.write_bytes(b"changed other packet")
+                return original(probe)
+
+            with mock.patch.object(_ProbeContext, "postvalidate",
+                    mutate_neighbor_before_validation):
+                capture = _run_raw_probe(context)
+            self.assertEqual(capture.returncode, 0)
+            self.assertFalse(capture.postcheck_passed)
+            self.assertFalse(capture.completed)
 
     def test_failed_primitive_value_invalidates_complete_transport(self):
         with self.context() as context, mock.patch(

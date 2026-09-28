@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 3c46b0f
+Baseline commit: e7a258e
 Remote status: `main` and fetched `origin/main` match at
-`3c46b0f1703223dfab4f697ee8ed23d8490e48f6`.
-GitHub Actions `handoff-contract` run 36486045529 succeeded for that exact SHA.
+`e7a258e675ecfed563b7ca375392d23cb7ed886c`.
+GitHub Actions `handoff-contract` run 36486526565 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -50,13 +50,6 @@ only the selected bundle root. Mutating a selected media leaf invalidates the
 candidate binding. This is synthetic local proof, not an invocation or
 capability result.
 
-The published checkpoint `eea5881` records a rejected raw transport spike.
-Its independently audited direct-spawn, weak-child-ownership, blocking-write,
-pipe-cleanup and post-exit-revalidation defects prevent any execution claim.
-The published successor `29a1d79` is a closed raw-transcript parser: it checks the
-exact 21-operation order, ASCII/LF framing, integer/hex bounds and duplicate/
-extra/missing rows. It grants no capability matrix, token or spawn authority.
-
 The synthetic native fixture compiles as a thin signed arm64 Mach-O outside Git.
 One retained entrypoint accepts the closed 21-row probe mode and 33 adapter-owned
 case IDs: literal argv, seven stdout failure forms, exact environment, descriptor
@@ -88,8 +81,7 @@ the non-mutating check. Neighbor/result ownership and integration remain open.
 The scratch snapshot now retains its rename source, requires exactly one allowed
 scratch-write marker after probe and rejects fork/exec markers or private-directory
 replacement. Live IPv4, IPv6 and AF_UNIX listeners check bound addresses, socket
-path identity and zero accepted connections. Launcher-bound execution remains
-pending.
+path identity and zero accepted connections.
 The private probe context now assembles exact 19-argument probe mode from the
 batch candidate, four retained denied-read leaves, outside/scratch snapshots
 and live listeners. It checks denial-path disjointness against retained policy
@@ -97,17 +89,22 @@ roots, then revalidates all inputs before and after. A changed neighbor leaf
 fails postvalidation. The new private transport runs one bounded host raw probe
 through the retained launcher, same retained runtime and exact policy. Its 21
 rows and 14 provisional primitive values pass with postvalidation. A forced
-pre-policy timeout emits no adapter output. These are transport/primitive
-observations, not capability authority. Abnormal group-descendant cleanup
-still needs review before claiming full process isolation.
+pre-policy timeout emits no adapter output. These observations do not grant
+capability authority.
 The context now fixes repository/protocol probes to the actual source leaves;
 substitution of another retained file fails. Neighbor/result sentinel
 provenance remains unresolved.
+The host fixture now selects packet six from a validated six-packet media set.
+The forbidden neighbor is a real PNG leaf belonging to another packet in the
+full bundle; the forbidden result is the full-set media gate result file.
+Ten host transport tests pass through this setup, including a test that
+changes the neighbor leaf after process exit and rejects the capture. This
+does not yet make production neighbor/result selection coordinator-owned.
 An attempted unconditional pre-reap `killpg` returned macOS `EPERM` for an
 already-exited leader and was reverted before publication. A revised local
 change keeps the leader unreaped with `waitid(WNOWAIT)`, signals its group,
 tolerates `EPERM` only in that final exited-leader case, and still requires
-post-reap group absence. Four host transport tests pass. A controlled test now
+post-reap group absence. A controlled host test now
 leaves a child sleeping after the leader exits, verifies teardown, and fails
 when group `SIGKILL` is suppressed. This closes that specific lifecycle defect;
 other abnormal exit paths still require review.
@@ -148,13 +145,13 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@3c46b0f`; GitHub Actions
-  `handoff-contract` run 36486045529 succeeded for exact SHA
-  `3c46b0f1703223dfab4f697ee8ed23d8490e48f6`.
+- Published checkpoint: `BinHsu/aegis-360@e7a258e`; GitHub Actions
+  `handoff-contract` run 36486526565 succeeded for exact SHA
+  `e7a258e675ecfed563b7ca375392d23cb7ed886c`.
 
 ## Verified
 
-- Restricted full discovery: 758 tests run, 732 passed, 26 skips. Six listener
+- Restricted full discovery: 759 tests run, 732 passed, 27 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -172,9 +169,10 @@ successor protocol for its exact scope and backend constraints.
   pass, including successful connections to all three listener families.
 - Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
   disjointness, fixed source leaves and post-execution neighbor mutation rejection.
-- Escalated raw transport host gate: nine tests pass, including 21-row
+- Escalated raw transport host gate: ten tests pass, including 21-row
   evaluation, malformed/false-row rejection, timeout, post-exit mutation,
-  owned-descendant teardown, TERM-ignore/KILL, stdout ceiling and changed binding.
+  owned-descendant teardown, TERM-ignore/KILL, stdout ceiling, changed binding
+  and mutation of a real other-packet leaf.
   Suppressing group KILL fails both relevant lifecycle regressions.
 - Full-set selection: two focused tests pass. Selected first/last packet
   bundles publish and validate; changed full result and replacement are rejected.
