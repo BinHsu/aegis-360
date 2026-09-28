@@ -20,7 +20,9 @@ from aegis360.sparse_story_probe_listeners import _ProbeListeners
 from aegis360.sparse_story_probe_sentinels import (
     _OutsideSentinelSnapshot, _ReadDenialSentinel, _ScratchProbeSnapshot,
 )
-from aegis360.sparse_story_media_tree import publish_sanitized_bundle
+from aegis360.sparse_story_media_tree import (
+    publish_sanitized_bundle, publish_selected_one_packet_media_gate,
+)
 from aegis360.sparse_story_runner_contract import (
     build_runner_policy, build_seatbelt_backend_manifest_shape,
     canonical_seatbelt_backend_manifest_shape_bytes,
@@ -122,6 +124,38 @@ class BatchPolicyTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.candidate(salt_hex="6" * 64)
         with self.assertRaisesRegex(ValueError, "does not derive"):
             self.candidate(media_result_bytes=b"{}")
+
+    def test_selected_full_set_bundle_is_retained_as_one_packet_candidate(self):
+        helper = media_helpers.SparseStoryMediaTreeTests()
+        packets, hashes, index = media_helpers.projection_helpers.SparseStoryProjectionTests().build(6)
+        payloads = helper.payloads(index)
+        full = self.base / "full-bundle"
+        selected = self.base / "selected-bundle"
+        selected_result = self.base / "selected-result.json"
+        with mock.patch("aegis360.sparse_story_media_tree._rename_exclusive",
+                side_effect=local_rename):
+            full_result = publish_sanitized_bundle(index=index,
+                private_packets=packets, ordered_private_packet_sha256s=hashes,
+                salt_hex="5" * 64, payloads=payloads, destination=full)
+            _, one, chosen, chosen_hashes, chosen_payloads = (
+                publish_selected_one_packet_media_gate(result_bytes=full_result,
+                    index=index, private_packets=packets,
+                    ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                    payloads=payloads, bundle=full, presentation_ordinal=6,
+                    bundle_destination=selected,
+                    result_destination=selected_result))
+        candidate = self.candidate(bundle_root=selected, index=one,
+            private_packets=chosen, ordered_private_packet_sha256s=chosen_hashes,
+            payloads=chosen_payloads,
+            media_result_bytes=selected_result.read_bytes())
+        policy = candidate._policy_bytes()
+        self.assertIn(str(selected).encode(), policy)
+        self.assertNotIn(str(full).encode(), policy)
+        self.assertEqual(len(candidate.invocation_binding_sha256()), 64)
+        leaf = next((selected / "media").glob("*/*.png"))
+        leaf.chmod(0o644)
+        leaf.write_bytes(b"changed")
+        with self.assertRaises(ValueError): candidate.invocation_binding_sha256()
 
     def test_named_bundle_replacement_rejects(self):
         candidate = self.candidate()

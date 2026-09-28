@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: e145060
+Baseline commit: 251c8e6
 Remote status: `main` and fetched `origin/main` match at
-`e14506081c867ceaaa2e361f594c933923934525`.
-GitHub Actions `handoff-contract` run 36485084166 succeeded for that exact SHA.
+`251c8e6faded9381d375e897064e418df77a135f`.
+GitHub Actions `handoff-contract` run 36485387941 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -35,7 +35,7 @@ Only path-free policy and invocation-binding digests are exposed. The candidate
 grants no spawn, installed-policy, receipt or capability authority.
 Its internal synthetic-support manifest is solely a retention representation;
 the original media result remains the source of input-derived authority.
-Full-set-to-one-packet candidate retention remains unimplemented.
+Full-set-to-one-packet candidate retention now has synthetic integration evidence.
 Validated 6/24-packet projection sets now select a stable one-packet projection
 and copied private packet. A verified full media result and tree yield exactly
 the selected six original payloads; tests publish and validate first/last
@@ -43,8 +43,12 @@ derived bundles. This input selector grants no execution-bundle authority.
 The selected inputs now feed the existing atomic media publisher, producing
 the one-packet bundle and result without replacement. Focused tests validate
 both first and last selected bundles; a repeated publication at the same
-destinations is refused and preserves the first result. The batch candidate
-still needs to retain the resulting selected bundle before capability probing.
+destinations is refused and preserves the first result.
+An integration test publishes packet six from a validated six-packet set,
+opens the resulting one-packet batch candidate and checks its policy includes
+only the selected bundle root. Mutating a selected media leaf invalidates the
+candidate binding. This is synthetic local proof, not an invocation or
+capability result.
 
 The published checkpoint `eea5881` records a rejected raw transport spike.
 Its independently audited direct-spawn, weak-child-ownership, blocking-write,
@@ -137,13 +141,13 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@e145060`; GitHub Actions
-  `handoff-contract` run 36485084166 succeeded for exact SHA
-  `e14506081c867ceaaa2e361f594c933923934525`.
+- Published checkpoint: `BinHsu/aegis-360@251c8e6`; GitHub Actions
+  `handoff-contract` run 36485387941 succeeded for exact SHA
+  `251c8e6faded9381d375e897064e418df77a135f`.
 
 ## Verified
 
-- Restricted full discovery: 756 tests run, 731 passed, 25 skips. Six listener
+- Restricted full discovery: 757 tests run, 732 passed, 25 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -167,6 +171,8 @@ successor protocol for its exact scope and backend constraints.
   Suppressing group KILL fails both relevant lifecycle regressions.
 - Full-set selection: two focused tests pass. Selected first/last packet
   bundles publish and validate; changed full result and replacement are rejected.
+- Batch candidate integration: packet six selected from a six-packet set is
+  retained; policy excludes the full-set root and a changed selected leaf fails.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -183,8 +189,8 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Retain the published selected one-packet bundle in a batch candidate, then compose validated
-  raw rows and context facts into a private single-use capability
+- Compose validated raw rows and retained selected-packet facts into a private
+  single-use capability
   boundary; audit remaining abnormal process lifecycle cases. Passing
   provisional booleans cannot attest denial alone.
 - The rejected transport defects and their disposition are recorded above; do
