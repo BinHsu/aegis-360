@@ -132,6 +132,21 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertTrue(capture.postcheck_passed)
             self.assertFalse(capture.completed)
 
+    def test_changed_request_bytes_invalidate_completed_probe(self):
+        with self.context() as context:
+            original = _ProbeContext.postvalidate
+
+            def mutate_request_before_validation(probe):
+                probe.candidate._request_bytes += b" "
+                return original(probe)
+
+            with mock.patch.object(_ProbeContext, "postvalidate",
+                    mutate_request_before_validation):
+                capture = _run_raw_probe(context)
+            self.assertEqual(capture.returncode, 0)
+            self.assertFalse(capture.postcheck_passed)
+            self.assertFalse(capture.completed)
+
     def test_malformed_rows_invalidate_complete_transport(self):
         with self.context() as context, mock.patch(
                 "aegis360.sparse_story_raw_probe_transport.parse_isolation_probe_transcript",

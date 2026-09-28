@@ -58,6 +58,7 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
         raise TypeError("raw probe requires an exact private context")
     suffix = context.argv_suffix()
     candidate = context.candidate
+    binding_before = candidate._binding_bytes()
     live = batch_policy._require_live(candidate._facade)
     launcher_proof = live._backend_binding._runtime
     runtime_proof = live._adapter_binding._runtime
@@ -223,6 +224,8 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
         if returncode is not None:
             try:
                 context.postvalidate()
+                if candidate._binding_bytes() != binding_before:
+                    raise ValueError("probe invocation binding changed")
                 launcher_proof.manifest()
                 runtime_proof.manifest()
                 postcheck_passed = True

@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 80f0b9f
+Baseline commit: 9b921a2
 Remote status: `main` and fetched `origin/main` match at
-`80f0b9fcfcfc1ec1a04f6398dbb97af010d76eca`.
-GitHub Actions `handoff-contract` run 36483708495 succeeded for that exact SHA.
+`9b921a2faacce95840e0352725b557f1624b36a2`.
+GitHub Actions `handoff-contract` run 36484069809 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -103,6 +103,10 @@ previous gap where tests checked rows separately but the transport did not.
 An owned TERM-ignoring process is now tested under a short timeout and grace:
 the transport returns SIGKILL and confirms group absence. Suppressing group
 SIGKILL makes the test fail; its fixture cleans up the exact process it spawned.
+The transport now compares the complete invocation-binding bytes before and
+after execution. A host test appends JSON whitespace to the retained request
+after process exit: all rows remain valid, but the binding changes and the
+capture is invalid. The public capability and receipt APIs remain closed.
 No capability token, receipt or spawn authority is created.
 
 The prior retained launcher, adapter and forbidden-exec sentinel facade remains
@@ -124,13 +128,13 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@80f0b9f`; GitHub Actions
-  `handoff-contract` run 36483708495 succeeded for exact SHA
-  `80f0b9fcfcfc1ec1a04f6398dbb97af010d76eca`.
+- Published checkpoint: `BinHsu/aegis-360@9b921a2`; GitHub Actions
+  `handoff-contract` run 36484069809 succeeded for exact SHA
+  `9b921a2faacce95840e0352725b557f1624b36a2`.
 
 ## Verified
 
-- Restricted full discovery: 753 tests run, 729 passed, 24 skips. Six listener
+- Restricted full discovery: 754 tests run, 729 passed, 25 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -148,10 +152,10 @@ successor protocol for its exact scope and backend constraints.
   pass, including successful connections to all three listener families.
 - Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
   disjointness and post-execution neighbor mutation rejection.
-- Escalated raw transport host gate: seven tests pass, including 21-row
+- Escalated raw transport host gate: eight tests pass, including 21-row
   evaluation, malformed/false-row rejection, timeout, post-exit mutation,
-  owned-descendant teardown and TERM-ignore/KILL. Suppressing group KILL fails
-  both relevant lifecycle regressions.
+  owned-descendant teardown, TERM-ignore/KILL and changed request-byte binding.
+  Suppressing group KILL fails both relevant lifecycle regressions.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
