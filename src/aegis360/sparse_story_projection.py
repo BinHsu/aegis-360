@@ -183,3 +183,27 @@ def validate_adapter_index(index: Mapping[str, object], **inputs) -> None:
     expected = build_adapter_index(**inputs)
     if index != expected:
         raise ValueError("adapter projection index must exactly rebuild")
+
+
+def select_one_packet_projection(*, index: Mapping[str, object],
+        private_packets: Sequence[Mapping[str, object]],
+        ordered_private_packet_sha256s: Sequence[str], salt_hex: str,
+        presentation_ordinal: int):
+    """Rebuild one packet from a validated set; this grants no media authority."""
+    validate_adapter_index(index, private_packets=private_packets,
+        ordered_private_packet_sha256s=ordered_private_packet_sha256s,
+        salt_hex=salt_hex)
+    if (type(presentation_ordinal) is not int
+            or not 1 <= presentation_ordinal <= len(index["packets"])):
+        raise ValueError("presentation ordinal is invalid")
+    selected = index["packets"][presentation_ordinal - 1]["projection"]
+    matches = []
+    for packet, packet_hash in zip(private_packets, ordered_private_packet_sha256s):
+        one_index = build_adapter_index(private_packets=(packet,),
+            ordered_private_packet_sha256s=(packet_hash,), salt_hex=salt_hex)
+        if one_index["packets"][0]["projection"] == selected:
+            matches.append((one_index,
+                json.loads(canonical_private_packet_bytes(packet)), packet_hash))
+    if len(matches) != 1:
+        raise ValueError("selected packet does not uniquely derive")
+    return matches[0]

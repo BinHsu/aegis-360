@@ -15,6 +15,7 @@ from aegis360.sparse_story_projection import (  # noqa: E402
     build_adapter_index, canonical_index_bytes, canonical_private_packet_bytes,
     canonical_projection_bytes, index_sha256, private_packet_sha256,
     projection_sha256, validate_adapter_index, validate_private_packet,
+    select_one_packet_projection,
 )
 
 
@@ -41,6 +42,30 @@ class SparseStoryProjectionTests(unittest.TestCase):
         packets = [packet(i, role="control" if i % 2 else "proposal") for i in range(count)]
         hashes = [private_packet_sha256(value) for value in packets]
         return packets, hashes, build_adapter_index(private_packets=packets, ordered_private_packet_sha256s=hashes, salt_hex="5" * 64)
+
+    def test_full_set_selection_rebuilds_exact_one_packet_projection(self):
+        for count in (6, 24):
+            packets, hashes, index = self.build(count)
+            for ordinal in range(1, count + 1):
+                one, selected, selected_hash = select_one_packet_projection(
+                    index=index, private_packets=packets,
+                    ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                    presentation_ordinal=ordinal)
+                self.assertEqual(one["packet_count"], 1)
+                self.assertEqual(one["packets"][0]["projection"],
+                    index["packets"][ordinal - 1]["projection"])
+                self.assertEqual(private_packet_sha256(selected), selected_hash)
+                self.assertIsNot(selected, packets[hashes.index(selected_hash)])
+            with self.assertRaises(ValueError):
+                select_one_packet_projection(index=index, private_packets=packets,
+                    ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                    presentation_ordinal=True)
+            changed = copy.deepcopy(index)
+            changed["packets"][0]["projection"]["packet_id"] = "packet-" + "0" * 20
+            with self.assertRaises(ValueError):
+                select_one_packet_projection(index=changed, private_packets=packets,
+                    ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                    presentation_ordinal=1)
 
     def test_private_canonical_hash_and_structure(self):
         value = packet(); validate_private_packet(value)

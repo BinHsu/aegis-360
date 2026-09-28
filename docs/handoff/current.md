@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 9b921a2
+Baseline commit: 47b8d76
 Remote status: `main` and fetched `origin/main` match at
-`9b921a2faacce95840e0352725b557f1624b36a2`.
-GitHub Actions `handoff-contract` run 36484069809 succeeded for that exact SHA.
+`47b8d762e0bfe8a6ab0d6d7d7b35cfdae117b29e`.
+GitHub Actions `handoff-contract` run 36484486599 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -35,7 +35,11 @@ Only path-free policy and invocation-binding digests are exposed. The candidate
 grants no spawn, installed-policy, receipt or capability authority.
 Its internal synthetic-support manifest is solely a retention representation;
 the original media result remains the source of input-derived authority.
-Full-set-to-one-packet execution-bundle derivation remains unimplemented.
+Full-set-to-one-packet execution-bundle publication remains unimplemented.
+Validated 6/24-packet projection sets now select a stable one-packet projection
+and copied private packet. A verified full media result and tree yield exactly
+the selected six original payloads; tests publish and validate first/last
+derived bundles. This input selector grants no execution-bundle authority.
 
 The published checkpoint `eea5881` records a rejected raw transport spike.
 Its independently audited direct-spawn, weak-child-ownership, blocking-write,
@@ -128,13 +132,13 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@9b921a2`; GitHub Actions
-  `handoff-contract` run 36484069809 succeeded for exact SHA
-  `9b921a2faacce95840e0352725b557f1624b36a2`.
+- Published checkpoint: `BinHsu/aegis-360@47b8d76`; GitHub Actions
+  `handoff-contract` run 36484486599 succeeded for exact SHA
+  `47b8d762e0bfe8a6ab0d6d7d7b35cfdae117b29e`.
 
 ## Verified
 
-- Restricted full discovery: 754 tests run, 729 passed, 25 skips. Six listener
+- Restricted full discovery: 756 tests run, 731 passed, 25 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -156,6 +160,8 @@ successor protocol for its exact scope and backend constraints.
   evaluation, malformed/false-row rejection, timeout, post-exit mutation,
   owned-descendant teardown, TERM-ignore/KILL and changed request-byte binding.
   Suppressing group KILL fails both relevant lifecycle regressions.
+- Full-set selection: two focused tests pass. Selected first/last packet
+  bundles publish and validate; a changed full-set result is rejected.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -172,7 +178,8 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Compose validated raw rows and context facts into a private single-use capability
+- Publish/retain a selected one-packet execution bundle, then compose validated
+  raw rows and context facts into a private single-use capability
   boundary; audit remaining abnormal process lifecycle cases. Passing
   provisional booleans cannot attest denial alone.
 - The rejected transport defects and their disposition are recorded above; do
@@ -192,6 +199,7 @@ successor protocol for its exact scope and backend constraints.
 ```sh
 cd ~/Documents/aegis-360
 python3 -m unittest discover -s tests -q
+python3 -m unittest tests.test_sparse_story_projection tests.test_sparse_story_media_tree -q
 AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_raw_probe_transport -v
 python3 scripts/check_handoff.py
 git diff --check

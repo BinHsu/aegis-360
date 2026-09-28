@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from aegis360.sparse_story_media_tree import (  # noqa: E402
     PNG, canonical_result_bytes, publish_sanitized_bundle, sanitize_png_bytes,
     validate_closed_tree, validate_result, validate_sanitized_media_gate,
+    select_one_packet_media_inputs,
     publish_sanitized_media_gate, _rename_exclusive, _remove_owned_tree,
     _publish_sanitized_bundle, _write_result_exclusive,
 )
@@ -49,6 +50,44 @@ class SparseStoryMediaTreeTests(unittest.TestCase):
 
     def payloads(self, index):
         return [(row["media_ref"], image()) for item in index["packets"] for row in item["projection"]["rows"]]
+
+    def test_full_media_set_derives_selected_one_packet_inputs(self):
+        packets, hashes, index = projection_helpers.SparseStoryProjectionTests().build(6)
+        payloads = self.payloads(index)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with mock.patch("aegis360.sparse_story_media_tree._rename_exclusive",
+                    side_effect=local_rename):
+                full_result = publish_sanitized_bundle(
+                    **self.publish_args(packets, hashes, index),
+                    payloads=payloads, destination=root / "full")
+            for ordinal in (1, 6):
+                one, selected, selected_hashes, selected_payloads = (
+                    select_one_packet_media_inputs(result_bytes=full_result,
+                        **self.publish_args(packets, hashes, index),
+                        payloads=payloads, bundle=root / "full",
+                        presentation_ordinal=ordinal))
+                self.assertEqual(one["packets"][0]["projection"],
+                    index["packets"][ordinal - 1]["projection"])
+                self.assertEqual(len(selected_payloads), 6)
+                destination = root / f"one-{ordinal}"
+                with mock.patch("aegis360.sparse_story_media_tree._rename_exclusive",
+                        side_effect=local_rename):
+                    one_result = publish_sanitized_bundle(index=one,
+                        private_packets=selected,
+                        ordered_private_packet_sha256s=selected_hashes,
+                        salt_hex="5" * 64, payloads=selected_payloads,
+                        destination=destination)
+                validate_sanitized_media_gate(result_bytes=one_result,
+                    index=one, private_packets=selected,
+                    ordered_private_packet_sha256s=selected_hashes,
+                    salt_hex="5" * 64, payloads=selected_payloads,
+                    bundle=destination)
+            with self.assertRaises(ValueError):
+                select_one_packet_media_inputs(result_bytes=full_result + b" ",
+                    **self.publish_args(packets, hashes, index),
+                    payloads=payloads, bundle=root / "full",
+                    presentation_ordinal=1)
 
     def test_png_deterministic_sanitize_and_failures(self):
         source = image(); first = sanitize_png_bytes(source); second = sanitize_png_bytes(source)

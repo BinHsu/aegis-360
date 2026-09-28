@@ -15,7 +15,9 @@ import zlib
 from pathlib import Path, PurePosixPath
 from typing import Mapping, Sequence
 
-from .sparse_story_projection import canonical_index_bytes, validate_adapter_index
+from .sparse_story_projection import (
+    canonical_index_bytes, select_one_packet_projection, validate_adapter_index,
+)
 
 
 PNG = b"\x89PNG\r\n\x1a\n"
@@ -461,6 +463,26 @@ def validate_sanitized_media_gate(*, result_bytes: bytes, index: Mapping[str, ob
     try:
         if result_bytes != expected: raise ValueError("sanitized media gate result does not exactly derive")
     finally: snapshot.close()
+
+
+def select_one_packet_media_inputs(*, result_bytes: bytes,
+        index: Mapping[str, object], private_packets: Sequence[Mapping[str, object]],
+        ordered_private_packet_sha256s: Sequence[str], salt_hex: str,
+        payloads: Sequence[tuple[str, bytes]], bundle: Path,
+        presentation_ordinal: int):
+    """Select six inputs from a verified full set; publish no execution bundle."""
+    validate_sanitized_media_gate(result_bytes=result_bytes, index=index,
+        private_packets=private_packets,
+        ordered_private_packet_sha256s=ordered_private_packet_sha256s,
+        salt_hex=salt_hex, payloads=payloads, bundle=bundle)
+    one_index, selected, selected_hash = select_one_packet_projection(
+        index=index, private_packets=private_packets,
+        ordered_private_packet_sha256s=ordered_private_packet_sha256s,
+        salt_hex=salt_hex, presentation_ordinal=presentation_ordinal)
+    by_ref = dict(payloads)
+    refs = _refs(one_index)
+    return (one_index, (selected,), (selected_hash,),
+        tuple((ref, by_ref[ref]) for ref in refs))
 
 
 def publish_sanitized_media_gate(*, index: Mapping[str, object],
