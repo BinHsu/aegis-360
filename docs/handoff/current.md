@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-09-29T05:01:35+08:00
+Updated: 2026-09-29T05:48:03+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: ff4c461
+Baseline commit: 747c744
 Remote status: `main` and fetched `origin/main` match at
-`ff4c461c70a66612ae8910af7823f7cf1a429168`.
-GitHub Actions `handoff-contract` run 36487742885 succeeded for that exact SHA.
+`747c744b4c74692c158c00cb81b454913a5424eb`.
+GitHub Actions `handoff-contract` run 36488267651 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -20,116 +20,37 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-The published implementation `edcbe3a` freezes the
-canonical adapter request and runner-policy bytes, real/effective uid/gid and
-retained private HOME/TMPDIR identities. HOME and TMPDIR must be distinct,
-nonoverlapping empty directories beneath scratch, so their writes remain inside
-the sole policy write allowance. It derives exact media leaves from the existing
-sanitizer/lineage gate, retains them with asset-tree named-path and child-map
-checks, and rebuilds canonical policy bytes only after revalidating all roots.
-Multi-packet execution roots, aliases, overlapping roots, changed content,
-replaced names and extra leaves fail closed. Close releases owned input proofs
-and never closes the borrowed facade or deletes caller assets.
+The private batch candidate retains exact request, runner-policy and enforcement-
+policy bytes; uid/gid; launcher, runtime, model and prompt roots; selected media;
+and empty private HOME/TMPDIR identities. A validated 6/24-packet set can publish
+one selected bundle without replacement. The candidate retains it, and a changed
+selected leaf invalidates the binding. The candidate grants no spawn authority.
 
-Only path-free policy and invocation-binding digests are exposed. The candidate
-grants no spawn, installed-policy, receipt or capability authority.
-Its internal synthetic-support manifest is solely a retention representation;
-the original media result remains the source of input-derived authority.
-Full-set-to-one-packet candidate retention now has synthetic integration evidence.
-Validated 6/24-packet projection sets now select a stable one-packet projection
-and copied private packet. A verified full media result and tree yield exactly
-the selected six original payloads; tests publish and validate first/last
-derived bundles. This input selector grants no execution-bundle authority.
-The selected inputs now feed the existing atomic media publisher, producing
-the one-packet bundle and result without replacement. Focused tests validate
-both first and last selected bundles; a repeated publication at the same
-destinations is refused and preserves the first result.
-An integration test publishes packet six from a validated six-packet set,
-opens the resulting one-packet batch candidate and checks its policy includes
-only the selected bundle root. Mutating a selected media leaf invalidates the
-candidate binding. This is synthetic local proof, not an invocation or
-capability result.
+The private raw probe runs the same retained native launcher, runtime and policy
+through a bounded policy pipe and process group. Completion requires pre/post
+root and sentinel checks, all 21 transcript rows, and exactly the contract's 14
+boolean `True` matrix keys. Eleven host tests cover the positive native path,
+malformed/false rows, wrong keys or truthy integers, changed request/sentinel
+facts, timeout, stdout ceiling, a surviving descendant and TERM-ignore/KILL.
+Controlled mutations confirm the descendant, KILL and stdout tests detect their
+target defects. These are transport and finite primitive observations, not an
+installed-policy receipt or model-invocation authority.
 
-The synthetic native fixture compiles as a thin signed arm64 Mach-O outside Git.
-One retained entrypoint accepts the closed 21-row probe mode and 33 adapter-owned
-case IDs: literal argv, seven stdout failure forms, exact environment, descriptor
-hygiene, cwd identity, three stdout ceilings, stderr, nonzero exit, signal exit
-and wall timeout, concurrent stdin/stdout pressure, TERM-ignore/KILL, known-file
-read/write attempts, live loopback/AF_UNIX connect attempts and child fork.
-The other four frozen cases require coordinator verification. Positive
-cases emit a schema-valid abstention. Host
-tests verify the manifest before and after both modes and reject malformed
-mode/argv. Negative tests detect extra/missing/wrong environment entries,
-inherited descriptors and incorrect cwd. This is unsandboxed fixture evidence only;
-the remaining case matrix, capability probe, policy installation and coordinator
-are pending.
+The full-set denial helper verifies the media result and tree, retains an actual
+other-packet PNG and full-set result file, and rechecks them with the candidate
+binding after probing. Repository/protocol probes use fixed actual source files.
+One-packet smoke now uses a private, non-media decoy leaf outside policy roots;
+it is explicitly not an actual other packet. Its owner retains the leaf and
+removes it only after the probe leader is reaped and exact facts revalidate.
+Changed content is preserved, pre-reap cleanup is refused, and allowed-root
+placement is rejected. Outside/scratch/listener lifecycle still needs
+coordinator ownership and cleanup.
 
-The new private allowed-probe selector reads the first request-bound media leaf,
-one model leaf and `prompt.txt` through their retained file descriptors. It
-returns only transient paths and at most 128-byte prefixes after pre/post root
-revalidation. A changed model leaf fails.
-
-The new private raw-row evaluator checks 21 operation values, errno and data
-against the three allowed prefixes, yielding 14 provisional booleans. It cannot
-prove the process/policy source or absence of side effects. One retained outside
-sentinel tree now checks the existing file and absent create/rename names before
-and after. The unconfined native probe changes that tree and fails revalidation.
-An existing forbidden-read leaf can now be retained with no-follow descriptors,
-bounded full-content digest and pre/post identity checks. Synthetic mutation,
-replacement, unlink and unsafe-mode tests fail; actual repo/protocol files pass
-the non-mutating check. Neighbor/result ownership and integration remain open.
-The scratch snapshot now retains its rename source, requires exactly one allowed
-scratch-write marker after probe and rejects fork/exec markers or private-directory
-replacement. Live IPv4, IPv6 and AF_UNIX listeners check bound addresses, socket
-path identity and zero accepted connections.
-The private probe context now assembles exact 19-argument probe mode from the
-batch candidate, four retained denied-read leaves, outside/scratch snapshots
-and live listeners. It checks denial-path disjointness against retained policy
-roots, then revalidates all inputs before and after. A changed neighbor leaf
-fails postvalidation. The new private transport runs one bounded host raw probe
-through the retained launcher, same retained runtime and exact policy. Its 21
-rows and 14 provisional primitive values pass with postvalidation. A forced
-pre-policy timeout emits no adapter output. These observations do not grant
-capability authority.
-The context fixes repository/protocol probes to actual source leaves. A new
-private helper retains full-set neighbor/result leaves after validating the
-full media result/tree and selected packet ID; it rechecks the full tree,
-result file and candidate binding at exit. One-packet smoke still lacks a
-distinct neighbor, and coordinator ownership of side-effect sentinels remains
-open. No capability is issued.
-The host fixture now selects packet six from a validated six-packet media set.
-The forbidden neighbor is a real PNG leaf belonging to another packet in the
-full bundle; the forbidden result is the full-set media gate result file.
-Ten host transport tests pass through this setup, including a test that
-changes the neighbor leaf after process exit and rejects the capture. This
-does not yet make production neighbor/result selection coordinator-owned.
-An attempted unconditional pre-reap `killpg` returned macOS `EPERM` for an
-already-exited leader and was reverted before publication. A revised local
-change keeps the leader unreaped with `waitid(WNOWAIT)`, signals its group,
-tolerates `EPERM` only in that final exited-leader case, and still requires
-post-reap group absence. A controlled host test now
-leaves a child sleeping after the leader exits, verifies teardown, and fails
-when group `SIGKILL` is suppressed. This closes that specific lifecycle defect;
-other abnormal exit paths still require review.
-The transport now marks completion only after its own closed parser accepts
-all 21 rows and all 14 primitive value checks pass. Host tests force malformed
-rows and a false primitive result after an otherwise clean run; both remain
-invalid with return code zero and passing postvalidation. This closes the
-previous gap where tests checked rows separately but the transport did not.
-It now requires exactly the contract's 14 matrix keys and actual boolean
-`True` values; a wrong key or truthy integer remains invalid.
-An owned TERM-ignoring process is now tested under a short timeout and grace:
-the transport returns SIGKILL and confirms group absence. Suppressing group
-SIGKILL makes the test fail; its fixture cleans up the exact process it spawned.
-The raw transport now has a host test for stdout capture at the frozen
-65,536-byte limit plus one proof byte. A process writes 131,072 bytes; the
-capture retains exactly 65,537 and remains invalid. Raising the limit to
-131,072 makes the regression fail.
-The transport now compares the complete invocation-binding bytes before and
-after execution. A host test appends JSON whitespace to the retained request
-after process exit: all rows remain valid, but the binding changes and the
-capture is invalid. The public capability and receipt APIs remain closed.
-No capability token, receipt or spawn authority is created.
+The rejected direct-spawn transport spike at `eea5881` is historical evidence;
+its weak process ownership and incomplete cleanup are not restored. The signed
+synthetic adapter covers 33 adapter-owned case IDs, while four coordinator-owned
+cases, capability issuance and inference remain pending. No capability token,
+receipt or spawn authority has been created.
 
 ## Prior Skiing rejection
 
@@ -144,13 +65,13 @@ No capability token, receipt or spawn authority is created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@ff4c461`; GitHub Actions
-  `handoff-contract` run 36487742885 succeeded for exact SHA
-  `ff4c461c70a66612ae8910af7823f7cf1a429168`.
+- Published checkpoint: `BinHsu/aegis-360@747c744`; GitHub Actions
+  `handoff-contract` run 36488267651 succeeded for exact SHA
+  `747c744b4c74692c158c00cb81b454913a5424eb`.
 
 ## Verified
 
-- Restricted full discovery: 762 tests run, 734 passed, 28 skips. Six listener
+- Restricted full discovery: 765 tests run, 736 passed, 29 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -168,7 +89,7 @@ No capability token, receipt or spawn authority is created.
   pass, including successful connections to all three listener families.
 - Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
   disjointness, fixed source leaves and post-execution neighbor mutation rejection.
-- Escalated raw transport host gate: eleven tests pass, including 21-row
+- Escalated raw transport host gate: twelve tests pass, including 21-row
   evaluation, malformed/false-row rejection, timeout, post-exit mutation,
   owned-descendant teardown, TERM-ignore/KILL, stdout ceiling, changed binding
   and mutation of a real other-packet leaf. Wrong matrix keys and non-boolean
@@ -180,6 +101,8 @@ No capability token, receipt or spawn authority is created.
   retained; policy excludes the full-set root and a changed selected leaf fails.
 - Retained full-set denials: two focused tests pass; changed result bytes/file
   and a selected packet absent from the full set fail before probe context use.
+- One-packet decoy: two focused tests cover exact cleanup after reap, changed
+  content preservation and allowed-root overlap rejection; host smoke passes.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -196,21 +119,12 @@ No capability token, receipt or spawn authority is created.
 
 ## Pending
 
-- Provide a one-packet neighbor sentinel and coordinator-owned side-effect
-  cleanup, then compose retained full-set proofs and validated raw rows into a
-  private single-use capability.
-  boundary; audit remaining abnormal process lifecycle cases. Passing
-  provisional booleans cannot attest denial alone.
-- The rejected transport defects and their disposition are recorded above; do
-  not restore its source unchanged or treat its 21 passing tests as authority.
-- Implement the same-entrypoint raw capability-probe transcript and private
-  single-use composition boundary before restoring launcher transport. The next
-  transport must use strong child ownership, bounded nonblocking policy delivery,
-  exact stdio cleanup, lifecycle-based signal revocation and post-exit checks.
-- Capability probing must use the same entrypoint/policy/roots as inference and
-  known existing leaves; never add sentinel files to closed input bundles.
-- Keep proof-accepting authority APIs closed. Do not acquire models or real-media
-  packets until the implementation gate is reviewed and frozen.
+- Own outside/scratch/listener lifecycle and exact cleanup for the coordinator.
+- Compose retained inputs, installed-policy observations and raw rows into a
+  private single-use capability. The later inference path must use the same
+  launcher, runtime, policy, uid/gid and roots. Keep public authority APIs closed.
+- Complete four coordinator-owned synthetic cases, then review the implementation
+  gate before acquiring models or real-media packets.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands

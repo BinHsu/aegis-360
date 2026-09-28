@@ -15,7 +15,9 @@ from aegis360.sparse_story_asset_tree import (  # noqa: E402
     _observe_asset_manifest_shape, validate_asset_tree,
 )
 from aegis360.sparse_story_probe_context import _ProbeContext  # noqa: E402
-from aegis360.sparse_story_probe_denials import _retain_full_set_denials  # noqa: E402
+from aegis360.sparse_story_probe_denials import (  # noqa: E402
+    _OwnedOnePacketNeighbor, _retain_full_set_denials,
+)
 from aegis360.sparse_story_media_tree import (  # noqa: E402
     publish_sanitized_media_gate, publish_selected_one_packet_media_gate,
 )
@@ -38,32 +40,33 @@ from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
     "requires explicit Darwin host Seatbelt gate outside nested sandbox")
 class RawProbeTransportHostTests(unittest.TestCase):
     @contextmanager
-    def context(self):
+    def context(self, *, one_packet=False):
         fixture = batch_policy_tests.BatchPolicyTests(
             "test_exact_policy_is_frozen_and_path_free_digest_only")
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
         base = fixture.base
-        packets, hashes, index = projection_tests.SparseStoryProjectionTests().build(6)
-        payloads = media_tests.SparseStoryMediaTreeTests().payloads(index)
-        full_bundle = base / "full-bundle"
-        full_result = base / "full-result.json"
-        selected_bundle = base / "selected-bundle"
-        selected_result = base / "selected-result.json"
-        with mock.patch("aegis360.sparse_story_media_tree._rename_exclusive",
-                side_effect=media_tests.local_rename):
-            publish_sanitized_media_gate(index=index, private_packets=packets,
-                ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
-                payloads=payloads, bundle_destination=full_bundle,
-                result_destination=full_result)
-            _, one, chosen, chosen_hashes, chosen_payloads = (
-                publish_selected_one_packet_media_gate(
-                    result_bytes=full_result.read_bytes(), index=index,
-                    private_packets=packets,
+        if not one_packet:
+            packets, hashes, index = projection_tests.SparseStoryProjectionTests().build(6)
+            payloads = media_tests.SparseStoryMediaTreeTests().payloads(index)
+            full_bundle = base / "full-bundle"
+            full_result = base / "full-result.json"
+            selected_bundle = base / "selected-bundle"
+            selected_result = base / "selected-result.json"
+            with mock.patch("aegis360.sparse_story_media_tree._rename_exclusive",
+                    side_effect=media_tests.local_rename):
+                publish_sanitized_media_gate(index=index, private_packets=packets,
                     ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
-                    payloads=payloads, bundle=full_bundle, presentation_ordinal=6,
-                    bundle_destination=selected_bundle,
-                    result_destination=selected_result))
+                    payloads=payloads, bundle_destination=full_bundle,
+                    result_destination=full_result)
+                _, one, chosen, chosen_hashes, chosen_payloads = (
+                    publish_selected_one_packet_media_gate(
+                        result_bytes=full_result.read_bytes(), index=index,
+                        private_packets=packets,
+                        ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                        payloads=payloads, bundle=full_bundle, presentation_ordinal=6,
+                        bundle_destination=selected_bundle,
+                        result_destination=selected_result))
         with ExitStack() as stack:
             launcher_root = base / "real-launcher"
             subprocess.run([str(ROOT / "scripts/build_sparse_story_native_launcher.sh"),
@@ -92,11 +95,14 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 manifest=runtime_manifest, root=runtime_root))
             fixture.live._backend_binding._runtime = launcher
             fixture.live._adapter_binding._runtime = runtime
-            candidate = fixture.candidate(bundle_root=selected_bundle, index=one,
-                private_packets=chosen,
-                ordered_private_packet_sha256s=chosen_hashes,
-                payloads=chosen_payloads,
-                media_result_bytes=selected_result.read_bytes())
+            if one_packet:
+                candidate = fixture.candidate()
+            else:
+                candidate = fixture.candidate(bundle_root=selected_bundle, index=one,
+                    private_packets=chosen,
+                    ordered_private_packet_sha256s=chosen_hashes,
+                    payloads=chosen_payloads,
+                    media_result_bytes=selected_result.read_bytes())
             outside = base / "outside"; outside.mkdir(mode=0o700)
             (outside / "outside-existing").write_bytes(b"outside-existing-sentinel-v1")
             (outside / "outside-existing").chmod(0o600)
@@ -107,12 +113,21 @@ class RawProbeTransportHostTests(unittest.TestCase):
             static_reads = [stack.enter_context(_ReadDenialSentinel(path)) for path in (
                 ROOT / "src/aegis360/sparse_story_batch_policy.py",
                 ROOT / "docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md")]
-            neighbor, result = stack.enter_context(_retain_full_set_denials(
-                candidate=candidate, result_bytes=full_result.read_bytes(),
-                index=index, private_packets=packets,
-                ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
-                payloads=payloads, bundle=full_bundle,
-                result_path=full_result))
+            if one_packet:
+                decoy = _OwnedOnePacketNeighbor(candidate=candidate, parent=base)
+                stack.callback(decoy.abandon)
+                single_result = base / "single-result.json"
+                single_result.write_bytes(fixture.args["media_result_bytes"])
+                single_result.chmod(0o600)
+                neighbor = decoy.proof
+                result = stack.enter_context(_ReadDenialSentinel(single_result))
+            else:
+                neighbor, result = stack.enter_context(_retain_full_set_denials(
+                    candidate=candidate, result_bytes=full_result.read_bytes(),
+                    index=index, private_packets=packets,
+                    ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                    payloads=payloads, bundle=full_bundle,
+                    result_path=full_result))
             reads = (*static_reads, neighbor, result)
             context = _ProbeContext(candidate=candidate, repository=reads[0],
                 protocol=reads[1], neighbor=reads[2], result=reads[3],
@@ -120,6 +135,7 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 scratch=stack.enter_context(_ScratchProbeSnapshot(scratch,
                     fixture.args["private_home"], fixture.args["private_tmpdir"])),
                 listeners=stack.enter_context(_ProbeListeners(listener_root)))
+            if one_packet: context.owned_neighbor = decoy
             yield context
 
     def test_same_retained_runtime_probes_through_native_launcher(self):
@@ -133,6 +149,15 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 bundle_prefix=allowed[0].prefix, model_prefix=allowed[1].prefix,
                 prompt_prefix=allowed[2].prefix)
             self.assertTrue(all(primitive.values()), primitive)
+
+    def test_one_packet_smoke_uses_owned_decoy_and_cleans_after_reap(self):
+        with self.context(one_packet=True) as context:
+            decoy = context.owned_neighbor
+            capture = _run_raw_probe(context)
+            self.assertTrue(capture.completed, capture.reason)
+            self.assertTrue(decoy.path.exists())
+            decoy.finish_after_reap(capture.returncode)
+            self.assertFalse(decoy.root.exists())
 
     def test_timeout_before_policy_delivery_fails_without_adapter_output(self):
         with self.context() as context, mock.patch(

@@ -10,7 +10,9 @@ sys.path.insert(0, str(ROOT / "src"))
 from aegis360.sparse_story_media_tree import (  # noqa: E402
     publish_sanitized_media_gate, publish_selected_one_packet_media_gate,
 )
-from aegis360.sparse_story_probe_denials import _retain_full_set_denials  # noqa: E402
+from aegis360.sparse_story_probe_denials import (  # noqa: E402
+    _OwnedOnePacketNeighbor, _retain_full_set_denials,
+)
 from tests import test_sparse_story_batch_policy as batch_tests  # noqa: E402
 from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
 from tests import test_sparse_story_projection as projection_tests  # noqa: E402
@@ -84,6 +86,41 @@ class FullSetDenialTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "result leaf does not match"):
             with _retain_full_set_denials(**values):
                 self.fail("changed result leaf was retained")
+
+
+class OnePacketNeighborTests(unittest.TestCase):
+    def fixture(self):
+        owner = batch_tests.BatchPolicyTests(
+            "test_exact_policy_is_frozen_and_path_free_digest_only")
+        owner.setUp()
+        self.addCleanup(owner.doCleanups)
+        return owner, owner.candidate()
+
+    def test_owned_decoy_revalidates_and_cleans_only_after_reap(self):
+        owner, candidate = self.fixture()
+        decoy = _OwnedOnePacketNeighbor(candidate=candidate, parent=owner.base)
+        decoy.revalidate()
+        self.assertTrue(decoy.path.exists())
+        decoy.finish_after_reap(0)
+        self.assertFalse(decoy.root.exists())
+        with self.assertRaisesRegex(ValueError, "closed"):
+            decoy.revalidate()
+        unreaped = _OwnedOnePacketNeighbor(candidate=candidate, parent=owner.base)
+        with self.assertRaisesRegex(ValueError, "before reap"):
+            unreaped.finish_after_reap(None)
+        self.assertTrue(unreaped.root.exists())
+
+    def test_changed_decoy_is_preserved_and_allowed_root_rejected(self):
+        owner, candidate = self.fixture()
+        decoy = _OwnedOnePacketNeighbor(candidate=candidate, parent=owner.base)
+        decoy.path.write_bytes(b"replaced content")
+        with self.assertRaises(ValueError): decoy.finish_after_reap(0)
+        self.assertEqual(decoy.path.read_bytes(), b"replaced content")
+        scratch = owner.args["scratch_root"]
+        before = set(scratch.glob("aegis-neighbor-*"))
+        with self.assertRaisesRegex(ValueError, "overlaps policy roots"):
+            _OwnedOnePacketNeighbor(candidate=candidate, parent=scratch)
+        self.assertEqual(set(scratch.glob("aegis-neighbor-*")), before)
 
 
 if __name__ == "__main__": unittest.main()
