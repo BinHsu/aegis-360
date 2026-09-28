@@ -237,5 +237,22 @@ class RawProbeTransportHostTests(unittest.TestCase):
                     os.kill(owned[0].pid, signal.SIGKILL)
                     owned[0].wait(timeout=2)
 
+    def test_stdout_capture_stops_at_one_byte_beyond_limit(self):
+        with self.context() as context:
+            real_popen = subprocess.Popen
+
+            def launch_large_output(_argv, **_kwargs):
+                return real_popen([sys.executable, "-c",
+                    "import os; os.write(1,b'x'*131072)"],
+                    stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE, close_fds=True,
+                    start_new_session=True)
+
+            with mock.patch("aegis360.sparse_story_raw_probe_transport.subprocess.Popen",
+                    side_effect=launch_large_output):
+                capture = _run_raw_probe(context)
+            self.assertFalse(capture.completed)
+            self.assertEqual(len(capture.stdout), 65_537)
+
 
 if __name__ == "__main__": unittest.main()

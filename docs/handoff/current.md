@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 251c8e6
+Baseline commit: ffd6431
 Remote status: `main` and fetched `origin/main` match at
-`251c8e6faded9381d375e897064e418df77a135f`.
-GitHub Actions `handoff-contract` run 36485387941 succeeded for that exact SHA.
+`ffd64317a324316e32bd16b99b23eb8da4d66cce`.
+GitHub Actions `handoff-contract` run 36485699294 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -116,6 +116,10 @@ previous gap where tests checked rows separately but the transport did not.
 An owned TERM-ignoring process is now tested under a short timeout and grace:
 the transport returns SIGKILL and confirms group absence. Suppressing group
 SIGKILL makes the test fail; its fixture cleans up the exact process it spawned.
+The raw transport now has a host test for stdout capture at the frozen
+65,536-byte limit plus one proof byte. A process writes 131,072 bytes; the
+capture retains exactly 65,537 and remains invalid. Raising the limit to
+131,072 makes the regression fail.
 The transport now compares the complete invocation-binding bytes before and
 after execution. A host test appends JSON whitespace to the retained request
 after process exit: all rows remain valid, but the binding changes and the
@@ -141,13 +145,13 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@251c8e6`; GitHub Actions
-  `handoff-contract` run 36485387941 succeeded for exact SHA
-  `251c8e6faded9381d375e897064e418df77a135f`.
+- Published checkpoint: `BinHsu/aegis-360@ffd6431`; GitHub Actions
+  `handoff-contract` run 36485699294 succeeded for exact SHA
+  `ffd64317a324316e32bd16b99b23eb8da4d66cce`.
 
 ## Verified
 
-- Restricted full discovery: 757 tests run, 732 passed, 25 skips. Six listener
+- Restricted full discovery: 758 tests run, 732 passed, 26 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -165,9 +169,9 @@ successor protocol for its exact scope and backend constraints.
   pass, including successful connections to all three listener families.
 - Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
   disjointness and post-execution neighbor mutation rejection.
-- Escalated raw transport host gate: eight tests pass, including 21-row
+- Escalated raw transport host gate: nine tests pass, including 21-row
   evaluation, malformed/false-row rejection, timeout, post-exit mutation,
-  owned-descendant teardown, TERM-ignore/KILL and changed request-byte binding.
+  owned-descendant teardown, TERM-ignore/KILL, stdout ceiling and changed binding.
   Suppressing group KILL fails both relevant lifecycle regressions.
 - Full-set selection: two focused tests pass. Selected first/last packet
   bundles publish and validate; changed full result and replacement are rejected.
