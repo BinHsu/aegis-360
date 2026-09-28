@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 70e6a41
+Baseline commit: ff4c461
 Remote status: `main` and fetched `origin/main` match at
-`70e6a41848d39e1136877cde705f748e1345f776`.
-GitHub Actions `handoff-contract` run 36487076999 succeeded for that exact SHA.
+`ff4c461c70a66612ae8910af7823f7cf1a429168`.
+GitHub Actions `handoff-contract` run 36487742885 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -116,6 +116,8 @@ all 21 rows and all 14 primitive value checks pass. Host tests force malformed
 rows and a false primitive result after an otherwise clean run; both remain
 invalid with return code zero and passing postvalidation. This closes the
 previous gap where tests checked rows separately but the transport did not.
+It now requires exactly the contract's 14 matrix keys and actual boolean
+`True` values; a wrong key or truthy integer remains invalid.
 An owned TERM-ignoring process is now tested under a short timeout and grace:
 the transport returns SIGKILL and confirms group absence. Suppressing group
 SIGKILL makes the test fail; its fixture cleans up the exact process it spawned.
@@ -142,13 +144,13 @@ No capability token, receipt or spawn authority is created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@70e6a41`; GitHub Actions
-  `handoff-contract` run 36487076999 succeeded for exact SHA
-  `70e6a41848d39e1136877cde705f748e1345f776`.
+- Published checkpoint: `BinHsu/aegis-360@ff4c461`; GitHub Actions
+  `handoff-contract` run 36487742885 succeeded for exact SHA
+  `ff4c461c70a66612ae8910af7823f7cf1a429168`.
 
 ## Verified
 
-- Restricted full discovery: 761 tests run, 734 passed, 27 skips. Six listener
+- Restricted full discovery: 762 tests run, 734 passed, 28 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -166,10 +168,11 @@ No capability token, receipt or spawn authority is created.
   pass, including successful connections to all three listener families.
 - Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
   disjointness, fixed source leaves and post-execution neighbor mutation rejection.
-- Escalated raw transport host gate: ten tests pass, including 21-row
+- Escalated raw transport host gate: eleven tests pass, including 21-row
   evaluation, malformed/false-row rejection, timeout, post-exit mutation,
   owned-descendant teardown, TERM-ignore/KILL, stdout ceiling, changed binding
-  and mutation of a real other-packet leaf.
+  and mutation of a real other-packet leaf. Wrong matrix keys and non-boolean
+  truthy values are rejected.
   Suppressing group KILL fails both relevant lifecycle regressions.
 - Full-set selection: two focused tests pass. Selected first/last packet
   bundles publish and validate; changed full result and replacement are rejected.

@@ -27,6 +27,7 @@ from aegis360.sparse_story_probe_transcript import (  # noqa: E402
     _check_probe_row_values, parse_isolation_probe_transcript,
 )
 from aegis360.sparse_story_raw_probe_transport import _run_raw_probe  # noqa: E402
+from aegis360.sparse_story_runner_contract import MATRIX_KEYS  # noqa: E402
 from tests import test_sparse_story_batch_policy as batch_policy_tests  # noqa: E402
 from tests import test_sparse_story_projection as projection_tests  # noqa: E402
 from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
@@ -176,11 +177,28 @@ class RawProbeTransportHostTests(unittest.TestCase):
     def test_failed_primitive_value_invalidates_complete_transport(self):
         with self.context() as context, mock.patch(
                 "aegis360.sparse_story_raw_probe_transport._check_probe_row_values",
-                return_value={"allowed_bundle_read": False}):
+                return_value={key: key != "allowed_bundle_read"
+                    for key in MATRIX_KEYS}):
             capture = _run_raw_probe(context)
             self.assertEqual(capture.returncode, 0)
             self.assertTrue(capture.postcheck_passed)
             self.assertFalse(capture.completed)
+
+    def test_wrong_or_nonboolean_matrix_invalidates_complete_transport(self):
+        all_true = {key: True for key in MATRIX_KEYS}
+        wrong_key = dict(all_true)
+        wrong_key.pop("allowed_bundle_read")
+        wrong_key["unrecognized"] = True
+        truthy_integer = dict(all_true)
+        truthy_integer["allowed_bundle_read"] = 1
+        for matrix in (wrong_key, truthy_integer):
+            with self.subTest(matrix=matrix), self.context() as context, mock.patch(
+                    "aegis360.sparse_story_raw_probe_transport._check_probe_row_values",
+                    return_value=matrix):
+                capture = _run_raw_probe(context)
+                self.assertEqual(capture.returncode, 0)
+                self.assertTrue(capture.postcheck_passed)
+                self.assertFalse(capture.completed)
 
     def test_changed_request_bytes_invalidate_completed_probe(self):
         with self.assertRaisesRegex(ValueError, "full-set denial source changed"):

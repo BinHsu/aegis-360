@@ -17,6 +17,7 @@ from .sparse_story_probe_context import _ProbeContext
 from .sparse_story_probe_transcript import (
     _check_probe_row_values, parse_isolation_probe_transcript,
 )
+from .sparse_story_runner_contract import MATRIX_KEYS
 
 _TIMEOUT_NS = 120_000_000_000
 _GRACE_NS = 2_000_000_000
@@ -245,7 +246,10 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
                 matrix = _check_probe_row_values(rows,
                     bundle_prefix=bundle.prefix, model_prefix=model.prefix,
                     prompt_prefix=prompt.prefix)
-                primitive_passed = len(matrix) == 14 and all(matrix.values())
+                primitive_passed = (type(matrix) is dict
+                    and set(matrix) == set(MATRIX_KEYS)
+                    and all(type(matrix[key]) is bool and matrix[key]
+                            for key in MATRIX_KEYS))
             except ValueError:
                 pass
         completed = transport_complete and primitive_passed
