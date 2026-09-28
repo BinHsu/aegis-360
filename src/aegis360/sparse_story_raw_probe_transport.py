@@ -14,6 +14,9 @@ from dataclasses import dataclass
 
 from . import sparse_story_batch_policy as batch_policy
 from .sparse_story_probe_context import _ProbeContext
+from .sparse_story_probe_transcript import (
+    _check_probe_row_values, parse_isolation_probe_transcript,
+)
 
 _TIMEOUT_NS = 120_000_000_000
 _GRACE_NS = 2_000_000_000
@@ -227,10 +230,22 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
                 pass
             try: os.killpg(process.pid, 0)
             except ProcessLookupError: group_gone = True
-        completed = bool(returncode == 0 and transferred == len(transfer)
+        transport_complete = bool(returncode == 0 and transferred == len(transfer)
             and group_verified and group_gone and not timed_out and not writer_failed
             and not stdout_overflow and not stderr_overflow and not stderr_present
             and not cleanup_failed and postcheck_passed and stdout)
+        primitive_passed = False
+        if transport_complete:
+            try:
+                rows = parse_isolation_probe_transcript(bytes(stdout))
+                bundle, model, prompt = context.allowed
+                matrix = _check_probe_row_values(rows,
+                    bundle_prefix=bundle.prefix, model_prefix=model.prefix,
+                    prompt_prefix=prompt.prefix)
+                primitive_passed = len(matrix) == 14 and all(matrix.values())
+            except ValueError:
+                pass
+        completed = transport_complete and primitive_passed
         return _RawProbeCapture(bytes(stdout), returncode, completed,
             postcheck_passed, "raw_probe_complete" if completed else "raw_probe_invalid")
     finally:

@@ -122,6 +122,24 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(capture.completed)
             self.assertFalse(capture.postcheck_passed)
 
+    def test_failed_primitive_value_invalidates_complete_transport(self):
+        with self.context() as context, mock.patch(
+                "aegis360.sparse_story_raw_probe_transport._check_probe_row_values",
+                return_value={"allowed_bundle_read": False}):
+            capture = _run_raw_probe(context)
+            self.assertEqual(capture.returncode, 0)
+            self.assertTrue(capture.postcheck_passed)
+            self.assertFalse(capture.completed)
+
+    def test_malformed_rows_invalidate_complete_transport(self):
+        with self.context() as context, mock.patch(
+                "aegis360.sparse_story_raw_probe_transport.parse_isolation_probe_transcript",
+                side_effect=ValueError("malformed row")):
+            capture = _run_raw_probe(context)
+            self.assertEqual(capture.returncode, 0)
+            self.assertTrue(capture.postcheck_passed)
+            self.assertFalse(capture.completed)
+
     def test_exited_leader_does_not_leave_live_descendant(self):
         with self.context() as context:
             marker = context.outside.root.parent / "owned-grandchild-pid"
