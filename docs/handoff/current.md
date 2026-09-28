@@ -3,10 +3,10 @@
 Updated: 2026-09-29T05:01:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: ffd6431
+Baseline commit: 3c46b0f
 Remote status: `main` and fetched `origin/main` match at
-`ffd64317a324316e32bd16b99b23eb8da4d66cce`.
-GitHub Actions `handoff-contract` run 36485699294 succeeded for that exact SHA.
+`3c46b0f1703223dfab4f697ee8ed23d8490e48f6`.
+GitHub Actions `handoff-contract` run 36486045529 succeeded for that exact SHA.
 Working tree at checkpoint: clean after local commit; verify with
 `git status --short` before resuming.
 
@@ -100,6 +100,9 @@ rows and 14 provisional primitive values pass with postvalidation. A forced
 pre-policy timeout emits no adapter output. These are transport/primitive
 observations, not capability authority. Abnormal group-descendant cleanup
 still needs review before claiming full process isolation.
+The context now fixes repository/protocol probes to the actual source leaves;
+substitution of another retained file fails. Neighbor/result sentinel
+provenance remains unresolved.
 An attempted unconditional pre-reap `killpg` returned macOS `EPERM` for an
 already-exited leader and was reverted before publication. A revised local
 change keeps the leader unreaped with `waitid(WNOWAIT)`, signals its group,
@@ -145,9 +148,9 @@ successor protocol for its exact scope and backend constraints.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@ffd6431`; GitHub Actions
-  `handoff-contract` run 36485699294 succeeded for exact SHA
-  `ffd64317a324316e32bd16b99b23eb8da4d66cce`.
+- Published checkpoint: `BinHsu/aegis-360@3c46b0f`; GitHub Actions
+  `handoff-contract` run 36486045529 succeeded for exact SHA
+  `3c46b0f1703223dfab4f697ee8ed23d8490e48f6`.
 
 ## Verified
 
@@ -168,7 +171,7 @@ successor protocol for its exact scope and backend constraints.
   marker and private-directory changes. Escalated listener host gate: three tests
   pass, including successful connections to all three listener families.
 - Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
-  disjointness and post-execution neighbor mutation rejection.
+  disjointness, fixed source leaves and post-execution neighbor mutation rejection.
 - Escalated raw transport host gate: nine tests pass, including 21-row
   evaluation, malformed/false-row rejection, timeout, post-exit mutation,
   owned-descendant teardown, TERM-ignore/KILL, stdout ceiling and changed binding.
@@ -193,7 +196,8 @@ successor protocol for its exact scope and backend constraints.
 
 ## Pending
 
-- Compose validated raw rows and retained selected-packet facts into a private
+- Prove coordinator ownership of neighbor/result sentinels and cleanup, then
+  compose validated raw rows and retained selected-packet facts into a private
   single-use capability
   boundary; audit remaining abnormal process lifecycle cases. Passing
   provisional booleans cannot attest denial alone.

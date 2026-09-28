@@ -12,6 +12,10 @@ from .sparse_story_probe_sentinels import (
     _OutsideSentinelSnapshot, _ReadDenialSentinel, _ScratchProbeSnapshot,
 )
 
+_REPOSITORY_SENTINEL = Path(__file__).resolve().parent / "sparse_story_batch_policy.py"
+_PROTOCOL_SENTINEL = (Path(__file__).resolve().parents[2] / "docs/experiments"
+    / "sparse-story-semantic-successor-v1-2026-09-07.md")
+
 
 def _overlaps(first: Path, second: Path) -> bool:
     return first == second or first in second.parents or second in first.parents
@@ -27,6 +31,9 @@ class _ProbeContext:
                 or type(scratch) is not _ScratchProbeSnapshot
                 or type(listeners) is not _ProbeListeners):
             raise TypeError("raw probe requires exact retained private inputs")
+        if (repository.path != _REPOSITORY_SENTINEL
+                or protocol.path != _PROTOCOL_SENTINEL):
+            raise ValueError("repository and protocol probes require fixed source leaves")
         self.candidate = candidate
         self.reads = (repository, protocol, neighbor, result)
         self.outside = outside

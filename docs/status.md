@@ -194,7 +194,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Compose a private single-use capability boundary over the retained selected
-packet, exact policy and validated probe rows.
+Prove coordinator ownership of neighbor/result sentinels and cleanup, then
+compose a single-use capability over the retained packet and validated probe.
 Coordinator proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.

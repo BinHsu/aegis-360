@@ -293,6 +293,11 @@ class BatchPolicyTests(unittest.TestCase):
             try: listeners = stack.enter_context(_ProbeListeners(listener_root))
             except PermissionError as error:
                 self.skipTest(f"host policy denies local listener bind: {error.errno}")
+            with self.assertRaisesRegex(ValueError, "fixed source leaves"):
+                _ProbeContext(candidate=candidate, repository=reads[2],
+                    protocol=reads[1], neighbor=reads[0], result=reads[3],
+                    outside=outside_proof, scratch=scratch_proof,
+                    listeners=listeners)
             context = _ProbeContext(candidate=candidate, repository=reads[0],
                 protocol=reads[1], neighbor=reads[2], result=reads[3],
                 outside=outside_proof, scratch=scratch_proof, listeners=listeners)
