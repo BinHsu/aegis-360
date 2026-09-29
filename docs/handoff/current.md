@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-30T05:17:30+08:00
+Updated: 2026-09-30T05:21:12+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: d2dd406
+Baseline commit: 3265723
 Remote status: `main` and fetched `origin/main` match at
-`d2dd406a1dbb0928fd867a2c947a7037b3d0822f`.
-GitHub Actions `handoff-contract` run 36631951651 succeeded for that exact SHA.
-Working tree at checkpoint: missing-write cleanup changes pending; verify with
+`3265723cd278636a2f0033350d37591c31366375`.
+GitHub Actions `handoff-contract` run 36632342182 succeeded for that exact SHA.
+Working tree at checkpoint: first-packet full-set host case pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -29,7 +29,7 @@ selected leaf invalidates the binding. The candidate grants no spawn authority.
 The private raw probe runs the same retained native launcher, runtime and policy
 through a bounded policy pipe and process group. Completion requires pre/post
 root and sentinel checks, all 21 transcript rows, and exactly the contract's 14
-boolean `True` matrix keys. Fourteen host tests cover the positive native path,
+boolean `True` matrix keys. Fifteen host tests cover the positive native path,
 malformed/false rows, wrong keys or truthy integers, changed request/sentinel
 facts, timeout, stdout ceiling, a surviving descendant and TERM-ignore/KILL.
 Controlled mutations confirm the descendant, KILL and stdout tests detect their
@@ -38,7 +38,9 @@ installed-policy receipt or model-invocation authority.
 
 The full-set denial helper verifies the media result and tree, retains an actual
 other-packet PNG and full-set result file, and rechecks them with the candidate
-binding after probing. Repository/protocol probes use fixed actual source files.
+binding after probing. Native host positives now select both the first and last
+packets from the six-packet set, each with a real other-packet read target.
+Repository/protocol probes use fixed actual source files.
 One-packet smoke now uses a private, non-media decoy leaf outside policy roots;
 it is explicitly not an actual other packet. Its owner retains the leaf and
 removes it only after the probe leader is reaped and exact facts revalidate.
@@ -77,13 +79,13 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@d2dd406`; GitHub Actions
-  `handoff-contract` run 36631951651 succeeded for exact SHA
-  `d2dd406a1dbb0928fd867a2c947a7037b3d0822f`.
+- Published checkpoint: `BinHsu/aegis-360@3265723`; GitHub Actions
+  `handoff-contract` run 36632342182 succeeded for exact SHA
+  `3265723cd278636a2f0033350d37591c31366375`.
 
 ## Verified
 
-- Restricted full discovery: 775 tests run, 742 passed, 33 skips. Listener
+- Restricted full discovery: 776 tests run, 742 passed, 34 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -125,7 +127,7 @@ receipt or spawn authority has been created.
 - Scratch file owner: four focused tests cover exact cleanup after reap,
   pre-reap/changed-output preservation and a replaced write file after snapshot
   closure and missing-write source-only cleanup. Corrected rename replacement
-  passes portable CI. Fourteen native
+  passes portable CI. Fifteen native
   raw transport host tests pass; positive paths
   remove both exact probe-created files.
 - Owned raw-probe path: one cleanup-refusal host test forces incomplete status

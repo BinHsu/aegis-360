@@ -42,7 +42,7 @@ from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
     "requires explicit Darwin host Seatbelt gate outside nested sandbox")
 class RawProbeTransportHostTests(unittest.TestCase):
     @contextmanager
-    def context(self, *, one_packet=False):
+    def context(self, *, one_packet=False, presentation_ordinal=6):
         fixture = batch_policy_tests.BatchPolicyTests(
             "test_exact_policy_is_frozen_and_path_free_digest_only")
         fixture.setUp()
@@ -66,7 +66,8 @@ class RawProbeTransportHostTests(unittest.TestCase):
                         result_bytes=full_result.read_bytes(), index=index,
                         private_packets=packets,
                         ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
-                        payloads=payloads, bundle=full_bundle, presentation_ordinal=6,
+                        payloads=payloads, bundle=full_bundle,
+                        presentation_ordinal=presentation_ordinal,
                         bundle_destination=selected_bundle,
                         result_destination=selected_result))
         with ExitStack() as stack:
@@ -171,6 +172,15 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(context.owned_outside.root.exists())
             self.assertFalse(context.owned_listeners.root.exists())
             self.assertFalse(context.owned_scratch.snapshot.source_path.exists())
+
+    def test_first_full_set_packet_denies_actual_other_packet(self):
+        with self.context(presentation_ordinal=1) as context:
+            capture = _run_owned_raw_probe(context,
+                outside=context.owned_outside, scratch=context.owned_scratch,
+                listeners=context.owned_listeners)
+            self.assertTrue(capture.completed, capture.reason)
+            self.assertTrue(context.reads[2].path.exists())
+            self.assertFalse(context.owned_outside.root.exists())
 
     def test_owned_cleanup_failure_invalidates_raw_completion(self):
         with self.context() as context, mock.patch.object(
