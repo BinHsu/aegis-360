@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-30T05:02:26+08:00
+Updated: 2026-09-30T05:06:20+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 4958891
+Baseline commit: c817df4
 Remote status: `main` and fetched `origin/main` match at
-`4958891d25a7ae2ab803bdd0d93d09f66deeb093`.
-GitHub Actions `handoff-contract` run 36630147021 succeeded for that exact SHA.
-Working tree at checkpoint: scratch probe file owner changes pending; verify with
+`c817df4f5e2dde41159731736697b5bb14fa44d2`.
+GitHub Actions `handoff-contract` run 36630638219 succeeded for that exact SHA.
+Working tree at checkpoint: scratch cleanup identity fix pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -50,7 +50,8 @@ tests exercise this cleanup. The listener owner now creates a private root,
 retains exact live sockets, and removes the exact owned tree only after child
 reap. An unexpected child is preserved. A scratch file owner now creates the
 rename source exclusively and removes the exact source and expected write only
-after child reap and postvalidation. It preserves changed output; the batch
+after child reap and postvalidation. It rechecks both names immediately before
+deletion and preserves a replaced write file; the batch
 scratch root and private HOME/TMPDIR remain under the batch fixture's owner.
 
 The rejected direct-spawn transport spike at `eea5881` is historical evidence;
@@ -72,13 +73,13 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@4958891`; GitHub Actions
-  `handoff-contract` run 36630147021 succeeded for exact SHA
-  `4958891d25a7ae2ab803bdd0d93d09f66deeb093`.
+- Published checkpoint: `BinHsu/aegis-360@c817df4`; GitHub Actions
+  `handoff-contract` run 36630638219 succeeded for exact SHA
+  `c817df4f5e2dde41159731736697b5bb14fa44d2`.
 
 ## Verified
 
-- Restricted full discovery: 771 tests run, 740 passed, 31 skips. Listener
+- Restricted full discovery: 772 tests run, 741 passed, 31 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -117,9 +118,10 @@ receipt or spawn authority has been created.
   child preservation. Seventeen listener/raw transport host tests pass, including
   positive owner cleanup through the native launcher. The initial long AF_UNIX
   path failed; the short owned name is verified on the host.
-- Scratch file owner: two focused tests cover exact file cleanup after reap and
-  preservation on pre-reap or changed output. Twelve native raw transport host
-  tests pass with it; positive paths remove both exact probe-created files.
+- Scratch file owner: three focused tests cover exact cleanup after reap,
+  pre-reap/changed-output preservation and a replaced write file after snapshot
+  closure. Twelve native raw transport host tests pass with it; positive paths
+  remove both exact probe-created files.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.

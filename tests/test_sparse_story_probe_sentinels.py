@@ -197,5 +197,23 @@ class OwnedScratchProbeFilesTests(unittest.TestCase):
         with self.assertRaises(ValueError): owner.finish_after_reap(0)
         self.assertEqual(owner.snapshot.scratch_write_path.read_bytes(), b"changed")
 
+    def test_replacement_after_snapshot_close_is_preserved(self):
+        owner = _OwnedScratchProbeFiles(self.root, self.home, self.tmpdir)
+        write = owner.snapshot.scratch_write_path
+        write.write_bytes(b"scratch-write-sentinel-v1")
+        write.chmod(0o600)
+        original_close = owner.snapshot.close
+
+        def replace_after_close():
+            original_close()
+            write.unlink()
+            write.write_bytes(b"replacement")
+
+        owner.snapshot.close = replace_after_close
+        with self.assertRaisesRegex(ValueError, "cleanup target changed"):
+            owner.finish_after_reap(0)
+        self.assertEqual(write.read_bytes(), b"replacement")
+        self.assertTrue(owner.snapshot.source_path.exists())
+
 
 if __name__ == "__main__": unittest.main()
