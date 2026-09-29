@@ -194,7 +194,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 
-Bind owned probe effects into coordinator and compose one-/multi-packet denial
-proofs into a single-use capability gate.
+Own batch scratch root/HOME/TMPDIR cleanup, then compose retained probe evidence
+into a private single-use capability gate.
 Coordinator proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.

@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-30T05:24:44+08:00
+Updated: 2026-09-30T05:30:36+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: c7a5767
+Baseline commit: 66b5565
 Remote status: `main` and fetched `origin/main` match at
-`c7a576776bfdf20c2aa1f12e7e49f895acea1256`.
-GitHub Actions `handoff-contract` run 36632755529 succeeded for that exact SHA.
-Working tree at checkpoint: group-absence cleanup fix pending; verify with
+`66b5565beceeb7f17227bcc37cf0d22606304a90`.
+GitHub Actions `handoff-contract` run 36633146487 succeeded for that exact SHA.
+Working tree at checkpoint: clean before this handoff-only update; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -81,9 +81,19 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@c7a5767`; GitHub Actions
-  `handoff-contract` run 36632755529 succeeded for exact SHA
-  `c7a576776bfdf20c2aa1f12e7e49f895acea1256`.
+- Published checkpoint: `BinHsu/aegis-360@66b5565`; GitHub Actions
+  `handoff-contract` run 36633146487 succeeded for exact SHA
+  `66b5565beceeb7f17227bcc37cf0d22606304a90`.
+
+## Work assessment
+
+Nine commits since `570a869` added outside/listener/scratch-file ownership,
+combined probe cleanup and first-packet full-set host coverage. Four of those
+commits mainly repaired cleanup or test portability. Roughly two-thirds of this
+wave went to debugging, lifecycle hardening and verification; it did not yet
+produce a capability, adapter inference, semantic result or camera decision.
+An unverified batch-scratch-root spike and an unrestricted shared-launcher
+refactor were withdrawn before this checkpoint, leaving no partial code.
 
 ## Verified
 
@@ -154,8 +164,8 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- Integrate the owned raw-probe path with one-/multi-packet denial proofs and
-  coordinate with the existing batch owner for scratch root/HOME/TMPDIR cleanup.
+- Own batch scratch root/HOME/TMPDIR after a verified group exit and candidate
+  closure, then integrate the owned raw-probe path with full-set denial proofs.
 - Compose retained inputs, installed-policy observations and raw rows into a
   private single-use capability. The later inference path must use the same
   launcher, runtime, policy, uid/gid and roots. Keep public authority APIs closed.
@@ -167,6 +177,7 @@ receipt or spawn authority has been created.
 
 ```sh
 cd ~/Documents/aegis-360
+git status --short --branch
 python3 -m unittest discover -s tests -q
 python3 -m unittest tests.test_sparse_story_projection tests.test_sparse_story_media_tree -q
 AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_raw_probe_transport -v
