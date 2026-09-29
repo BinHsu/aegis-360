@@ -28,7 +28,9 @@ from aegis360.sparse_story_probe_sentinels import (  # noqa: E402
 from aegis360.sparse_story_probe_transcript import (  # noqa: E402
     _check_probe_row_values, parse_isolation_probe_transcript,
 )
-from aegis360.sparse_story_raw_probe_transport import _run_raw_probe  # noqa: E402
+from aegis360.sparse_story_raw_probe_transport import (  # noqa: E402
+    _run_raw_probe, _run_owned_raw_probe,
+)
 from aegis360.sparse_story_runner_contract import MATRIX_KEYS  # noqa: E402
 from tests import test_sparse_story_batch_policy as batch_policy_tests  # noqa: E402
 from tests import test_sparse_story_projection as projection_tests  # noqa: E402
@@ -143,7 +145,9 @@ class RawProbeTransportHostTests(unittest.TestCase):
 
     def test_same_retained_runtime_probes_through_native_launcher(self):
         with self.context() as context:
-            capture = _run_raw_probe(context)
+            capture = _run_owned_raw_probe(context,
+                outside=context.owned_outside, scratch=context.owned_scratch,
+                listeners=context.owned_listeners)
             self.assertTrue(capture.completed, capture.reason)
             self.assertEqual((capture.returncode, capture.postcheck_passed), (0, True))
             rows = parse_isolation_probe_transcript(capture.stdout)
@@ -152,24 +156,34 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 bundle_prefix=allowed[0].prefix, model_prefix=allowed[1].prefix,
                 prompt_prefix=allowed[2].prefix)
             self.assertTrue(all(primitive.values()), primitive)
-            context.owned_outside.finish_after_reap(capture.returncode)
             self.assertFalse(context.owned_outside.root.exists())
-            context.owned_listeners.finish_after_reap(capture.returncode)
             self.assertFalse(context.owned_listeners.root.exists())
-            context.owned_scratch.finish_after_reap(capture.returncode)
             self.assertFalse(context.owned_scratch.snapshot.source_path.exists())
 
     def test_one_packet_smoke_uses_owned_decoy_and_cleans_after_reap(self):
         with self.context(one_packet=True) as context:
             decoy = context.owned_neighbor
-            capture = _run_raw_probe(context)
+            capture = _run_owned_raw_probe(context,
+                outside=context.owned_outside, scratch=context.owned_scratch,
+                listeners=context.owned_listeners, neighbor=decoy)
             self.assertTrue(capture.completed, capture.reason)
-            self.assertTrue(decoy.path.exists())
-            decoy.finish_after_reap(capture.returncode)
             self.assertFalse(decoy.root.exists())
-            context.owned_outside.finish_after_reap(capture.returncode)
-            context.owned_listeners.finish_after_reap(capture.returncode)
-            context.owned_scratch.finish_after_reap(capture.returncode)
+            self.assertFalse(context.owned_outside.root.exists())
+            self.assertFalse(context.owned_listeners.root.exists())
+            self.assertFalse(context.owned_scratch.snapshot.source_path.exists())
+
+    def test_owned_cleanup_failure_invalidates_raw_completion(self):
+        with self.context() as context, mock.patch.object(
+                context.owned_scratch, "finish_after_reap",
+                side_effect=ValueError("cleanup refused")):
+            capture = _run_owned_raw_probe(context,
+                outside=context.owned_outside, scratch=context.owned_scratch,
+                listeners=context.owned_listeners)
+            self.assertFalse(capture.completed)
+            self.assertEqual(capture.reason, "raw_probe_cleanup_invalid")
+            self.assertTrue(context.owned_scratch.snapshot.source_path.exists())
+            self.assertFalse(context.owned_outside.root.exists())
+            self.assertFalse(context.owned_listeners.root.exists())
 
     def test_timeout_before_policy_delivery_fails_without_adapter_output(self):
         with self.context() as context, mock.patch(

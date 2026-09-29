@@ -1,15 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-30T05:09:01+08:00
+Updated: 2026-09-30T05:13:59+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 6926cbc
+Baseline commit: 09734e0
 Remote status: `main` and fetched `origin/main` match at
-`6926cbc24a7b53d91fd1be4e8a19681343708575`.
-GitHub Actions `handoff-contract` run 36631079193 failed for that exact SHA:
-Linux reused an unlinked test file's inode. Deterministic rename replacement and
-full-fact cleanup recheck are pending publication.
-Working tree at checkpoint: correction pending; verify with
+`09734e0295c1a90ae9cdcbfa1544393758e001c3`.
+GitHub Actions `handoff-contract` run 36631419571 succeeded for that exact SHA.
+Working tree at checkpoint: combined owned raw-probe changes pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -31,7 +29,7 @@ selected leaf invalidates the binding. The candidate grants no spawn authority.
 The private raw probe runs the same retained native launcher, runtime and policy
 through a bounded policy pipe and process group. Completion requires pre/post
 root and sentinel checks, all 21 transcript rows, and exactly the contract's 14
-boolean `True` matrix keys. Twelve host tests cover the positive native path,
+boolean `True` matrix keys. Thirteen host tests cover the positive native path,
 malformed/false rows, wrong keys or truthy integers, changed request/sentinel
 facts, timeout, stdout ceiling, a surviving descendant and TERM-ignore/KILL.
 Controlled mutations confirm the descendant, KILL and stdout tests detect their
@@ -55,6 +53,9 @@ rename source exclusively and removes the exact source and expected write only
 after child reap and postvalidation. It rechecks full file facts immediately
 before deletion and preserves a replaced write file; the batch
 scratch root and private HOME/TMPDIR remain under the batch fixture's owner.
+The private owned-run path now ties these owners to the exact probe context,
+cleans each after a reaped child, and turns cleanup refusal into incomplete raw
+probe status. It creates no capability or public authority.
 
 The rejected direct-spawn transport spike at `eea5881` is historical evidence;
 its weak process ownership and incomplete cleanup are not restored. The signed
@@ -75,14 +76,13 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@6926cbc`; GitHub Actions
-  `handoff-contract` run 36631079193 failed for exact SHA
-  `6926cbc24a7b53d91fd1be4e8a19681343708575` due to a non-discriminating
-  Linux replacement test. Corrected test uses rename to retain the old inode.
+- Published checkpoint: `BinHsu/aegis-360@09734e0`; GitHub Actions
+  `handoff-contract` run 36631419571 succeeded for exact SHA
+  `09734e0295c1a90ae9cdcbfa1544393758e001c3`.
 
 ## Verified
 
-- Restricted full discovery: 772 tests run, 741 passed, 31 skips. Listener
+- Restricted full discovery: 773 tests run, 741 passed, 32 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -123,9 +123,12 @@ receipt or spawn authority has been created.
   path failed; the short owned name is verified on the host.
 - Scratch file owner: three focused tests cover exact cleanup after reap,
   pre-reap/changed-output preservation and a replaced write file after snapshot
-  closure. The old unlink/recreate case failed on Linux inode reuse. Twelve
-  native raw transport host tests pass; positive paths
+  closure. Corrected rename replacement passes portable CI. Thirteen native
+  raw transport host tests pass; positive paths
   remove both exact probe-created files.
+- Owned raw-probe path: one cleanup-refusal host test forces incomplete status
+  while unaffected owned trees are removed. A missing reap proof closes owners
+  without deleting their paths.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -142,7 +145,7 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- Bind owned outside, scratch-file and listener lifecycles into the coordinator;
+- Integrate the owned raw-probe path with one-/multi-packet denial proofs and
   coordinate with the existing batch owner for scratch root/HOME/TMPDIR cleanup.
 - Compose retained inputs, installed-policy observations and raw rows into a
   private single-use capability. The later inference path must use the same

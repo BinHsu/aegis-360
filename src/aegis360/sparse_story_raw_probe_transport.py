@@ -10,10 +10,13 @@ import stat
 import struct
 import subprocess
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from . import sparse_story_batch_policy as batch_policy
 from .sparse_story_probe_context import _ProbeContext
+from .sparse_story_probe_denials import _OwnedOnePacketNeighbor
+from .sparse_story_probe_listeners import _OwnedProbeListeners
+from .sparse_story_probe_sentinels import _OwnedOutsideSentinel, _OwnedScratchProbeFiles
 from .sparse_story_probe_transcript import (
     _check_probe_row_values, parse_isolation_probe_transcript,
 )
@@ -265,3 +268,35 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
                 try: process.wait(timeout=_DRAIN_NS / 1e9)
                 except subprocess.TimeoutExpired: pass
             _close_streams(process)
+
+
+def _run_owned_raw_probe(context: _ProbeContext, *, outside, scratch, listeners,
+                         neighbor=None) -> _RawProbeCapture:
+    """Pair one finite raw probe with its exact owned side-effect cleanup."""
+    if (type(context) is not _ProbeContext
+            or type(outside) is not _OwnedOutsideSentinel
+            or type(scratch) is not _OwnedScratchProbeFiles
+            or type(listeners) is not _OwnedProbeListeners
+            or (neighbor is not None and type(neighbor) is not _OwnedOnePacketNeighbor)
+            or context.outside is not outside.snapshot
+            or context.scratch is not scratch.snapshot
+            or context.listeners is not listeners.listeners
+            or (neighbor is not None and context.reads[2] is not neighbor.proof)):
+        raise TypeError("owned raw probe requires matching private owners")
+    try: capture = _run_raw_probe(context)
+    except BaseException:
+        for owner in (neighbor, scratch, outside, listeners):
+            if owner is not None: owner.abandon()
+        raise
+    if type(capture.returncode) is not int:
+        for owner in (neighbor, scratch, outside, listeners):
+            if owner is not None: owner.abandon()
+        return replace(capture, completed=False, reason="raw_probe_cleanup_unverified")
+    failed = False
+    for owner in (neighbor, scratch, outside, listeners):
+        if owner is None: continue
+        try: owner.finish_after_reap(capture.returncode)
+        except (OSError, ValueError): failed = True
+    if failed:
+        return replace(capture, completed=False, reason="raw_probe_cleanup_invalid")
+    return capture
