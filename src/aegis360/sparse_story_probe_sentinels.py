@@ -9,6 +9,7 @@ from __future__ import annotations
 import os
 import stat
 import hashlib
+import tempfile
 from pathlib import Path
 
 _EXISTING = "outside-existing"
@@ -163,6 +164,91 @@ class _OutsideSentinelSnapshot:
     def __enter__(self): return self
 
     def __exit__(self, *_): self.close()
+
+
+class _OwnedOutsideSentinel:
+    """Create and remove the exact outside-write probe tree after child reap."""
+
+    def __init__(self, parent: Path):
+        if (not isinstance(parent, Path) or not parent.is_absolute()
+                or parent.resolve(strict=True) != parent):
+            raise ValueError("outside sentinel parent is not canonical")
+        self.root = Path(tempfile.mkdtemp(prefix="aegis-outside-", dir=parent)).resolve()
+        self.path = self.root / _EXISTING
+        created_root = os.lstat(self.root)
+        self.root_identity = (created_root.st_dev, created_root.st_ino)
+        self.root_fd = self.snapshot = self.file_identity = None
+        self.closed = False
+        try:
+            self.root_fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY
+                | os.O_NOFOLLOW | os.O_CLOEXEC)
+            fd = os.open(self.path.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL
+                | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600, dir_fd=self.root_fd)
+            try:
+                created = os.fstat(fd)
+                self.file_identity = (created.st_dev, created.st_ino)
+                if os.write(fd, _EXPECTED) != len(_EXPECTED):
+                    raise OSError("outside sentinel write was incomplete")
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+            self.snapshot = _OutsideSentinelSnapshot(self.root)
+            self.revalidate()
+        except BaseException:
+            if self.snapshot is not None: self.snapshot.close()
+            if self.root_fd is not None: os.close(self.root_fd)
+            try:
+                named = os.lstat(self.path)
+                if ((named.st_dev, named.st_ino) == self.file_identity
+                        and stat.S_ISREG(named.st_mode)):
+                    self.path.unlink()
+            except FileNotFoundError:
+                pass
+            try:
+                current = os.lstat(self.root)
+                if (current.st_dev, current.st_ino) == self.root_identity:
+                    self.root.rmdir()
+            except OSError:
+                pass
+            raise
+
+    def revalidate(self):
+        if self.closed: raise ValueError("owned outside sentinel is closed")
+        current = os.lstat(self.root)
+        if (current.st_dev, current.st_ino) != self.root_identity:
+            raise ValueError("owned outside sentinel root was replaced")
+        self.snapshot.revalidate()
+
+    def finish_after_reap(self, returncode: int | None):
+        if type(returncode) is not int:
+            self.abandon()
+            raise ValueError("outside sentinel cannot be cleaned before reap")
+        try:
+            self.revalidate()
+            named = os.stat(self.path.name, dir_fd=self.root_fd,
+                follow_symlinks=False)
+            if (named.st_dev, named.st_ino) != self.file_identity:
+                raise ValueError("outside sentinel file was replaced")
+            self.snapshot.close()
+            os.unlink(self.path.name, dir_fd=self.root_fd)
+            current = os.lstat(self.root)
+            if (current.st_dev, current.st_ino) != self.root_identity:
+                raise ValueError("outside sentinel root changed during cleanup")
+            os.close(self.root_fd)
+            self.root_fd = None
+            self.root.rmdir()
+            self.closed = True
+        except BaseException:
+            self.abandon()
+            raise
+
+    def abandon(self):
+        if self.closed: return
+        self.closed = True
+        if self.snapshot is not None: self.snapshot.close()
+        if self.root_fd is not None:
+            os.close(self.root_fd)
+            self.root_fd = None
 
 
 class _ScratchProbeSnapshot:

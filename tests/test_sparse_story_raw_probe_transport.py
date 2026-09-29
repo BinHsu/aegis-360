@@ -23,7 +23,7 @@ from aegis360.sparse_story_media_tree import (  # noqa: E402
 )
 from aegis360.sparse_story_probe_listeners import _ProbeListeners  # noqa: E402
 from aegis360.sparse_story_probe_sentinels import (  # noqa: E402
-    _OutsideSentinelSnapshot, _ReadDenialSentinel, _ScratchProbeSnapshot,
+    _OwnedOutsideSentinel, _ReadDenialSentinel, _ScratchProbeSnapshot,
 )
 from aegis360.sparse_story_probe_transcript import (  # noqa: E402
     _check_probe_row_values, parse_isolation_probe_transcript,
@@ -103,9 +103,8 @@ class RawProbeTransportHostTests(unittest.TestCase):
                     ordered_private_packet_sha256s=chosen_hashes,
                     payloads=chosen_payloads,
                     media_result_bytes=selected_result.read_bytes())
-            outside = base / "outside"; outside.mkdir(mode=0o700)
-            (outside / "outside-existing").write_bytes(b"outside-existing-sentinel-v1")
-            (outside / "outside-existing").chmod(0o600)
+            outside_owner = _OwnedOutsideSentinel(base)
+            stack.callback(outside_owner.abandon)
             scratch = fixture.args["scratch_root"]
             (scratch / "rename-source").write_bytes(b"rename-source-v1")
             (scratch / "rename-source").chmod(0o600)
@@ -131,11 +130,12 @@ class RawProbeTransportHostTests(unittest.TestCase):
             reads = (*static_reads, neighbor, result)
             context = _ProbeContext(candidate=candidate, repository=reads[0],
                 protocol=reads[1], neighbor=reads[2], result=reads[3],
-                outside=stack.enter_context(_OutsideSentinelSnapshot(outside)),
+                outside=outside_owner.snapshot,
                 scratch=stack.enter_context(_ScratchProbeSnapshot(scratch,
                     fixture.args["private_home"], fixture.args["private_tmpdir"])),
                 listeners=stack.enter_context(_ProbeListeners(listener_root)))
             if one_packet: context.owned_neighbor = decoy
+            context.owned_outside = outside_owner
             yield context
 
     def test_same_retained_runtime_probes_through_native_launcher(self):
@@ -149,6 +149,8 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 bundle_prefix=allowed[0].prefix, model_prefix=allowed[1].prefix,
                 prompt_prefix=allowed[2].prefix)
             self.assertTrue(all(primitive.values()), primitive)
+            context.owned_outside.finish_after_reap(capture.returncode)
+            self.assertFalse(context.owned_outside.root.exists())
 
     def test_one_packet_smoke_uses_owned_decoy_and_cleans_after_reap(self):
         with self.context(one_packet=True) as context:
@@ -158,6 +160,7 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertTrue(decoy.path.exists())
             decoy.finish_after_reap(capture.returncode)
             self.assertFalse(decoy.root.exists())
+            context.owned_outside.finish_after_reap(capture.returncode)
 
     def test_timeout_before_policy_delivery_fails_without_adapter_output(self):
         with self.context() as context, mock.patch(

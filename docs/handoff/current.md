@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-29T05:48:03+08:00
+Updated: 2026-09-30T04:53:41+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 747c744
+Baseline commit: 570a869
 Remote status: `main` and fetched `origin/main` match at
-`747c744b4c74692c158c00cb81b454913a5424eb`.
-GitHub Actions `handoff-contract` run 36488267651 succeeded for that exact SHA.
-Working tree at checkpoint: clean after local commit; verify with
+`570a869fa9062b2827ae2c25552f891f97cfbd2b`.
+GitHub Actions `handoff-contract` run 36489066174 succeeded for that exact SHA.
+Working tree at checkpoint: outside-sentinel owner changes pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -29,7 +29,7 @@ selected leaf invalidates the binding. The candidate grants no spawn authority.
 The private raw probe runs the same retained native launcher, runtime and policy
 through a bounded policy pipe and process group. Completion requires pre/post
 root and sentinel checks, all 21 transcript rows, and exactly the contract's 14
-boolean `True` matrix keys. Eleven host tests cover the positive native path,
+boolean `True` matrix keys. Twelve host tests cover the positive native path,
 malformed/false rows, wrong keys or truthy integers, changed request/sentinel
 facts, timeout, stdout ceiling, a surviving descendant and TERM-ignore/KILL.
 Controlled mutations confirm the descendant, KILL and stdout tests detect their
@@ -43,8 +43,11 @@ One-packet smoke now uses a private, non-media decoy leaf outside policy roots;
 it is explicitly not an actual other packet. Its owner retains the leaf and
 removes it only after the probe leader is reaped and exact facts revalidate.
 Changed content is preserved, pre-reap cleanup is refused, and allowed-root
-placement is rejected. Outside/scratch/listener lifecycle still needs
-coordinator ownership and cleanup.
+placement is rejected. Outside-write sentinel now also has an owner that
+creates a private tree, retains its identity and bytes, and removes only the
+exact owned tree after child reap. Changed content is preserved. Host positive
+tests exercise this cleanup. Scratch/listener lifecycle still needs coordinator
+ownership and cleanup.
 
 The rejected direct-spawn transport spike at `eea5881` is historical evidence;
 its weak process ownership and incomplete cleanup are not restored. The signed
@@ -65,13 +68,13 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@747c744`; GitHub Actions
-  `handoff-contract` run 36488267651 succeeded for exact SHA
-  `747c744b4c74692c158c00cb81b454913a5424eb`.
+- Published checkpoint: `BinHsu/aegis-360@570a869`; GitHub Actions
+  `handoff-contract` run 36489066174 succeeded for exact SHA
+  `570a869fa9062b2827ae2c25552f891f97cfbd2b`.
 
 ## Verified
 
-- Restricted full discovery: 765 tests run, 736 passed, 29 skips. Six listener
+- Restricted full discovery: 767 tests run, 738 passed, 29 skips. Six listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -103,6 +106,9 @@ receipt or spawn authority has been created.
   and a selected packet absent from the full set fail before probe context use.
 - One-packet decoy: two focused tests cover exact cleanup after reap, changed
   content preservation and allowed-root overlap rejection; host smoke passes.
+- Outside owner: two focused tests cover exact after-reap cleanup, refusal to
+  clean before reap and changed-content preservation. Twelve raw transport host
+  tests pass with the owner; positive paths remove its exact tree.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -119,7 +125,8 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- Own outside/scratch/listener lifecycle and exact cleanup for the coordinator.
+- Own scratch/listener lifecycle and exact cleanup for the coordinator; bind
+  the now-owned outside sentinel into that coordinator.
 - Compose retained inputs, installed-policy observations and raw rows into a
   private single-use capability. The later inference path must use the same
   launcher, runtime, policy, uid/gid and roots. Keep public authority APIs closed.

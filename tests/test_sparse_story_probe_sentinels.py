@@ -6,8 +6,35 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from aegis360.sparse_story_probe_sentinels import (
-    _OutsideSentinelSnapshot, _ReadDenialSentinel, _ScratchProbeSnapshot,
+    _OutsideSentinelSnapshot, _OwnedOutsideSentinel,
+    _ReadDenialSentinel, _ScratchProbeSnapshot,
 )
+
+
+class OwnedOutsideSentinelTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.parent = Path(self.temp.name).resolve()
+
+    def test_exact_cleanup_requires_reaped_child(self):
+        owner = _OwnedOutsideSentinel(self.parent)
+        owner.revalidate()
+        self.assertTrue(owner.path.exists())
+        owner.finish_after_reap(0)
+        self.assertFalse(owner.root.exists())
+        with self.assertRaisesRegex(ValueError, "closed"):
+            owner.revalidate()
+        unreaped = _OwnedOutsideSentinel(self.parent)
+        with self.assertRaisesRegex(ValueError, "before reap"):
+            unreaped.finish_after_reap(None)
+        self.assertTrue(unreaped.root.exists())
+
+    def test_changed_outside_file_is_preserved(self):
+        owner = _OwnedOutsideSentinel(self.parent)
+        owner.path.write_bytes(b"changed")
+        with self.assertRaises(ValueError): owner.finish_after_reap(0)
+        self.assertEqual(owner.path.read_bytes(), b"changed")
 
 
 class OutsideSentinelSnapshotTests(unittest.TestCase):

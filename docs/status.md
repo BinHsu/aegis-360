@@ -132,8 +132,8 @@ version; they must not be silently reinterpreted.
 
 ## Active acceptance gate
 
-The structural blind replication is rejected. Both reviewers agree on all eight
-packets and supply adequate 6:2 story/no-change classes, but minimum story score
+The structural blind replication is rejected. Reviewers agree on all eight
+packets with 6:2 story/no-change classes, but minimum story score
 0.04363508 is below maximum no-change score 0.06806761. This descriptor is not a
 monotonic story-change ranker and grants no boundary, camera or render authority.
 
@@ -183,18 +183,18 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 765 tests run, 736 passed and 29 host/sandbox cases skipped.
-- Native same-entrypoint fixture: eight host tests cover raw probe rows,
-  retained identity and 33 adapter-owned case IDs; no confinement result.
-- Candidate/facade real-host integration: 34 tests run, all passed.
-- Controlled mutations are detected by the extra-leaf and nonempty-HOME regressions.
-- A selected packet is published and retained; mutation or replacement fails.
-- Host raw probe uses real full-set leaves and exact 14 boolean keys;
-  lifecycle/capture gates pass, while changed bindings and wrong keys fail.
+- Full discovery: 767 tests run, 738 passed and 29 host/sandbox cases skipped.
+- Native fixture: eight host tests cover rows, retained identity and 33 adapter
+  case IDs; no confinement result.
+- Candidate/facade real-host integration: 34 tests pass; mutations are detected.
+- A selected packet is retained; mutation or replacement fails. Host raw probe
+  uses full-set leaves and exact 14 boolean keys; bad bindings or keys fail.
+- Owned outside-write sentinel cleans exact retained tree only after child
+  reap; 12 raw transport host tests pass with it.
 
 ## Next action
 
-Own outside/scratch/listener side effects and compose one-/multi-packet
-denial proofs into a single-use capability gate.
+Own scratch/listener side effects and compose one-/multi-packet denial proofs
+into a single-use capability gate.
 Coordinator proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.
