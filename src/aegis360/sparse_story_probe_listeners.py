@@ -6,6 +6,7 @@ import errno
 import os
 import socket
 import stat
+import tempfile
 from pathlib import Path
 
 
@@ -94,3 +95,63 @@ class _ProbeListeners:
     def __enter__(self): return self
 
     def __exit__(self, *_): self.close()
+
+
+class _OwnedProbeListeners:
+    """Own the listener directory and remove it only after child reap."""
+
+    def __init__(self, parent: Path):
+        if (not isinstance(parent, Path) or not parent.is_absolute()
+                or parent.resolve(strict=True) != parent):
+            raise ValueError("listener parent is not canonical")
+        self.root = Path(tempfile.mkdtemp(prefix="l", dir=parent)).resolve()
+        named = os.lstat(self.root)
+        self.identity = (named.st_dev, named.st_ino)
+        self.listeners = None
+        self.closed = False
+        try:
+            self.listeners = _ProbeListeners(self.root)
+            self.revalidate()
+        except BaseException:
+            if self.listeners is not None: self.listeners.close()
+            try:
+                named = os.lstat(self.root)
+                if (named.st_dev, named.st_ino) == self.identity:
+                    self.root.rmdir()
+            except OSError:
+                pass
+            raise
+
+    def revalidate(self):
+        if self.closed: raise ValueError("owned probe listeners are closed")
+        named = os.lstat(self.root)
+        if ((named.st_dev, named.st_ino) != self.identity
+                or not stat.S_ISDIR(named.st_mode)
+                or stat.S_IMODE(named.st_mode) != 0o700
+                or named.st_uid != os.getuid()
+                or set(os.listdir(self.root)) != {"listener.sock"}):
+            raise ValueError("owned listener tree changed")
+        self.listeners.revalidate()
+
+    def finish_after_reap(self, returncode: int | None):
+        if type(returncode) is not int:
+            self.abandon()
+            raise ValueError("listeners cannot be cleaned before reap")
+        try:
+            self.revalidate()
+            self.listeners.close()
+            named = os.lstat(self.root)
+            if (named.st_dev, named.st_ino) != self.identity:
+                raise ValueError("listener root changed during cleanup")
+            self.root.rmdir()
+            self.closed = True
+        except BaseException:
+            self.abandon()
+            raise
+
+    def abandon(self):
+        if self.closed: return
+        self.closed = True
+        if self.listeners is not None:
+            self.listeners.closed = True
+            for listener in self.listeners.sockets: listener.close()

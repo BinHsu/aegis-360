@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-30T04:53:41+08:00
+Updated: 2026-09-30T04:58:09+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 570a869
+Baseline commit: 90047f4
 Remote status: `main` and fetched `origin/main` match at
-`570a869fa9062b2827ae2c25552f891f97cfbd2b`.
-GitHub Actions `handoff-contract` run 36489066174 succeeded for that exact SHA.
-Working tree at checkpoint: outside-sentinel owner changes pending; verify with
+`90047f47269045534bc5cc651069528d46937bfe`.
+GitHub Actions `handoff-contract` run 36629722627 succeeded for that exact SHA.
+Working tree at checkpoint: listener owner changes pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -46,8 +46,9 @@ Changed content is preserved, pre-reap cleanup is refused, and allowed-root
 placement is rejected. Outside-write sentinel now also has an owner that
 creates a private tree, retains its identity and bytes, and removes only the
 exact owned tree after child reap. Changed content is preserved. Host positive
-tests exercise this cleanup. Scratch/listener lifecycle still needs coordinator
-ownership and cleanup.
+tests exercise this cleanup. The listener owner now creates a private root,
+retains exact live sockets, and removes the exact owned tree only after child
+reap. An unexpected child is preserved. Scratch ownership remains pending.
 
 The rejected direct-spawn transport spike at `eea5881` is historical evidence;
 its weak process ownership and incomplete cleanup are not restored. The signed
@@ -68,13 +69,13 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@570a869`; GitHub Actions
-  `handoff-contract` run 36489066174 succeeded for exact SHA
-  `570a869fa9062b2827ae2c25552f891f97cfbd2b`.
+- Published checkpoint: `BinHsu/aegis-360@90047f4`; GitHub Actions
+  `handoff-contract` run 36629722627 succeeded for exact SHA
+  `90047f47269045534bc5cc651069528d46937bfe`.
 
 ## Verified
 
-- Restricted full discovery: 767 tests run, 738 passed, 29 skips. Six listener
+- Restricted full discovery: 769 tests run, 738 passed, 31 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -109,6 +110,10 @@ receipt or spawn authority has been created.
 - Outside owner: two focused tests cover exact after-reap cleanup, refusal to
   clean before reap and changed-content preservation. Twelve raw transport host
   tests pass with the owner; positive paths remove its exact tree.
+- Listener owner: two focused host tests cover after-reap cleanup and unexpected
+  child preservation. Seventeen listener/raw transport host tests pass, including
+  positive owner cleanup through the native launcher. The initial long AF_UNIX
+  path failed; the short owned name is verified on the host.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -125,8 +130,8 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- Own scratch/listener lifecycle and exact cleanup for the coordinator; bind
-  the now-owned outside sentinel into that coordinator.
+- Own scratch lifecycle and exact cleanup for the coordinator; bind the now-owned
+  outside sentinel and listeners into that coordinator.
 - Compose retained inputs, installed-policy observations and raw rows into a
   private single-use capability. The later inference path must use the same
   launcher, runtime, policy, uid/gid and roots. Keep public authority APIs closed.

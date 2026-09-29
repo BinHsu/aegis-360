@@ -6,7 +6,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from aegis360.sparse_story_probe_listeners import _ProbeListeners  # noqa: E402
+from aegis360.sparse_story_probe_listeners import (  # noqa: E402
+    _ProbeListeners, _OwnedProbeListeners,
+)
 
 
 class ProbeListenerTests(unittest.TestCase):
@@ -48,6 +50,30 @@ class ProbeListenerTests(unittest.TestCase):
         proof.unix_path.write_bytes(b"replacement")
         with self.assertRaisesRegex(ValueError, "preserved"): proof.close()
         self.assertEqual(proof.unix_path.read_bytes(), b"replacement")
+
+    def test_owned_tree_cleans_only_after_reap(self):
+        parent = Path(self.temp.name).resolve()
+        try: owner = _OwnedProbeListeners(parent)
+        except PermissionError as error:
+            self.skipTest(f"host policy denies local listener bind: {error.errno}")
+        owner.revalidate()
+        with self.assertRaisesRegex(ValueError, "before reap"):
+            owner.finish_after_reap(None)
+        self.assertTrue(owner.root.exists())
+        second = _OwnedProbeListeners(parent)
+        second.finish_after_reap(0)
+        self.assertFalse(second.root.exists())
+
+    def test_owned_tree_preserves_unexpected_child(self):
+        parent = Path(self.temp.name).resolve()
+        try: owner = _OwnedProbeListeners(parent)
+        except PermissionError as error:
+            self.skipTest(f"host policy denies local listener bind: {error.errno}")
+        extra = owner.root / "unexpected"
+        extra.write_bytes(b"keep")
+        with self.assertRaisesRegex(ValueError, "tree changed"):
+            owner.finish_after_reap(0)
+        self.assertEqual(extra.read_bytes(), b"keep")
 
 
 if __name__ == "__main__": unittest.main()
