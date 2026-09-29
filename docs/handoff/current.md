@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-30T05:21:12+08:00
+Updated: 2026-09-30T05:24:44+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 3265723
+Baseline commit: c7a5767
 Remote status: `main` and fetched `origin/main` match at
-`3265723cd278636a2f0033350d37591c31366375`.
-GitHub Actions `handoff-contract` run 36632342182 succeeded for that exact SHA.
-Working tree at checkpoint: first-packet full-set host case pending; verify with
+`c7a576776bfdf20c2aa1f12e7e49f895acea1256`.
+GitHub Actions `handoff-contract` run 36632755529 succeeded for that exact SHA.
+Working tree at checkpoint: group-absence cleanup fix pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -29,7 +29,7 @@ selected leaf invalidates the binding. The candidate grants no spawn authority.
 The private raw probe runs the same retained native launcher, runtime and policy
 through a bounded policy pipe and process group. Completion requires pre/post
 root and sentinel checks, all 21 transcript rows, and exactly the contract's 14
-boolean `True` matrix keys. Fifteen host tests cover the positive native path,
+boolean `True` matrix keys. Sixteen host tests cover the positive native path,
 malformed/false rows, wrong keys or truthy integers, changed request/sentinel
 facts, timeout, stdout ceiling, a surviving descendant and TERM-ignore/KILL.
 Controlled mutations confirm the descendant, KILL and stdout tests detect their
@@ -58,7 +58,9 @@ scratch root and private HOME/TMPDIR remain under the batch fixture's owner.
 The private owned-run path now ties these owners to the exact probe context,
 cleans each after a reaped child, and turns cleanup refusal into incomplete raw
 probe status. When no scratch write was created, exact pre-probe state allows
-source-only cleanup after reap. It creates no capability or public authority.
+source-only cleanup after reap. Cleanup now also requires confirmed process-group
+absence; a reaped leader alone is insufficient. It creates no capability or
+public authority.
 
 The rejected direct-spawn transport spike at `eea5881` is historical evidence;
 its weak process ownership and incomplete cleanup are not restored. The signed
@@ -79,13 +81,13 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@3265723`; GitHub Actions
-  `handoff-contract` run 36632342182 succeeded for exact SHA
-  `3265723cd278636a2f0033350d37591c31366375`.
+- Published checkpoint: `BinHsu/aegis-360@c7a5767`; GitHub Actions
+  `handoff-contract` run 36632755529 succeeded for exact SHA
+  `c7a576776bfdf20c2aa1f12e7e49f895acea1256`.
 
 ## Verified
 
-- Restricted full discovery: 776 tests run, 742 passed, 34 skips. Listener
+- Restricted full discovery: 777 tests run, 742 passed, 35 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -127,13 +129,15 @@ receipt or spawn authority has been created.
 - Scratch file owner: four focused tests cover exact cleanup after reap,
   pre-reap/changed-output preservation and a replaced write file after snapshot
   closure and missing-write source-only cleanup. Corrected rename replacement
-  passes portable CI. Fifteen native
+  passes portable CI. Sixteen native
   raw transport host tests pass; positive paths
   remove both exact probe-created files.
 - Owned raw-probe path: one cleanup-refusal host test forces incomplete status
   while unaffected owned trees are removed. A missing reap proof closes owners
   without deleting their paths. A native timeout before policy delivery remains
   incomplete while the source and unaffected owned trees are removed after reap.
+  A controlled capture with a reaped leader but live group preserves all owned
+  paths and returns incomplete cleanup status.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.

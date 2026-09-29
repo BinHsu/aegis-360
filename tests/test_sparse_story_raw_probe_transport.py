@@ -29,7 +29,7 @@ from aegis360.sparse_story_probe_transcript import (  # noqa: E402
     _check_probe_row_values, parse_isolation_probe_transcript,
 )
 from aegis360.sparse_story_raw_probe_transport import (  # noqa: E402
-    _run_raw_probe, _run_owned_raw_probe,
+    _RawProbeCapture, _run_raw_probe, _run_owned_raw_probe,
 )
 from aegis360.sparse_story_runner_contract import MATRIX_KEYS  # noqa: E402
 from tests import test_sparse_story_batch_policy as batch_policy_tests  # noqa: E402
@@ -150,6 +150,7 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 outside=context.owned_outside, scratch=context.owned_scratch,
                 listeners=context.owned_listeners)
             self.assertTrue(capture.completed, capture.reason)
+            self.assertTrue(capture.group_gone)
             self.assertEqual((capture.returncode, capture.postcheck_passed), (0, True))
             rows = parse_isolation_probe_transcript(capture.stdout)
             allowed = context.allowed
@@ -194,6 +195,19 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertTrue(context.owned_scratch.snapshot.source_path.exists())
             self.assertFalse(context.owned_outside.root.exists())
             self.assertFalse(context.owned_listeners.root.exists())
+
+    def test_owned_paths_are_preserved_without_group_absence(self):
+        with self.context() as context, mock.patch(
+                "aegis360.sparse_story_raw_probe_transport._run_raw_probe",
+                return_value=_RawProbeCapture(b"", 0, False, False, False,
+                    "raw_probe_invalid")):
+            capture = _run_owned_raw_probe(context,
+                outside=context.owned_outside, scratch=context.owned_scratch,
+                listeners=context.owned_listeners)
+            self.assertEqual(capture.reason, "raw_probe_cleanup_unverified")
+            self.assertTrue(context.owned_scratch.snapshot.source_path.exists())
+            self.assertTrue(context.owned_outside.root.exists())
+            self.assertTrue(context.owned_listeners.root.exists())
 
     def test_timeout_before_policy_delivery_fails_without_adapter_output(self):
         with self.context() as context, mock.patch(

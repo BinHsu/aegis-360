@@ -32,6 +32,7 @@ _LIMIT = 65_536
 class _RawProbeCapture:
     stdout: bytes
     returncode: int | None
+    group_gone: bool
     completed: bool
     postcheck_passed: bool
     reason: str
@@ -256,7 +257,7 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
             except ValueError:
                 pass
         completed = transport_complete and primitive_passed
-        return _RawProbeCapture(bytes(stdout), returncode, completed,
+        return _RawProbeCapture(bytes(stdout), returncode, group_gone, completed,
             postcheck_passed, "raw_probe_complete" if completed else "raw_probe_invalid")
     finally:
         if read_fd >= 0: os.close(read_fd)
@@ -288,7 +289,7 @@ def _run_owned_raw_probe(context: _ProbeContext, *, outside, scratch, listeners,
         for owner in (neighbor, scratch, outside, listeners):
             if owner is not None: owner.abandon()
         raise
-    if type(capture.returncode) is not int:
+    if type(capture.returncode) is not int or capture.group_gone is not True:
         for owner in (neighbor, scratch, outside, listeners):
             if owner is not None: owner.abandon()
         return replace(capture, completed=False, reason="raw_probe_cleanup_unverified")
