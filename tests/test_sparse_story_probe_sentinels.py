@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from aegis360.sparse_story_probe_sentinels import (
     _OutsideSentinelSnapshot, _OwnedOutsideSentinel,
-    _ReadDenialSentinel, _ScratchProbeSnapshot,
+    _ReadDenialSentinel, _ScratchProbeSnapshot, _OwnedScratchProbeFiles,
 )
 
 
@@ -167,6 +167,35 @@ class ScratchProbeSnapshotTests(unittest.TestCase):
             self.home.rename(self.root / "old-home")
             self.home.mkdir(mode=0o700)
             with self.assertRaises(ValueError): proof.prevalidate()
+
+
+class OwnedScratchProbeFilesTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name).resolve() / "scratch"
+        self.root.mkdir(mode=0o700)
+        self.home, self.tmpdir = self.root / "home", self.root / "tmp"
+        self.home.mkdir(mode=0o700)
+        self.tmpdir.mkdir(mode=0o700)
+
+    def test_exact_files_clean_after_reap(self):
+        owner = _OwnedScratchProbeFiles(self.root, self.home, self.tmpdir)
+        owner.snapshot.scratch_write_path.write_bytes(b"scratch-write-sentinel-v1")
+        owner.snapshot.scratch_write_path.chmod(0o600)
+        owner.finish_after_reap(0)
+        self.assertEqual(set(self.root.iterdir()), {self.home, self.tmpdir})
+
+    def test_unreaped_or_changed_write_is_preserved(self):
+        owner = _OwnedScratchProbeFiles(self.root, self.home, self.tmpdir)
+        with self.assertRaisesRegex(ValueError, "before reap"):
+            owner.finish_after_reap(None)
+        self.assertTrue(owner.snapshot.source_path.exists())
+        owner.snapshot.source_path.unlink()
+        owner = _OwnedScratchProbeFiles(self.root, self.home, self.tmpdir)
+        owner.snapshot.scratch_write_path.write_bytes(b"changed")
+        with self.assertRaises(ValueError): owner.finish_after_reap(0)
+        self.assertEqual(owner.snapshot.scratch_write_path.read_bytes(), b"changed")
 
 
 if __name__ == "__main__": unittest.main()

@@ -358,3 +358,76 @@ class _ScratchProbeSnapshot:
     def __enter__(self): return self
 
     def __exit__(self, *_): self.close()
+
+
+class _OwnedScratchProbeFiles:
+    """Own only the scratch files created for one probe, not its batch root."""
+
+    def __init__(self, root: Path, home: Path, tmpdir: Path):
+        if (not all(isinstance(path, Path) and path.is_absolute()
+                    and path.resolve(strict=True) == path for path in (root, home, tmpdir))
+                or home.parent != root or tmpdir.parent != root or home == tmpdir):
+            raise ValueError("owned scratch paths are invalid")
+        self.root = root
+        self.snapshot = None
+        self.closed = False
+        self.root_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY
+            | os.O_NOFOLLOW | os.O_CLOEXEC)
+        root_stat = os.fstat(self.root_fd)
+        self.root_identity = (root_stat.st_dev, root_stat.st_ino)
+        self.source_identity = None
+        try:
+            fd = os.open("rename-source", os.O_WRONLY | os.O_CREAT | os.O_EXCL
+                | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600, dir_fd=self.root_fd)
+            try:
+                created = os.fstat(fd)
+                self.source_identity = (created.st_dev, created.st_ino)
+                if os.write(fd, _RENAME_SOURCE) != len(_RENAME_SOURCE):
+                    raise OSError("scratch source write was incomplete")
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+            self.snapshot = _ScratchProbeSnapshot(root, home, tmpdir)
+        except BaseException:
+            try:
+                named = os.stat("rename-source", dir_fd=self.root_fd,
+                    follow_symlinks=False)
+                if (named.st_dev, named.st_ino) == self.source_identity:
+                    os.unlink("rename-source", dir_fd=self.root_fd)
+            except FileNotFoundError:
+                pass
+            os.close(self.root_fd)
+            self.root_fd = None
+            raise
+
+    def finish_after_reap(self, returncode: int | None):
+        if type(returncode) is not int:
+            self.abandon()
+            raise ValueError("scratch files cannot be cleaned before reap")
+        try:
+            self.snapshot.postvalidate()
+            root_fd = self.root_fd
+            root_stat = os.lstat(self.root)
+            if (root_stat.st_dev, root_stat.st_ino) != self.root_identity:
+                raise ValueError("owned scratch root was replaced")
+            for name in ("scratch-write", "rename-source"):
+                named = os.stat(name, dir_fd=root_fd, follow_symlinks=False)
+                if name == "rename-source" and (named.st_dev, named.st_ino) != self.source_identity:
+                    raise ValueError("owned scratch source was replaced")
+            self.snapshot.close()
+            for name in ("scratch-write", "rename-source"):
+                os.unlink(name, dir_fd=root_fd)
+            os.close(root_fd)
+            self.root_fd = None
+            self.closed = True
+        except BaseException:
+            self.abandon()
+            raise
+
+    def abandon(self):
+        if self.closed: return
+        self.closed = True
+        if self.snapshot is not None: self.snapshot.close()
+        if self.root_fd is not None:
+            os.close(self.root_fd)
+            self.root_fd = None

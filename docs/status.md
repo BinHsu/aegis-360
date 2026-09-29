@@ -183,18 +183,18 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 769 tests run, 738 passed and 31 host/sandbox cases skipped.
+- Full discovery: 771 tests run, 740 passed and 31 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, retained identity and 33 adapter
   case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests pass; mutations are detected.
 - A selected packet is retained; mutation or replacement fails. Host raw probe
   uses full-set leaves and exact 14 boolean keys; bad bindings or keys fail.
-- Owned outside-write sentinel and listeners clean exact retained trees only
-  after child reap; 17 listener/raw transport host tests pass with them.
+- Owned outside, listener and scratch probe files clean only after child reap;
+  17 listener/raw transport host tests pass with them.
 
 ## Next action
 
-Own scratch side effects and compose one-/multi-packet denial proofs
-into a single-use capability gate.
+Bind owned probe effects into coordinator and compose one-/multi-packet denial
+proofs into a single-use capability gate.
 Coordinator proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.

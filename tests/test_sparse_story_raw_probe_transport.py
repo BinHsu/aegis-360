@@ -23,7 +23,7 @@ from aegis360.sparse_story_media_tree import (  # noqa: E402
 )
 from aegis360.sparse_story_probe_listeners import _OwnedProbeListeners  # noqa: E402
 from aegis360.sparse_story_probe_sentinels import (  # noqa: E402
-    _OwnedOutsideSentinel, _ReadDenialSentinel, _ScratchProbeSnapshot,
+    _OwnedOutsideSentinel, _OwnedScratchProbeFiles, _ReadDenialSentinel,
 )
 from aegis360.sparse_story_probe_transcript import (  # noqa: E402
     _check_probe_row_values, parse_isolation_probe_transcript,
@@ -106,8 +106,9 @@ class RawProbeTransportHostTests(unittest.TestCase):
             outside_owner = _OwnedOutsideSentinel(base)
             stack.callback(outside_owner.abandon)
             scratch = fixture.args["scratch_root"]
-            (scratch / "rename-source").write_bytes(b"rename-source-v1")
-            (scratch / "rename-source").chmod(0o600)
+            scratch_owner = _OwnedScratchProbeFiles(scratch,
+                fixture.args["private_home"], fixture.args["private_tmpdir"])
+            stack.callback(scratch_owner.abandon)
             listener_owner = _OwnedProbeListeners(base)
             stack.callback(listener_owner.abandon)
             static_reads = [stack.enter_context(_ReadDenialSentinel(path)) for path in (
@@ -132,12 +133,12 @@ class RawProbeTransportHostTests(unittest.TestCase):
             context = _ProbeContext(candidate=candidate, repository=reads[0],
                 protocol=reads[1], neighbor=reads[2], result=reads[3],
                 outside=outside_owner.snapshot,
-                scratch=stack.enter_context(_ScratchProbeSnapshot(scratch,
-                    fixture.args["private_home"], fixture.args["private_tmpdir"])),
+                scratch=scratch_owner.snapshot,
                 listeners=listener_owner.listeners)
             if one_packet: context.owned_neighbor = decoy
             context.owned_outside = outside_owner
             context.owned_listeners = listener_owner
+            context.owned_scratch = scratch_owner
             yield context
 
     def test_same_retained_runtime_probes_through_native_launcher(self):
@@ -155,6 +156,8 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(context.owned_outside.root.exists())
             context.owned_listeners.finish_after_reap(capture.returncode)
             self.assertFalse(context.owned_listeners.root.exists())
+            context.owned_scratch.finish_after_reap(capture.returncode)
+            self.assertFalse(context.owned_scratch.snapshot.source_path.exists())
 
     def test_one_packet_smoke_uses_owned_decoy_and_cleans_after_reap(self):
         with self.context(one_packet=True) as context:
@@ -166,6 +169,7 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(decoy.root.exists())
             context.owned_outside.finish_after_reap(capture.returncode)
             context.owned_listeners.finish_after_reap(capture.returncode)
+            context.owned_scratch.finish_after_reap(capture.returncode)
 
     def test_timeout_before_policy_delivery_fails_without_adapter_output(self):
         with self.context() as context, mock.patch(
