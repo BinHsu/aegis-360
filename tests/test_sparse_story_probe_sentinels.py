@@ -206,7 +206,7 @@ class OwnedScratchProbeFilesTests(unittest.TestCase):
 
         def replace_after_close():
             original_close()
-            write.unlink()
+            write.rename(self.root / "old-write")
             write.write_bytes(b"replacement")
 
         owner.snapshot.close = replace_after_close

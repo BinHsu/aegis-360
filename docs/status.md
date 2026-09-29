@@ -189,8 +189,8 @@ specific directing question. No new video is currently awaiting owner review.
 - Candidate/facade real-host integration: 34 tests pass; mutations are detected.
 - A selected packet is retained; mutation or replacement fails. Host raw probe
   uses full-set leaves and exact 14 boolean keys; bad bindings or keys fail.
-- Owned outside, listener and scratch probe files clean only after child reap;
-  replaced scratch output is preserved; 17 listener/raw host tests pass.
+- Owned probe files clean after reap; replacement survives; 17 host tests pass.
+  CI `6926cbc` failed on Linux inode reuse in the test; fix pending.
 
 ## Next action
 

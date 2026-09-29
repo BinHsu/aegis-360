@@ -413,7 +413,7 @@ class _OwnedScratchProbeFiles:
             identities = {}
             for name in ("scratch-write", "rename-source"):
                 named = os.stat(name, dir_fd=root_fd, follow_symlinks=False)
-                identities[name] = (named.st_dev, named.st_ino)
+                identities[name] = _file_facts(named)
                 if name == "rename-source" and (named.st_dev, named.st_ino) != self.source_identity:
                     raise ValueError("owned scratch source was replaced")
             self.snapshot.close()
@@ -421,7 +421,7 @@ class _OwnedScratchProbeFiles:
                 root_stat = os.lstat(self.root)
                 named = os.stat(name, dir_fd=root_fd, follow_symlinks=False)
                 if ((root_stat.st_dev, root_stat.st_ino) != self.root_identity
-                        or (named.st_dev, named.st_ino) != identities[name]
+                        or _file_facts(named) != identities[name]
                         or not stat.S_ISREG(named.st_mode)):
                     raise ValueError("owned scratch cleanup target changed")
                 os.unlink(name, dir_fd=root_fd)

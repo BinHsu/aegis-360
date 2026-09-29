@@ -1,13 +1,15 @@
 # Current handoff
 
-Updated: 2026-09-30T05:06:20+08:00
+Updated: 2026-09-30T05:09:01+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: c817df4
+Baseline commit: 6926cbc
 Remote status: `main` and fetched `origin/main` match at
-`c817df4f5e2dde41159731736697b5bb14fa44d2`.
-GitHub Actions `handoff-contract` run 36630638219 succeeded for that exact SHA.
-Working tree at checkpoint: scratch cleanup identity fix pending; verify with
+`6926cbc24a7b53d91fd1be4e8a19681343708575`.
+GitHub Actions `handoff-contract` run 36631079193 failed for that exact SHA:
+Linux reused an unlinked test file's inode. Deterministic rename replacement and
+full-fact cleanup recheck are pending publication.
+Working tree at checkpoint: correction pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -50,8 +52,8 @@ tests exercise this cleanup. The listener owner now creates a private root,
 retains exact live sockets, and removes the exact owned tree only after child
 reap. An unexpected child is preserved. A scratch file owner now creates the
 rename source exclusively and removes the exact source and expected write only
-after child reap and postvalidation. It rechecks both names immediately before
-deletion and preserves a replaced write file; the batch
+after child reap and postvalidation. It rechecks full file facts immediately
+before deletion and preserves a replaced write file; the batch
 scratch root and private HOME/TMPDIR remain under the batch fixture's owner.
 
 The rejected direct-spawn transport spike at `eea5881` is historical evidence;
@@ -73,9 +75,10 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@c817df4`; GitHub Actions
-  `handoff-contract` run 36630638219 succeeded for exact SHA
-  `c817df4f5e2dde41159731736697b5bb14fa44d2`.
+- Published checkpoint: `BinHsu/aegis-360@6926cbc`; GitHub Actions
+  `handoff-contract` run 36631079193 failed for exact SHA
+  `6926cbc24a7b53d91fd1be4e8a19681343708575` due to a non-discriminating
+  Linux replacement test. Corrected test uses rename to retain the old inode.
 
 ## Verified
 
@@ -120,7 +123,8 @@ receipt or spawn authority has been created.
   path failed; the short owned name is verified on the host.
 - Scratch file owner: three focused tests cover exact cleanup after reap,
   pre-reap/changed-output preservation and a replaced write file after snapshot
-  closure. Twelve native raw transport host tests pass with it; positive paths
+  closure. The old unlink/recreate case failed on Linux inode reuse. Twelve
+  native raw transport host tests pass; positive paths
   remove both exact probe-created files.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
