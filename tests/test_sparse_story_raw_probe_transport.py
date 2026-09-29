@@ -193,6 +193,18 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(capture.postcheck_passed)
             self.assertEqual(capture.stdout, b"")
 
+    def test_owned_timeout_cleans_source_when_write_is_absent(self):
+        with self.context() as context, mock.patch(
+                "aegis360.sparse_story_raw_probe_transport._TIMEOUT_NS", 1):
+            capture = _run_owned_raw_probe(context,
+                outside=context.owned_outside, scratch=context.owned_scratch,
+                listeners=context.owned_listeners)
+            self.assertFalse(capture.completed)
+            self.assertIsInstance(capture.returncode, int)
+            self.assertFalse(context.owned_scratch.snapshot.source_path.exists())
+            self.assertFalse(context.owned_outside.root.exists())
+            self.assertFalse(context.owned_listeners.root.exists())
+
     def test_postexit_sentinel_mutation_invalidates_completed_rows(self):
         with self.context() as context:
             original = _ProbeContext.postvalidate

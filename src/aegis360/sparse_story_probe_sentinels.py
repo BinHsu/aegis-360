@@ -405,19 +405,26 @@ class _OwnedScratchProbeFiles:
             self.abandon()
             raise ValueError("scratch files cannot be cleaned before reap")
         try:
-            self.snapshot.postvalidate()
+            try: os.stat("scratch-write", dir_fd=self.root_fd,
+                         follow_symlinks=False)
+            except FileNotFoundError:
+                self.snapshot.prevalidate()
+                names = ("rename-source",)
+            else:
+                self.snapshot.postvalidate()
+                names = ("scratch-write", "rename-source")
             root_fd = self.root_fd
             root_stat = os.lstat(self.root)
             if (root_stat.st_dev, root_stat.st_ino) != self.root_identity:
                 raise ValueError("owned scratch root was replaced")
             identities = {}
-            for name in ("scratch-write", "rename-source"):
+            for name in names:
                 named = os.stat(name, dir_fd=root_fd, follow_symlinks=False)
                 identities[name] = _file_facts(named)
                 if name == "rename-source" and (named.st_dev, named.st_ino) != self.source_identity:
                     raise ValueError("owned scratch source was replaced")
             self.snapshot.close()
-            for name in ("scratch-write", "rename-source"):
+            for name in names:
                 root_stat = os.lstat(self.root)
                 named = os.stat(name, dir_fd=root_fd, follow_symlinks=False)
                 if ((root_stat.st_dev, root_stat.st_ino) != self.root_identity

@@ -183,14 +183,14 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 773 tests run, 741 passed and 32 host/sandbox cases skipped.
+- Full discovery: 775 tests run, 742 passed and 33 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, retained identity and 33 adapter
   case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests pass; mutations are detected.
 - A selected packet is retained; mutation or replacement fails. Host raw probe
   uses full-set leaves and exact 14 boolean keys; bad bindings or keys fail.
-- Owned probe files clean after reap; replacement survives; 18 host tests pass.
-  The combined private path invalidates probe completion on cleanup refusal.
+- Owned probe cleanup preserves replacement and removes no-write source after
+  reap; 19 host tests pass. Cleanup refusal invalidates probe completion.
 
 ## Next action
 

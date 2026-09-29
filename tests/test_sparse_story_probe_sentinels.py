@@ -186,6 +186,11 @@ class OwnedScratchProbeFilesTests(unittest.TestCase):
         owner.finish_after_reap(0)
         self.assertEqual(set(self.root.iterdir()), {self.home, self.tmpdir})
 
+    def test_missing_write_cleans_only_source_after_reap(self):
+        owner = _OwnedScratchProbeFiles(self.root, self.home, self.tmpdir)
+        owner.finish_after_reap(1)
+        self.assertEqual(set(self.root.iterdir()), {self.home, self.tmpdir})
+
     def test_unreaped_or_changed_write_is_preserved(self):
         owner = _OwnedScratchProbeFiles(self.root, self.home, self.tmpdir)
         with self.assertRaisesRegex(ValueError, "before reap"):
