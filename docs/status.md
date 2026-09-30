@@ -183,14 +183,14 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 780 tests run, 744 passed and 36 host/sandbox cases skipped.
+- Full discovery: 781 tests run, 744 passed and 37 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, retained identity and 33 adapter
   case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests pass; mutations are detected.
 - First/last selected packets retain actual other-packet leaves. Host raw probe
   uses exact 14 boolean keys; bad bindings or keys fail.
-- Owned cleanup requires group absence and exact candidate closure; 22 host
-  tests pass. Changed trees and cleanup refusal preserve invalid status.
+- Owned cleanup requires group absence and exact candidate closure; 23 host
+  tests pass. No-write timeout cleans; changed private HOME remains in place.
 
 ## Next action
 

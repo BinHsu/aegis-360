@@ -142,6 +142,13 @@ class BatchPolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "root changed"):
             owner.finish_after_candidate_close(candidate, capture)
         self.assertEqual(extra.read_bytes(), b"keep")
+        owner, candidate = self.owned_scratch_candidate()
+        candidate.close()
+        private_artifact = owner.home / "unexpected"
+        private_artifact.write_bytes(b"keep")
+        with self.assertRaisesRegex(ValueError, "private directory changed"):
+            owner.finish_after_candidate_close(candidate, capture)
+        self.assertEqual(private_artifact.read_bytes(), b"keep")
 
     def test_exact_policy_is_frozen_and_path_free_digest_only(self):
         candidate = self.candidate()

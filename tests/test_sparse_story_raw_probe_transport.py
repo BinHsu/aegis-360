@@ -208,6 +208,21 @@ class RawProbeTransportHostTests(unittest.TestCase):
         owner.finish_after_candidate_close(candidate, capture)
         self.assertFalse(owner.root.exists())
 
+    def test_batch_scratch_root_closes_after_no_write_timeout(self):
+        with self.context(own_batch_scratch=True) as context, mock.patch(
+                "aegis360.sparse_story_raw_probe_transport._TIMEOUT_NS", 1):
+            capture = _run_owned_raw_probe(context,
+                outside=context.owned_outside, scratch=context.owned_scratch,
+                listeners=context.owned_listeners)
+            self.assertFalse(capture.completed)
+            self.assertTrue(capture.group_gone)
+            self.assertFalse(context.owned_scratch.snapshot.source_path.exists())
+            owner = context.owned_batch_scratch
+            candidate = context.candidate
+        candidate.close()
+        owner.finish_after_candidate_close(candidate, capture)
+        self.assertFalse(owner.root.exists())
+
     def test_owned_cleanup_failure_invalidates_raw_completion(self):
         with self.context() as context, mock.patch.object(
                 context.owned_scratch, "finish_after_reap",

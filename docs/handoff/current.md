@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-10-01T05:06:04+08:00
+Updated: 2026-10-01T05:09:44+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 22df758
+Baseline commit: 582d9b0
 Remote status: `main` and fetched `origin/main` match at
-`22df75819ce3ef65607b6b39d3d0c494feabc8d4`.
-GitHub Actions `handoff-contract` run 36633821560 succeeded for that exact SHA.
-Working tree at checkpoint: batch scratch owner changes pending; verify with
+`582d9b08a565590b0ca66f0258c2208bf1669fbb`.
+GitHub Actions `handoff-contract` run 36777302908 succeeded for that exact SHA.
+Working tree at checkpoint: no-write failure-path tests pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -57,7 +57,8 @@ before deletion and preserves a replaced write file. A new batch scratch owner
 creates an exact private root and empty HOME/TMPDIR, binds one candidate, and
 removes only that tree after the native group is absent, full-set denial proof
 has exited and the candidate has closed. Changed trees and a different candidate
-are rejected. This ownership has focused tests and one native host positive.
+are rejected. A native timeout with no scratch output also cleans this root
+after group absence and candidate closure; changed private HOME stays in place.
 The private owned-run path now ties these owners to the exact probe context,
 cleans each after a reaped child, and turns cleanup refusal into incomplete raw
 probe status. When no scratch write was created, exact pre-probe state allows
@@ -84,13 +85,13 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@22df758`; GitHub Actions
-  `handoff-contract` run 36633821560 succeeded for exact SHA
-  `22df75819ce3ef65607b6b39d3d0c494feabc8d4`.
+- Published checkpoint: `BinHsu/aegis-360@582d9b0`; GitHub Actions
+  `handoff-contract` run 36777302908 succeeded for exact SHA
+  `582d9b08a565590b0ca66f0258c2208bf1669fbb`.
 
 ## Verified
 
-- Restricted full discovery: 780 tests run, 744 passed, 36 skips. Listener
+- Restricted full discovery: 781 tests run, 744 passed, 37 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -142,9 +143,10 @@ receipt or spawn authority has been created.
   A controlled capture with a reaped leader but live group preserves all owned
   paths and returns incomplete cleanup status.
 - Owned batch scratch root: two focused tests cover exact candidate binding,
-  closed-candidate/group requirement and changed-tree preservation. A native
-  host case removes the exact root only after probe cleanup, denial-proof exit
-  and candidate close. Seventeen raw transport host tests pass.
+  closed-candidate/group requirement and changed-tree/private-HOME preservation.
+  Native success and no-write timeout cases remove the exact root only after
+  probe cleanup, denial-proof exit and candidate close. Eighteen raw transport
+  host tests pass.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
