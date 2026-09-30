@@ -326,6 +326,19 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 self.assertTrue(owner.closed)
                 self.assertTrue(owner.root.exists())
 
+    def test_coordinator_preserves_batch_root_after_inner_cleanup_refusal(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            scratch = inputs["scratch"]
+            source = scratch.snapshot.source_path
+            with mock.patch.object(scratch, "finish_after_reap",
+                    side_effect=ValueError("scratch cleanup refused")):
+                capture = _run_owned_full_set_batch_probe(**inputs)
+            self.assertFalse(capture.completed)
+            self.assertEqual(capture.reason, "batch_scratch_cleanup_invalid")
+            self.assertTrue(source.exists())
+            self.assertTrue(inputs["batch_scratch"].root.exists())
+            self.assertTrue(inputs["candidate"]._closed)
+
     def test_owned_cleanup_failure_invalidates_raw_completion(self):
         with self.context() as context, mock.patch.object(
                 context.owned_scratch, "finish_after_reap",
