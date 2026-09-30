@@ -312,6 +312,20 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertTrue(inputs["batch_scratch"].closed)
             self.assertTrue(inputs["batch_scratch"].root.exists())
 
+    def test_coordinator_preserves_owned_trees_without_group_absence(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_raw_probe",
+                    return_value=_RawProbeCapture(b"", 0, False, False, False,
+                        "raw_probe_invalid")):
+                capture = _run_owned_full_set_batch_probe(**inputs)
+            self.assertFalse(capture.completed)
+            self.assertEqual(capture.reason, "batch_scratch_cleanup_invalid")
+            self.assertTrue(inputs["candidate"]._closed)
+            for owner in (inputs["batch_scratch"], inputs["outside"],
+                    inputs["scratch"], inputs["listeners"]):
+                self.assertTrue(owner.closed)
+                self.assertTrue(owner.root.exists())
+
     def test_owned_cleanup_failure_invalidates_raw_completion(self):
         with self.context() as context, mock.patch.object(
                 context.owned_scratch, "finish_after_reap",
