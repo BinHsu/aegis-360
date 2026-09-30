@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-10-01T05:18:00+08:00
+Updated: 2026-10-01T05:22:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: ebf724d
+Baseline commit: f569e96
 Remote status: `main` and fetched `origin/main` match at
-`ebf724d8965bad6f142f83df573e5bf817fe7750`.
-GitHub Actions `handoff-contract` run 36778347709 succeeded for that exact SHA.
-Working tree at checkpoint: coordinator exception closure pending; verify with
+`f569e9602f40668401efa1d24a8c00432801034e`.
+GitHub Actions `handoff-contract` run 36778589776 succeeded for that exact SHA.
+Working tree at checkpoint: coordinator failure tests pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -74,6 +74,9 @@ On a prelaunch full-set proof failure, the coordinator closes the candidate
 and abandons the exact outside, scratch, listener and batch-scratch owners;
 it preserves unverified filesystem trees. A candidate-close exception also
 abandons batch scratch rather than claiming cleanup.
+Native host tests now exercise that close exception and a full-set result
+mutation after probe execution: both reject completion, close retained owners
+and preserve the unverified batch root.
 
 The rejected direct-spawn transport spike at `eea5881` is historical evidence;
 its weak process ownership and incomplete cleanup are not restored. The signed
@@ -94,13 +97,13 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@ebf724d`; GitHub Actions
-  `handoff-contract` run 36778347709 succeeded for exact SHA
-  `ebf724d8965bad6f142f83df573e5bf817fe7750`.
+- Published checkpoint: `BinHsu/aegis-360@f569e96`; GitHub Actions
+  `handoff-contract` run 36778589776 succeeded for exact SHA
+  `f569e9602f40668401efa1d24a8c00432801034e`.
 
 ## Verified
 
-- Restricted full discovery: 784 tests run, 744 passed, 40 skips. Listener
+- Restricted full discovery: 786 tests run, 744 passed, 42 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -156,8 +159,9 @@ receipt or spawn authority has been created.
   Native success and no-write timeout cases remove the exact root only after
   probe cleanup, denial-proof exit and candidate close. Eighteen raw transport
   host tests pass.
-- Full-set coordinator: 21 native raw transport host tests pass, including
-  success, timeout, prelaunch result change and postprobe HOME change.
+- Full-set coordinator: 23 native raw transport host tests pass, including
+  success, timeout, prelaunch/postprobe result change, candidate-close failure
+  and postprobe HOME change.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -174,8 +178,8 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- Test a candidate-close failure and postprobe proof mutation under the
-  coordinator; preserve changed trees and close retained descriptors.
+- Review coordinator denial-failure, cleanup-refusal and process-group absence
+  interactions before composing the private single-use capability gate.
 - Compose retained inputs, installed-policy observations and raw rows into a
   private single-use capability. The later inference path must use the same
   launcher, runtime, policy, uid/gid and roots. Keep public authority APIs closed.

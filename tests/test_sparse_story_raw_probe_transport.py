@@ -280,6 +280,38 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertEqual(capture.reason, "batch_scratch_cleanup_invalid")
             self.assertTrue(owner.root.exists())
 
+    def test_coordinator_preserves_batch_root_if_candidate_close_fails(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            candidate = inputs["candidate"]
+            original = candidate.close
+
+            def close_then_fail():
+                original()
+                raise OSError("candidate close failed")
+
+            with mock.patch.object(candidate, "close", side_effect=close_then_fail):
+                with self.assertRaisesRegex(OSError, "candidate close failed"):
+                    _run_owned_full_set_batch_probe(**inputs)
+            self.assertTrue(inputs["batch_scratch"].closed)
+            self.assertTrue(inputs["batch_scratch"].root.exists())
+
+    def test_coordinator_detects_postprobe_full_set_mutation(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            real_run = _run_owned_raw_probe
+
+            def change_result_after_probe(context, **owners):
+                capture = real_run(context, **owners)
+                inputs["denial_source"]["result_path"].chmod(0o600)
+                return capture
+
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_owned_raw_probe",
+                    side_effect=change_result_after_probe):
+                with self.assertRaises(ValueError):
+                    _run_owned_full_set_batch_probe(**inputs)
+            self.assertTrue(inputs["candidate"]._closed)
+            self.assertTrue(inputs["batch_scratch"].closed)
+            self.assertTrue(inputs["batch_scratch"].root.exists())
+
     def test_owned_cleanup_failure_invalidates_raw_completion(self):
         with self.context() as context, mock.patch.object(
                 context.owned_scratch, "finish_after_reap",
