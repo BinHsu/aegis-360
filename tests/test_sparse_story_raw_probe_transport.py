@@ -17,6 +17,7 @@ from aegis360.sparse_story_asset_tree import (  # noqa: E402
 from aegis360.sparse_story_probe_context import _ProbeContext  # noqa: E402
 from aegis360.sparse_story_probe_denials import (  # noqa: E402
     _OwnedOnePacketNeighbor, _retain_full_set_denials,
+    _run_owned_full_set_batch_probe,
 )
 from aegis360.sparse_story_media_tree import (  # noqa: E402
     publish_sanitized_media_gate, publish_selected_one_packet_media_gate,
@@ -44,7 +45,7 @@ from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
 class RawProbeTransportHostTests(unittest.TestCase):
     @contextmanager
     def context(self, *, one_packet=False, presentation_ordinal=6,
-                own_batch_scratch=False):
+                own_batch_scratch=False, coordinated=False):
         fixture = batch_policy_tests.BatchPolicyTests(
             "test_exact_policy_is_frozen_and_path_free_digest_only")
         fixture.setUp()
@@ -128,6 +129,19 @@ class RawProbeTransportHostTests(unittest.TestCase):
             static_reads = [stack.enter_context(_ReadDenialSentinel(path)) for path in (
                 ROOT / "src/aegis360/sparse_story_batch_policy.py",
                 ROOT / "docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md")]
+            if coordinated:
+                if one_packet or batch_scratch_owner is None:
+                    raise ValueError("coordinated fixture requires owned full set")
+                yield dict(candidate=candidate, batch_scratch=batch_scratch_owner,
+                    outside=outside_owner, scratch=scratch_owner,
+                    listeners=listener_owner, repository=static_reads[0],
+                    protocol=static_reads[1], denial_source=dict(
+                        result_bytes=full_result.read_bytes(), index=index,
+                        private_packets=packets,
+                        ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
+                        payloads=payloads, bundle=full_bundle,
+                        result_path=full_result))
+                return
             if one_packet:
                 decoy = _OwnedOnePacketNeighbor(candidate=candidate, parent=base)
                 stack.callback(decoy.abandon)
@@ -222,6 +236,45 @@ class RawProbeTransportHostTests(unittest.TestCase):
         candidate.close()
         owner.finish_after_candidate_close(candidate, capture)
         self.assertFalse(owner.root.exists())
+
+    def test_coordinator_owns_full_set_success_and_timeout_cleanup(self):
+        for timeout in (False, True):
+            with self.subTest(timeout=timeout), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                owner = inputs["batch_scratch"]
+                with mock.patch("aegis360.sparse_story_raw_probe_transport._TIMEOUT_NS",
+                        1 if timeout else 120_000_000_000):
+                    capture = _run_owned_full_set_batch_probe(**inputs)
+                self.assertEqual(capture.completed, not timeout)
+                self.assertTrue(capture.group_gone)
+                self.assertTrue(inputs["candidate"]._closed)
+                self.assertFalse(owner.root.exists())
+
+    def test_coordinator_refuses_changed_full_set_before_launch(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            inputs["denial_source"]["result_bytes"] = b"changed"
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_raw_probe"
+                    ) as launch, self.assertRaises(ValueError):
+                _run_owned_full_set_batch_probe(**inputs)
+            launch.assert_not_called()
+            self.assertTrue(inputs["candidate"]._closed)
+            self.assertTrue(inputs["batch_scratch"].root.exists())
+
+    def test_coordinator_invalidates_changed_batch_scratch_after_probe(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            owner = inputs["batch_scratch"]
+            original = owner.finish_after_candidate_close
+
+            def change_home(candidate, capture):
+                (owner.home / "unexpected").write_bytes(b"changed")
+                return original(candidate, capture)
+
+            with mock.patch.object(owner, "finish_after_candidate_close",
+                    side_effect=change_home):
+                capture = _run_owned_full_set_batch_probe(**inputs)
+            self.assertFalse(capture.completed)
+            self.assertEqual(capture.reason, "batch_scratch_cleanup_invalid")
+            self.assertTrue(owner.root.exists())
 
     def test_owned_cleanup_failure_invalidates_raw_completion(self):
         with self.context() as context, mock.patch.object(

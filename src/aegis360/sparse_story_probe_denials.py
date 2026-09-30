@@ -162,3 +162,49 @@ def _retain_full_set_denials(*, candidate: _BatchPolicyCandidate,
                 raise ValueError("full-set denial source changed during probe")
     finally:
         snapshot.close()
+
+
+def _run_owned_full_set_batch_probe(*, candidate, batch_scratch, outside,
+        scratch, listeners, repository, protocol, denial_source):
+    """Own full-set proof exit, candidate closure, then exact batch cleanup."""
+    from dataclasses import replace
+    from .sparse_story_probe_context import _ProbeContext
+    from .sparse_story_probe_listeners import _OwnedProbeListeners
+    from .sparse_story_probe_sentinels import (
+        _OwnedBatchScratch, _OwnedOutsideSentinel, _OwnedScratchProbeFiles,
+    )
+    from .sparse_story_raw_probe_transport import _run_owned_raw_probe
+
+    if (type(candidate) is not _BatchPolicyCandidate
+            or type(batch_scratch) is not _OwnedBatchScratch
+            or batch_scratch.bound_candidate is not candidate
+            or type(outside) is not _OwnedOutsideSentinel
+            or type(scratch) is not _OwnedScratchProbeFiles
+            or type(listeners) is not _OwnedProbeListeners
+            or type(repository) is not _ReadDenialSentinel
+            or type(protocol) is not _ReadDenialSentinel
+            or type(denial_source) is not dict
+            or set(denial_source) != {"result_bytes", "index", "private_packets",
+                "ordered_private_packet_sha256s", "salt_hex", "payloads",
+                "bundle", "result_path"}):
+        raise TypeError("full-set batch probe requires exact private owners")
+    capture = None
+    try:
+        with _retain_full_set_denials(candidate=candidate, **denial_source) as (
+                neighbor, result):
+            context = _ProbeContext(candidate=candidate, repository=repository,
+                protocol=protocol, neighbor=neighbor, result=result,
+                outside=outside.snapshot, scratch=scratch.snapshot,
+                listeners=listeners.listeners)
+            capture = _run_owned_raw_probe(context, outside=outside, scratch=scratch,
+                listeners=listeners)
+    except BaseException:
+        candidate.close()
+        batch_scratch.abandon()
+        raise
+    candidate.close()
+    try:
+        batch_scratch.finish_after_candidate_close(candidate, capture)
+    except (OSError, ValueError):
+        return replace(capture, completed=False, reason="batch_scratch_cleanup_invalid")
+    return capture
