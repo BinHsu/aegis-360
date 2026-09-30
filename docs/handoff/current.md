@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-10-01T05:15:11+08:00
+Updated: 2026-10-01T05:18:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: b1418b7
+Baseline commit: ebf724d
 Remote status: `main` and fetched `origin/main` match at
-`b1418b75568b301244431e75b0f5074bc5354a32`.
-GitHub Actions `handoff-contract` run 36777674105 succeeded for that exact SHA.
-Working tree at checkpoint: private coordinator changes pending; verify with
+`ebf724d8965bad6f142f83df573e5bf817fe7750`.
+GitHub Actions `handoff-contract` run 36778347709 succeeded for that exact SHA.
+Working tree at checkpoint: coordinator exception closure pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -70,6 +70,10 @@ denial proofs around the owned raw probe, closes the exact candidate only after
 proof exit, then cleans its bound batch scratch root. Native success and timeout
 cases pass. A changed full-set result is rejected before launch; a changed
 private HOME after probing invalidates completion and preserves the tree.
+On a prelaunch full-set proof failure, the coordinator closes the candidate
+and abandons the exact outside, scratch, listener and batch-scratch owners;
+it preserves unverified filesystem trees. A candidate-close exception also
+abandons batch scratch rather than claiming cleanup.
 
 The rejected direct-spawn transport spike at `eea5881` is historical evidence;
 its weak process ownership and incomplete cleanup are not restored. The signed
@@ -90,9 +94,9 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@b1418b7`; GitHub Actions
-  `handoff-contract` run 36777674105 succeeded for exact SHA
-  `b1418b75568b301244431e75b0f5074bc5354a32`.
+- Published checkpoint: `BinHsu/aegis-360@ebf724d`; GitHub Actions
+  `handoff-contract` run 36778347709 succeeded for exact SHA
+  `ebf724d8965bad6f142f83df573e5bf817fe7750`.
 
 ## Verified
 
@@ -170,8 +174,8 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- Extend the coordinator to the other failure branches and verify that every
-  exception preserves changed trees and closes exact owned resources.
+- Test a candidate-close failure and postprobe proof mutation under the
+  coordinator; preserve changed trees and close retained descriptors.
 - Compose retained inputs, installed-policy observations and raw rows into a
   private single-use capability. The later inference path must use the same
   launcher, runtime, policy, uid/gid and roots. Keep public authority APIs closed.

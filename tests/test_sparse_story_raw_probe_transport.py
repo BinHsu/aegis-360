@@ -259,6 +259,10 @@ class RawProbeTransportHostTests(unittest.TestCase):
             launch.assert_not_called()
             self.assertTrue(inputs["candidate"]._closed)
             self.assertTrue(inputs["batch_scratch"].root.exists())
+            self.assertTrue(inputs["batch_scratch"].closed)
+            self.assertTrue(inputs["outside"].closed)
+            self.assertTrue(inputs["scratch"].closed)
+            self.assertTrue(inputs["listeners"].closed)
 
     def test_coordinator_invalidates_changed_batch_scratch_after_probe(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:

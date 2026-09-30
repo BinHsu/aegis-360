@@ -199,10 +199,17 @@ def _run_owned_full_set_batch_probe(*, candidate, batch_scratch, outside,
             capture = _run_owned_raw_probe(context, outside=outside, scratch=scratch,
                 listeners=listeners)
     except BaseException:
+        try:
+            candidate.close()
+        finally:
+            for owner in (outside, scratch, listeners, batch_scratch):
+                owner.abandon()
+        raise
+    try:
         candidate.close()
+    except BaseException:
         batch_scratch.abandon()
         raise
-    candidate.close()
     try:
         batch_scratch.finish_after_candidate_close(candidate, capture)
     except (OSError, ValueError):
