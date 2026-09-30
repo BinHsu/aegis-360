@@ -183,18 +183,18 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 777 tests run, 742 passed and 35 host/sandbox cases skipped.
+- Full discovery: 780 tests run, 744 passed and 36 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, retained identity and 33 adapter
   case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests pass; mutations are detected.
 - First/last selected packets retain actual other-packet leaves. Host raw probe
   uses exact 14 boolean keys; bad bindings or keys fail.
-- Owned cleanup requires process-group absence and preserves replacement;
-  21 host tests pass. Cleanup refusal invalidates probe completion.
+- Owned cleanup requires group absence and exact candidate closure; 22 host
+  tests pass. Changed trees and cleanup refusal preserve invalid status.
 
 ## Next action
 
-Own batch scratch root/HOME/TMPDIR cleanup, then compose retained probe evidence
-into a private single-use capability gate.
+Integrate batch scratch cleanup across private failure paths, then compose
+retained probe evidence into a private single-use capability gate.
 Coordinator proof remains pending.
 Keep public authority APIs closed until the mandatory capability gate passes.

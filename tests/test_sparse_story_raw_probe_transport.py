@@ -23,7 +23,8 @@ from aegis360.sparse_story_media_tree import (  # noqa: E402
 )
 from aegis360.sparse_story_probe_listeners import _OwnedProbeListeners  # noqa: E402
 from aegis360.sparse_story_probe_sentinels import (  # noqa: E402
-    _OwnedOutsideSentinel, _OwnedScratchProbeFiles, _ReadDenialSentinel,
+    _OwnedOutsideSentinel, _OwnedScratchProbeFiles, _OwnedBatchScratch,
+    _ReadDenialSentinel,
 )
 from aegis360.sparse_story_probe_transcript import (  # noqa: E402
     _check_probe_row_values, parse_isolation_probe_transcript,
@@ -42,12 +43,20 @@ from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
     "requires explicit Darwin host Seatbelt gate outside nested sandbox")
 class RawProbeTransportHostTests(unittest.TestCase):
     @contextmanager
-    def context(self, *, one_packet=False, presentation_ordinal=6):
+    def context(self, *, one_packet=False, presentation_ordinal=6,
+                own_batch_scratch=False):
         fixture = batch_policy_tests.BatchPolicyTests(
             "test_exact_policy_is_frozen_and_path_free_digest_only")
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
         base = fixture.base
+        batch_scratch_owner = None
+        if own_batch_scratch:
+            batch_scratch_owner = _OwnedBatchScratch(base)
+            self.addCleanup(batch_scratch_owner.abandon)
+            fixture.args.update(scratch_root=batch_scratch_owner.root,
+                private_home=batch_scratch_owner.home,
+                private_tmpdir=batch_scratch_owner.tmpdir)
         if not one_packet:
             packets, hashes, index = projection_tests.SparseStoryProjectionTests().build(6)
             payloads = media_tests.SparseStoryMediaTreeTests().payloads(index)
@@ -106,6 +115,8 @@ class RawProbeTransportHostTests(unittest.TestCase):
                     ordered_private_packet_sha256s=chosen_hashes,
                     payloads=chosen_payloads,
                     media_result_bytes=selected_result.read_bytes())
+            if batch_scratch_owner is not None:
+                batch_scratch_owner.bind(candidate)
             outside_owner = _OwnedOutsideSentinel(base)
             stack.callback(outside_owner.abandon)
             scratch = fixture.args["scratch_root"]
@@ -142,6 +153,7 @@ class RawProbeTransportHostTests(unittest.TestCase):
             context.owned_outside = outside_owner
             context.owned_listeners = listener_owner
             context.owned_scratch = scratch_owner
+            context.owned_batch_scratch = batch_scratch_owner
             yield context
 
     def test_same_retained_runtime_probes_through_native_launcher(self):
@@ -182,6 +194,19 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertTrue(capture.completed, capture.reason)
             self.assertTrue(context.reads[2].path.exists())
             self.assertFalse(context.owned_outside.root.exists())
+
+    def test_batch_scratch_root_closes_after_native_probe_and_candidate(self):
+        with self.context(own_batch_scratch=True) as context:
+            capture = _run_owned_raw_probe(context,
+                outside=context.owned_outside, scratch=context.owned_scratch,
+                listeners=context.owned_listeners)
+            self.assertTrue(capture.completed, capture.reason)
+            owner = context.owned_batch_scratch
+            self.assertTrue(owner.root.exists())
+            candidate = context.candidate
+        candidate.close()
+        owner.finish_after_candidate_close(candidate, capture)
+        self.assertFalse(owner.root.exists())
 
     def test_owned_cleanup_failure_invalidates_raw_completion(self):
         with self.context() as context, mock.patch.object(

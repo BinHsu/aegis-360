@@ -446,3 +446,131 @@ class _OwnedScratchProbeFiles:
         if self.root_fd is not None:
             os.close(self.root_fd)
             self.root_fd = None
+
+
+class _OwnedBatchScratch:
+    """Own one private batch scratch root and its empty HOME/TMPDIR."""
+
+    def __init__(self, parent: Path):
+        if (not isinstance(parent, Path) or not parent.is_absolute()
+                or parent.resolve(strict=True) != parent):
+            raise ValueError("batch scratch parent is not canonical")
+        self.root = Path(tempfile.mkdtemp(prefix="aegis-scratch-", dir=parent)).resolve()
+        self.home, self.tmpdir = self.root / "home", self.root / "tmp"
+        root = os.lstat(self.root)
+        self.root_identity = (root.st_dev, root.st_ino)
+        self.root_fd = None
+        self.closed = False
+        self.bound_candidate = None
+        self.private_identities = {}
+        try:
+            self.root_fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY
+                | os.O_NOFOLLOW | os.O_CLOEXEC)
+            for name in ("home", "tmp"):
+                os.mkdir(name, 0o700, dir_fd=self.root_fd)
+                named = os.stat(name, dir_fd=self.root_fd,
+                    follow_symlinks=False)
+                self.private_identities[name] = (named.st_dev, named.st_ino)
+            self.revalidate()
+        except BaseException:
+            self._discard_created_before_use()
+            raise
+
+    def _discard_created_before_use(self):
+        if self.root_fd is not None:
+            for name, identity in reversed(tuple(self.private_identities.items())):
+                try:
+                    named = os.stat(name, dir_fd=self.root_fd,
+                        follow_symlinks=False)
+                    if (named.st_dev, named.st_ino) == identity:
+                        os.rmdir(name, dir_fd=self.root_fd)
+                except OSError:
+                    pass
+            os.close(self.root_fd)
+            self.root_fd = None
+        try:
+            named = os.lstat(self.root)
+            if (named.st_dev, named.st_ino) == self.root_identity:
+                self.root.rmdir()
+        except OSError:
+            pass
+        self.closed = True
+
+    def revalidate(self):
+        if self.closed: raise ValueError("owned batch scratch is closed")
+        root = os.lstat(self.root)
+        if ((root.st_dev, root.st_ino) != self.root_identity
+                or _directory_facts(root) != _directory_facts(os.fstat(self.root_fd))
+                or not stat.S_ISDIR(root.st_mode)
+                or stat.S_IMODE(root.st_mode) != 0o700
+                or root.st_uid != os.getuid()
+                or set(os.listdir(self.root_fd)) != {"home", "tmp"}):
+            raise ValueError("owned batch scratch root changed")
+        for path in (self.home, self.tmpdir):
+            named = os.stat(path.name, dir_fd=self.root_fd,
+                follow_symlinks=False)
+            absolute = os.lstat(path)
+            if ((named.st_dev, named.st_ino) != self.private_identities[path.name]
+                    or _directory_facts(named) != _directory_facts(absolute)
+                    or not stat.S_ISDIR(named.st_mode)
+                    or stat.S_IMODE(named.st_mode) != 0o700
+                    or named.st_uid != os.getuid() or os.listdir(path)):
+                raise ValueError("owned batch private directory changed")
+
+    def bind(self, candidate):
+        from .sparse_story_batch_policy import _BatchPolicyCandidate
+        if (type(candidate) is not _BatchPolicyCandidate
+                or self.bound_candidate is not None or candidate._closed
+                or candidate._roots["scratch_root"] != str(self.root)
+                or candidate._private_home.identity.path != str(self.home)
+                or candidate._private_tmpdir.identity.path != str(self.tmpdir)):
+            raise ValueError("owned batch scratch candidate binding is invalid")
+        self.revalidate()
+        candidate._binding_bytes()
+        self.bound_candidate = candidate
+
+    def finish_after_candidate_close(self, candidate, capture):
+        from .sparse_story_batch_policy import _BatchPolicyCandidate
+        from .sparse_story_raw_probe_transport import _RawProbeCapture
+        if (type(candidate) is not _BatchPolicyCandidate
+                or type(capture) is not _RawProbeCapture
+                or candidate is not self.bound_candidate
+                or not candidate._closed or type(capture.returncode) is not int
+                or capture.group_gone is not True
+                or candidate._roots["scratch_root"] != str(self.root)
+                or candidate._private_home.identity.path != str(self.home)
+                or candidate._private_tmpdir.identity.path != str(self.tmpdir)
+                or (candidate._scratch.identity.device,
+                    candidate._scratch.identity.inode) != self.root_identity
+                or (candidate._private_home.identity.device,
+                    candidate._private_home.identity.inode) != self.private_identities["home"]
+                or (candidate._private_tmpdir.identity.device,
+                    candidate._private_tmpdir.identity.inode) != self.private_identities["tmp"]):
+            self.abandon()
+            raise ValueError("batch scratch cannot be cleaned before owner closure")
+        try:
+            self.revalidate()
+            for path in (self.home, self.tmpdir):
+                named = os.stat(path.name, dir_fd=self.root_fd,
+                    follow_symlinks=False)
+                if (named.st_dev, named.st_ino) != self.private_identities[path.name]:
+                    raise ValueError("batch private cleanup target changed")
+                os.rmdir(path.name, dir_fd=self.root_fd)
+            root = os.lstat(self.root)
+            if ((root.st_dev, root.st_ino) != self.root_identity
+                    or os.listdir(self.root_fd)):
+                raise ValueError("batch scratch root changed during cleanup")
+            os.close(self.root_fd)
+            self.root_fd = None
+            self.root.rmdir()
+            self.closed = True
+        except BaseException:
+            self.abandon()
+            raise
+
+    def abandon(self):
+        if self.closed: return
+        self.closed = True
+        if self.root_fd is not None:
+            os.close(self.root_fd)
+            self.root_fd = None

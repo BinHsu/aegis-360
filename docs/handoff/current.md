@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-09-30T05:30:36+08:00
+Updated: 2026-10-01T05:06:04+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 66b5565
+Baseline commit: 22df758
 Remote status: `main` and fetched `origin/main` match at
-`66b5565beceeb7f17227bcc37cf0d22606304a90`.
-GitHub Actions `handoff-contract` run 36633146487 succeeded for that exact SHA.
-Working tree at checkpoint: clean before this handoff-only update; verify with
+`22df75819ce3ef65607b6b39d3d0c494feabc8d4`.
+GitHub Actions `handoff-contract` run 36633821560 succeeded for that exact SHA.
+Working tree at checkpoint: batch scratch owner changes pending; verify with
 `git status --short` before resuming.
 
 ## Objective
@@ -53,8 +53,11 @@ retains exact live sockets, and removes the exact owned tree only after child
 reap. An unexpected child is preserved. A scratch file owner now creates the
 rename source exclusively and removes the exact source and expected write only
 after child reap and postvalidation. It rechecks full file facts immediately
-before deletion and preserves a replaced write file; the batch
-scratch root and private HOME/TMPDIR remain under the batch fixture's owner.
+before deletion and preserves a replaced write file. A new batch scratch owner
+creates an exact private root and empty HOME/TMPDIR, binds one candidate, and
+removes only that tree after the native group is absent, full-set denial proof
+has exited and the candidate has closed. Changed trees and a different candidate
+are rejected. This ownership has focused tests and one native host positive.
 The private owned-run path now ties these owners to the exact probe context,
 cleans each after a reaped child, and turns cleanup refusal into incomplete raw
 probe status. When no scratch write was created, exact pre-probe state allows
@@ -81,23 +84,13 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@66b5565`; GitHub Actions
-  `handoff-contract` run 36633146487 succeeded for exact SHA
-  `66b5565beceeb7f17227bcc37cf0d22606304a90`.
-
-## Work assessment
-
-Nine commits since `570a869` added outside/listener/scratch-file ownership,
-combined probe cleanup and first-packet full-set host coverage. Four of those
-commits mainly repaired cleanup or test portability. Roughly two-thirds of this
-wave went to debugging, lifecycle hardening and verification; it did not yet
-produce a capability, adapter inference, semantic result or camera decision.
-An unverified batch-scratch-root spike and an unrestricted shared-launcher
-refactor were withdrawn before this checkpoint, leaving no partial code.
+- Published checkpoint: `BinHsu/aegis-360@22df758`; GitHub Actions
+  `handoff-contract` run 36633821560 succeeded for exact SHA
+  `22df75819ce3ef65607b6b39d3d0c494feabc8d4`.
 
 ## Verified
 
-- Restricted full discovery: 777 tests run, 742 passed, 35 skips. Listener
+- Restricted full discovery: 780 tests run, 744 passed, 36 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -148,6 +141,10 @@ refactor were withdrawn before this checkpoint, leaving no partial code.
   incomplete while the source and unaffected owned trees are removed after reap.
   A controlled capture with a reaped leader but live group preserves all owned
   paths and returns incomplete cleanup status.
+- Owned batch scratch root: two focused tests cover exact candidate binding,
+  closed-candidate/group requirement and changed-tree preservation. A native
+  host case removes the exact root only after probe cleanup, denial-proof exit
+  and candidate close. Seventeen raw transport host tests pass.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -164,8 +161,8 @@ refactor were withdrawn before this checkpoint, leaving no partial code.
 
 ## Pending
 
-- Own batch scratch root/HOME/TMPDIR after a verified group exit and candidate
-  closure, then integrate the owned raw-probe path with full-set denial proofs.
+- Integrate owned batch scratch cleanup into the private coordinator's full
+  failure lifecycle; current positive host path closes it explicitly.
 - Compose retained inputs, installed-policy observations and raw rows into a
   private single-use capability. The later inference path must use the same
   launcher, runtime, policy, uid/gid and roots. Keep public authority APIs closed.

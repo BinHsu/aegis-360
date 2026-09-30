@@ -19,7 +19,9 @@ from aegis360.sparse_story_probe_context import _ProbeContext
 from aegis360.sparse_story_probe_listeners import _ProbeListeners
 from aegis360.sparse_story_probe_sentinels import (
     _OutsideSentinelSnapshot, _ReadDenialSentinel, _ScratchProbeSnapshot,
+    _OwnedBatchScratch,
 )
+from aegis360.sparse_story_raw_probe_transport import _RawProbeCapture
 from aegis360.sparse_story_media_tree import (
     publish_sanitized_bundle, publish_selected_one_packet_media_gate,
 )
@@ -97,6 +99,49 @@ class BatchPolicyTests(unittest.TestCase):
         result = _open_batch_policy_candidate(**(self.args | changes))
         self.addCleanup(result.close)
         return result
+
+    def owned_scratch_candidate(self):
+        owner = _OwnedBatchScratch(self.base)
+        self.addCleanup(owner.abandon)
+        candidate = self.candidate(scratch_root=owner.root,
+            private_home=owner.home, private_tmpdir=owner.tmpdir)
+        owner.bind(candidate)
+        return owner, candidate
+
+    def test_owned_batch_scratch_cleans_after_candidate_and_group_close(self):
+        owner, candidate = self.owned_scratch_candidate()
+        owner.revalidate()
+        capture = _RawProbeCapture(b"", 0, True, False, False, "test")
+        candidate.close()
+        owner.finish_after_candidate_close(candidate, capture)
+        self.assertFalse(owner.root.exists())
+
+    def test_owned_batch_scratch_preserves_changed_or_live_tree(self):
+        capture = _RawProbeCapture(b"", 0, True, False, False, "test")
+        owner, candidate = self.owned_scratch_candidate()
+        with self.assertRaisesRegex(ValueError, "owner closure"):
+            owner.finish_after_candidate_close(candidate, capture)
+        self.assertTrue(owner.root.exists())
+        owner, candidate = self.owned_scratch_candidate()
+        candidate.close()
+        live_group = _RawProbeCapture(b"", 0, False, False, False, "test")
+        with self.assertRaisesRegex(ValueError, "owner closure"):
+            owner.finish_after_candidate_close(candidate, live_group)
+        self.assertTrue(owner.root.exists())
+        owner, candidate = self.owned_scratch_candidate()
+        other = self.candidate(scratch_root=owner.root,
+            private_home=owner.home, private_tmpdir=owner.tmpdir)
+        other.close()
+        with self.assertRaisesRegex(ValueError, "owner closure"):
+            owner.finish_after_candidate_close(other, capture)
+        self.assertTrue(owner.root.exists())
+        owner, candidate = self.owned_scratch_candidate()
+        candidate.close()
+        extra = owner.root / "unexpected"
+        extra.write_bytes(b"keep")
+        with self.assertRaisesRegex(ValueError, "root changed"):
+            owner.finish_after_candidate_close(candidate, capture)
+        self.assertEqual(extra.read_bytes(), b"keep")
 
     def test_exact_policy_is_frozen_and_path_free_digest_only(self):
         candidate = self.candidate()
