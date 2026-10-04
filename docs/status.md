@@ -189,10 +189,10 @@ specific directing question. No new video is currently awaiting owner review.
 - Candidate/facade real-host integration: 34 tests pass; mutations are detected.
 - First/last selected packets retain actual other-packet leaves. Host raw probe
   uses exact 14 boolean keys; bad bindings or keys fail.
-- The private retained-probe session keeps the candidate and batch scratch root
-  open after success. One claim binds exact policy/backend/runner hashes and 14
-  true probes. Three fixed synthetic cases use the same native launcher and
-  policy; all 36 host tests pass. No general inference authority exists.
+- The private retained session binds 14 probes and policy/backend/runner hashes.
+  Three fixed synthetic cases use the same native launcher and policy; strict
+  stdout validation and all 37 host tests pass. No general inference authority
+  exists.
 
 ## Next action
 

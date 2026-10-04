@@ -405,6 +405,21 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertTrue(inputs["batch_scratch"].root.exists())
             self.assertTrue(inputs["candidate"]._closed)
 
+    def test_claim_rejects_malformed_success_stdout(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            real_run = _run_native_process
+
+            def malformed_stdout(*args, **kwargs):
+                return replace(real_run(*args, **kwargs), stdout=b"{}{}")
+
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process",
+                    side_effect=malformed_stdout), self.assertRaises(ValueError):
+                claim._run_fixed_synthetic_fd_case_once()
+            session.close()
+            self.assertFalse(inputs["batch_scratch"].root.exists())
+
     def test_retained_probe_timeout_closes_candidate_and_owned_root(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
             root = inputs["batch_scratch"].root

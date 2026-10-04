@@ -1,14 +1,13 @@
 # Current handoff
 
-Updated: 2026-10-04T15:04:00+08:00
+Updated: 2026-10-04T15:00:49+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: df82f92
+Baseline commit: 626b81e
 Remote status: `git ls-remote origin refs/heads/main` confirmed
 `df82f925866aa9c85320f7b1538a1f903e6d4b20`; `handoff-contract` run
-37183729225 succeeded for that exact SHA.
-Working tree at checkpoint: bounded native invocation transport, design note,
-tests and this handoff update pending local commit; verify with `git status --short`.
+37183729225 succeeded for that exact SHA. Local `main` is two commits ahead.
+Working tree at checkpoint: clean after this commit; verify with `git status --short`.
 
 ## Objective
 
@@ -26,17 +25,13 @@ the same retained native launcher, runtime and policy: descriptor hygiene,
 shared transport retains the leader through process-group teardown. Exact
 scratch content is removed only after group absence; changed content and
 missing inference group proof preserve the batch root. A second invocation is
-rejected. This is fixed synthetic transport evidence, not general adapter or
-model invocation authority. Native raw-transport host suite: 36/36 passed.
+rejected. Strict raw JSON/schema validation rejects malformed stdout. This is
+fixed synthetic transport evidence, not general adapter/model authority.
+Native raw-transport host suite: 37/37 passed.
 
-The private retained session now issues one claim after revalidation, rejects a
-second claim, and invalidates the claim on terminal close. The claim cannot be
-copied or pickled. Its private receipt bytes are derived from the rechecked raw
-matrix and hashes of the retained backend manifest, exact policy input and
-runner policy. The 14-key matrix is exact true booleans. This is still an
-internal shape/binding milestone: no spawn method, public receipt derivation,
-inference call or aggregate authority has been opened. The full native
-raw-transport host suite remains 29/29 passing.
+The private claim is single-use and invalid after terminal close. Its receipt
+shape binds the exact 14-key raw matrix and backend, policy and runner hashes;
+public receipt and general invocation authority remain closed.
 
 The retained session keeps candidate and scratch alive; changed inputs fail closed.
 The private batch candidate retains exact request, runner-policy and enforcement-
@@ -121,10 +116,11 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@df82f92`; exact-SHA remote CI passed.
+- Local unpublished commits: `626b81e` and this stdout-gate checkpoint.
 
 ## Verified
 
-- Restricted full discovery: 799 tests run, 744 passed, 55 skips. Listener
+- Restricted full discovery: 800 tests run, 744 passed, 56 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -182,7 +178,7 @@ receipt or spawn authority has been created.
   host tests pass.
 - Full-set coordinator covers success, timeout, source mutation and cleanup
   refusal in the current 29-test native raw-transport suite.
-- Private retained session and fixed synthetic transport: 36 native host tests
+- Private retained session and fixed synthetic transport: 37 native host tests
   pass, including changed HOME, timeout, simultaneous pipes, exact scratch
   cleanup, changed content and missing inference group proof.
 - The native retained-session case also confirms one-time claim rejection and

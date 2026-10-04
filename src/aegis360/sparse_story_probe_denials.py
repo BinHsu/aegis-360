@@ -347,6 +347,9 @@ class _ClaimedProbedBatch:
             if not capture.completed or not capture.group_gone:
                 return capture
             _clean_fixed_synthetic_scratch(scratch_owner)
+        if capture.completed:
+            from .sparse_story_semantics import _strict_raw
+            _strict_raw(capture.stdout)
         self.revalidate()
         return capture
 
