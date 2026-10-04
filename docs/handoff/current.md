@@ -1,14 +1,14 @@
 # Current handoff
 
-Updated: 2026-10-04T14:14:59+08:00
+Updated: 2026-10-04T14:21:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0fc1c87
 Remote status: local `main` and `origin/main` refs match at
 `0fc1c8709157c2b93a5852cae4583ce17c5346d8`; no remote CI was verified
 for that SHA in this turn.
-Working tree at checkpoint: private retained-session implementation, host tests
-and checkpoint update pending local commit; verify with `git status --short`.
+Working tree at checkpoint: private one-time claim and receipt-shape changes
+pending local commit; verify with `git status --short`.
 
 ## Objective
 
@@ -20,16 +20,17 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-The private retained-probe session runs the same owned full-set raw probe,
-keeps the exact candidate and batch scratch root alive after denial-proof exit,
-and revalidates candidate binding and empty private HOME/TMPDIR. Its terminal
-close closes the candidate before exact scratch cleanup. Incomplete raw probe
-and changed full-set result paths cannot return a session; changed private HOME
-invalidates the session and preserves the root. Four new native host tests cover
-these paths; the full raw-transport host suite passes 29 tests. This is a
-private lifecycle only: no token, capability receipt, inference invocation or
-public authority API exists.
+The private retained session now issues one claim after revalidation, rejects a
+second claim, and invalidates the claim on terminal close. The claim cannot be
+copied or pickled. Its private receipt bytes are derived from the rechecked raw
+matrix and hashes of the retained backend manifest, exact policy input and
+runner policy. The 14-key matrix is exact true booleans. This is still an
+internal shape/binding milestone: no spawn method, public receipt derivation,
+inference call or aggregate authority has been opened. The full native
+raw-transport host suite remains 29/29 passing.
 
+The retained session keeps the candidate and batch scratch alive after denial
+proof exit; failed probes, changed source and changed HOME fail closed.
 The private batch candidate retains exact request, runner-policy and enforcement-
 policy bytes; uid/gid; launcher, runtime, model and prompt roots; selected media;
 and empty private HOME/TMPDIR identities. A validated 6/24-packet set can publish
@@ -111,8 +112,8 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Local baseline: `BinHsu/aegis-360@0fc1c87`; local and origin tracking refs
-  match. New retained-session work is uncommitted at this checkpoint.
+- Local baseline: `BinHsu/aegis-360@ca6c12b`; this turn has not published it.
+  Claim and receipt-shape work is uncommitted.
 
 ## Verified
 
@@ -172,13 +173,14 @@ receipt or spawn authority has been created.
   Native success and no-write timeout cases remove the exact root only after
   probe cleanup, denial-proof exit and candidate close. Eighteen raw transport
   host tests pass.
-- Full-set coordinator: 25 native raw transport host tests pass, including
-  success, timeout, prelaunch/postprobe result change, candidate-close failure
-  postprobe HOME change, missing group absence and inner cleanup refusal.
+- Full-set coordinator covers success, timeout, source mutation and cleanup
+  refusal in the current 29-test native raw-transport suite.
 - Private retained session: four new native host checks pass for successful
   retention/terminal cleanup, changed HOME preservation, timeout cleanup and
   changed full-set result rejection. Full native raw-transport suite: 29 tests
   passed, zero skips under the explicit host gate.
+- The native retained-session case also confirms one-time claim rejection and
+  private receipt hashes/matrix; claim and receipt fail after terminal close.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -195,10 +197,11 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The private retained session has probe evidence, exact candidate binding and
-  terminal cleanup, but no single-use claim or inference invocation. Add a
-  private claim that retains the same launcher, runtime, policy, uid/gid and
-  roots across the invocation path, then compose an installed-policy receipt.
+- The private retained session has probe evidence, exact binding and one-time
+  claim, but no inference invocation. Bind the
+  claim to the same launcher, runtime, policy, uid/gid and roots through the
+  invocation path; then assess receipt authority. The current private receipt
+  bytes are shape evidence only.
   The current `capture_adapter_process` accepts injected tokens but supplies no
   production backend token. Keep public authority APIs closed.
 - Then complete the four coordinator-owned synthetic cases before model/media

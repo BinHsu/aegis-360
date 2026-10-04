@@ -223,12 +223,14 @@ class _RetainedProbedBatch:
     This is deliberately not an invocation token or capability receipt.
     """
 
-    def __init__(self, candidate, batch_scratch, capture, binding):
+    def __init__(self, candidate, batch_scratch, capture, binding, receipt_bytes):
         self._candidate = candidate
         self._batch_scratch = batch_scratch
         self._capture = capture
         self._binding = binding
+        self._receipt_bytes = receipt_bytes
         self._closed = False
+        self._claimed = False
 
     def revalidate(self):
         if self._closed or not self._capture.completed:
@@ -251,12 +253,52 @@ class _RetainedProbedBatch:
         self._batch_scratch.finish_after_candidate_close(
             self._candidate, self._capture)
 
+    def claim_once(self):
+        """Consume the private batch claim before any future invocation work."""
+        if self._claimed:
+            raise ValueError("retained probe batch was already claimed")
+        self.revalidate()
+        self._claimed = True
+        return _ClaimedProbedBatch(_CLAIM_FACTORY_TOKEN, self)
+
     def __enter__(self):
         self.revalidate()
         return self
 
     def __exit__(self, _type, _value, _traceback):
         self.close()
+
+
+class _ClaimedProbedBatch:
+    """Non-transferable private claim; it has no spawn or receipt method."""
+
+    def __init__(self, token, session):
+        if (token is not _CLAIM_FACTORY_TOKEN
+                or type(session) is not _RetainedProbedBatch
+                or not session._claimed):
+            raise TypeError("claim requires a consumed retained session")
+        self._session = session
+
+    def revalidate(self):
+        if not self._session._claimed:
+            raise ValueError("retained claim is inactive")
+        self._session.revalidate()
+
+    def receipt_bytes(self):
+        self.revalidate()
+        return self._session._receipt_bytes
+
+    def __copy__(self):
+        raise TypeError("private batch claims cannot be copied")
+
+    def __deepcopy__(self, _memo):
+        raise TypeError("private batch claims cannot be copied")
+
+    def __reduce__(self):
+        raise TypeError("private batch claims cannot be pickled")
+
+
+_CLAIM_FACTORY_TOKEN = object()
 
 
 def _open_retained_probed_batch(*, candidate, batch_scratch, outside,
@@ -268,6 +310,13 @@ def _open_retained_probed_batch(*, candidate, batch_scratch, outside,
         _OwnedBatchScratch, _OwnedOutsideSentinel, _OwnedScratchProbeFiles,
     )
     from .sparse_story_raw_probe_transport import _run_owned_raw_probe
+    from .sparse_story_probe_transcript import (
+        _check_probe_row_values, parse_isolation_probe_transcript,
+    )
+    from .sparse_story_runner_contract import (
+        CAPABILITY_SCHEMA, MATRIX_KEYS, canonical_capability_receipt_shape_bytes,
+    )
+    import hashlib
 
     if (type(candidate) is not _BatchPolicyCandidate
             or type(batch_scratch) is not _OwnedBatchScratch
@@ -296,7 +345,26 @@ def _open_retained_probed_batch(*, candidate, batch_scratch, outside,
             raise ValueError("retained batch raw probe is incomplete")
         binding = candidate._binding_bytes()
         batch_scratch.revalidate()
-        session = _RetainedProbedBatch(candidate, batch_scratch, capture, binding)
+        rows = parse_isolation_probe_transcript(capture.stdout)
+        bundle, model, prompt = context.allowed
+        matrix = _check_probe_row_values(rows,
+            bundle_prefix=bundle.prefix, model_prefix=model.prefix,
+            prompt_prefix=prompt.prefix)
+        if (set(matrix) != set(MATRIX_KEYS)
+                or any(matrix[key] is not True for key in MATRIX_KEYS)):
+            raise ValueError("retained probe matrix is incomplete")
+        receipt_bytes = canonical_capability_receipt_shape_bytes({
+            "schema_version": CAPABILITY_SCHEMA,
+            "backend_manifest_sha256": hashlib.sha256(
+                candidate._backend_bytes).hexdigest(),
+            "compiled_policy_sha256": hashlib.sha256(
+                candidate._policy_bytes()).hexdigest(),
+            "runner_policy_sha256": hashlib.sha256(
+                candidate._runner_policy_bytes).hexdigest(),
+            "matrix": matrix,
+        })
+        session = _RetainedProbedBatch(candidate, batch_scratch, capture, binding,
+            receipt_bytes)
         session.revalidate()
         return session
     except BaseException:

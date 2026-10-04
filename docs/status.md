@@ -190,11 +190,11 @@ specific directing question. No new video is currently awaiting owner review.
 - First/last selected packets retain actual other-packet leaves. Host raw probe
   uses exact 14 boolean keys; bad bindings or keys fail.
 - The private retained-probe session keeps the candidate and batch scratch root
-  open after success, then closes them in order. Four lifecycle tests and all
-  29 native raw-transport host tests pass. Mutation and incomplete probe paths
-  fail closed; no token or inference authority exists.
+  open after success, then closes them in order. One private claim is issued;
+  its receipt shape binds exact policy/backend/runner hashes and 14 true probes.
+  All 29 native raw-transport host tests pass. No inference authority exists.
 
 ## Next action
 
-Add a private single-use claim and same-policy inference binding to the retained
-session, then compose a capability receipt. Keep public APIs closed.
+Bind the private claim to same-policy inference invocation, then assess receipt
+authority. Keep public APIs closed.

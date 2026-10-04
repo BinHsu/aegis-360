@@ -1,4 +1,6 @@
 import os
+import hashlib
+import json
 import signal
 import subprocess
 import sys
@@ -258,6 +260,19 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(candidate._closed)
             self.assertTrue(root.exists())
             session.revalidate()
+            claim = session.claim_once()
+            claim.revalidate()
+            receipt = json.loads(claim.receipt_bytes())
+            self.assertEqual(receipt["compiled_policy_sha256"],
+                hashlib.sha256(candidate._policy_bytes()).hexdigest())
+            self.assertEqual(receipt["backend_manifest_sha256"],
+                hashlib.sha256(candidate._backend_bytes).hexdigest())
+            self.assertEqual(receipt["runner_policy_sha256"],
+                hashlib.sha256(candidate._runner_policy_bytes).hexdigest())
+            self.assertEqual(set(receipt["matrix"]), set(MATRIX_KEYS))
+            self.assertTrue(all(value is True for value in receipt["matrix"].values()))
+            with self.assertRaisesRegex(ValueError, "already claimed"):
+                session.claim_once()
             self.assertFalse(inputs["outside"].root.exists())
             self.assertFalse(inputs["listeners"].root.exists())
             session.close()
@@ -265,6 +280,10 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(root.exists())
             with self.assertRaises(ValueError):
                 session.revalidate()
+            with self.assertRaises(ValueError):
+                claim.revalidate()
+            with self.assertRaises(ValueError):
+                claim.receipt_bytes()
 
     def test_retained_probe_rejects_changed_batch_before_close(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
@@ -273,6 +292,8 @@ class RawProbeTransportHostTests(unittest.TestCase):
             (root / "home" / "unexpected").write_bytes(b"changed")
             with self.assertRaises(ValueError):
                 session.revalidate()
+            with self.assertRaises(ValueError):
+                session.claim_once()
             with self.assertRaises(ValueError):
                 session.close()
             self.assertTrue(root.exists())
