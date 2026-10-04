@@ -293,6 +293,7 @@ class _ClaimedProbedBatch:
             raise TypeError("claim requires a consumed retained session")
         self._session = session
         self._invoked = False
+        self._last_stimulus = None
 
     def revalidate(self):
         if not self._session._claimed:
@@ -320,6 +321,30 @@ class _ClaimedProbedBatch:
             raise ValueError("synthetic packet ID is invalid")
         return _PrivateSyntheticObservation(_CLAIM_FACTORY_TOKEN, self._session,
             packet_id, hashlib.sha256(capture.stdout).hexdigest())
+
+    def _record_fixed_stimulus(self, case_id, argv, stdin):
+        import hashlib
+        from .sparse_story_runner_contract import (
+            build_asset_manifest_shape, canonical_asset_manifest_shape_bytes,
+        )
+        if (self._last_stimulus is not None or type(argv) is not tuple
+                or type(stdin) is not bytes):
+            raise ValueError("fixed stimulus was already recorded")
+        support = build_asset_manifest_shape(asset_kind="synthetic_support",
+            entries=[])
+        self._last_stimulus = (case_id, {"argv": list(argv),
+            "stdin_sha256": hashlib.sha256(stdin).hexdigest(),
+            "support_manifest_sha256": hashlib.sha256(
+                canonical_asset_manifest_shape_bytes(support)).hexdigest()})
+
+    def _verify_frozen_case_stimulus(self, row):
+        if (not self._invoked or self._session._invocation_capture is None
+                or type(row) is not dict or set(row) != {
+                    "case_id", "expected_result", "stimulus"}
+                or self._last_stimulus is None
+                or row["case_id"] != self._last_stimulus[0]
+                or row["stimulus"] != self._last_stimulus[1]):
+            raise ValueError("executed case differs from frozen stimulus")
 
     def _run_fixed_synthetic_fd_case_once(self):
         """Exercise one closed fixture case; no general adapter invocation API."""
@@ -399,6 +424,7 @@ class _ClaimedProbedBatch:
                 ("--aegis-synthetic-case", case_id, "--", str(target.path)),
                 postvalidate=postvalidate, request_bytes=b"")
             self._session._invocation_capture = capture
+            self._record_fixed_stimulus(case_id, (str(target.path),), b"")
         self.revalidate()
         return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
             == "success" else "invocation_failure")
@@ -427,6 +453,8 @@ class _ClaimedProbedBatch:
                 "hex:" + leaf.prefix.hex()),
             postvalidate=postvalidate, request_bytes=b"")
         self._session._invocation_capture = capture
+        self._record_fixed_stimulus(case_id,
+            (str(leaf.path), "hex:" + leaf.prefix.hex()), b"")
         self.revalidate()
         return ("isolation_allowed" if _classify_fixed_synthetic_output(capture)
             == "success" else "invocation_failure")
@@ -523,6 +551,7 @@ class _ClaimedProbedBatch:
             if read_owner is not None: read_owner.close()
             raise
         self._session._invocation_capture = capture
+        self._record_fixed_stimulus(case_id, suffix[3:], request_bytes)
         if listener_owner is not None:
             if capture.group_gone and type(capture.returncode) is int:
                 listener_owner.finish_after_reap(capture.returncode)

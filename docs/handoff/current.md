@@ -1,13 +1,13 @@
 # Current handoff
 
-Updated: 2026-10-04T17:39:06+08:00
+Updated: 2026-10-04T17:48:10+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 8e19526
+Baseline commit: 792b57a
 Remote status: `git ls-remote origin refs/heads/main` confirmed
 `b9d6455dc295d1b1374b87698eb05bc6348307a2`; `handoff-contract` run
-37186500596 succeeded for that exact SHA. Local `main` is two commits ahead.
-Working tree at checkpoint: serial repeatability and handoff pending local commit.
+37186500596 succeeded for that exact SHA. Local `main` is three commits ahead.
+Working tree at checkpoint: synthetic plan and execution-audit changes; verify with `git status --short`.
 
 ## Objective
 
@@ -22,10 +22,11 @@ observations without per-frame VLM inference.
 Two serial retained native invocations now produce sealed path-free packet ID
 and stdout SHA observations. The private repeatability record compares them
 after each batch closes and rejects same-session reuse, mutation and different
-packet IDs. This is a bounded piece of the synthetic gate, not its formal
-case result. Native raw-transport suite: 47/47 passed; restricted discovery:
-811 run, 66 skips.
+packet IDs. This is not a formal case result. Native host suite: 51/51 passed; discovery:
+819 run, 66 skips.
 
+A 37-case shape freezer hashes argv, stdin and support. Native `fd_hygiene`
+matches its frozen row; changed hash fails. This is post-execution audit only.
 The private claim now exercises all 33 adapter-owned fixture case types through
 the same native launcher, policy and retained roots. Binary selected-media
 reads use an exact prefix; denied reads use real other-packet/result leaves or
@@ -36,8 +37,7 @@ case result or aggregate.
 
 The shared transport retains the leader through group teardown. Exact scratch
 content is cleaned after group absence; changed content and missing proof
-preserve the root. A second invocation is rejected. General authority is closed.
-
+preserve the root. A second invocation is rejected.
 The single-use claim binds 14 raw probes and backend/policy/runner hashes;
 public receipt and general invocation authority remain closed.
 
@@ -123,11 +123,11 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@b9d6455`; exact-SHA remote CI passed.
-- Local unpublished milestones: `268a5b6` and this 33-case checkpoint.
+- Local unpublished milestones: `268a5b6`, `8e19526`, `792b57a`.
 
 ## Verified
 
-- Restricted full discovery: 811 tests run, 745 passed, 66 skips. Listener
+- Restricted full discovery: 819 tests run, 753 passed, 66 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -185,7 +185,7 @@ receipt or spawn authority has been created.
   host tests pass.
 - Full-set coordinator covers success, timeout, source mutation and cleanup
   refusal in the current 29-test native raw-transport suite.
-- Private retained session and fixed synthetic transport: 47 native host tests
+- Private retained session and fixed synthetic transport: 51 native host tests
   pass, including changed HOME, timeout, simultaneous pipes, exact scratch
   cleanup, changed content and missing inference group proof.
 - The native retained-session case also confirms one-time claim rejection and
@@ -207,7 +207,7 @@ receipt or spawn authority has been created.
 ## Pending
 
 - The private claim covers all 33 adapter-owned case types as separate host
-  checks. Build the exact ordered case manifest/result, repeatability record
+  checks. Bind frozen stimuli before spawn, then build the ordered case result, repeatability record
   and aggregate with four coordinator-owned cases. Then review the gate before
   model/media acquisition. Private receipt bytes remain shape evidence; public
   authority APIs stay closed. No model or real-media acquisition is authorized.

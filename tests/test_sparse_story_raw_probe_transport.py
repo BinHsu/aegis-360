@@ -39,6 +39,10 @@ from aegis360.sparse_story_raw_probe_transport import (  # noqa: E402
     _run_native_process,
 )
 from aegis360.sparse_story_runner_contract import MATRIX_KEYS  # noqa: E402
+from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
+    _freeze_private_synthetic_case_manifest,
+)
+from tests.test_sparse_story_synthetic_plan import SyntheticCasePlanTests  # noqa: E402
 from tests import test_sparse_story_batch_policy as batch_policy_tests  # noqa: E402
 from tests import test_sparse_story_projection as projection_tests  # noqa: E402
 from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
@@ -342,6 +346,17 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertEqual(capture.returncode, 0)
             self.assertTrue(capture.group_gone)
             self.assertIn(b'"status":"abstain"', capture.stdout)
+            planned = SyntheticCasePlanTests().stimuli()
+            _, manifest = _freeze_private_synthetic_case_manifest(
+                adapter_manifest_sha256="a" * 64,
+                repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+            row = next(row for row in manifest["cases"]
+                if row["case_id"] == "fd_hygiene")
+            claim._verify_frozen_case_stimulus(row)
+            changed = {**row, "stimulus": {**row["stimulus"],
+                "stdin_sha256": "0" * 64}}
+            with self.assertRaisesRegex(ValueError, "differs from frozen"):
+                claim._verify_frozen_case_stimulus(changed)
             with self.assertRaisesRegex(ValueError, "already invoked"):
                 claim._run_fixed_synthetic_fd_case_once()
             session.close()
