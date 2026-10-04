@@ -6,6 +6,7 @@ import subprocess
 import sys
 import time
 import unittest
+from dataclasses import replace
 from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from unittest import mock
@@ -34,6 +35,7 @@ from aegis360.sparse_story_probe_transcript import (  # noqa: E402
 )
 from aegis360.sparse_story_raw_probe_transport import (  # noqa: E402
     _RawProbeCapture, _run_raw_probe, _run_owned_raw_probe,
+    _run_native_process,
 )
 from aegis360.sparse_story_runner_contract import MATRIX_KEYS  # noqa: E402
 from tests import test_sparse_story_batch_policy as batch_policy_tests  # noqa: E402
@@ -297,6 +299,110 @@ class RawProbeTransportHostTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 session.close()
             self.assertTrue(root.exists())
+            self.assertTrue(inputs["candidate"]._closed)
+
+    def test_claim_runs_one_fixed_native_synthetic_case(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            capture = claim._run_fixed_synthetic_fd_case_once()
+            self.assertTrue(capture.completed, capture.reason)
+            self.assertEqual(capture.returncode, 0)
+            self.assertTrue(capture.group_gone)
+            self.assertIn(b'"status":"abstain"', capture.stdout)
+            with self.assertRaisesRegex(ValueError, "already invoked"):
+                claim._run_fixed_synthetic_fd_case_once()
+            session.close()
+            self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_claim_refuses_changed_home_before_synthetic_spawn(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            root = inputs["batch_scratch"].root
+            (root / "home" / "unexpected").write_bytes(b"changed")
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaises(ValueError):
+                claim._run_fixed_synthetic_fd_case_once()
+            launch.assert_not_called()
+            with self.assertRaises(ValueError):
+                session.close()
+            self.assertTrue(root.exists())
+
+    def test_claim_handles_simultaneous_policy_request_and_stdout(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            capture = claim._run_fixed_synthetic_pipe_case_once()
+            self.assertTrue(capture.completed, capture.reason)
+            self.assertEqual(len(capture.stdout), 60_000)
+            self.assertTrue(capture.group_gone)
+            session.close()
+            self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_claim_cleans_exact_synthetic_scratch_write(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            capture = claim._run_fixed_synthetic_scratch_case_once()
+            self.assertTrue(capture.completed, capture.reason)
+            self.assertTrue(capture.group_gone)
+            self.assertFalse((inputs["batch_scratch"].root / "synthetic-write").exists())
+            session.close()
+            self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_claim_preserves_unexpected_synthetic_scratch_content(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            real_run = _run_native_process
+
+            def changed_content(*args, **kwargs):
+                capture = real_run(*args, **kwargs)
+                (inputs["batch_scratch"].root / "synthetic-write").write_bytes(b"changed")
+                return capture
+
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process",
+                    side_effect=changed_content), self.assertRaises(ValueError):
+                claim._run_fixed_synthetic_scratch_case_once()
+            with self.assertRaises(ValueError):
+                session.close()
+            self.assertEqual((inputs["batch_scratch"].root / "synthetic-write").read_bytes(),
+                b"changed")
+
+    def test_claim_preserves_scratch_without_inference_group_absence(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            real_run = _run_native_process
+
+            def missing_group_proof(*args, **kwargs):
+                return replace(real_run(*args, **kwargs), group_gone=False)
+
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process",
+                    side_effect=missing_group_proof):
+                capture = claim._run_fixed_synthetic_scratch_case_once()
+            self.assertFalse(capture.group_gone)
+            with self.assertRaises(ValueError):
+                session.close()
+            self.assertTrue((inputs["batch_scratch"].root / "synthetic-write").exists())
+
+    def test_claim_preserves_empty_batch_without_inference_group_absence(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            real_run = _run_native_process
+
+            def missing_group_proof(*args, **kwargs):
+                return replace(real_run(*args, **kwargs), group_gone=False)
+
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process",
+                    side_effect=missing_group_proof):
+                capture = claim._run_fixed_synthetic_fd_case_once()
+            self.assertFalse(capture.group_gone)
+            with self.assertRaisesRegex(ValueError, "group absence is unverified"):
+                session.close()
+            self.assertTrue(inputs["batch_scratch"].root.exists())
             self.assertTrue(inputs["candidate"]._closed)
 
     def test_retained_probe_timeout_closes_candidate_and_owned_root(self):

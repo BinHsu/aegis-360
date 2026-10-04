@@ -190,11 +190,11 @@ specific directing question. No new video is currently awaiting owner review.
 - First/last selected packets retain actual other-packet leaves. Host raw probe
   uses exact 14 boolean keys; bad bindings or keys fail.
 - The private retained-probe session keeps the candidate and batch scratch root
-  open after success, then closes them in order. One private claim is issued;
-  its receipt shape binds exact policy/backend/runner hashes and 14 true probes.
-  All 29 native raw-transport host tests pass. No inference authority exists.
+  open after success. One claim binds exact policy/backend/runner hashes and 14
+  true probes. Three fixed synthetic cases use the same native launcher and
+  policy; all 36 host tests pass. No general inference authority exists.
 
 ## Next action
 
-Bind the private claim to same-policy inference invocation, then assess receipt
-authority. Keep public APIs closed.
+Complete coordinator-owned synthetic cases, then assess general invocation and
+receipt authority. Keep public APIs closed.

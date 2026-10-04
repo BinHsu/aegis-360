@@ -1,14 +1,14 @@
 # Current handoff
 
-Updated: 2026-10-04T14:25:00+08:00
+Updated: 2026-10-04T15:04:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: d5beef3
-Remote status: `git ls-remote origin refs/heads/main` confirms
-`0fc1c8709157c2b93a5852cae4583ce17c5346d8`; local `main` is three commits
-ahead after this checkpoint commit. No CI was verified for the new commits.
-Working tree at checkpoint: clean after the handoff commit; verify with
-`git status --short`.
+Baseline commit: df82f92
+Remote status: `git ls-remote origin refs/heads/main` confirmed
+`df82f925866aa9c85320f7b1538a1f903e6d4b20`; `handoff-contract` run
+37183729225 succeeded for that exact SHA.
+Working tree at checkpoint: bounded native invocation transport, design note,
+tests and this handoff update pending local commit; verify with `git status --short`.
 
 ## Objective
 
@@ -20,6 +20,15 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
+The private claimed batch now runs three fixed synthetic fixture cases through
+the same retained native launcher, runtime and policy: descriptor hygiene,
+60 KB simultaneous request/stdout pressure, and one exact scratch write. The
+shared transport retains the leader through process-group teardown. Exact
+scratch content is removed only after group absence; changed content and
+missing inference group proof preserve the batch root. A second invocation is
+rejected. This is fixed synthetic transport evidence, not general adapter or
+model invocation authority. Native raw-transport host suite: 36/36 passed.
+
 The private retained session now issues one claim after revalidation, rejects a
 second claim, and invalidates the claim on terminal close. The claim cannot be
 copied or pickled. Its private receipt bytes are derived from the rechecked raw
@@ -29,8 +38,7 @@ internal shape/binding milestone: no spawn method, public receipt derivation,
 inference call or aggregate authority has been opened. The full native
 raw-transport host suite remains 29/29 passing.
 
-The retained session keeps the candidate and batch scratch alive after denial
-proof exit; failed probes, changed source and changed HOME fail closed.
+The retained session keeps candidate and scratch alive; changed inputs fail closed.
 The private batch candidate retains exact request, runner-policy and enforcement-
 policy bytes; uid/gid; launcher, runtime, model and prompt roots; selected media;
 and empty private HOME/TMPDIR identities. A validated 6/24-packet set can publish
@@ -112,12 +120,11 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Local milestone commits: `BinHsu/aegis-360@ca6c12b`, `@d5beef3` and this
-  checkpoint commit are unpublished.
+- Published milestone: `BinHsu/aegis-360@df82f92`; exact-SHA remote CI passed.
 
 ## Verified
 
-- Restricted full discovery: 792 tests run, 744 passed, 48 skips. Listener
+- Restricted full discovery: 799 tests run, 744 passed, 55 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -175,10 +182,9 @@ receipt or spawn authority has been created.
   host tests pass.
 - Full-set coordinator covers success, timeout, source mutation and cleanup
   refusal in the current 29-test native raw-transport suite.
-- Private retained session: four new native host checks pass for successful
-  retention/terminal cleanup, changed HOME preservation, timeout cleanup and
-  changed full-set result rejection. Full native raw-transport suite: 29 tests
-  passed, zero skips under the explicit host gate.
+- Private retained session and fixed synthetic transport: 36 native host tests
+  pass, including changed HOME, timeout, simultaneous pipes, exact scratch
+  cleanup, changed content and missing inference group proof.
 - The native retained-session case also confirms one-time claim rejection and
   private receipt hashes/matrix; claim and receipt fail after terminal close.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
@@ -197,18 +203,12 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The private retained session has probe evidence, exact binding and one-time
-  claim, but no inference invocation. Bind the
-  claim to the same launcher, runtime, policy, uid/gid and roots through the
-  invocation path; then assess receipt authority. The current private receipt
-  bytes are shape evidence only.
-  The current `capture_adapter_process` accepts injected tokens but supplies no
-  production backend token. Keep public authority APIs closed.
+- The private claim now runs only three fixed synthetic fixture cases. Add
+  closed coordinator case selection and complete the remaining synthetic gate
+  before assessing general invocation or receipt authority. The private receipt
+  bytes remain shape evidence; public authority APIs stay closed.
 - Then complete the four coordinator-owned synthetic cases before model/media
   acquisition. No model or real-media acquisition is authorized yet.
-- Compose retained inputs, installed-policy observations and raw rows into a
-  private single-use capability. The later inference path must use the same
-  launcher, runtime, policy, uid/gid and roots. Keep public authority APIs closed.
 - Complete four coordinator-owned synthetic cases, then review the implementation
   gate before acquiring models or real-media packets.
 - No production render or retuning of rejected descriptors is authorized.

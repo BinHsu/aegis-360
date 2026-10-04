@@ -38,6 +38,16 @@ class _RawProbeCapture:
     reason: str
 
 
+@dataclass(frozen=True)
+class _NativeLaunchSpec:
+    argv: tuple[str, ...]
+    env: dict[str, str]
+    policy: bytes
+    bundle_fd: int
+    launcher_proof: object
+    runtime_proof: object
+
+
 def _entrypoint_facts(proof):
     proof.manifest()
     path = proof._root / proof._entrypoint
@@ -57,13 +67,14 @@ def _close_streams(process):
             except OSError: pass
 
 
-def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
-    """Execute only the closed raw-probe mode; never invoke the model adapter mode."""
-    if type(context) is not _ProbeContext:
-        raise TypeError("raw probe requires an exact private context")
-    suffix = context.argv_suffix()
-    candidate = context.candidate
-    binding_before = candidate._binding_bytes()
+def _retained_launch_spec(candidate, suffix: tuple[str, ...], policy_fd: int):
+    """Build the same exact launcher/identity/policy arguments for every mode."""
+    if (type(candidate) is not batch_policy._BatchPolicyCandidate
+            or type(suffix) is not tuple or not suffix
+            or any(type(value) is not str or not value or "\x00" in value
+                   for value in suffix)
+            or type(policy_fd) is not int or policy_fd <= 2):
+        raise TypeError("native launch requires exact private inputs")
     live = batch_policy._require_live(candidate._facade)
     launcher_proof = live._backend_binding._runtime
     runtime_proof = live._adapter_binding._runtime
@@ -71,16 +82,13 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
     runtime, runtime_stat = _entrypoint_facts(runtime_proof)
     policy = candidate._policy_bytes()
     if not 1 <= len(policy) <= _LIMIT:
-        raise ValueError("raw probe policy size is invalid")
+        raise ValueError("native policy size is invalid")
     bundle_fd = candidate._proofs[0]._root_fd
     bundle_stat = os.fstat(bundle_fd)
     env = {"LANG": "C", "LC_ALL": "C", "TZ": "UTC", "NO_COLOR": "1",
            "HOME": candidate._private_home.identity.path,
            "TMPDIR": candidate._private_tmpdir.identity.path}
-    read_fd, write_fd = os.pipe()
-    os.set_blocking(write_fd, False)
-    transfer = memoryview(struct.pack(">Q", len(policy)) + policy)
-    argv = (str(launcher), f"--policy-fd={read_fd}",
+    argv = (str(launcher), f"--policy-fd={policy_fd}",
         f"--policy-size={len(policy)}",
         f"--policy-sha256={hashlib.sha256(policy).hexdigest()}",
         f"--cwd-fd={bundle_fd}", f"--cwd-dev={bundle_stat.st_dev}",
@@ -89,14 +97,41 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
         f"--tmpdir={env['TMPDIR']}", f"--runtime-dev={runtime_stat.st_dev}",
         f"--runtime-ino={runtime_stat.st_ino}",
         f"--runtime-size={runtime_stat.st_size}", "--", str(runtime), *suffix)
+    return _NativeLaunchSpec(argv, env, policy, bundle_fd,
+        launcher_proof, runtime_proof)
+
+
+def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
+        request_bytes=None) -> _RawProbeCapture:
+    """Bounded native launch retaining the leader through group teardown."""
+    if (request_bytes is not None
+            and (type(request_bytes) is not bytes or len(request_bytes) > 1_048_576)):
+        raise ValueError("native request bytes are invalid")
+    binding_before = candidate._binding_bytes()
+    read_fd, write_fd = os.pipe()
+    os.set_blocking(write_fd, False)
+    try: spec = _retained_launch_spec(candidate, suffix, read_fd)
+    except BaseException:
+        os.close(read_fd)
+        os.close(write_fd)
+        raise
+    policy = spec.policy
+    bundle_fd = spec.bundle_fd
+    launcher_proof = spec.launcher_proof
+    runtime_proof = spec.runtime_proof
+    transfer = memoryview(struct.pack(">Q", len(policy)) + policy)
+    argv = spec.argv
+    env = spec.env
     process = None
     selector = selectors.DefaultSelector()
     stdout = bytearray()
     stderr_present = stdout_overflow = stderr_overflow = timed_out = False
     stderr_count = 0
     writer_failed = cleanup_failed = group_verified = False
-    writer_open = stdout_open = stderr_open = False
+    writer_open = stdin_open = stdout_open = stderr_open = False
     transferred = 0
+    input_transferred = 0
+    input_view = memoryview(request_bytes or b"")
     term_at = kill_at = None
     started = time.monotonic_ns()
 
@@ -108,6 +143,16 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
             writer_open = False
         try: os.close(write_fd)
         except OSError: pass
+
+    def close_stdin():
+        nonlocal stdin_open
+        if stdin_open:
+            try: selector.unregister(process.stdin.fileno())
+            except KeyError: pass
+            stdin_open = False
+        if process is not None and process.stdin is not None:
+            try: process.stdin.close()
+            except OSError: pass
 
     def signal_owned(sig):
         nonlocal cleanup_failed
@@ -122,7 +167,8 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
 
     try:
         process = subprocess.Popen(argv, pass_fds=(read_fd, bundle_fd),
-            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+            stdin=subprocess.DEVNULL if request_bytes is None else subprocess.PIPE,
+            stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, env=env, close_fds=True,
             start_new_session=False, shell=False)
         os.close(read_fd)
@@ -132,7 +178,14 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
             os.set_blocking(stream.fileno(), False)
             selector.register(stream.fileno(), selectors.EVENT_READ, name)
         stdout_open = stderr_open = True
-        while writer_open or stdout_open or stderr_open or not group_verified:
+        if request_bytes is not None:
+            if input_view:
+                os.set_blocking(process.stdin.fileno(), False)
+                selector.register(process.stdin.fileno(), selectors.EVENT_WRITE, "stdin")
+                stdin_open = True
+            else:
+                close_stdin()
+        while writer_open or stdin_open or stdout_open or stderr_open or not group_verified:
             now = time.monotonic_ns()
             if not group_verified:
                 try:
@@ -147,6 +200,7 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
                 timed_out = True
                 term_at = now
                 close_writer()
+                close_stdin()
                 signal_owned(signal.SIGTERM)
             if term_at is not None and now - term_at >= _GRACE_NS and kill_at is None:
                 kill_at = now
@@ -155,6 +209,16 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
                 cleanup_failed = True
                 break
             for key, _ in selector.select(0.01):
+                if key.data == "stdin":
+                    try: count = os.write(key.fd, input_view[input_transferred:])
+                    except BlockingIOError: continue
+                    except (BrokenPipeError, OSError):
+                        writer_failed = True
+                        count = 0
+                    input_transferred += count
+                    if writer_failed or input_transferred == len(input_view):
+                        close_stdin()
+                    continue
                 if key.data == "policy":
                     try: count = os.write(write_fd, transfer[transferred:])
                     except BlockingIOError: continue
@@ -185,11 +249,13 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
                 if (stdout_overflow or stderr_overflow) and term_at is None:
                     term_at = time.monotonic_ns()
                     close_writer()
+                    close_stdin()
                     signal_owned(signal.SIGTERM)
             if not group_verified and not stdout_open and not stderr_open:
                 close_writer()
                 break
         if writer_open: close_writer()
+        if stdin_open: close_stdin()
         # Keep the exited leader unreaped while signalling its process group:
         # its PID cannot be reused as a different group identifier yet.
         exited = False
@@ -228,7 +294,7 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
         group_gone = False
         if returncode is not None:
             try:
-                context.postvalidate()
+                postvalidate()
                 if candidate._binding_bytes() != binding_before:
                     raise ValueError("probe invocation binding changed")
                 launcher_proof.manifest()
@@ -239,14 +305,15 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
             try: os.killpg(process.pid, 0)
             except ProcessLookupError: group_gone = True
         transport_complete = bool(returncode == 0 and transferred == len(transfer)
+            and input_transferred == len(input_view)
             and group_verified and group_gone and not timed_out and not writer_failed
             and not stdout_overflow and not stderr_overflow and not stderr_present
             and not cleanup_failed and postcheck_passed and stdout)
         primitive_passed = False
-        if transport_complete:
+        if transport_complete and allowed is not None:
             try:
                 rows = parse_isolation_probe_transcript(bytes(stdout))
-                bundle, model, prompt = context.allowed
+                bundle, model, prompt = allowed
                 matrix = _check_probe_row_values(rows,
                     bundle_prefix=bundle.prefix, model_prefix=model.prefix,
                     prompt_prefix=prompt.prefix)
@@ -256,12 +323,16 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
                             for key in MATRIX_KEYS))
             except ValueError:
                 pass
-        completed = transport_complete and primitive_passed
+        completed = transport_complete and (allowed is None or primitive_passed)
+        reason = ("raw_probe_complete" if completed else "raw_probe_invalid") if (
+            allowed is not None) else (
+            "native_process_complete" if completed else "native_process_invalid")
         return _RawProbeCapture(bytes(stdout), returncode, group_gone, completed,
-            postcheck_passed, "raw_probe_complete" if completed else "raw_probe_invalid")
+            postcheck_passed, reason)
     finally:
         if read_fd >= 0: os.close(read_fd)
         close_writer()
+        close_stdin()
         selector.close()
         if process is not None:
             if process.returncode is None:
@@ -269,6 +340,15 @@ def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
                 try: process.wait(timeout=_DRAIN_NS / 1e9)
                 except subprocess.TimeoutExpired: pass
             _close_streams(process)
+
+
+def _run_raw_probe(context: _ProbeContext) -> _RawProbeCapture:
+    """Execute only the closed raw-probe mode; never invoke the model adapter mode."""
+    if type(context) is not _ProbeContext:
+        raise TypeError("raw probe requires an exact private context")
+    suffix = context.argv_suffix()
+    return _run_native_process(context.candidate, suffix,
+        postvalidate=context.postvalidate, allowed=context.allowed)
 
 
 def _run_owned_raw_probe(context: _ProbeContext, *, outside, scratch, listeners,

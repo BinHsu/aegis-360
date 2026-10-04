@@ -231,6 +231,8 @@ class _RetainedProbedBatch:
         self._receipt_bytes = receipt_bytes
         self._closed = False
         self._claimed = False
+        self._invocation_started = False
+        self._invocation_capture = None
 
     def revalidate(self):
         if self._closed or not self._capture.completed:
@@ -245,6 +247,13 @@ class _RetainedProbedBatch:
         if self._closed:
             return
         self._closed = True
+        if (self._invocation_started
+                and (self._invocation_capture is None
+                     or self._invocation_capture.group_gone is not True
+                     or type(self._invocation_capture.returncode) is not int)):
+            try: self._candidate.close()
+            finally: self._batch_scratch.abandon()
+            raise ValueError("inference group absence is unverified")
         try:
             self._candidate.close()
         except BaseException:
@@ -278,6 +287,7 @@ class _ClaimedProbedBatch:
                 or not session._claimed):
             raise TypeError("claim requires a consumed retained session")
         self._session = session
+        self._invoked = False
 
     def revalidate(self):
         if not self._session._claimed:
@@ -287,6 +297,58 @@ class _ClaimedProbedBatch:
     def receipt_bytes(self):
         self.revalidate()
         return self._session._receipt_bytes
+
+    def _run_fixed_synthetic_fd_case_once(self):
+        """Exercise one closed fixture case; no general adapter invocation API."""
+        return self._run_fixed_synthetic_case_once("fd_hygiene", b"")
+
+    def _run_fixed_synthetic_pipe_case_once(self):
+        """Exercise bounded simultaneous stdout and request transfer."""
+        return self._run_fixed_synthetic_case_once(
+            "concurrent_pipe_pressure", b"x" * 60_000)
+
+    def _run_fixed_synthetic_scratch_case_once(self):
+        """Exercise and remove one exact fixture-created scratch leaf."""
+        return self._run_fixed_synthetic_case_once("scratch_write_allowed", b"")
+
+    def _run_fixed_synthetic_case_once(self, case_id, request_bytes):
+        from . import sparse_story_batch_policy as batch_policy
+        from .sparse_story_raw_probe_transport import _run_native_process
+
+        if ((case_id, request_bytes) not in
+                (("fd_hygiene", b""),
+                 ("concurrent_pipe_pressure", b"x" * 60_000),
+                 ("scratch_write_allowed", b""))):
+            raise ValueError("fixed synthetic case is invalid")
+        if self._invoked:
+            raise ValueError("private batch claim was already invoked")
+        self.revalidate()
+        candidate = self._session._candidate
+        live = batch_policy._require_live(candidate._facade)
+        if live._adapter_binding._runtime._entrypoint != "bin/aegis-synthetic-adapter":
+            raise ValueError("fixed synthetic case requires the fixture runtime")
+        scratch_owner = self._session._batch_scratch
+        scratch_path = scratch_owner.root / "synthetic-write"
+        if case_id == "scratch_write_allowed":
+            try: os.lstat(scratch_path)
+            except FileNotFoundError: pass
+            else: raise ValueError("fixed synthetic scratch target already exists")
+        self._invoked = True
+        suffix = ("--aegis-synthetic-case", case_id, "--")
+        if case_id == "scratch_write_allowed":
+            suffix += (str(scratch_path),)
+        self._session._invocation_started = True
+        capture = _run_native_process(candidate,
+            suffix, postvalidate=(candidate._binding_bytes
+                if case_id == "scratch_write_allowed" else self.revalidate),
+            request_bytes=request_bytes)
+        self._session._invocation_capture = capture
+        if case_id == "scratch_write_allowed":
+            if not capture.completed or not capture.group_gone:
+                return capture
+            _clean_fixed_synthetic_scratch(scratch_owner)
+        self.revalidate()
+        return capture
 
     def __copy__(self):
         raise TypeError("private batch claims cannot be copied")
@@ -299,6 +361,39 @@ class _ClaimedProbedBatch:
 
 
 _CLAIM_FACTORY_TOKEN = object()
+
+
+def _clean_fixed_synthetic_scratch(owner):
+    """Remove only the exact verified fixture leaf after group absence."""
+    from .sparse_story_probe_sentinels import _OwnedBatchScratch, _file_facts
+    if type(owner) is not _OwnedBatchScratch or owner.closed:
+        raise ValueError("fixed synthetic scratch owner is invalid")
+    root = os.lstat(owner.root)
+    if ((root.st_dev, root.st_ino) != owner.root_identity
+            or set(os.listdir(owner.root_fd)) != {"home", "tmp", "synthetic-write"}):
+        raise ValueError("fixed synthetic scratch tree changed")
+    fd = os.open("synthetic-write", os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
+        dir_fd=owner.root_fd)
+    try:
+        value = os.fstat(fd)
+        named = os.stat("synthetic-write", dir_fd=owner.root_fd,
+            follow_symlinks=False)
+        facts = _file_facts(value)
+        marker = b"synthetic-scratch-write-v1"
+        if (facts != _file_facts(named) or not stat.S_ISREG(value.st_mode)
+                or stat.S_IMODE(value.st_mode) != 0o600
+                or value.st_uid != os.getuid() or value.st_nlink != 1
+                or value.st_size != len(marker)
+                or os.pread(fd, len(marker) + 1, 0) != marker):
+            raise ValueError("fixed synthetic scratch leaf changed")
+    finally:
+        os.close(fd)
+    if (_file_facts(os.stat("synthetic-write", dir_fd=owner.root_fd,
+            follow_symlinks=False)) != facts
+            or (os.lstat(owner.root).st_dev, os.lstat(owner.root).st_ino)
+               != owner.root_identity):
+        raise ValueError("fixed synthetic scratch cleanup target changed")
+    os.unlink("synthetic-write", dir_fd=owner.root_fd)
 
 
 def _open_retained_probed_batch(*, candidate, batch_scratch, outside,
