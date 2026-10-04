@@ -1,14 +1,14 @@
 # Current handoff
 
-Updated: 2026-10-01T05:29:00+08:00
+Updated: 2026-10-04T14:14:59+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 04201f1
-Remote status: `main` and fetched `origin/main` match at
-`04201f17911102568a8aec3e5a50584047e96463`.
-GitHub Actions `handoff-contract` run 36779299069 succeeded for that exact SHA.
-Working tree at checkpoint: inner-cleanup refusal test pending; verify with
-`git status --short` before resuming.
+Baseline commit: 0fc1c87
+Remote status: local `main` and `origin/main` refs match at
+`0fc1c8709157c2b93a5852cae4583ce17c5346d8`; no remote CI was verified
+for that SHA in this turn.
+Working tree at checkpoint: private retained-session implementation, host tests
+and checkpoint update pending local commit; verify with `git status --short`.
 
 ## Objective
 
@@ -19,6 +19,16 @@ direction is cheap-signal scheduling followed by sparse, closed semantic
 observations without per-frame VLM inference.
 
 ## Last completed milestone
+
+The private retained-probe session runs the same owned full-set raw probe,
+keeps the exact candidate and batch scratch root alive after denial-proof exit,
+and revalidates candidate binding and empty private HOME/TMPDIR. Its terminal
+close closes the candidate before exact scratch cleanup. Incomplete raw probe
+and changed full-set result paths cannot return a session; changed private HOME
+invalidates the session and preserves the root. Four new native host tests cover
+these paths; the full raw-transport host suite passes 29 tests. This is a
+private lifecycle only: no token, capability receipt, inference invocation or
+public authority API exists.
 
 The private batch candidate retains exact request, runner-policy and enforcement-
 policy bytes; uid/gid; launcher, runtime, model and prompt roots; selected media;
@@ -101,13 +111,12 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published checkpoint: `BinHsu/aegis-360@04201f1`; GitHub Actions
-  `handoff-contract` run 36779299069 succeeded for exact SHA
-  `04201f17911102568a8aec3e5a50584047e96463`.
+- Local baseline: `BinHsu/aegis-360@0fc1c87`; local and origin tracking refs
+  match. New retained-session work is uncommitted at this checkpoint.
 
 ## Verified
 
-- Restricted full discovery: 788 tests run, 744 passed, 44 skips. Listener
+- Restricted full discovery: 792 tests run, 744 passed, 48 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -166,6 +175,10 @@ receipt or spawn authority has been created.
 - Full-set coordinator: 25 native raw transport host tests pass, including
   success, timeout, prelaunch/postprobe result change, candidate-close failure
   postprobe HOME change, missing group absence and inner cleanup refusal.
+- Private retained session: four new native host checks pass for successful
+  retention/terminal cleanup, changed HOME preservation, timeout cleanup and
+  changed full-set result rejection. Full native raw-transport suite: 29 tests
+  passed, zero skips under the explicit host gate.
 - Focused candidate/facade real-host integration: 34 tests run, all passed.
 - Controlled mutation returning cached policy without revalidation causes the
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
@@ -182,13 +195,12 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The current coordinator closes the candidate after raw probing. It is a
-  terminal cleanup path, not a capability issuer: a one-batch token must retain
-  that same candidate and batch roots through later inference invocation(s).
-  Design a private retained session with probe evidence, exact policy/identity
-  binding, single-use claim and terminal cleanup before opening any public
-  authority API. The current `capture_adapter_process` accepts injected tokens
-  but supplies no production backend token.
+- The private retained session has probe evidence, exact candidate binding and
+  terminal cleanup, but no single-use claim or inference invocation. Add a
+  private claim that retains the same launcher, runtime, policy, uid/gid and
+  roots across the invocation path, then compose an installed-policy receipt.
+  The current `capture_adapter_process` accepts injected tokens but supplies no
+  production backend token. Keep public authority APIs closed.
 - Then complete the four coordinator-owned synthetic cases before model/media
   acquisition. No model or real-media acquisition is authorized yet.
 - Compose retained inputs, installed-policy observations and raw rows into a

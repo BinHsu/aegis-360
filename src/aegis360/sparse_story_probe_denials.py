@@ -215,3 +215,102 @@ def _run_owned_full_set_batch_probe(*, candidate, batch_scratch, outside,
     except (OSError, ValueError):
         return replace(capture, completed=False, reason="batch_scratch_cleanup_invalid")
     return capture
+
+
+class _RetainedProbedBatch:
+    """Private probe result retaining its exact batch until terminal closure.
+
+    This is deliberately not an invocation token or capability receipt.
+    """
+
+    def __init__(self, candidate, batch_scratch, capture, binding):
+        self._candidate = candidate
+        self._batch_scratch = batch_scratch
+        self._capture = capture
+        self._binding = binding
+        self._closed = False
+
+    def revalidate(self):
+        if self._closed or not self._capture.completed:
+            raise ValueError("retained probe session is inactive")
+        if (self._candidate._closed or self._batch_scratch.closed
+                or self._batch_scratch.bound_candidate is not self._candidate
+                or self._candidate._binding_bytes() != self._binding):
+            raise ValueError("retained probe batch changed")
+        self._batch_scratch.revalidate()
+
+    def close(self):
+        if self._closed:
+            return
+        self._closed = True
+        try:
+            self._candidate.close()
+        except BaseException:
+            self._batch_scratch.abandon()
+            raise
+        self._batch_scratch.finish_after_candidate_close(
+            self._candidate, self._capture)
+
+    def __enter__(self):
+        self.revalidate()
+        return self
+
+    def __exit__(self, _type, _value, _traceback):
+        self.close()
+
+
+def _open_retained_probed_batch(*, candidate, batch_scratch, outside,
+        scratch, listeners, repository, protocol, denial_source):
+    """Run one raw probe and retain only a fully validated batch candidate."""
+    from .sparse_story_probe_context import _ProbeContext
+    from .sparse_story_probe_listeners import _OwnedProbeListeners
+    from .sparse_story_probe_sentinels import (
+        _OwnedBatchScratch, _OwnedOutsideSentinel, _OwnedScratchProbeFiles,
+    )
+    from .sparse_story_raw_probe_transport import _run_owned_raw_probe
+
+    if (type(candidate) is not _BatchPolicyCandidate
+            or type(batch_scratch) is not _OwnedBatchScratch
+            or batch_scratch.bound_candidate is not candidate
+            or type(outside) is not _OwnedOutsideSentinel
+            or type(scratch) is not _OwnedScratchProbeFiles
+            or type(listeners) is not _OwnedProbeListeners
+            or type(repository) is not _ReadDenialSentinel
+            or type(protocol) is not _ReadDenialSentinel
+            or type(denial_source) is not dict
+            or set(denial_source) != {"result_bytes", "index", "private_packets",
+                "ordered_private_packet_sha256s", "salt_hex", "payloads",
+                "bundle", "result_path"}):
+        raise TypeError("retained batch probe requires exact private owners")
+    capture = None
+    try:
+        with _retain_full_set_denials(candidate=candidate, **denial_source) as (
+                neighbor, result):
+            context = _ProbeContext(candidate=candidate, repository=repository,
+                protocol=protocol, neighbor=neighbor, result=result,
+                outside=outside.snapshot, scratch=scratch.snapshot,
+                listeners=listeners.listeners)
+            capture = _run_owned_raw_probe(context, outside=outside,
+                scratch=scratch, listeners=listeners)
+        if not capture.completed:
+            raise ValueError("retained batch raw probe is incomplete")
+        binding = candidate._binding_bytes()
+        batch_scratch.revalidate()
+        session = _RetainedProbedBatch(candidate, batch_scratch, capture, binding)
+        session.revalidate()
+        return session
+    except BaseException:
+        try:
+            candidate.close()
+        finally:
+            for owner in (outside, scratch, listeners):
+                owner.abandon()
+            if (capture is not None and type(capture.returncode) is int
+                    and capture.group_gone is True):
+                try:
+                    batch_scratch.finish_after_candidate_close(candidate, capture)
+                except (OSError, ValueError):
+                    batch_scratch.abandon()
+            else:
+                batch_scratch.abandon()
+        raise

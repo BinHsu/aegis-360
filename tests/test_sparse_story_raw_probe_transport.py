@@ -17,7 +17,7 @@ from aegis360.sparse_story_asset_tree import (  # noqa: E402
 from aegis360.sparse_story_probe_context import _ProbeContext  # noqa: E402
 from aegis360.sparse_story_probe_denials import (  # noqa: E402
     _OwnedOnePacketNeighbor, _retain_full_set_denials,
-    _run_owned_full_set_batch_probe,
+    _run_owned_full_set_batch_probe, _open_retained_probed_batch,
 )
 from aegis360.sparse_story_media_tree import (  # noqa: E402
     publish_sanitized_media_gate, publish_selected_one_packet_media_gate,
@@ -248,7 +248,54 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 self.assertEqual(capture.completed, not timeout)
                 self.assertTrue(capture.group_gone)
                 self.assertTrue(inputs["candidate"]._closed)
-                self.assertFalse(owner.root.exists())
+            self.assertFalse(owner.root.exists())
+
+    def test_retained_probe_preserves_candidate_until_terminal_close(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            candidate = inputs["candidate"]
+            root = inputs["batch_scratch"].root
+            self.assertFalse(candidate._closed)
+            self.assertTrue(root.exists())
+            session.revalidate()
+            self.assertFalse(inputs["outside"].root.exists())
+            self.assertFalse(inputs["listeners"].root.exists())
+            session.close()
+            self.assertTrue(candidate._closed)
+            self.assertFalse(root.exists())
+            with self.assertRaises(ValueError):
+                session.revalidate()
+
+    def test_retained_probe_rejects_changed_batch_before_close(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            root = inputs["batch_scratch"].root
+            (root / "home" / "unexpected").write_bytes(b"changed")
+            with self.assertRaises(ValueError):
+                session.revalidate()
+            with self.assertRaises(ValueError):
+                session.close()
+            self.assertTrue(root.exists())
+            self.assertTrue(inputs["candidate"]._closed)
+
+    def test_retained_probe_timeout_closes_candidate_and_owned_root(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            root = inputs["batch_scratch"].root
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._TIMEOUT_NS", 1):
+                with self.assertRaisesRegex(ValueError, "raw probe is incomplete"):
+                    _open_retained_probed_batch(**inputs)
+            self.assertTrue(inputs["candidate"]._closed)
+            self.assertFalse(root.exists())
+
+    def test_retained_probe_rejects_changed_result_before_launch(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            inputs["denial_source"]["result_bytes"] = b"changed"
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_raw_probe"
+                    ) as launch, self.assertRaises(ValueError):
+                _open_retained_probed_batch(**inputs)
+            launch.assert_not_called()
+            self.assertTrue(inputs["candidate"]._closed)
+            self.assertTrue(inputs["batch_scratch"].root.exists())
 
     def test_coordinator_refuses_changed_full_set_before_launch(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:

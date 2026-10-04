@@ -183,18 +183,18 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 788 tests run, 744 passed and 44 host/sandbox cases skipped.
+- Full discovery: 792 tests run, 744 passed and 48 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, retained identity and 33 adapter
   case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests pass; mutations are detected.
 - First/last selected packets retain actual other-packet leaves. Host raw probe
   uses exact 14 boolean keys; bad bindings or keys fail.
-- Owned cleanup requires group absence and candidate closure. The 25 native
-  raw-transport host tests pass; a private coordinator orders proof exit,
-  candidate close and scratch cleanup on success and timeout. Changed result
-  bytes fail before launch; mutation, close/cleanup error or missing group proof preserves trees.
+- The private retained-probe session keeps the candidate and batch scratch root
+  open after success, then closes them in order. Four lifecycle tests and all
+  29 native raw-transport host tests pass. Mutation and incomplete probe paths
+  fail closed; no token or inference authority exists.
 
 ## Next action
 
-Build a private retained session: the current coordinator closes its candidate
-before it could issue the one-batch inference token. Keep public APIs closed.
+Add a private single-use claim and same-policy inference binding to the retained
+session, then compose a capability receipt. Keep public APIs closed.
