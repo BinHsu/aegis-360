@@ -21,6 +21,7 @@ from aegis360.sparse_story_probe_context import _ProbeContext  # noqa: E402
 from aegis360.sparse_story_probe_denials import (  # noqa: E402
     _OwnedOnePacketNeighbor, _retain_full_set_denials,
     _run_owned_full_set_batch_probe, _open_retained_probed_batch,
+    _private_synthetic_repeatability,
 )
 from aegis360.sparse_story_media_tree import (  # noqa: E402
     publish_sanitized_media_gate, publish_selected_one_packet_media_gate,
@@ -570,6 +571,39 @@ class RawProbeTransportHostTests(unittest.TestCase):
                     "isolation_allowed")
                 session.close()
                 self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_repeatability_uses_two_independent_retained_native_invocations(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as first_inputs:
+            first = _open_retained_probed_batch(**first_inputs)
+            first_claim = first.claim_once()
+            self.assertTrue(first_claim._run_fixed_synthetic_fd_case_once().completed)
+            first_observation = first_claim._seal_synthetic_observation()
+            first.close()
+        with self.context(own_batch_scratch=True, coordinated=True) as second_inputs:
+            second = _open_retained_probed_batch(**second_inputs)
+            second_claim = second.claim_once()
+            self.assertTrue(second_claim._run_fixed_synthetic_fd_case_once().completed)
+            second_observation = second_claim._seal_synthetic_observation()
+            second.close()
+        repeat = _private_synthetic_repeatability(first_observation,
+            second_observation)
+        self.assertTrue(repeat["equal"])
+        self.assertEqual(repeat["first_stdout_sha256"],
+            repeat["second_stdout_sha256"])
+        with self.assertRaises(TypeError):
+            _private_synthetic_repeatability(first_observation, first_observation)
+        with self.assertRaises(TypeError):
+            first_observation.stdout_sha256 = "0" * 64
+        with self.context(own_batch_scratch=True, coordinated=True,
+                presentation_ordinal=1) as different_inputs:
+            different = _open_retained_probed_batch(**different_inputs)
+            different_claim = different.claim_once()
+            self.assertTrue(different_claim._run_fixed_synthetic_fd_case_once().completed)
+            different_observation = different_claim._seal_synthetic_observation()
+            different.close()
+        with self.assertRaisesRegex(ValueError, "packet IDs differ"):
+            _private_synthetic_repeatability(first_observation,
+                different_observation)
 
     def test_retained_probe_timeout_closes_candidate_and_owned_root(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:

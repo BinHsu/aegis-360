@@ -303,6 +303,24 @@ class _ClaimedProbedBatch:
         self.revalidate()
         return self._session._receipt_bytes
 
+    def _seal_synthetic_observation(self):
+        import hashlib
+        from .sparse_story_runner_contract import PACKET
+        from .sparse_story_semantics import _strict_raw
+
+        self.revalidate()
+        capture = self._session._invocation_capture
+        if (not self._invoked or capture is None or not capture.completed
+                or capture.group_gone is not True or capture.returncode != 0
+                or not capture.postcheck_passed):
+            raise ValueError("synthetic invocation is incomplete")
+        _strict_raw(capture.stdout)
+        packet_id = json.loads(self._session._candidate._request_bytes)["packet_id"]
+        if type(packet_id) is not str or PACKET.fullmatch(packet_id) is None:
+            raise ValueError("synthetic packet ID is invalid")
+        return _PrivateSyntheticObservation(_CLAIM_FACTORY_TOKEN, self._session,
+            packet_id, hashlib.sha256(capture.stdout).hexdigest())
+
     def _run_fixed_synthetic_fd_case_once(self):
         """Exercise one closed fixture case; no general adapter invocation API."""
         return self._run_fixed_synthetic_case_once("fd_hygiene", b"")
@@ -559,6 +577,50 @@ def _classify_fixed_synthetic_output(capture):
     except ValueError:
         return "schema_violation"
     return "success"
+
+
+def _private_synthetic_repeatability(first, second):
+    """Compare two serial, sealed, path-free fixture observations."""
+    from .sparse_story_runner_contract import PACKET, SHA
+    if (type(first) is not _PrivateSyntheticObservation
+            or type(second) is not _PrivateSyntheticObservation
+            or first._session is second._session):
+        raise TypeError("repeatability requires distinct private observations")
+    for observation in (first, second):
+        if (type(observation.packet_id) is not str
+                or PACKET.fullmatch(observation.packet_id) is None
+                or type(observation.stdout_sha256) is not str
+                or SHA.fullmatch(observation.stdout_sha256) is None):
+            raise ValueError("repeatability observation is invalid")
+    if first.packet_id != second.packet_id:
+        raise ValueError("repeatability packet IDs differ")
+    return {"packet_id": first.packet_id,
+        "first_stdout_sha256": first.stdout_sha256,
+        "second_stdout_sha256": second.stdout_sha256,
+        "equal": first.stdout_sha256 == second.stdout_sha256}
+
+
+class _PrivateSyntheticObservation:
+    __slots__ = ("_session", "packet_id", "stdout_sha256")
+
+    def __init__(self, token, session, packet_id, stdout_sha256):
+        if token is not _CLAIM_FACTORY_TOKEN:
+            raise TypeError("private observation requires a claimed invocation")
+        object.__setattr__(self, "_session", session)
+        object.__setattr__(self, "packet_id", packet_id)
+        object.__setattr__(self, "stdout_sha256", stdout_sha256)
+
+    def __setattr__(self, _name, _value):
+        raise TypeError("private observations are immutable")
+
+    def __copy__(self):
+        raise TypeError("private observations cannot be copied")
+
+    def __deepcopy__(self, _memo):
+        raise TypeError("private observations cannot be copied")
+
+    def __reduce__(self):
+        raise TypeError("private observations cannot be pickled")
 
 
 def _rebuild_private_probe_receipt(candidate, capture, prefixes):

@@ -1,14 +1,13 @@
 # Current handoff
 
-Updated: 2026-10-04T16:00:27+08:00
+Updated: 2026-10-04T17:39:06+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 268a5b6
+Baseline commit: 8e19526
 Remote status: `git ls-remote origin refs/heads/main` confirmed
 `b9d6455dc295d1b1374b87698eb05bc6348307a2`; `handoff-contract` run
-37186500596 succeeded for that exact SHA. Local `main` is two commits ahead
-after this checkpoint commit.
-Working tree at checkpoint: clean after this commit; verify with `git status --short`.
+37186500596 succeeded for that exact SHA. Local `main` is two commits ahead.
+Working tree at checkpoint: serial repeatability and handoff pending local commit.
 
 ## Objective
 
@@ -20,21 +19,26 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
+Two serial retained native invocations now produce sealed path-free packet ID
+and stdout SHA observations. The private repeatability record compares them
+after each batch closes and rejects same-session reuse, mutation and different
+packet IDs. This is a bounded piece of the synthetic gate, not its formal
+case result. Native raw-transport suite: 47/47 passed; restricted discovery:
+811 run, 66 skips.
+
 The private claim now exercises all 33 adapter-owned fixture case types through
 the same native launcher, policy and retained roots. Binary selected-media
 reads use an exact prefix; denied reads use real other-packet/result leaves or
 fixed source files; network denials use live owned listeners. Bounded failure
 and stdout classification observes outcomes rather than assigning them by case
 name. These separate checks do not yet produce the required ordered manifest,
-case result, repeatability record or aggregate. Native raw-transport suite:
-46/46 passed; restricted discovery: 810 run, 65 skips.
+case result or aggregate.
 
 The shared transport retains the leader through group teardown. Exact scratch
 content is cleaned after group absence; changed content and missing proof
 preserve the root. A second invocation is rejected. General authority is closed.
 
-The private claim is single-use and invalid after terminal close. Its receipt
-shape binds the exact 14-key raw matrix and backend, policy and runner hashes;
+The single-use claim binds 14 raw probes and backend/policy/runner hashes;
 public receipt and general invocation authority remain closed.
 
 The private batch candidate retains exact request, runner-policy and enforcement-
@@ -123,7 +127,7 @@ receipt or spawn authority has been created.
 
 ## Verified
 
-- Restricted full discovery: 810 tests run, 745 passed, 65 skips. Listener
+- Restricted full discovery: 811 tests run, 745 passed, 66 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -181,7 +185,7 @@ receipt or spawn authority has been created.
   host tests pass.
 - Full-set coordinator covers success, timeout, source mutation and cleanup
   refusal in the current 29-test native raw-transport suite.
-- Private retained session and fixed synthetic transport: 46 native host tests
+- Private retained session and fixed synthetic transport: 47 native host tests
   pass, including changed HOME, timeout, simultaneous pipes, exact scratch
   cleanup, changed content and missing inference group proof.
 - The native retained-session case also confirms one-time claim rejection and
