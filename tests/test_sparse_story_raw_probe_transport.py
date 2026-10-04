@@ -301,6 +301,37 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertTrue(root.exists())
             self.assertTrue(inputs["candidate"]._closed)
 
+    def test_retained_receipt_rebuild_rejects_changed_bytes_and_rows(self):
+        for change in ("receipt", "transcript"):
+            with self.subTest(change=change), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                if change == "receipt":
+                    session._receipt_bytes = b"{}"
+                else:
+                    session._capture = replace(session._capture, stdout=b"{}")
+                with self.assertRaises(ValueError):
+                    session.claim_once()
+                session.close()
+                self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_bundle_mutation_after_probe_blocks_claim_before_spawn(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            candidate = inputs["candidate"]
+            relative = json.loads(candidate._request_bytes)["media"][0]["path"]
+            leaf = candidate._proofs[0]._root / relative
+            leaf.chmod(0o644)
+            before = leaf.read_bytes()
+            leaf.write_bytes(bytes([before[0] ^ 1]) + before[1:])
+            leaf.chmod(0o444)
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaises(ValueError):
+                session.claim_once()
+            launch.assert_not_called()
+            session.close()
+            self.assertFalse(inputs["batch_scratch"].root.exists())
+
     def test_claim_runs_one_fixed_native_synthetic_case(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
             session = _open_retained_probed_batch(**inputs)
@@ -369,6 +400,32 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 session.close()
             self.assertEqual((inputs["batch_scratch"].root / "synthetic-write").read_bytes(),
                 b"changed")
+
+    def test_claim_preserves_replaced_synthetic_scratch_inode(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            target = inputs["batch_scratch"].root / "synthetic-write"
+            original_pread = os.pread
+            replaced = False
+
+            def replace_after_read(fd, count, offset):
+                nonlocal replaced
+                data = original_pread(fd, count, offset)
+                if data == b"synthetic-scratch-write-v1" and not replaced:
+                    replaced = True
+                    target.unlink()
+                    target.write_bytes(data)
+                    target.chmod(0o600)
+                return data
+
+            with mock.patch("aegis360.sparse_story_probe_denials.os.pread",
+                    side_effect=replace_after_read), self.assertRaises(ValueError):
+                claim._run_fixed_synthetic_scratch_case_once()
+            self.assertTrue(replaced)
+            with self.assertRaises(ValueError):
+                session.close()
+            self.assertEqual(target.read_bytes(), b"synthetic-scratch-write-v1")
 
     def test_claim_preserves_scratch_without_inference_group_absence(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:

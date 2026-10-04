@@ -191,10 +191,10 @@ specific directing question. No new video is currently awaiting owner review.
   uses exact 14 boolean keys; bad bindings or keys fail.
 - The private retained session binds 14 probes and policy/backend/runner hashes.
   Three fixed synthetic cases use the same native launcher and policy; strict
-  stdout validation and all 37 host tests pass. No general inference authority
-  exists.
+  stdout and receipt rebuild checks pass. All 40 host tests pass; no general
+  inference authority or closed synthetic aggregate exists.
 
 ## Next action
 
-Complete coordinator-owned synthetic cases, then assess general invocation and
-receipt authority. Keep public APIs closed.
+Complete the closed synthetic manifest/result and aggregate for all cases, then
+assess invocation and receipt authority. Keep public APIs closed.

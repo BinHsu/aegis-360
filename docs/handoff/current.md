@@ -1,13 +1,14 @@
 # Current handoff
 
-Updated: 2026-10-04T15:00:49+08:00
+Updated: 2026-10-04T15:45:35+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 626b81e
+Baseline commit: b9d6455
 Remote status: `git ls-remote origin refs/heads/main` confirmed
-`df82f925866aa9c85320f7b1538a1f903e6d4b20`; `handoff-contract` run
-37183729225 succeeded for that exact SHA. Local `main` is two commits ahead.
-Working tree at checkpoint: clean after this commit; verify with `git status --short`.
+`b9d6455dc295d1b1374b87698eb05bc6348307a2`; `handoff-contract` run
+37186500596 succeeded for that exact SHA. Local `main` matches `origin/main`.
+Working tree at checkpoint: private receipt rebuild and coordinator-case host
+checks pending local commit; verify with `git status --short`.
 
 ## Objective
 
@@ -19,21 +20,28 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
+The retained session independently rebuilds its private receipt from the raw
+probe transcript and current bound policy/backend/runner bytes on every
+revalidation. Changed receipt bytes or rows fail before claim. Host checks now
+also reject a changed selected bundle before spawn, preserve a same-content
+scratch inode replacement, and enforce one invocation. These are bounded
+observations for the four coordinator-owned synthetic case themes; they do not
+yet produce the required closed case manifest/result or aggregate. Native
+raw-transport suite: 40/40 passed; restricted discovery: 803 run, 59 skips.
+
 The private claimed batch now runs three fixed synthetic fixture cases through
 the same retained native launcher, runtime and policy: descriptor hygiene,
 60 KB simultaneous request/stdout pressure, and one exact scratch write. The
 shared transport retains the leader through process-group teardown. Exact
 scratch content is removed only after group absence; changed content and
 missing inference group proof preserve the batch root. A second invocation is
-rejected. Strict raw JSON/schema validation rejects malformed stdout. This is
-fixed synthetic transport evidence, not general adapter/model authority.
-Native raw-transport host suite: 37/37 passed.
+rejected. Strict raw JSON/schema validation rejects malformed stdout; general
+adapter/model authority remains closed.
 
 The private claim is single-use and invalid after terminal close. Its receipt
 shape binds the exact 14-key raw matrix and backend, policy and runner hashes;
 public receipt and general invocation authority remain closed.
 
-The retained session keeps candidate and scratch alive; changed inputs fail closed.
 The private batch candidate retains exact request, runner-policy and enforcement-
 policy bytes; uid/gid; launcher, runtime, model and prompt roots; selected media;
 and empty private HOME/TMPDIR identities. A validated 6/24-packet set can publish
@@ -115,12 +123,11 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published milestone: `BinHsu/aegis-360@df82f92`; exact-SHA remote CI passed.
-- Local unpublished commits: `626b81e` and this stdout-gate checkpoint.
+- Published milestone: `BinHsu/aegis-360@b9d6455`; exact-SHA remote CI passed.
 
 ## Verified
 
-- Restricted full discovery: 800 tests run, 744 passed, 56 skips. Listener
+- Restricted full discovery: 803 tests run, 744 passed, 59 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -178,7 +185,7 @@ receipt or spawn authority has been created.
   host tests pass.
 - Full-set coordinator covers success, timeout, source mutation and cleanup
   refusal in the current 29-test native raw-transport suite.
-- Private retained session and fixed synthetic transport: 37 native host tests
+- Private retained session and fixed synthetic transport: 40 native host tests
   pass, including changed HOME, timeout, simultaneous pipes, exact scratch
   cleanup, changed content and missing inference group proof.
 - The native retained-session case also confirms one-time claim rejection and
@@ -199,14 +206,11 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The private claim now runs only three fixed synthetic fixture cases. Add
-  closed coordinator case selection and complete the remaining synthetic gate
-  before assessing general invocation or receipt authority. The private receipt
-  bytes remain shape evidence; public authority APIs stay closed.
-- Then complete the four coordinator-owned synthetic cases before model/media
-  acquisition. No model or real-media acquisition is authorized yet.
-- Complete four coordinator-owned synthetic cases, then review the implementation
-  gate before acquiring models or real-media packets.
+- The private claim runs only three fixed synthetic fixture cases. Add closed
+  case selection, manifest/result and aggregate for all adapter and coordinator
+  cases. Then review the implementation gate before
+  model/media acquisition. Private receipt bytes remain shape evidence; public
+  authority APIs stay closed. No model or real-media acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands

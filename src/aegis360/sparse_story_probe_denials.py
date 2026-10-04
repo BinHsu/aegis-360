@@ -223,12 +223,14 @@ class _RetainedProbedBatch:
     This is deliberately not an invocation token or capability receipt.
     """
 
-    def __init__(self, candidate, batch_scratch, capture, binding, receipt_bytes):
+    def __init__(self, candidate, batch_scratch, capture, binding, receipt_bytes,
+                 probe_prefixes):
         self._candidate = candidate
         self._batch_scratch = batch_scratch
         self._capture = capture
         self._binding = binding
         self._receipt_bytes = receipt_bytes
+        self._probe_prefixes = probe_prefixes
         self._closed = False
         self._claimed = False
         self._invocation_started = False
@@ -241,6 +243,9 @@ class _RetainedProbedBatch:
                 or self._batch_scratch.bound_candidate is not self._candidate
                 or self._candidate._binding_bytes() != self._binding):
             raise ValueError("retained probe batch changed")
+        if _rebuild_private_probe_receipt(self._candidate, self._capture,
+                self._probe_prefixes) != self._receipt_bytes:
+            raise ValueError("retained probe receipt changed")
         self._batch_scratch.revalidate()
 
     def close(self):
@@ -366,6 +371,38 @@ class _ClaimedProbedBatch:
 _CLAIM_FACTORY_TOKEN = object()
 
 
+def _rebuild_private_probe_receipt(candidate, capture, prefixes):
+    from .sparse_story_probe_transcript import (
+        _check_probe_row_values, parse_isolation_probe_transcript,
+    )
+    from .sparse_story_raw_probe_transport import _RawProbeCapture
+    from .sparse_story_runner_contract import (
+        CAPABILITY_SCHEMA, MATRIX_KEYS, canonical_capability_receipt_shape_bytes,
+    )
+    import hashlib
+
+    if (type(candidate) is not _BatchPolicyCandidate
+            or type(capture) is not _RawProbeCapture or not capture.completed
+            or capture.group_gone is not True or capture.postcheck_passed is not True
+            or capture.returncode != 0 or type(prefixes) is not tuple
+            or len(prefixes) != 3 or any(type(value) is not bytes for value in prefixes)):
+        raise ValueError("private probe receipt inputs are invalid")
+    rows = parse_isolation_probe_transcript(capture.stdout)
+    matrix = _check_probe_row_values(rows, bundle_prefix=prefixes[0],
+        model_prefix=prefixes[1], prompt_prefix=prefixes[2])
+    if (set(matrix) != set(MATRIX_KEYS)
+            or any(matrix[key] is not True for key in MATRIX_KEYS)):
+        raise ValueError("retained probe matrix is incomplete")
+    return canonical_capability_receipt_shape_bytes({
+        "schema_version": CAPABILITY_SCHEMA,
+        "backend_manifest_sha256": hashlib.sha256(candidate._backend_bytes).hexdigest(),
+        "compiled_policy_sha256": hashlib.sha256(candidate._policy_bytes()).hexdigest(),
+        "runner_policy_sha256": hashlib.sha256(
+            candidate._runner_policy_bytes).hexdigest(),
+        "matrix": matrix,
+    })
+
+
 def _clean_fixed_synthetic_scratch(owner):
     """Remove only the exact verified fixture leaf after group absence."""
     from .sparse_story_probe_sentinels import _OwnedBatchScratch, _file_facts
@@ -408,13 +445,6 @@ def _open_retained_probed_batch(*, candidate, batch_scratch, outside,
         _OwnedBatchScratch, _OwnedOutsideSentinel, _OwnedScratchProbeFiles,
     )
     from .sparse_story_raw_probe_transport import _run_owned_raw_probe
-    from .sparse_story_probe_transcript import (
-        _check_probe_row_values, parse_isolation_probe_transcript,
-    )
-    from .sparse_story_runner_contract import (
-        CAPABILITY_SCHEMA, MATRIX_KEYS, canonical_capability_receipt_shape_bytes,
-    )
-    import hashlib
 
     if (type(candidate) is not _BatchPolicyCandidate
             or type(batch_scratch) is not _OwnedBatchScratch
@@ -443,26 +473,11 @@ def _open_retained_probed_batch(*, candidate, batch_scratch, outside,
             raise ValueError("retained batch raw probe is incomplete")
         binding = candidate._binding_bytes()
         batch_scratch.revalidate()
-        rows = parse_isolation_probe_transcript(capture.stdout)
         bundle, model, prompt = context.allowed
-        matrix = _check_probe_row_values(rows,
-            bundle_prefix=bundle.prefix, model_prefix=model.prefix,
-            prompt_prefix=prompt.prefix)
-        if (set(matrix) != set(MATRIX_KEYS)
-                or any(matrix[key] is not True for key in MATRIX_KEYS)):
-            raise ValueError("retained probe matrix is incomplete")
-        receipt_bytes = canonical_capability_receipt_shape_bytes({
-            "schema_version": CAPABILITY_SCHEMA,
-            "backend_manifest_sha256": hashlib.sha256(
-                candidate._backend_bytes).hexdigest(),
-            "compiled_policy_sha256": hashlib.sha256(
-                candidate._policy_bytes()).hexdigest(),
-            "runner_policy_sha256": hashlib.sha256(
-                candidate._runner_policy_bytes).hexdigest(),
-            "matrix": matrix,
-        })
+        prefixes = (bundle.prefix, model.prefix, prompt.prefix)
+        receipt_bytes = _rebuild_private_probe_receipt(candidate, capture, prefixes)
         session = _RetainedProbedBatch(candidate, batch_scratch, capture, binding,
-            receipt_bytes)
+            receipt_bytes, prefixes)
         session.revalidate()
         return session
     except BaseException:
