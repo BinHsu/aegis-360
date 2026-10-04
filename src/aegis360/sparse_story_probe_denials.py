@@ -317,13 +317,122 @@ class _ClaimedProbedBatch:
         return self._run_fixed_synthetic_case_once("scratch_write_allowed", b"")
 
     def _run_fixed_synthetic_case_once(self, case_id, request_bytes):
+        capture = self._execute_fixed_synthetic_case_once(case_id, request_bytes)
+        if capture.completed:
+            from .sparse_story_semantics import _strict_raw
+            _strict_raw(capture.stdout)
+        return capture
+
+    def _observe_fixed_synthetic_output_case_once(self, case_id):
+        """Classify a closed fixture stdout case from observed bytes and status."""
+        allowed = {"stdout_empty", "stdout_invalid_utf8",
+            "stdout_duplicate_key", "stdout_nan", "stdout_trailing_bytes",
+            "stdout_forbidden_field", "stdout_extra_field",
+            "stdout_limit_minus_one", "stdout_limit_exact",
+            "stdout_limit_plus_one", "stderr_nonempty", "nonzero_exit",
+            "signal_exit", "wall_timeout", "term_ignore_kill"}
+        if case_id not in allowed:
+            raise ValueError("fixed synthetic output case is invalid")
+        capture = self._execute_fixed_synthetic_case_once(case_id, b"")
+        return _classify_fixed_synthetic_output(capture)
+
+    def _observe_fixed_synthetic_identity_case_once(self, case_id):
+        if case_id not in {"argv_literal", "environment_exact", "cwd_identity",
+                "fd_hygiene"}:
+            raise ValueError("fixed synthetic identity case is invalid")
+        capture = self._execute_fixed_synthetic_case_once(case_id, b"")
+        return _classify_fixed_synthetic_output(capture)
+
+    def _observe_fixed_synthetic_network_case_once(self, case_id):
+        if case_id not in {"network_ipv4_denied", "network_ipv6_denied",
+                "unix_socket_denied"}:
+            raise ValueError("fixed synthetic network case is invalid")
+        capture = self._execute_fixed_synthetic_case_once(case_id, b"")
+        return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
+            == "success" else "invocation_failure")
+
+    def _observe_fixed_synthetic_denial_case_once(self, case_id):
+        if case_id not in {"grandchild_containment", "outside_write_denied",
+                "repository_read_denied", "protocol_read_denied"}:
+            raise ValueError("fixed synthetic denial case is invalid")
+        capture = self._execute_fixed_synthetic_case_once(case_id, b"")
+        return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
+            == "success" else "invocation_failure")
+
+    def _observe_fixed_fullset_read_denial_once(self, case_id, denial_source):
+        """Probe an actual other-packet or full-result leaf from the same set."""
+        from .sparse_story_raw_probe_transport import _run_native_process
+        if case_id not in {"neighbor_packet_read_denied", "result_read_denied"}:
+            raise ValueError("fixed full-set read case is invalid")
+        if self._invoked:
+            raise ValueError("private batch claim was already invoked")
+        self.revalidate()
+        candidate = self._session._candidate
+        with _retain_full_set_denials(candidate=candidate, **denial_source) as (
+                neighbor, result):
+            target = neighbor if case_id == "neighbor_packet_read_denied" else result
+            self._invoked = True
+            self._session._invocation_started = True
+            def postvalidate():
+                self.revalidate()
+                neighbor.revalidate()
+                result.revalidate()
+            capture = _run_native_process(candidate,
+                ("--aegis-synthetic-case", case_id, "--", str(target.path)),
+                postvalidate=postvalidate, request_bytes=b"")
+            self._session._invocation_capture = capture
+        self.revalidate()
+        return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
+            == "success" else "invocation_failure")
+
+    def _observe_fixed_allowed_read_once(self, case_id):
+        """Read a request-selected retained leaf using its exact byte prefix."""
+        from .sparse_story_raw_probe_transport import _run_native_process
+        selected = {"bundle_read_allowed": 0, "model_read_allowed": 1,
+            "prompt_read_allowed": 2}
+        if case_id not in selected:
+            raise ValueError("fixed allowed-read case is invalid")
+        if self._invoked:
+            raise ValueError("private batch claim was already invoked")
+        self.revalidate()
+        candidate = self._session._candidate
+        allowed = candidate._allowed_probe_leaves()
+        leaf = allowed[selected[case_id]]
+        self._invoked = True
+        self._session._invocation_started = True
+        def postvalidate():
+            self.revalidate()
+            if candidate._allowed_probe_leaves() != allowed:
+                raise ValueError("allowed read leaf changed")
+        capture = _run_native_process(candidate,
+            ("--aegis-synthetic-case", case_id, "--", str(leaf.path),
+                "hex:" + leaf.prefix.hex()),
+            postvalidate=postvalidate, request_bytes=b"")
+        self._session._invocation_capture = capture
+        self.revalidate()
+        return ("isolation_allowed" if _classify_fixed_synthetic_output(capture)
+            == "success" else "invocation_failure")
+
+    def _execute_fixed_synthetic_case_once(self, case_id, request_bytes):
         from . import sparse_story_batch_policy as batch_policy
         from .sparse_story_raw_probe_transport import _run_native_process
 
         if ((case_id, request_bytes) not in
                 (("fd_hygiene", b""),
                  ("concurrent_pipe_pressure", b"x" * 60_000),
-                 ("scratch_write_allowed", b""))):
+                 ("scratch_write_allowed", b""))
+                and (case_id not in {"grandchild_containment",
+                    "outside_write_denied", "repository_read_denied",
+                    "protocol_read_denied", "network_ipv4_denied",
+                    "network_ipv6_denied", "unix_socket_denied",
+                    "argv_literal", "environment_exact",
+                    "cwd_identity", "stdout_empty", "stdout_invalid_utf8",
+                    "stdout_duplicate_key", "stdout_nan", "stdout_trailing_bytes",
+                    "stdout_forbidden_field", "stdout_extra_field",
+                    "stdout_limit_minus_one", "stdout_limit_exact",
+                    "stdout_limit_plus_one", "stderr_nonempty", "nonzero_exit",
+                    "signal_exit", "wall_timeout", "term_ignore_kill"}
+                    or request_bytes != b"")):
             raise ValueError("fixed synthetic case is invalid")
         if self._invoked:
             raise ValueError("private batch claim was already invoked")
@@ -334,6 +443,24 @@ class _ClaimedProbedBatch:
             raise ValueError("fixed synthetic case requires the fixture runtime")
         scratch_owner = self._session._batch_scratch
         scratch_path = scratch_owner.root / "synthetic-write"
+        network_case = case_id in {"network_ipv4_denied",
+            "network_ipv6_denied", "unix_socket_denied"}
+        listener_owner = None
+        outside_owner = None
+        read_owner = None
+        if network_case:
+            from .sparse_story_probe_listeners import _OwnedProbeListeners
+            listener_owner = _OwnedProbeListeners(scratch_owner.root.parent)
+        if case_id == "outside_write_denied":
+            from .sparse_story_probe_sentinels import _OwnedOutsideSentinel
+            outside_owner = _OwnedOutsideSentinel(scratch_owner.root.parent)
+        if case_id in {"repository_read_denied", "protocol_read_denied"}:
+            from .sparse_story_probe_context import (
+                _PROTOCOL_SENTINEL, _REPOSITORY_SENTINEL,
+            )
+            from .sparse_story_probe_sentinels import _ReadDenialSentinel
+            read_owner = _ReadDenialSentinel(_REPOSITORY_SENTINEL
+                if case_id == "repository_read_denied" else _PROTOCOL_SENTINEL)
         if case_id == "scratch_write_allowed":
             try: os.lstat(scratch_path)
             except FileNotFoundError: pass
@@ -342,19 +469,59 @@ class _ClaimedProbedBatch:
         suffix = ("--aegis-synthetic-case", case_id, "--")
         if case_id == "scratch_write_allowed":
             suffix += (str(scratch_path),)
+        elif case_id == "argv_literal":
+            suffix += (";$(touch should-not-run)", "* ' \" \\")
+        elif case_id == "environment_exact":
+            suffix += (candidate._private_home.identity.path,
+                candidate._private_tmpdir.identity.path)
+        elif case_id == "cwd_identity":
+            suffix += (str(candidate._proofs[0]._root),)
+        elif network_case:
+            listeners = listener_owner.listeners
+            suffix += (str(listeners.ipv4_port) if case_id == "network_ipv4_denied"
+                else str(listeners.ipv6_port) if case_id == "network_ipv6_denied"
+                else str(listeners.unix_path),)
+        elif case_id == "outside_write_denied":
+            suffix += (str(outside_owner.snapshot.create_path),)
+        elif read_owner is not None:
+            suffix += (str(read_owner.path),)
+        elif case_id == "grandchild_containment":
+            suffix += (str(scratch_owner.root / "grandchild-marker"),)
         self._session._invocation_started = True
-        capture = _run_native_process(candidate,
-            suffix, postvalidate=(candidate._binding_bytes
-                if case_id == "scratch_write_allowed" else self.revalidate),
-            request_bytes=request_bytes)
+        def postvalidate():
+            if case_id == "scratch_write_allowed":
+                candidate._binding_bytes()
+            else:
+                self.revalidate()
+            if listener_owner is not None: listener_owner.revalidate()
+            if outside_owner is not None: outside_owner.revalidate()
+            if read_owner is not None: read_owner.revalidate()
+        try:
+            capture = _run_native_process(candidate, suffix,
+                postvalidate=postvalidate, request_bytes=request_bytes)
+        except BaseException:
+            if listener_owner is not None: listener_owner.abandon()
+            if outside_owner is not None: outside_owner.abandon()
+            if read_owner is not None: read_owner.close()
+            raise
         self._session._invocation_capture = capture
+        if listener_owner is not None:
+            if capture.group_gone and type(capture.returncode) is int:
+                listener_owner.finish_after_reap(capture.returncode)
+            else:
+                listener_owner.abandon()
+        if outside_owner is not None:
+            if capture.group_gone and type(capture.returncode) is int:
+                outside_owner.finish_after_reap(capture.returncode)
+            else:
+                outside_owner.abandon()
+        if read_owner is not None:
+            try: read_owner.revalidate()
+            finally: read_owner.close()
         if case_id == "scratch_write_allowed":
             if not capture.completed or not capture.group_gone:
                 return capture
             _clean_fixed_synthetic_scratch(scratch_owner)
-        if capture.completed:
-            from .sparse_story_semantics import _strict_raw
-            _strict_raw(capture.stdout)
         self.revalidate()
         return capture
 
@@ -369,6 +536,29 @@ class _ClaimedProbedBatch:
 
 
 _CLAIM_FACTORY_TOKEN = object()
+
+
+def _classify_fixed_synthetic_output(capture):
+    from collections.abc import Mapping
+    from .sparse_story_raw_probe_transport import _RawProbeCapture
+    from .sparse_story_semantics import _decode_raw, validate_raw_observation
+
+    if type(capture) is not _RawProbeCapture:
+        raise TypeError("synthetic output classification requires native capture")
+    if not capture.completed:
+        return "invocation_failure"
+    try: parsed = _decode_raw(capture.stdout)
+    except ValueError:
+        return "malformed_json"
+    if not isinstance(parsed, Mapping):
+        return "schema_violation"
+    from .sparse_story_semantics import FIELDS
+    if set(parsed) != set(FIELDS):
+        return "forbidden_field" if set(parsed) - set(FIELDS) else "schema_violation"
+    try: validate_raw_observation(parsed)
+    except ValueError:
+        return "schema_violation"
+    return "success"
 
 
 def _rebuild_private_probe_receipt(candidate, capture, prefixes):

@@ -73,6 +73,19 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
                                  (64, b"", b""))
             self.assertEqual(proof.manifest(), manifest)
 
+    def test_binary_bundle_prefix_is_checked_without_text_conversion(self):
+        with tempfile.TemporaryDirectory() as directory:
+            leaf = Path(directory) / "binary.png"
+            prefix = b"\x89PNG\r\n\x1a\n\x00\xff"
+            leaf.write_bytes(prefix + b"more payload")
+            def run(expected):
+                return subprocess.run([str(self.executable),
+                    "--aegis-synthetic-case", "bundle_read_allowed", "--",
+                    str(leaf), expected], capture_output=True, timeout=5)
+            self.assertEqual(run("hex:" + prefix.hex()).returncode, 0)
+            self.assertEqual(run("hex:" + (prefix[:-1] + b"\x00").hex()).returncode, 65)
+            self.assertEqual(run("hex:zz").returncode, 64)
+
     def test_stdout_failure_cases_have_distinct_raw_bytes(self):
         expected = {
             "stdout_empty": (b"", "malformed_json"),

@@ -87,6 +87,12 @@ static int fd_hygiene(void) {
     return 0;
 }
 
+static int hex_digit(char value) {
+    if (value >= '0' && value <= '9') return value - '0';
+    if (value >= 'a' && value <= 'f') return value - 'a' + 10;
+    return -1;
+}
+
 static int read_case(const char *path, const char *expected, int denied) {
     errno = 0;
     int fd = open(path, O_RDONLY | O_CLOEXEC | O_NOFOLLOW);
@@ -96,6 +102,31 @@ static int read_case(const char *path, const char *expected, int denied) {
             ? emit_case_bytes(abstain, sizeof(abstain) - 1U) : 65;
     }
     if (fd < 0) return 65;
+    if (strncmp(expected, "hex:", 4) == 0) {
+        const char *hex = expected + 4;
+        size_t digits = strlen(hex);
+        if (digits < 2U || digits > 256U || digits % 2U != 0U) {
+            close(fd);
+            return 64;
+        }
+        unsigned char wanted[128], observed[128];
+        size_t length = digits / 2U;
+        for (size_t i = 0; i < length; ++i) {
+            int high = hex_digit(hex[2U * i]);
+            int low = hex_digit(hex[2U * i + 1U]);
+            if (high < 0 || low < 0) { close(fd); return 64; }
+            wanted[i] = (unsigned char)((high << 4) | low);
+        }
+        size_t offset = 0;
+        while (offset < length) {
+            ssize_t count = read(fd, observed + offset, length - offset);
+            if (count <= 0) { close(fd); return 65; }
+            offset += (size_t)count;
+        }
+        int close_result = close(fd);
+        if (close_result != 0 || memcmp(observed, wanted, length) != 0) return 65;
+        return emit_case_bytes(abstain, sizeof(abstain) - 1U);
+    }
     char bytes[129];
     ssize_t count = read(fd, bytes, sizeof(bytes));
     int close_result = close(fd);

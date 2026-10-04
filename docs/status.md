@@ -183,16 +183,16 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 792 tests run, 744 passed and 48 host/sandbox cases skipped.
+- Full discovery: 810 tests run, 745 passed and 65 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, retained identity and 33 adapter
   case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests pass; mutations are detected.
 - First/last selected packets retain actual other-packet leaves. Host raw probe
   uses exact 14 boolean keys; bad bindings or keys fail.
 - The private retained session binds 14 probes and policy/backend/runner hashes.
-  Three fixed synthetic cases use the same native launcher and policy; strict
-  stdout and receipt rebuild checks pass. All 40 host tests pass; no general
-  inference authority or closed synthetic aggregate exists.
+  All 33 adapter-owned fixture case types have separate native observations;
+  all 46 host tests pass. No general inference authority or ordered synthetic
+  aggregate exists.
 
 ## Next action
 

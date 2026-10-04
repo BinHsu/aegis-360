@@ -477,6 +477,100 @@ class RawProbeTransportHostTests(unittest.TestCase):
             session.close()
             self.assertFalse(inputs["batch_scratch"].root.exists())
 
+    def test_closed_synthetic_stdout_cases_use_observed_classification(self):
+        expected = {
+            "stdout_empty": "invocation_failure",
+            "stdout_invalid_utf8": "malformed_json",
+            "stdout_duplicate_key": "malformed_json",
+            "stdout_nan": "malformed_json",
+            "stdout_trailing_bytes": "malformed_json",
+            "stdout_forbidden_field": "forbidden_field",
+            "stdout_extra_field": "forbidden_field",
+            "stdout_limit_minus_one": "success",
+            "stdout_limit_exact": "success",
+            "stdout_limit_plus_one": "invocation_failure",
+            "stderr_nonempty": "invocation_failure",
+            "nonzero_exit": "invocation_failure",
+            "signal_exit": "invocation_failure",
+            "wall_timeout": "invocation_failure",
+            "term_ignore_kill": "invocation_failure",
+        }
+        for case_id, outcome in expected.items():
+            with self.subTest(case_id=case_id), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                claim = session.claim_once()
+                timeout = 10_000_000 if case_id in {
+                    "wall_timeout", "term_ignore_kill"} else 120_000_000_000
+                with mock.patch("aegis360.sparse_story_raw_probe_transport._TIMEOUT_NS",
+                        timeout):
+                    self.assertEqual(
+                        claim._observe_fixed_synthetic_output_case_once(case_id),
+                        outcome)
+                session.close()
+                self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_closed_synthetic_identity_cases_use_exact_native_launch(self):
+        for case_id in ("argv_literal", "environment_exact", "cwd_identity",
+                "fd_hygiene"):
+            with self.subTest(case_id=case_id), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                claim = session.claim_once()
+                self.assertEqual(claim._observe_fixed_synthetic_identity_case_once(case_id),
+                    "success")
+                self.assertFalse((inputs["candidate"]._proofs[0]._root
+                    / "should-not-run").exists())
+                session.close()
+                self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_closed_synthetic_network_cases_use_live_denial_targets(self):
+        for case_id in ("network_ipv4_denied", "network_ipv6_denied",
+                "unix_socket_denied"):
+            with self.subTest(case_id=case_id), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                claim = session.claim_once()
+                self.assertEqual(claim._observe_fixed_synthetic_network_case_once(case_id),
+                    "isolation_denied")
+                session.close()
+                self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_closed_synthetic_denials_use_retained_sources(self):
+        for case_id in ("grandchild_containment", "outside_write_denied",
+                "repository_read_denied", "protocol_read_denied"):
+            with self.subTest(case_id=case_id), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                claim = session.claim_once()
+                self.assertEqual(claim._observe_fixed_synthetic_denial_case_once(case_id),
+                    "isolation_denied")
+                session.close()
+                self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_closed_synthetic_fullset_reads_use_actual_other_packet_and_result(self):
+        for case_id in ("neighbor_packet_read_denied", "result_read_denied"):
+            with self.subTest(case_id=case_id), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                claim = session.claim_once()
+                self.assertEqual(claim._observe_fixed_fullset_read_denial_once(
+                    case_id, inputs["denial_source"]), "isolation_denied")
+                session.close()
+                self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_closed_synthetic_allowed_reads_use_request_selected_leaves(self):
+        for case_id in ("bundle_read_allowed", "model_read_allowed",
+                "prompt_read_allowed"):
+            with self.subTest(case_id=case_id), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                claim = session.claim_once()
+                self.assertEqual(claim._observe_fixed_allowed_read_once(case_id),
+                    "isolation_allowed")
+                session.close()
+                self.assertFalse(inputs["batch_scratch"].root.exists())
+
     def test_retained_probe_timeout_closes_candidate_and_owned_root(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
             root = inputs["batch_scratch"].root

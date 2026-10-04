@@ -5,8 +5,9 @@ Status: implementation design, no invocation authority
 The retained probe session in `sparse_story_probe_denials.py` keeps one exact
 batch candidate and its scratch root alive after a successful native probe. A
 single private claim binds the 14 observed probe results and the hashes of the
-backend manifest, runner policy and rendered enforcement-policy input. The
-claim currently has no spawn method.
+backend manifest, runner policy and rendered enforcement-policy input. Its
+private fixed-case methods now exercise the synthetic fixture through the
+retained launcher; no general adapter or model invocation API is open.
 
 ## Required sequence
 
@@ -33,8 +34,9 @@ backend token. It calls `process.wait()` before the caller can verify group
 absence and does not own the later scratch-file cleanup. Its fake-token tests
 establish capture mechanics, not this native lifecycle. The private native
 path must retain the leader until group teardown, as `_run_raw_probe` does.
-This is a transport design choice, not a new product decision or permission to
-run a model.
+The shared native transport now retains the leader for the fixed synthetic
+cases. This is a transport design choice, not a new product decision or
+permission to run a model.
 
 ## Next discriminating checks
 
