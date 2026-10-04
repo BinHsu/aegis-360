@@ -1,14 +1,14 @@
 # Current handoff
 
-Updated: 2026-10-04T14:21:00+08:00
+Updated: 2026-10-04T14:25:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 0fc1c87
-Remote status: local `main` and `origin/main` refs match at
-`0fc1c8709157c2b93a5852cae4583ce17c5346d8`; no remote CI was verified
-for that SHA in this turn.
-Working tree at checkpoint: private one-time claim and receipt-shape changes
-pending local commit; verify with `git status --short`.
+Baseline commit: d5beef3
+Remote status: `git ls-remote origin refs/heads/main` confirms
+`0fc1c8709157c2b93a5852cae4583ce17c5346d8`; local `main` is three commits
+ahead after this checkpoint commit. No CI was verified for the new commits.
+Working tree at checkpoint: clean after the handoff commit; verify with
+`git status --short`.
 
 ## Objective
 
@@ -112,8 +112,8 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Local baseline: `BinHsu/aegis-360@ca6c12b`; this turn has not published it.
-  Claim and receipt-shape work is uncommitted.
+- Local milestone commits: `BinHsu/aegis-360@ca6c12b`, `@d5beef3` and this
+  checkpoint commit are unpublished.
 
 ## Verified
 
