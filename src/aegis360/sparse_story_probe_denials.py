@@ -346,9 +346,10 @@ class _ClaimedProbedBatch:
                 or row["stimulus"] != self._last_stimulus[1]):
             raise ValueError("executed case differs from frozen stimulus")
 
-    def _run_fixed_synthetic_fd_case_once(self):
+    def _run_fixed_synthetic_fd_case_once(self, frozen_row=None):
         """Exercise one closed fixture case; no general adapter invocation API."""
-        return self._run_fixed_synthetic_case_once("fd_hygiene", b"")
+        return self._run_fixed_synthetic_case_once("fd_hygiene", b"",
+            frozen_row=frozen_row)
 
     def _run_fixed_synthetic_pipe_case_once(self):
         """Exercise bounded simultaneous stdout and request transfer."""
@@ -359,8 +360,10 @@ class _ClaimedProbedBatch:
         """Exercise and remove one exact fixture-created scratch leaf."""
         return self._run_fixed_synthetic_case_once("scratch_write_allowed", b"")
 
-    def _run_fixed_synthetic_case_once(self, case_id, request_bytes):
-        capture = self._execute_fixed_synthetic_case_once(case_id, request_bytes)
+    def _run_fixed_synthetic_case_once(self, case_id, request_bytes,
+            frozen_row=None):
+        capture = self._execute_fixed_synthetic_case_once(case_id,
+            request_bytes, frozen_row=frozen_row)
         if capture.completed:
             from .sparse_story_semantics import _strict_raw
             _strict_raw(capture.stdout)
@@ -459,7 +462,8 @@ class _ClaimedProbedBatch:
         return ("isolation_allowed" if _classify_fixed_synthetic_output(capture)
             == "success" else "invocation_failure")
 
-    def _execute_fixed_synthetic_case_once(self, case_id, request_bytes):
+    def _execute_fixed_synthetic_case_once(self, case_id, request_bytes,
+            frozen_row=None):
         from . import sparse_story_batch_policy as batch_policy
         from .sparse_story_raw_probe_transport import _run_native_process
 
@@ -482,6 +486,8 @@ class _ClaimedProbedBatch:
             raise ValueError("fixed synthetic case is invalid")
         if self._invoked:
             raise ValueError("private batch claim was already invoked")
+        if frozen_row is not None and case_id != "fd_hygiene":
+            raise ValueError("frozen stimulus preflight is limited to fd_hygiene")
         self.revalidate()
         candidate = self._session._candidate
         live = batch_policy._require_live(candidate._facade)
@@ -533,6 +539,16 @@ class _ClaimedProbedBatch:
             suffix += (str(read_owner.path),)
         elif case_id == "grandchild_containment":
             suffix += (str(scratch_owner.root / "grandchild-marker"),)
+        self._record_fixed_stimulus(case_id, suffix[3:], request_bytes)
+        if frozen_row is not None:
+            from .sparse_story_runner_contract import CASE_SPECS
+            if (type(frozen_row) is not dict or set(frozen_row) != {
+                    "case_id", "expected_result", "stimulus"}
+                    or frozen_row["case_id"] != self._last_stimulus[0]
+                    or (frozen_row["case_id"], frozen_row["expected_result"])
+                       not in CASE_SPECS
+                    or frozen_row["stimulus"] != self._last_stimulus[1]):
+                raise ValueError("planned case differs from frozen stimulus")
         self._session._invocation_started = True
         def postvalidate():
             if case_id == "scratch_write_allowed":
@@ -551,7 +567,6 @@ class _ClaimedProbedBatch:
             if read_owner is not None: read_owner.close()
             raise
         self._session._invocation_capture = capture
-        self._record_fixed_stimulus(case_id, suffix[3:], request_bytes)
         if listener_owner is not None:
             if capture.group_gone and type(capture.returncode) is int:
                 listener_owner.finish_after_reap(capture.returncode)

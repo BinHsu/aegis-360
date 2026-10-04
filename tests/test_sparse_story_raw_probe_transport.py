@@ -338,20 +338,20 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertFalse(inputs["batch_scratch"].root.exists())
 
     def test_claim_runs_one_fixed_native_synthetic_case(self):
+        planned = SyntheticCasePlanTests().stimuli()
+        _, manifest = _freeze_private_synthetic_case_manifest(
+            adapter_manifest_sha256="a" * 64,
+            repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+        row = next(row for row in manifest["cases"]
+            if row["case_id"] == "fd_hygiene")
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
             session = _open_retained_probed_batch(**inputs)
             claim = session.claim_once()
-            capture = claim._run_fixed_synthetic_fd_case_once()
+            capture = claim._run_fixed_synthetic_fd_case_once(row)
             self.assertTrue(capture.completed, capture.reason)
             self.assertEqual(capture.returncode, 0)
             self.assertTrue(capture.group_gone)
             self.assertIn(b'"status":"abstain"', capture.stdout)
-            planned = SyntheticCasePlanTests().stimuli()
-            _, manifest = _freeze_private_synthetic_case_manifest(
-                adapter_manifest_sha256="a" * 64,
-                repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
-            row = next(row for row in manifest["cases"]
-                if row["case_id"] == "fd_hygiene")
             claim._verify_frozen_case_stimulus(row)
             changed = {**row, "stimulus": {**row["stimulus"],
                 "stdin_sha256": "0" * 64}}
@@ -361,6 +361,25 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 claim._run_fixed_synthetic_fd_case_once()
             session.close()
             self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_frozen_fd_stimulus_is_checked_before_native_spawn(self):
+        planned = SyntheticCasePlanTests().stimuli()
+        _, manifest = _freeze_private_synthetic_case_manifest(
+            adapter_manifest_sha256="a" * 64,
+            repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+        row = next(row for row in manifest["cases"]
+            if row["case_id"] == "fd_hygiene")
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            changed = {**row, "stimulus": {**row["stimulus"],
+                "stdin_sha256": "0" * 64}}
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaisesRegex(ValueError,
+                    "planned case differs from frozen"):
+                claim._run_fixed_synthetic_fd_case_once(changed)
+            launch.assert_not_called()
+            session.close()
 
     def test_claim_refuses_changed_home_before_synthetic_spawn(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
