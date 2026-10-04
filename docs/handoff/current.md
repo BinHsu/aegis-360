@@ -3,10 +3,10 @@
 Updated: 2026-10-04T17:48:10+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 7237278
+Baseline commit: 2fc3b77
 Remote status: `git ls-remote origin refs/heads/main` confirmed
 `b9d6455dc295d1b1374b87698eb05bc6348307a2`; `handoff-contract` run
-37186500596 succeeded for that exact SHA. Local `main` is four commits ahead.
+37186500596 succeeded for that exact SHA. Local `main` is five commits ahead.
 Working tree at checkpoint: clean after local commit; verify with `git status --short`.
 
 ## Objective
@@ -122,7 +122,7 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@b9d6455`; exact-SHA remote CI passed.
-- Local unpublished milestones: `268a5b6`, `8e19526`, `792b57a`, `7237278`.
+- Local unpublished milestones: `268a5b6`, `8e19526`, `792b57a`, `7237278`, `2fc3b77`.
 
 ## Verified
 
