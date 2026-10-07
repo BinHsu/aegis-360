@@ -42,6 +42,24 @@ The shared native transport now retains the leader for the fixed synthetic
 cases. This is a transport design choice, not a new product decision or
 permission to run a model.
 
+## Pending prepared-case boundary
+
+Listener ports and the outside-write sentinel path are created by their owned
+resources. Their literal argv cannot be frozen before those resources exist.
+An ordinary `frozen_row` argument to the current case method can reject a bad
+row, but it cannot supply a valid row for a listener whose port is allocated
+inside that method. Do not mark these cases preflight-bound from a negative
+test alone.
+
+The next coordinator should prepare each case in a single-use retained object:
+create and validate its exact owner, capture argv/stdin/support bytes, freeze
+the 37 ordered rows while all owners remain live, then execute each row through
+the same retained owner and candidate. The owner must support exact cleanup
+when a row fails before spawn, and the existing after-reap cleanup when a
+child ran. A prepared owner may not be reconstructed from the frozen path or
+port. Tests must exercise both a valid frozen row using the same live owner
+and a changed row that spawns no process and leaves no owned temporary tree.
+
 ## Next discriminating checks
 
 - A native synthetic no-write case must use the retained launcher/policy and

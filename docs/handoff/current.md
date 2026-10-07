@@ -7,7 +7,7 @@ Baseline commit: c359ec8
 Remote status: `git ls-remote origin refs/heads/main` confirmed
 `c359ec8bcda4f7d51b4e207d1209838907658475`; `handoff-contract` run
 37690926091 succeeded for that exact SHA. Local `main` has one unpublished commit.
-Working tree at checkpoint: preflight milestone edits; verify with `git status --short`.
+Working tree at checkpoint: clean after local commit; verify with `git status --short`.
 
 ## Objective
 
@@ -123,7 +123,7 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@c359ec8`; exact-SHA remote CI passed.
-- Local unpublished milestones: `2524ac3`, `c60f1c0`, read-proof preflight.
+- Local unpublished milestones: four commits after the published baseline.
 
 ## Verified
 
@@ -207,10 +207,10 @@ receipt or spawn authority has been created.
 ## Pending
 
 - The private claim covers all 33 adapter-owned case types as separate host
-  checks. Add listener/outside cleanup around pre-spawn binding, then build case result, repeatability record
-  and aggregate with four coordinator-owned cases. Then review the gate before
-  model/media acquisition. Private receipt bytes remain shape evidence; public
-  authority APIs stay closed. No model or real-media acquisition is authorized.
+  checks. Prepare retained listener/outside owners before manifest freeze,
+  add exact pre-spawn cleanup, then build case result and aggregate with four
+  coordinator-owned cases. Review the gate before model/media acquisition.
+  Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
