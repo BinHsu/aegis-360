@@ -381,6 +381,40 @@ class RawProbeTransportHostTests(unittest.TestCase):
             launch.assert_not_called()
             session.close()
 
+    def test_frozen_pipe_stdin_is_checked_before_native_spawn(self):
+        _, manifest = _freeze_private_synthetic_case_manifest(
+            adapter_manifest_sha256="a" * 64,
+            repeat_packet_id="packet-" + "b" * 20,
+            stimuli=SyntheticCasePlanTests().stimuli())
+        row = next(row for row in manifest["cases"]
+            if row["case_id"] == "concurrent_pipe_pressure")
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            changed = {**row, "stimulus": {**row["stimulus"],
+                "stdin_sha256": hashlib.sha256(b"x" * 59_999).hexdigest()}}
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaisesRegex(ValueError,
+                    "planned case differs from frozen"):
+                claim._run_fixed_synthetic_pipe_case_once(changed)
+            launch.assert_not_called()
+            session.close()
+
+    def test_frozen_literal_argv_runs_through_native_launcher(self):
+        _, manifest = _freeze_private_synthetic_case_manifest(
+            adapter_manifest_sha256="a" * 64,
+            repeat_packet_id="packet-" + "b" * 20,
+            stimuli=SyntheticCasePlanTests().stimuli())
+        row = next(row for row in manifest["cases"]
+            if row["case_id"] == "argv_literal")
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            self.assertEqual(claim._observe_fixed_synthetic_identity_case_once(
+                "argv_literal", row), "success")
+            claim._verify_frozen_case_stimulus(row)
+            session.close()
+
     def test_claim_refuses_changed_home_before_synthetic_spawn(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
             session = _open_retained_probed_batch(**inputs)

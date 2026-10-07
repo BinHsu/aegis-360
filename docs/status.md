@@ -183,7 +183,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 820 tests run, 753 passed and 67 host/sandbox cases skipped.
+- Full discovery: 822 tests run, 753 passed and 69 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, retained identity and 33 adapter
   case IDs; no confinement result.
 - Candidate/facade real-host integration: 34 tests pass; mutations are detected.
@@ -191,10 +191,10 @@ specific directing question. No new video is currently awaiting owner review.
   uses exact 14 boolean keys; bad bindings or keys fail.
 - The private retained session binds 14 probes and policy/backend/runner hashes.
   All 33 adapter-owned fixture case types have separate native observations;
-  52 host tests pass. Serial invocations yield a private byte-repeat record.
-  A 37-case freezer hashes inputs; one native case rejects a changed hash before spawn.
+  54 host tests pass. Serial invocations yield a private byte-repeat record.
+  A 37-case freezer hashes inputs; closed no-owner cases can preflight them.
 
 ## Next action
 
-Extend pre-spawn binding; complete case results and aggregate, then
+Add owned-case preflight cleanup; complete case results and aggregate, then
 assess invocation and receipt authority. Keep public APIs closed.

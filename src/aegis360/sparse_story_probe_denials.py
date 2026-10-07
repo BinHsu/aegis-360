@@ -351,10 +351,10 @@ class _ClaimedProbedBatch:
         return self._run_fixed_synthetic_case_once("fd_hygiene", b"",
             frozen_row=frozen_row)
 
-    def _run_fixed_synthetic_pipe_case_once(self):
+    def _run_fixed_synthetic_pipe_case_once(self, frozen_row=None):
         """Exercise bounded simultaneous stdout and request transfer."""
         return self._run_fixed_synthetic_case_once(
-            "concurrent_pipe_pressure", b"x" * 60_000)
+            "concurrent_pipe_pressure", b"x" * 60_000, frozen_row=frozen_row)
 
     def _run_fixed_synthetic_scratch_case_once(self):
         """Exercise and remove one exact fixture-created scratch leaf."""
@@ -369,7 +369,8 @@ class _ClaimedProbedBatch:
             _strict_raw(capture.stdout)
         return capture
 
-    def _observe_fixed_synthetic_output_case_once(self, case_id):
+    def _observe_fixed_synthetic_output_case_once(self, case_id,
+            frozen_row=None):
         """Classify a closed fixture stdout case from observed bytes and status."""
         allowed = {"stdout_empty", "stdout_invalid_utf8",
             "stdout_duplicate_key", "stdout_nan", "stdout_trailing_bytes",
@@ -379,14 +380,17 @@ class _ClaimedProbedBatch:
             "signal_exit", "wall_timeout", "term_ignore_kill"}
         if case_id not in allowed:
             raise ValueError("fixed synthetic output case is invalid")
-        capture = self._execute_fixed_synthetic_case_once(case_id, b"")
+        capture = self._execute_fixed_synthetic_case_once(case_id, b"",
+            frozen_row=frozen_row)
         return _classify_fixed_synthetic_output(capture)
 
-    def _observe_fixed_synthetic_identity_case_once(self, case_id):
+    def _observe_fixed_synthetic_identity_case_once(self, case_id,
+            frozen_row=None):
         if case_id not in {"argv_literal", "environment_exact", "cwd_identity",
                 "fd_hygiene"}:
             raise ValueError("fixed synthetic identity case is invalid")
-        capture = self._execute_fixed_synthetic_case_once(case_id, b"")
+        capture = self._execute_fixed_synthetic_case_once(case_id, b"",
+            frozen_row=frozen_row)
         return _classify_fixed_synthetic_output(capture)
 
     def _observe_fixed_synthetic_network_case_once(self, case_id):
@@ -486,8 +490,15 @@ class _ClaimedProbedBatch:
             raise ValueError("fixed synthetic case is invalid")
         if self._invoked:
             raise ValueError("private batch claim was already invoked")
-        if frozen_row is not None and case_id != "fd_hygiene":
-            raise ValueError("frozen stimulus preflight is limited to fd_hygiene")
+        preflight_cases = {"fd_hygiene", "concurrent_pipe_pressure",
+            "argv_literal", "environment_exact", "cwd_identity",
+            "stdout_empty", "stdout_invalid_utf8", "stdout_duplicate_key",
+            "stdout_nan", "stdout_trailing_bytes", "stdout_forbidden_field",
+            "stdout_extra_field", "stdout_limit_minus_one", "stdout_limit_exact",
+            "stdout_limit_plus_one", "stderr_nonempty", "nonzero_exit",
+            "signal_exit", "wall_timeout", "term_ignore_kill"}
+        if frozen_row is not None and case_id not in preflight_cases:
+            raise ValueError("frozen stimulus preflight has no owned-case cleanup")
         self.revalidate()
         candidate = self._session._candidate
         live = batch_policy._require_live(candidate._facade)
