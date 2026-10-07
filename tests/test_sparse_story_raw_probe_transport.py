@@ -17,7 +17,9 @@ sys.path.insert(0, str(ROOT / "src"))
 from aegis360.sparse_story_asset_tree import (  # noqa: E402
     _observe_asset_manifest_shape, validate_asset_tree,
 )
-from aegis360.sparse_story_probe_context import _ProbeContext  # noqa: E402
+from aegis360.sparse_story_probe_context import (  # noqa: E402
+    _ProbeContext, _PROTOCOL_SENTINEL, _REPOSITORY_SENTINEL,
+)
 from aegis360.sparse_story_probe_denials import (  # noqa: E402
     _OwnedOnePacketNeighbor, _retain_full_set_denials,
     _run_owned_full_set_batch_probe, _open_retained_probed_batch,
@@ -485,6 +487,39 @@ class RawProbeTransportHostTests(unittest.TestCase):
             launch.assert_not_called()
             session.close()
 
+    def test_frozen_repository_read_closes_proof_before_spawn(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            planned = SyntheticCasePlanTests().stimuli()
+            planned["repository_read_denied"] = {
+                **planned["repository_read_denied"],
+                "argv": (str(_REPOSITORY_SENTINEL),)}
+            _, manifest = _freeze_private_synthetic_case_manifest(
+                adapter_manifest_sha256="a" * 64,
+                repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+            row = next(row for row in manifest["cases"]
+                if row["case_id"] == "repository_read_denied")
+            changed = {**row, "stimulus": {**row["stimulus"],
+                "argv": [str(_REPOSITORY_SENTINEL) + "-wrong"]}}
+            created = []
+            class TrackedReadProof(_ReadDenialSentinel):
+                def __init__(self, path):
+                    super().__init__(path)
+                    created.append(self)
+            with mock.patch("aegis360.sparse_story_probe_sentinels._ReadDenialSentinel",
+                    TrackedReadProof), mock.patch(
+                    "aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaisesRegex(ValueError,
+                    "planned case differs from frozen"):
+                claim._observe_fixed_synthetic_denial_case_once(
+                    "repository_read_denied", changed)
+            launch.assert_not_called()
+            self.assertEqual(len(created), 1)
+            self.assertTrue(created[0].closed)
+            self.assertTrue(_REPOSITORY_SENTINEL.is_file())
+            session.close()
+
     def test_claim_refuses_changed_home_before_synthetic_spawn(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
             session = _open_retained_probed_batch(**inputs)
@@ -682,8 +717,20 @@ class RawProbeTransportHostTests(unittest.TestCase):
                     own_batch_scratch=True, coordinated=True) as inputs:
                 session = _open_retained_probed_batch(**inputs)
                 claim = session.claim_once()
-                self.assertEqual(claim._observe_fixed_synthetic_denial_case_once(case_id),
-                    "isolation_denied")
+                row = None
+                if case_id in {"repository_read_denied", "protocol_read_denied"}:
+                    target = (_REPOSITORY_SENTINEL if case_id ==
+                        "repository_read_denied" else _PROTOCOL_SENTINEL)
+                    planned = SyntheticCasePlanTests().stimuli()
+                    planned[case_id] = {**planned[case_id],
+                        "argv": (str(target),)}
+                    _, manifest = _freeze_private_synthetic_case_manifest(
+                        adapter_manifest_sha256="a" * 64,
+                        repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+                    row = next(row for row in manifest["cases"]
+                        if row["case_id"] == case_id)
+                self.assertEqual(claim._observe_fixed_synthetic_denial_case_once(
+                    case_id, row), "isolation_denied")
                 session.close()
                 self.assertFalse(inputs["batch_scratch"].root.exists())
 

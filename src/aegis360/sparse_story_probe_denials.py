@@ -509,6 +509,7 @@ class _ClaimedProbedBatch:
             raise ValueError("private batch claim was already invoked")
         preflight_cases = {"fd_hygiene", "concurrent_pipe_pressure",
             "scratch_write_allowed", "grandchild_containment",
+            "repository_read_denied", "protocol_read_denied",
             "argv_literal", "environment_exact", "cwd_identity",
             "stdout_empty", "stdout_invalid_utf8", "stdout_duplicate_key",
             "stdout_nan", "stdout_trailing_bytes", "stdout_forbidden_field",
@@ -570,7 +571,12 @@ class _ClaimedProbedBatch:
             suffix += (str(scratch_owner.root / "grandchild-marker"),)
         self._record_fixed_stimulus(case_id, suffix[3:], request_bytes)
         if frozen_row is not None:
-            self._preflight_frozen_stimulus(frozen_row)
+            try:
+                self._preflight_frozen_stimulus(frozen_row)
+            except BaseException:
+                if read_owner is not None:
+                    read_owner.close()
+                raise
         self._session._invocation_started = True
         def postvalidate():
             if case_id == "scratch_write_allowed":

@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-08T05:54:12+08:00
+Updated: 2026-10-08T05:56:27+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: c359ec8
@@ -22,13 +22,14 @@ observations without per-frame VLM inference.
 Two serial retained native invocations now produce sealed path-free packet ID
 and stdout SHA observations. The private repeatability record compares them
 after each batch closes and rejects same-session reuse, mutation and different
-packet IDs. This is not a formal case result. Native host suite: 57/57 passed; discovery:
-825 run, 72 skips.
+packet IDs. This is not a formal case result. Native host suite: 58/58 passed; discovery:
+826 run, 73 skips.
 
 A 37-case shape freezer hashes argv, stdin and support. Native `fd_hygiene`
 and closed no-owner cases can match frozen rows before spawn. Changed
 pipe stdin, selected-read, scratch and full-set read mutations block spawn.
-Listener and outside-sentinel cases retain post-execution audit only.
+Repository/protocol preflight closes read proofs on rejection. Listener and
+outside-sentinel cases retain post-execution audit only.
 The private claim now exercises all 33 adapter-owned fixture case types through
 the same native launcher, policy and retained roots. Binary selected-media
 reads use an exact prefix; denied reads use real other-packet/result leaves or
@@ -37,8 +38,7 @@ and stdout classification observes outcomes rather than assigning them by case
 name. These separate checks do not yet produce the required ordered manifest,
 case result or aggregate.
 
-The transport retains the leader through teardown and rejects a second invocation.
-The single-use claim binds 14 raw probes and backend/policy/runner hashes;
+The claim binds 14 probes and backend/policy/runner hashes;
 public receipt and general invocation authority remain closed.
 
 The private batch candidate retains exact request, runner-policy and enforcement-
@@ -123,11 +123,11 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@c359ec8`; exact-SHA remote CI passed.
-- Local unpublished milestones: `2524ac3` plus selected-read/scratch/full-set preflight.
+- Local unpublished milestones: `2524ac3`, `c60f1c0`, read-proof preflight.
 
 ## Verified
 
-- Restricted full discovery: 825 tests run, 753 passed, 72 skips. Listener
+- Restricted full discovery: 826 tests run, 753 passed, 73 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -185,7 +185,7 @@ receipt or spawn authority has been created.
   host tests pass.
 - Full-set coordinator covers success, timeout, source mutation and cleanup
   refusal in the current 29-test native raw-transport suite.
-- Private retained session and fixed synthetic transport: 57 native host tests
+- Private retained session and fixed synthetic transport: 58 native host tests
   pass, including changed HOME, timeout, simultaneous pipes, exact scratch
   cleanup, changed content and missing inference group proof.
 - The native retained-session case also confirms one-time claim rejection and

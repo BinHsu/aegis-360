@@ -8,8 +8,9 @@ single private claim binds the 14 observed probe results and the hashes of the
 backend manifest, runner policy and rendered enforcement-policy input. Its
 private fixed-case methods now exercise the synthetic fixture through the
 retained launcher. Closed no-owner, selected-read, scratch, and full-set read
-cases can compare a frozen stimulus row before spawn; listener and outside
-sentinel cases still need a cleanup-safe preflight. No general
+and repository/protocol read cases can compare a frozen row before spawn;
+read proofs close on rejection. Listener and outside sentinel cases still need
+a cleanup-safe preflight. No general
 adapter or model invocation API is open.
 
 ## Required sequence
