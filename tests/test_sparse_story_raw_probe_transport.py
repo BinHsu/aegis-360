@@ -415,6 +415,76 @@ class RawProbeTransportHostTests(unittest.TestCase):
             claim._verify_frozen_case_stimulus(row)
             session.close()
 
+    def test_frozen_selected_read_is_checked_before_native_spawn(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            leaf = inputs["candidate"]._allowed_probe_leaves()[0]
+            planned = SyntheticCasePlanTests().stimuli()
+            planned["bundle_read_allowed"] = {
+                **planned["bundle_read_allowed"],
+                "argv": (str(leaf.path), "hex:" + leaf.prefix.hex())}
+            _, manifest = _freeze_private_synthetic_case_manifest(
+                adapter_manifest_sha256="a" * 64,
+                repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+            row = next(row for row in manifest["cases"]
+                if row["case_id"] == "bundle_read_allowed")
+            changed = {**row, "stimulus": {**row["stimulus"],
+                "argv": [str(leaf.path), "hex:00"]}}
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaisesRegex(ValueError,
+                    "planned case differs from frozen"):
+                claim._observe_fixed_allowed_read_once("bundle_read_allowed",
+                    changed)
+            launch.assert_not_called()
+            session.close()
+
+    def test_frozen_scratch_target_is_checked_before_native_spawn(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            planned = SyntheticCasePlanTests().stimuli()
+            target = inputs["batch_scratch"].root / "synthetic-write"
+            planned["scratch_write_allowed"] = {
+                **planned["scratch_write_allowed"], "argv": (str(target),)}
+            _, manifest = _freeze_private_synthetic_case_manifest(
+                adapter_manifest_sha256="a" * 64,
+                repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+            row = next(row for row in manifest["cases"]
+                if row["case_id"] == "scratch_write_allowed")
+            changed = {**row, "stimulus": {**row["stimulus"],
+                "argv": [str(target) + "-wrong"]}}
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaisesRegex(ValueError,
+                    "planned case differs from frozen"):
+                claim._run_fixed_synthetic_scratch_case_once(changed)
+            launch.assert_not_called()
+            self.assertFalse(target.exists())
+            session.close()
+
+    def test_frozen_full_result_denial_is_checked_before_native_spawn(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            planned = SyntheticCasePlanTests().stimuli()
+            target = inputs["denial_source"]["result_path"]
+            planned["result_read_denied"] = {
+                **planned["result_read_denied"], "argv": (str(target),)}
+            _, manifest = _freeze_private_synthetic_case_manifest(
+                adapter_manifest_sha256="a" * 64,
+                repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+            row = next(row for row in manifest["cases"]
+                if row["case_id"] == "result_read_denied")
+            changed = {**row, "stimulus": {**row["stimulus"],
+                "argv": [str(target) + "-wrong"]}}
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaisesRegex(ValueError,
+                    "planned case differs from frozen"):
+                claim._observe_fixed_fullset_read_denial_once(
+                    "result_read_denied", inputs["denial_source"], changed)
+            launch.assert_not_called()
+            session.close()
+
     def test_claim_refuses_changed_home_before_synthetic_spawn(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
             session = _open_retained_probed_batch(**inputs)
@@ -623,8 +693,24 @@ class RawProbeTransportHostTests(unittest.TestCase):
                     own_batch_scratch=True, coordinated=True) as inputs:
                 session = _open_retained_probed_batch(**inputs)
                 claim = session.claim_once()
+                source = inputs["denial_source"]
+                selected_id = json.loads(inputs["candidate"]._request_bytes)[
+                    "packet_id"]
+                other = next(item for item in source["index"]["packets"]
+                    if item["projection"]["packet_id"] != selected_id)
+                neighbor_path = (source["bundle"] /
+                    other["projection"]["rows"][0]["media_ref"])
+                target = (neighbor_path if case_id == "neighbor_packet_read_denied"
+                    else source["result_path"])
+                planned = SyntheticCasePlanTests().stimuli()
+                planned[case_id] = {**planned[case_id], "argv": (str(target),)}
+                _, manifest = _freeze_private_synthetic_case_manifest(
+                    adapter_manifest_sha256="a" * 64,
+                    repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+                row = next(row for row in manifest["cases"]
+                    if row["case_id"] == case_id)
                 self.assertEqual(claim._observe_fixed_fullset_read_denial_once(
-                    case_id, inputs["denial_source"]), "isolation_denied")
+                    case_id, source, row), "isolation_denied")
                 session.close()
                 self.assertFalse(inputs["batch_scratch"].root.exists())
 
@@ -635,8 +721,19 @@ class RawProbeTransportHostTests(unittest.TestCase):
                     own_batch_scratch=True, coordinated=True) as inputs:
                 session = _open_retained_probed_batch(**inputs)
                 claim = session.claim_once()
-                self.assertEqual(claim._observe_fixed_allowed_read_once(case_id),
-                    "isolation_allowed")
+                selected = {"bundle_read_allowed": 0, "model_read_allowed": 1,
+                    "prompt_read_allowed": 2}
+                leaf = inputs["candidate"]._allowed_probe_leaves()[selected[case_id]]
+                planned = SyntheticCasePlanTests().stimuli()
+                planned[case_id] = {**planned[case_id],
+                    "argv": (str(leaf.path), "hex:" + leaf.prefix.hex())}
+                _, manifest = _freeze_private_synthetic_case_manifest(
+                    adapter_manifest_sha256="a" * 64,
+                    repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+                row = next(row for row in manifest["cases"]
+                    if row["case_id"] == case_id)
+                self.assertEqual(claim._observe_fixed_allowed_read_once(
+                    case_id, row), "isolation_allowed")
                 session.close()
                 self.assertFalse(inputs["batch_scratch"].root.exists())
 

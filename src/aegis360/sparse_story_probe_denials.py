@@ -346,6 +346,16 @@ class _ClaimedProbedBatch:
                 or row["stimulus"] != self._last_stimulus[1]):
             raise ValueError("executed case differs from frozen stimulus")
 
+    def _preflight_frozen_stimulus(self, row):
+        from .sparse_story_runner_contract import CASE_SPECS
+        if (type(row) is not dict or set(row) != {
+                "case_id", "expected_result", "stimulus"}
+                or self._last_stimulus is None
+                or row["case_id"] != self._last_stimulus[0]
+                or (row["case_id"], row["expected_result"]) not in CASE_SPECS
+                or row["stimulus"] != self._last_stimulus[1]):
+            raise ValueError("planned case differs from frozen stimulus")
+
     def _run_fixed_synthetic_fd_case_once(self, frozen_row=None):
         """Exercise one closed fixture case; no general adapter invocation API."""
         return self._run_fixed_synthetic_case_once("fd_hygiene", b"",
@@ -356,9 +366,10 @@ class _ClaimedProbedBatch:
         return self._run_fixed_synthetic_case_once(
             "concurrent_pipe_pressure", b"x" * 60_000, frozen_row=frozen_row)
 
-    def _run_fixed_synthetic_scratch_case_once(self):
+    def _run_fixed_synthetic_scratch_case_once(self, frozen_row=None):
         """Exercise and remove one exact fixture-created scratch leaf."""
-        return self._run_fixed_synthetic_case_once("scratch_write_allowed", b"")
+        return self._run_fixed_synthetic_case_once("scratch_write_allowed", b"",
+            frozen_row=frozen_row)
 
     def _run_fixed_synthetic_case_once(self, case_id, request_bytes,
             frozen_row=None):
@@ -401,15 +412,18 @@ class _ClaimedProbedBatch:
         return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
             == "success" else "invocation_failure")
 
-    def _observe_fixed_synthetic_denial_case_once(self, case_id):
+    def _observe_fixed_synthetic_denial_case_once(self, case_id,
+            frozen_row=None):
         if case_id not in {"grandchild_containment", "outside_write_denied",
                 "repository_read_denied", "protocol_read_denied"}:
             raise ValueError("fixed synthetic denial case is invalid")
-        capture = self._execute_fixed_synthetic_case_once(case_id, b"")
+        capture = self._execute_fixed_synthetic_case_once(case_id, b"",
+            frozen_row=frozen_row)
         return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
             == "success" else "invocation_failure")
 
-    def _observe_fixed_fullset_read_denial_once(self, case_id, denial_source):
+    def _observe_fixed_fullset_read_denial_once(self, case_id, denial_source,
+            frozen_row=None):
         """Probe an actual other-packet or full-result leaf from the same set."""
         from .sparse_story_raw_probe_transport import _run_native_process
         if case_id not in {"neighbor_packet_read_denied", "result_read_denied"}:
@@ -422,6 +436,9 @@ class _ClaimedProbedBatch:
                 neighbor, result):
             target = neighbor if case_id == "neighbor_packet_read_denied" else result
             self._invoked = True
+            self._record_fixed_stimulus(case_id, (str(target.path),), b"")
+            if frozen_row is not None:
+                self._preflight_frozen_stimulus(frozen_row)
             self._session._invocation_started = True
             def postvalidate():
                 self.revalidate()
@@ -431,12 +448,11 @@ class _ClaimedProbedBatch:
                 ("--aegis-synthetic-case", case_id, "--", str(target.path)),
                 postvalidate=postvalidate, request_bytes=b"")
             self._session._invocation_capture = capture
-            self._record_fixed_stimulus(case_id, (str(target.path),), b"")
         self.revalidate()
         return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
             == "success" else "invocation_failure")
 
-    def _observe_fixed_allowed_read_once(self, case_id):
+    def _observe_fixed_allowed_read_once(self, case_id, frozen_row=None):
         """Read a request-selected retained leaf using its exact byte prefix."""
         from .sparse_story_raw_probe_transport import _run_native_process
         selected = {"bundle_read_allowed": 0, "model_read_allowed": 1,
@@ -450,18 +466,19 @@ class _ClaimedProbedBatch:
         allowed = candidate._allowed_probe_leaves()
         leaf = allowed[selected[case_id]]
         self._invoked = True
+        suffix = (str(leaf.path), "hex:" + leaf.prefix.hex())
+        self._record_fixed_stimulus(case_id, suffix, b"")
+        if frozen_row is not None:
+            self._preflight_frozen_stimulus(frozen_row)
         self._session._invocation_started = True
         def postvalidate():
             self.revalidate()
             if candidate._allowed_probe_leaves() != allowed:
                 raise ValueError("allowed read leaf changed")
         capture = _run_native_process(candidate,
-            ("--aegis-synthetic-case", case_id, "--", str(leaf.path),
-                "hex:" + leaf.prefix.hex()),
+            ("--aegis-synthetic-case", case_id, "--", *suffix),
             postvalidate=postvalidate, request_bytes=b"")
         self._session._invocation_capture = capture
-        self._record_fixed_stimulus(case_id,
-            (str(leaf.path), "hex:" + leaf.prefix.hex()), b"")
         self.revalidate()
         return ("isolation_allowed" if _classify_fixed_synthetic_output(capture)
             == "success" else "invocation_failure")
@@ -491,6 +508,7 @@ class _ClaimedProbedBatch:
         if self._invoked:
             raise ValueError("private batch claim was already invoked")
         preflight_cases = {"fd_hygiene", "concurrent_pipe_pressure",
+            "scratch_write_allowed", "grandchild_containment",
             "argv_literal", "environment_exact", "cwd_identity",
             "stdout_empty", "stdout_invalid_utf8", "stdout_duplicate_key",
             "stdout_nan", "stdout_trailing_bytes", "stdout_forbidden_field",
@@ -552,14 +570,7 @@ class _ClaimedProbedBatch:
             suffix += (str(scratch_owner.root / "grandchild-marker"),)
         self._record_fixed_stimulus(case_id, suffix[3:], request_bytes)
         if frozen_row is not None:
-            from .sparse_story_runner_contract import CASE_SPECS
-            if (type(frozen_row) is not dict or set(frozen_row) != {
-                    "case_id", "expected_result", "stimulus"}
-                    or frozen_row["case_id"] != self._last_stimulus[0]
-                    or (frozen_row["case_id"], frozen_row["expected_result"])
-                       not in CASE_SPECS
-                    or frozen_row["stimulus"] != self._last_stimulus[1]):
-                raise ValueError("planned case differs from frozen stimulus")
+            self._preflight_frozen_stimulus(frozen_row)
         self._session._invocation_started = True
         def postvalidate():
             if case_id == "scratch_write_allowed":
