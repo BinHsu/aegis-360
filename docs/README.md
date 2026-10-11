@@ -31,6 +31,7 @@ not invent a resolution.
 | --- | --- |
 | Understand current progress | `docs/status.md`, then `docs/adr/README.md` |
 | Resume interrupted or cross-agent work | `docs/handoff/current.md`, then the documents it links |
+| Investigate a regression or request bounded review | `docs/engineering-review.md`, then the affected contract and tests |
 | Change product scope or offline behavior | ADR 0001, ADR 0002 |
 | Change accepted input formats or validation | ADR 0003 |
 | Choose storage, compute, or Apple-specific acceleration | ADR 0004, ADR 0005 |

@@ -153,6 +153,8 @@ data.
 ## Agent workflow
 
 - Read relevant ADRs and design notes before changing architecture.
+- For regressions and bounded independent review, use
+  `docs/engineering-review.md` under this policy's scope and evidence rules.
 - Before starting work, read `docs/handoff/current.md`. Treat it as the
   vendor-neutral operational checkpoint; verify its Git claims locally rather
   than relying on a prior chat, agent thread, memory, or UI.
