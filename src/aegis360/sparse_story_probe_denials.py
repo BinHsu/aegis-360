@@ -235,6 +235,7 @@ class _RetainedProbedBatch:
         self._claimed = False
         self._invocation_started = False
         self._invocation_capture = None
+        self._prepared_owner = None
 
     def revalidate(self):
         if self._closed or not self._capture.completed:
@@ -251,6 +252,14 @@ class _RetainedProbedBatch:
     def close(self):
         if self._closed:
             return
+        if self._prepared_owner is not None:
+            try:
+                self._prepared_owner.close_before_spawn()
+            except BaseException:
+                self._closed = True
+                try: self._candidate.close()
+                finally: self._batch_scratch.abandon()
+                raise
         self._closed = True
         if (self._invocation_started
                 and (self._invocation_capture is None
@@ -283,6 +292,67 @@ class _RetainedProbedBatch:
         self.close()
 
 
+class _PreparedFixedSyntheticOwner:
+    """Hold one literal case target from freeze through a single spawn."""
+
+    def __init__(self, claim, case_id):
+        from .sparse_story_probe_listeners import _OwnedProbeListeners
+        from .sparse_story_probe_sentinels import _OwnedOutsideSentinel
+        if (type(claim) is not _ClaimedProbedBatch or claim._invoked
+                or claim._session._prepared_owner is not None
+                or case_id not in {"network_ipv4_denied", "network_ipv6_denied",
+                    "unix_socket_denied", "outside_write_denied"}):
+            raise ValueError("fixed synthetic owner preparation is invalid")
+        claim.revalidate()
+        candidate = claim._session._candidate
+        self.binding = candidate._binding_bytes()
+        self.claim = claim
+        self.case_id = case_id
+        parent = claim._session._batch_scratch.root.parent
+        self.owner = (_OwnedOutsideSentinel(parent) if case_id ==
+            "outside_write_denied" else _OwnedProbeListeners(parent))
+        self.state = "prepared"
+        if case_id == "outside_write_denied":
+            self.argv = (str(self.owner.snapshot.create_path),)
+        else:
+            listeners = self.owner.listeners
+            self.argv = (str(listeners.ipv4_port) if case_id ==
+                "network_ipv4_denied" else str(listeners.ipv6_port) if case_id ==
+                "network_ipv6_denied" else str(listeners.unix_path),)
+        claim._session._prepared_owner = self
+        try:
+            self.revalidate()
+        except BaseException:
+            self.close_before_spawn()
+            raise
+
+    def revalidate(self):
+        if (self.state != "prepared"
+                or self.claim._session._prepared_owner is not self
+                or self.claim._session._candidate._binding_bytes() != self.binding):
+            raise ValueError("prepared synthetic owner changed")
+        self.claim.revalidate()
+        self.owner.revalidate()
+
+    def close_before_spawn(self):
+        if self.state != "prepared":
+            raise ValueError("prepared synthetic owner was already consumed")
+        try:
+            self.owner.finish_before_spawn()
+        finally:
+            self.state = "closed"
+            if self.claim._session._prepared_owner is self:
+                self.claim._session._prepared_owner = None
+
+    def take_for_spawn(self, claim, case_id):
+        if self.claim is not claim or self.case_id != case_id:
+            raise ValueError("prepared synthetic owner belongs to another case")
+        self.revalidate()
+        self.state = "running"
+        self.claim._session._prepared_owner = None
+        return self.owner
+
+
 class _ClaimedProbedBatch:
     """Non-transferable private claim; it has no spawn or receipt method."""
 
@@ -303,6 +373,9 @@ class _ClaimedProbedBatch:
     def receipt_bytes(self):
         self.revalidate()
         return self._session._receipt_bytes
+
+    def _prepare_fixed_synthetic_owned_case(self, case_id):
+        return _PreparedFixedSyntheticOwner(self, case_id)
 
     def _seal_synthetic_observation(self):
         import hashlib
@@ -404,21 +477,23 @@ class _ClaimedProbedBatch:
             frozen_row=frozen_row)
         return _classify_fixed_synthetic_output(capture)
 
-    def _observe_fixed_synthetic_network_case_once(self, case_id):
+    def _observe_fixed_synthetic_network_case_once(self, case_id,
+            frozen_row=None, prepared_owner=None):
         if case_id not in {"network_ipv4_denied", "network_ipv6_denied",
                 "unix_socket_denied"}:
             raise ValueError("fixed synthetic network case is invalid")
-        capture = self._execute_fixed_synthetic_case_once(case_id, b"")
+        capture = self._execute_fixed_synthetic_case_once(case_id, b"",
+            frozen_row=frozen_row, prepared_owner=prepared_owner)
         return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
             == "success" else "invocation_failure")
 
     def _observe_fixed_synthetic_denial_case_once(self, case_id,
-            frozen_row=None):
+            frozen_row=None, prepared_owner=None):
         if case_id not in {"grandchild_containment", "outside_write_denied",
                 "repository_read_denied", "protocol_read_denied"}:
             raise ValueError("fixed synthetic denial case is invalid")
         capture = self._execute_fixed_synthetic_case_once(case_id, b"",
-            frozen_row=frozen_row)
+            frozen_row=frozen_row, prepared_owner=prepared_owner)
         return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
             == "success" else "invocation_failure")
 
@@ -484,7 +559,7 @@ class _ClaimedProbedBatch:
             == "success" else "invocation_failure")
 
     def _execute_fixed_synthetic_case_once(self, case_id, request_bytes,
-            frozen_row=None):
+            frozen_row=None, prepared_owner=None):
         from . import sparse_story_batch_policy as batch_policy
         from .sparse_story_raw_probe_transport import _run_native_process
 
@@ -516,8 +591,18 @@ class _ClaimedProbedBatch:
             "stdout_extra_field", "stdout_limit_minus_one", "stdout_limit_exact",
             "stdout_limit_plus_one", "stderr_nonempty", "nonzero_exit",
             "signal_exit", "wall_timeout", "term_ignore_kill"}
-        if frozen_row is not None and case_id not in preflight_cases:
+        if (frozen_row is not None and case_id not in preflight_cases
+                and (type(prepared_owner) is not _PreparedFixedSyntheticOwner
+                    or case_id not in {"network_ipv4_denied",
+                        "network_ipv6_denied", "unix_socket_denied",
+                        "outside_write_denied"})):
             raise ValueError("frozen stimulus preflight has no owned-case cleanup")
+        if prepared_owner is not None:
+            if (type(prepared_owner) is not _PreparedFixedSyntheticOwner
+                    or prepared_owner.claim is not self
+                    or prepared_owner.case_id != case_id):
+                raise ValueError("prepared synthetic owner belongs to another case")
+            prepared_owner.revalidate()
         self.revalidate()
         candidate = self._session._candidate
         live = batch_policy._require_live(candidate._facade)
@@ -530,12 +615,15 @@ class _ClaimedProbedBatch:
         listener_owner = None
         outside_owner = None
         read_owner = None
-        if network_case:
+        if network_case and prepared_owner is None:
             from .sparse_story_probe_listeners import _OwnedProbeListeners
             listener_owner = _OwnedProbeListeners(scratch_owner.root.parent)
-        if case_id == "outside_write_denied":
+        if case_id == "outside_write_denied" and prepared_owner is None:
             from .sparse_story_probe_sentinels import _OwnedOutsideSentinel
             outside_owner = _OwnedOutsideSentinel(scratch_owner.root.parent)
+        if prepared_owner is not None:
+            if network_case: listener_owner = prepared_owner.owner
+            else: outside_owner = prepared_owner.owner
         if case_id in {"repository_read_denied", "protocol_read_denied"}:
             from .sparse_story_probe_context import (
                 _PROTOCOL_SENTINEL, _REPOSITORY_SENTINEL,
@@ -576,7 +664,11 @@ class _ClaimedProbedBatch:
             except BaseException:
                 if read_owner is not None:
                     read_owner.close()
+                if prepared_owner is not None:
+                    prepared_owner.close_before_spawn()
                 raise
+        if prepared_owner is not None:
+            prepared_owner.take_for_spawn(self, case_id)
         self._session._invocation_started = True
         def postvalidate():
             if case_id == "scratch_write_allowed":

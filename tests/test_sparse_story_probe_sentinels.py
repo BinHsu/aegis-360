@@ -36,6 +36,16 @@ class OwnedOutsideSentinelTests(unittest.TestCase):
         with self.assertRaises(ValueError): owner.finish_after_reap(0)
         self.assertEqual(owner.path.read_bytes(), b"changed")
 
+    def test_prepared_tree_cleanup_checks_exact_bytes(self):
+        owner = _OwnedOutsideSentinel(self.parent)
+        root = owner.root
+        owner.finish_before_spawn()
+        self.assertFalse(root.exists())
+        changed = _OwnedOutsideSentinel(self.parent)
+        changed.path.write_bytes(b"changed")
+        with self.assertRaises(ValueError): changed.finish_before_spawn()
+        self.assertEqual(changed.path.read_bytes(), b"changed")
+
 
 class OutsideSentinelSnapshotTests(unittest.TestCase):
     def setUp(self):

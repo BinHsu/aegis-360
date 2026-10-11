@@ -75,5 +75,20 @@ class ProbeListenerTests(unittest.TestCase):
             owner.finish_after_reap(0)
         self.assertEqual(extra.read_bytes(), b"keep")
 
+    def test_prepared_tree_cleanup_checks_exact_children(self):
+        parent = Path(self.temp.name).resolve()
+        try: owner = _OwnedProbeListeners(parent)
+        except PermissionError as error:
+            self.skipTest(f"host policy denies local listener bind: {error.errno}")
+        root = owner.root
+        owner.finish_before_spawn()
+        self.assertFalse(root.exists())
+        changed = _OwnedProbeListeners(parent)
+        extra = changed.root / "unexpected"
+        extra.write_bytes(b"keep")
+        with self.assertRaisesRegex(ValueError, "tree changed"):
+            changed.finish_before_spawn()
+        self.assertEqual(extra.read_bytes(), b"keep")
+
 
 if __name__ == "__main__": unittest.main()

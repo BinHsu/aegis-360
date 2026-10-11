@@ -137,6 +137,13 @@ class _OwnedProbeListeners:
         if type(returncode) is not int:
             self.abandon()
             raise ValueError("listeners cannot be cleaned before reap")
+        self._finish_exact()
+
+    def finish_before_spawn(self):
+        """Remove an unchanged prepared tree when no child was launched."""
+        self._finish_exact()
+
+    def _finish_exact(self):
         try:
             self.revalidate()
             self.listeners.close()

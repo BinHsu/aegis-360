@@ -520,6 +520,130 @@ class RawProbeTransportHostTests(unittest.TestCase):
             self.assertTrue(_REPOSITORY_SENTINEL.is_file())
             session.close()
 
+    def test_prepared_listener_reuses_frozen_owner(self):
+        for case_id in ("network_ipv4_denied", "network_ipv6_denied",
+                "unix_socket_denied"):
+            with self.subTest(case_id=case_id), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                claim = session.claim_once()
+                prepared = claim._prepare_fixed_synthetic_owned_case(case_id)
+                planned = SyntheticCasePlanTests().stimuli()
+                planned[case_id] = {**planned[case_id], "argv": prepared.argv}
+                _, manifest = _freeze_private_synthetic_case_manifest(
+                    adapter_manifest_sha256="a" * 64,
+                    repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+                row = next(row for row in manifest["cases"]
+                    if row["case_id"] == case_id)
+                root = prepared.owner.root
+                self.assertEqual(claim._observe_fixed_synthetic_network_case_once(
+                    case_id, row, prepared), "isolation_denied")
+                claim._verify_frozen_case_stimulus(row)
+                self.assertFalse(root.exists())
+                session.close()
+
+    def test_changed_prepared_listener_row_cleans_before_spawn(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            prepared = claim._prepare_fixed_synthetic_owned_case(
+                "unix_socket_denied")
+            planned = SyntheticCasePlanTests().stimuli()
+            planned[prepared.case_id] = {**planned[prepared.case_id],
+                "argv": prepared.argv}
+            _, manifest = _freeze_private_synthetic_case_manifest(
+                adapter_manifest_sha256="a" * 64,
+                repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+            row = next(row for row in manifest["cases"]
+                if row["case_id"] == prepared.case_id)
+            changed = {**row, "stimulus": {**row["stimulus"],
+                "argv": [prepared.argv[0] + "-wrong"]}}
+            root = prepared.owner.root
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaisesRegex(ValueError,
+                    "planned case differs from frozen"):
+                claim._observe_fixed_synthetic_network_case_once(
+                    prepared.case_id, changed, prepared)
+            launch.assert_not_called()
+            self.assertFalse(root.exists())
+            session.close()
+
+    def test_prepared_outside_owner_reuses_frozen_path_and_closes_on_rejection(self):
+        for changed_row in (False, True):
+            with self.subTest(changed_row=changed_row), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                claim = session.claim_once()
+                prepared = claim._prepare_fixed_synthetic_owned_case(
+                    "outside_write_denied")
+                planned = SyntheticCasePlanTests().stimuli()
+                planned[prepared.case_id] = {**planned[prepared.case_id],
+                    "argv": prepared.argv}
+                _, manifest = _freeze_private_synthetic_case_manifest(
+                    adapter_manifest_sha256="a" * 64,
+                    repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+                row = next(row for row in manifest["cases"]
+                    if row["case_id"] == prepared.case_id)
+                root = prepared.owner.root
+                if changed_row:
+                    row = {**row, "stimulus": {**row["stimulus"],
+                        "argv": [prepared.argv[0] + "-wrong"]}}
+                    with mock.patch(
+                            "aegis360.sparse_story_raw_probe_transport._run_native_process"
+                            ) as launch, self.assertRaisesRegex(ValueError,
+                            "planned case differs from frozen"):
+                        claim._observe_fixed_synthetic_denial_case_once(
+                            prepared.case_id, row, prepared)
+                    launch.assert_not_called()
+                else:
+                    self.assertEqual(claim._observe_fixed_synthetic_denial_case_once(
+                        prepared.case_id, row, prepared), "isolation_denied")
+                    claim._verify_frozen_case_stimulus(row)
+                self.assertFalse(root.exists())
+                session.close()
+
+    def test_unused_prepared_owner_closes_with_session(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            prepared = claim._prepare_fixed_synthetic_owned_case(
+                "outside_write_denied")
+            root = prepared.owner.root
+            with self.assertRaisesRegex(ValueError, "preparation is invalid"):
+                claim._prepare_fixed_synthetic_owned_case("network_ipv4_denied")
+            session.close()
+            self.assertFalse(root.exists())
+            self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_changed_prepared_outside_tree_is_preserved_before_spawn(self):
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            prepared = claim._prepare_fixed_synthetic_owned_case(
+                "outside_write_denied")
+            prepared.owner.path.write_bytes(b"changed")
+            root = prepared.owner.root
+            planned = SyntheticCasePlanTests().stimuli()
+            planned[prepared.case_id] = {**planned[prepared.case_id],
+                "argv": prepared.argv}
+            _, manifest = _freeze_private_synthetic_case_manifest(
+                adapter_manifest_sha256="a" * 64,
+                repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+            row = next(row for row in manifest["cases"]
+                if row["case_id"] == prepared.case_id)
+            changed = {**row, "stimulus": {**row["stimulus"],
+                "argv": [prepared.argv[0] + "-wrong"]}}
+            with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                    ) as launch, self.assertRaises(ValueError):
+                claim._observe_fixed_synthetic_denial_case_once(
+                    prepared.case_id, changed, prepared)
+            launch.assert_not_called()
+            self.assertEqual(prepared.owner.path.read_bytes(), b"changed")
+            with self.assertRaisesRegex(ValueError,
+                    "outside existing sentinel changed"):
+                session.close()
+            self.assertTrue(root.exists())
+
     def test_claim_refuses_changed_home_before_synthetic_spawn(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
             session = _open_retained_probed_batch(**inputs)
