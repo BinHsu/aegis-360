@@ -54,6 +54,11 @@ argv for a valid row and is used by the native invocation. A changed row
 blocks spawn and removes only an unchanged owned tree. An unused prepared
 owner closes with the session; a changed tree is preserved with a failure.
 
+The shape-only helper freezes the 37 row shapes while four distinct dynamic
+owners remain live and their portable requests agree. The other 33 stimuli
+are still caller-provided shape inputs. This does not execute or attest the
+complete schedule.
+
 The next coordinator must prepare the complete schedule, freeze the 37 ordered
 rows while their owners remain live, then execute each row through its retained
 owner and candidate. Prepared owners may not be reconstructed from a frozen

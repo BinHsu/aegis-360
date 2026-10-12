@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from collections.abc import Mapping
 
 from .sparse_story_runner_contract import (
@@ -21,6 +22,53 @@ _COORDINATOR = {"bundle_mutation", "replacement_race",
     "single_invocation", "receipt_rebuild"}
 _NO_SUPPORT = ({case_id for case_id, _ in CASE_SPECS}
     - _ONE_ARG - _TWO_ARGS - _COORDINATOR)
+_PREPARED_OWNER_CASES = ("network_ipv4_denied", "network_ipv6_denied",
+    "unix_socket_denied", "outside_write_denied")
+
+
+def _freeze_private_synthetic_manifest_with_prepared_owners(*,
+        adapter_manifest_sha256, repeat_packet_id, stimuli,
+        prepared_owners):
+    """Freeze shape while the four literal-target owners remain live."""
+    from .sparse_story_probe_denials import _PreparedFixedSyntheticOwner
+    if (type(prepared_owners) is not dict
+            or set(prepared_owners) != set(_PREPARED_OWNER_CASES)
+            or not isinstance(stimuli, Mapping)
+            or set(stimuli) != {case_id for case_id, _ in CASE_SPECS}):
+        raise ValueError("prepared synthetic schedule is incomplete")
+    sources = dict(stimuli)
+    claims = set()
+    request_shape = None
+    for case_id in _PREPARED_OWNER_CASES:
+        prepared = prepared_owners[case_id]
+        if (type(prepared) is not _PreparedFixedSyntheticOwner
+                or prepared.case_id != case_id
+                or id(prepared.claim) in claims):
+            raise ValueError("prepared synthetic owner is duplicated or mismatched")
+        prepared.revalidate()
+        claims.add(id(prepared.claim))
+        retained_request = prepared.claim._session._candidate._request_bytes
+        request = json.loads(retained_request)
+        packet_id = request["packet_id"]
+        if packet_id != repeat_packet_id:
+            raise ValueError("prepared synthetic packet ID differs")
+        # Each retained session has private asset roots. The candidate separately
+        # proves those exact roots and bytes; the portable request must agree.
+        for role in ("model", "prompt_schema"):
+            request[role].pop("root_path")
+        if request_shape is None: request_shape = request
+        elif request != request_shape:
+            raise ValueError("prepared synthetic requests differ")
+        source = stimuli[case_id]
+        if not isinstance(source, Mapping):
+            raise ValueError("prepared synthetic stimulus is invalid")
+        sources[case_id] = {**source, "argv": prepared.argv}
+    result = _freeze_private_synthetic_case_manifest(
+        adapter_manifest_sha256=adapter_manifest_sha256,
+        repeat_packet_id=repeat_packet_id, stimuli=sources)
+    for prepared in prepared_owners.values():
+        prepared.revalidate()
+    return result
 
 
 def _freeze_private_synthetic_case_manifest(*, adapter_manifest_sha256,

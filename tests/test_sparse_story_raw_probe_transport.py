@@ -43,6 +43,7 @@ from aegis360.sparse_story_raw_probe_transport import (  # noqa: E402
 from aegis360.sparse_story_runner_contract import MATRIX_KEYS  # noqa: E402
 from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
     _freeze_private_synthetic_case_manifest,
+    _freeze_private_synthetic_manifest_with_prepared_owners,
 )
 from tests.test_sparse_story_synthetic_plan import SyntheticCasePlanTests  # noqa: E402
 from tests import test_sparse_story_batch_policy as batch_policy_tests  # noqa: E402
@@ -56,7 +57,7 @@ from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
 class RawProbeTransportHostTests(unittest.TestCase):
     @contextmanager
     def context(self, *, one_packet=False, presentation_ordinal=6,
-                own_batch_scratch=False, coordinated=False):
+                own_batch_scratch=False, coordinated=False, expose_live=False):
         fixture = batch_policy_tests.BatchPolicyTests(
             "test_exact_policy_is_frozen_and_path_free_digest_only")
         fixture.setUp()
@@ -143,7 +144,8 @@ class RawProbeTransportHostTests(unittest.TestCase):
             if coordinated:
                 if one_packet or batch_scratch_owner is None:
                     raise ValueError("coordinated fixture requires owned full set")
-                yield dict(candidate=candidate, batch_scratch=batch_scratch_owner,
+                result = dict(candidate=candidate,
+                    batch_scratch=batch_scratch_owner,
                     outside=outside_owner, scratch=scratch_owner,
                     listeners=listener_owner, repository=static_reads[0],
                     protocol=static_reads[1], denial_source=dict(
@@ -152,6 +154,8 @@ class RawProbeTransportHostTests(unittest.TestCase):
                         ordered_private_packet_sha256s=hashes, salt_hex="5" * 64,
                         payloads=payloads, bundle=full_bundle,
                         result_path=full_result))
+                if expose_live: result["_fixture_live"] = fixture.live
+                yield result
                 return
             if one_packet:
                 decoy = _OwnedOnePacketNeighbor(candidate=candidate, parent=base)
@@ -541,6 +545,67 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 claim._verify_frozen_case_stimulus(row)
                 self.assertFalse(root.exists())
                 session.close()
+
+    def test_four_live_owners_freeze_dynamic_rows_before_execution(self):
+        case_ids = ("network_ipv4_denied", "network_ipv6_denied",
+            "unix_socket_denied", "outside_write_denied")
+        with ExitStack() as stack:
+            prepared = {}
+            live_by_facade = {}
+            sessions = []
+            for case_id in case_ids:
+                inputs = stack.enter_context(self.context(
+                    own_batch_scratch=True, coordinated=True,
+                    expose_live=True))
+                live = inputs.pop("_fixture_live")
+                session = _open_retained_probed_batch(**inputs)
+                stack.callback(session.close)
+                sessions.append(session)
+                live_by_facade[id(inputs["candidate"]._facade)] = live
+                claim = session.claim_once()
+                prepared[case_id] = claim._prepare_fixed_synthetic_owned_case(
+                    case_id)
+            def retained_live(facade):
+                return live_by_facade[id(facade)]
+            with mock.patch("aegis360.sparse_story_batch_policy._require_live",
+                    side_effect=retained_live):
+                packet_id = json.loads(prepared[case_ids[0]].claim._session
+                    ._candidate._request_bytes)["packet_id"]
+                parameters = dict(adapter_manifest_sha256="a" * 64,
+                    repeat_packet_id=packet_id,
+                    stimuli=SyntheticCasePlanTests().stimuli())
+                with self.assertRaisesRegex(ValueError, "incomplete"):
+                    _freeze_private_synthetic_manifest_with_prepared_owners(
+                        **parameters, prepared_owners={
+                            case_ids[0]: prepared[case_ids[0]]})
+                with self.assertRaisesRegex(ValueError, "packet ID differs"):
+                    _freeze_private_synthetic_manifest_with_prepared_owners(
+                        **{**parameters,
+                            "repeat_packet_id": "packet-" + "a" * 20},
+                        prepared_owners=prepared)
+                encoded, manifest = (
+                    _freeze_private_synthetic_manifest_with_prepared_owners(
+                        **parameters, prepared_owners=prepared))
+                self.assertTrue(encoded)
+                rows = {row["case_id"]: row for row in manifest["cases"]}
+                for case_id in case_ids:
+                    owner = prepared[case_id]
+                    self.assertEqual(rows[case_id]["stimulus"]["argv"],
+                        list(owner.argv))
+                    owner.revalidate()
+                for case_id in case_ids:
+                    owner = prepared[case_id]
+                    claim = owner.claim
+                    if case_id == "outside_write_denied":
+                        observed = claim._observe_fixed_synthetic_denial_case_once(
+                            case_id, rows[case_id], owner)
+                    else:
+                        observed = claim._observe_fixed_synthetic_network_case_once(
+                            case_id, rows[case_id], owner)
+                    self.assertEqual(observed, "isolation_denied")
+                    claim._verify_frozen_case_stimulus(rows[case_id])
+                    self.assertFalse(owner.owner.root.exists())
+                for session in sessions: session.close()
 
     def test_changed_prepared_listener_row_cleans_before_spawn(self):
         with self.context(own_batch_scratch=True, coordinated=True) as inputs:
