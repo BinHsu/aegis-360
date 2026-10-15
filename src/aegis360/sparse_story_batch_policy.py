@@ -101,7 +101,7 @@ class _BatchPolicyCandidate:
 
     def __init__(self, token, *, facade, proofs, scratch, private_home,
                  private_tmpdir, roots, backend_bytes, request_bytes,
-                 runner_policy_bytes, uid, gid):
+                 runner_policy_bytes, media_result_sha256, uid, gid):
         if token is not _TOKEN:
             raise TypeError("batch policy candidates require the private factory")
         self._facade = facade
@@ -113,6 +113,10 @@ class _BatchPolicyCandidate:
         self._backend_bytes = backend_bytes
         self._request_bytes = request_bytes
         self._runner_policy_bytes = runner_policy_bytes
+        self._frozen_request_bytes = request_bytes
+        self._frozen_runner_policy_bytes = runner_policy_bytes
+        self._media_result_sha256 = media_result_sha256
+        self._frozen_media_result_sha256 = media_result_sha256
         self._uid = uid
         self._gid = gid
         self._frozen_root_identities = None
@@ -170,6 +174,10 @@ class _BatchPolicyCandidate:
         return policy
 
     def _binding_bytes(self):
+        if (self._request_bytes != self._frozen_request_bytes
+                or self._runner_policy_bytes != self._frozen_runner_policy_bytes
+                or self._media_result_sha256 != self._frozen_media_result_sha256):
+            raise ValueError("batch receipt input bytes or digest changed")
         policy = self._policy_bytes()
         if os.getuid() != self._uid or os.geteuid() != self._uid:
             raise ValueError("batch user identity changed")
@@ -314,6 +322,7 @@ def _open_batch_policy_candidate(*, facade, bundle_root, index, private_packets,
             proofs=tuple(proofs), scratch=scratch, private_home=home,
             private_tmpdir=tmpdir, roots=roots, backend_bytes=backend_bytes,
             request_bytes=request_bytes, runner_policy_bytes=runner_policy_bytes,
+            media_result_sha256=hashlib.sha256(expected).hexdigest(),
             uid=os.getuid(), gid=os.getgid())
         proofs = []
         scratch = home = tmpdir = None

@@ -76,7 +76,8 @@ class FullSetDenialTests(unittest.TestCase):
             changed["packet_id"] = "packet-" + "0" * 20
             candidate._request_bytes = json.dumps(changed, sort_keys=True,
                 separators=(",", ":")).encode()
-            with self.assertRaisesRegex(ValueError, "not in the full set"):
+            with self.assertRaisesRegex(ValueError,
+                    "batch receipt input bytes or digest changed|not in the full set"):
                 with _retain_full_set_denials(**values):
                     self.fail("nonmember packet was retained")
         finally:

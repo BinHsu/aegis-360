@@ -364,6 +364,8 @@ class _ClaimedProbedBatch:
         self._session = session
         self._invoked = False
         self._last_stimulus = None
+        from .sparse_story_raw_probe_transport import _NativeLaunchLedger
+        self._launch_ledger = _NativeLaunchLedger(session._candidate)
 
     def revalidate(self):
         if not self._session._claimed:
@@ -521,7 +523,8 @@ class _ClaimedProbedBatch:
                 result.revalidate()
             capture = _run_native_process(candidate,
                 ("--aegis-synthetic-case", case_id, "--", str(target.path)),
-                postvalidate=postvalidate, request_bytes=b"")
+                postvalidate=postvalidate, request_bytes=b"",
+                launch_ledger=self._launch_ledger)
             self._session._invocation_capture = capture
         self.revalidate()
         return ("isolation_denied" if _classify_fixed_synthetic_output(capture)
@@ -552,7 +555,8 @@ class _ClaimedProbedBatch:
                 raise ValueError("allowed read leaf changed")
         capture = _run_native_process(candidate,
             ("--aegis-synthetic-case", case_id, "--", *suffix),
-            postvalidate=postvalidate, request_bytes=b"")
+            postvalidate=postvalidate, request_bytes=b"",
+            launch_ledger=self._launch_ledger)
         self._session._invocation_capture = capture
         self.revalidate()
         return ("isolation_allowed" if _classify_fixed_synthetic_output(capture)
@@ -680,7 +684,8 @@ class _ClaimedProbedBatch:
             if read_owner is not None: read_owner.revalidate()
         try:
             capture = _run_native_process(candidate, suffix,
-                postvalidate=postvalidate, request_bytes=request_bytes)
+                postvalidate=postvalidate, request_bytes=request_bytes,
+                launch_ledger=self._launch_ledger)
         except BaseException:
             if listener_owner is not None: listener_owner.abandon()
             if outside_owner is not None: outside_owner.abandon()

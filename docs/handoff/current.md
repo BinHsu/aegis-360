@@ -1,13 +1,14 @@
 # Current handoff
 
-Updated: 2026-10-15T08:45:23+08:00
+Updated: 2026-10-15T11:45:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 3eeee16
 Remote status: `git ls-remote origin refs/heads/main` confirmed
 `3eeee1626062dbe1a25a0650616c64af0f3e38f7`; `handoff-contract` run
-38660913858 succeeded for that exact SHA. Local `main` matches remote.
-Working tree at checkpoint: clean after local commit; verify with `git status --short`.
+38660913858 succeeded for that exact SHA. Local `main` has unpublished commits;
+verify the current set with `git log origin/main..main`.
+Working tree at checkpoint: clean after local commit; verify with `git status`.
 
 ## Objective
 
@@ -19,29 +20,26 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-Three private coordinator prerequisites now have bounded checks: owned selected
+Six private coordinator prerequisites now have bounded checks: owned selected
 bundle mutation rejects retained trust before spawn; changed receipt/evidence
 peer names survive identity-guarded cleanup; cardinality audit binds a consumed
-claim, capture and frozen row without issuing an enum. Ten focused tests pass,
-including cached-validator and blind-unlink negative controls. Full discovery:
-847 run, 83 skipped. The 33 frozen adapter rows still match their closed native
+claim, capture and frozen row without issuing an enum. A real Popen now records a
+one-shot launch event bound to the exact capture and claim ledger; six receipt
+input hashes derive from retained request/media/runtime/model/prompt/policy;
+two peer bytes publish exclusively with exact identity-guarded cleanup. Sixteen
+new focused tests pass, including fabricated-capture, duplicate-launch and
+blind-unlink negative controls. The complete 67-test native host transport gate
+passes after four focused regression corrections. Full discovery: 863 run,
+780 passed, 83 skipped.
+The 33 frozen adapter rows still match their closed native
 observations; four coordinator rows have no full case result or aggregate.
 
-A 37-case shape freezer hashes argv, stdin and support. Native `fd_hygiene`
-and closed no-owner cases can match frozen rows before spawn. Changed
-pipe stdin, selected-read, scratch and full-set read mutations block spawn.
-Repository/protocol preflight closes read proofs on rejection. Prepared listener
-and outside cases now close exact owners before spawn on row mismatch.
-The private claim now exercises all 33 adapter-owned fixture case types through
-the same native launcher, policy and retained roots. Binary selected-media
-reads use an exact prefix; denied reads use real other-packet/result leaves or
-fixed source files; network denials use live owned listeners. Bounded failure
-and stdout classification observes outcomes rather than assigning them by case
-name. These separate checks do not yet produce the required ordered manifest,
-case result or aggregate.
-
-The claim binds 14 probes and backend/policy/runner hashes;
-public receipt and general invocation authority remain closed.
+A 37-case shape freezer hashes argv, stdin and support. Changed stimuli block
+spawn; prepared owners close exact paths on row mismatch.
+The private claim exercises all 33 adapter-owned case types through the same
+native launcher and policy. Selected reads use exact bytes; denied reads use
+real leaves/files and live listeners. Outcomes are classified from observations.
+These checks do not yet produce a case result or aggregate.
 
 The private batch candidate retains exact request, runner-policy and enforcement-
 policy bytes; uid/gid; launcher, runtime, model and prompt roots; selected media;
@@ -125,11 +123,12 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@3eeee16`; exact-SHA remote CI passed.
-- Local unpublished milestones: handoff, workplan and private prerequisites.
+- Local unpublished milestones: handoff, workplan and private prerequisites;
+  check exact local commits with `git log origin/main..main`.
 
 ## Verified
 
-- Restricted full discovery: 847 tests run, 764 passed, 83 skips. Listener
+- Restricted full discovery: 863 tests run, 780 passed, 83 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -208,9 +207,9 @@ receipt or spawn authority has been created.
 ## Pending
 
 - The private claim covers all 33 adapter-owned case types through one ordered
-  frozen native schedule. Add a transport-owned one-shot launch fact, derive an
-  adapter run receipt from retained inputs/capture, publish exact owned peers,
-  then complete four coordinator observations, case result and aggregate.
+  frozen native schedule. Integrate the launch event, six input facts and exact
+  owned publication into an adapter run receipt, then complete four coordinator
+  observations, case result and aggregate.
   Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
@@ -238,7 +237,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-Three workers own disjoint transport, receipt-input and publication briefs in the coordinator workplan.
+The three second-round workers have completed their disjoint briefs. Main agent
+is integrating their private prerequisites and owns the handoff.
 
 ## Safety and claims
 

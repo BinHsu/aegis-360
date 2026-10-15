@@ -1,16 +1,11 @@
 # Project status
 
-Status: first gradual chapter policy rejected by blind control experiment
-
 ## Current conclusion
 
-The repository has an executable offline analysis-to-render architecture for
-monoscopic equirectangular input on the M4/16 GB reference machine. Full-source
-motion onset and the active scene threshold both fail to recover the gradual
-Skiing story states, so neither may remain the sole chapter signal. A canonical
-lossless 960x480/10-fps FFV1 proxy now avoids paying the 5K VP9 decode cost for
-each new low-cost signal. It preserves the declared analysis pixels exactly in
-the bounded direct-source gate and has complete source/config/proxy lineage.
+The repository has an offline analysis-to-render architecture for monoscopic
+equirectangular input on the M4/16 GB Mac. Motion onset and the active scene
+threshold fail to recover gradual Skiing story states. A lossless
+960x480/10-fps FFV1 proxy preserves bounded direct-source pixels and lineage.
 A deterministic 1-fps visual-state stream derives 616 path-free compact rows
 from the full proxy in 22.93 seconds. Its values remained uninspected until the
 persistent-state proposal policy and blind review protocol were frozen. The
@@ -183,7 +178,7 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 847 tests run, 764 passed and 83 host/sandbox cases skipped.
+- Full discovery: 863 tests run, 780 passed and 83 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
 - Candidate/facade: 34 host tests pass; mutations detected. First/last packets
   retain other-packet leaves; raw probe checks 14 boolean keys and bindings.
@@ -194,7 +189,11 @@ specific directing question. No new video is currently awaiting owner review.
   preflight rejection. A retained claim derives 29 fixed stimuli; four altered
   rows fail before spawn. Thirty-three live claims freeze and run native adapter
   rows in order; all 33 observations match. Three private coordinator helpers
-  pass ten focused tests but do not issue complete case results.
+  pass ten focused tests but do not issue complete case results. A native Popen
+  launch ledger, six live input hashes and two-peer exclusive publisher add 16
+  passing focused tests. The 67-test native host transport gate passes with the
+  claim-level ledger. No private run receipt or full coordinator row yet.
 
 ## Next action
-Add attested launch/receipt/publication prerequisites, then complete four coordinator cases, result and aggregate; keep public APIs closed.
+Integrate private receipt from attested launch and retained inputs, then four
+coordinator cases, result and aggregate; keep public APIs closed.

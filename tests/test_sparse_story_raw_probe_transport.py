@@ -1350,7 +1350,8 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 self.assertFalse(capture.completed)
 
     def test_changed_request_bytes_invalidate_completed_probe(self):
-        with self.assertRaisesRegex(ValueError, "full-set denial source changed"):
+        with self.assertRaisesRegex(ValueError,
+                "batch receipt input bytes or digest changed|full-set denial source changed"):
             with self.context() as context:
                 original = _ProbeContext.postvalidate
 

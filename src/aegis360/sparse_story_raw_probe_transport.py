@@ -9,8 +9,9 @@ import signal
 import stat
 import struct
 import subprocess
+import threading
 import time
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 
 from . import sparse_story_batch_policy as batch_policy
 from .sparse_story_probe_context import _ProbeContext
@@ -36,6 +37,96 @@ class _RawProbeCapture:
     completed: bool
     postcheck_passed: bool
     reason: str
+    launch_event: object = field(default=None, compare=False, repr=False)
+
+
+class _NativeLaunchEvent:
+    """In-memory Popen fact, bound once to the exact returned capture."""
+
+    __slots__ = ("_ledger", "_process", "_capture", "_suffix", "mode")
+
+    def __init__(self, ledger, process, suffix, mode):
+        if (type(ledger) is not _NativeLaunchLedger
+                or type(process.pid) is not int or process.pid <= 0):
+            raise TypeError("native launch event requires an actual Popen")
+        self._ledger = ledger
+        self._process = process
+        self._capture = None
+        self._suffix = suffix
+        self.mode = mode
+
+    def bind_capture(self, capture):
+        if (self._capture is not None or type(capture) is not _RawProbeCapture
+                or capture.launch_event is not self):
+            raise ValueError("native launch event capture binding is invalid")
+        self._capture = capture
+
+    def verify(self, capture, *, candidate, suffix):
+        if (self._capture is not capture or capture.launch_event is not self
+                or self._ledger._candidate is not candidate
+                or self._ledger._event is not self
+                or self._ledger.count != 1 or self._suffix != suffix
+                or self.mode != _native_mode(suffix)):
+            raise ValueError("native launch event does not bind this capture")
+
+
+class _NativeLaunchLedger:
+    """Private one-shot ledger shared by a coordinator's exact candidate."""
+
+    __slots__ = ("_candidate", "_event", "_reserved", "_lock", "count")
+
+    def __init__(self, candidate):
+        self._candidate = candidate
+        self._event = None
+        self._reserved = False
+        self._lock = threading.Lock()
+        self.count = 0
+
+    def assert_available(self, candidate):
+        with self._lock:
+            if (candidate is not self._candidate or self.count != 0
+                    or self._reserved):
+                raise ValueError("native launch ledger is unavailable")
+
+    def reserve(self, candidate):
+        with self._lock:
+            if (candidate is not self._candidate or self.count != 0
+                    or self._reserved):
+                raise ValueError("native launch ledger is unavailable")
+            self._reserved = True
+
+    def cancel_before_popen(self):
+        with self._lock:
+            if self.count == 0:
+                self._reserved = False
+
+    def record_popen(self, candidate, process, suffix, mode):
+        with self._lock:
+            if (candidate is not self._candidate or self.count != 0
+                    or not self._reserved):
+                raise ValueError("native launch ledger is unavailable")
+            event = _NativeLaunchEvent(self, process, suffix, mode)
+            self._event = event
+            self.count = 1
+            self._reserved = False
+            return event
+
+
+def _native_mode(suffix):
+    if suffix and suffix[0] == "--aegis-isolation-probe":
+        return "isolation_probe"
+    if suffix and suffix[0] == "--aegis-synthetic-case":
+        return "synthetic_case"
+    return "adapter"
+
+
+def _verify_native_launch_event(capture, *, candidate, suffix):
+    """Reject fabricated or copied captures; return no serializable PID/path."""
+    if (type(capture) is not _RawProbeCapture
+            or type(capture.launch_event) is not _NativeLaunchEvent):
+        raise ValueError("native capture has no launch event")
+    capture.launch_event.verify(capture, candidate=candidate, suffix=suffix)
+    return capture.launch_event
 
 
 @dataclass(frozen=True)
@@ -102,12 +193,18 @@ def _retained_launch_spec(candidate, suffix: tuple[str, ...], policy_fd: int):
 
 
 def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
-        request_bytes=None) -> _RawProbeCapture:
+        request_bytes=None, launch_ledger=None) -> _RawProbeCapture:
     """Bounded native launch retaining the leader through group teardown."""
     if (request_bytes is not None
             and (type(request_bytes) is not bytes or len(request_bytes) > 1_048_576)):
         raise ValueError("native request bytes are invalid")
     binding_before = candidate._binding_bytes()
+    if launch_ledger is None:
+        launch_ledger = _NativeLaunchLedger(candidate)
+    if type(launch_ledger) is not _NativeLaunchLedger:
+        raise TypeError("native launch ledger is invalid")
+    launch_ledger.assert_available(candidate)
+    mode = _native_mode(suffix)
     read_fd, write_fd = os.pipe()
     os.set_blocking(write_fd, False)
     try: spec = _retained_launch_spec(candidate, suffix, read_fd)
@@ -123,6 +220,8 @@ def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
     argv = spec.argv
     env = spec.env
     process = None
+    launch_event = None
+    reserved = False
     selector = selectors.DefaultSelector()
     stdout = bytearray()
     stderr_present = stdout_overflow = stderr_overflow = timed_out = False
@@ -166,11 +265,14 @@ def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
             cleanup_failed = True
 
     try:
+        launch_ledger.reserve(candidate)
+        reserved = True
         process = subprocess.Popen(argv, pass_fds=(read_fd, bundle_fd),
             stdin=subprocess.DEVNULL if request_bytes is None else subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, env=env, close_fds=True,
             start_new_session=False, shell=False)
+        launch_event = launch_ledger.record_popen(candidate, process, suffix, mode)
         os.close(read_fd)
         read_fd = -1
         for name, stream in (("stdout", process.stdout), ("stderr", process.stderr)):
@@ -327,9 +429,13 @@ def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
         reason = ("raw_probe_complete" if completed else "raw_probe_invalid") if (
             allowed is not None) else (
             "native_process_complete" if completed else "native_process_invalid")
-        return _RawProbeCapture(bytes(stdout), returncode, group_gone, completed,
-            postcheck_passed, reason)
+        capture = _RawProbeCapture(bytes(stdout), returncode, group_gone,
+            completed, postcheck_passed, reason, launch_event)
+        launch_event.bind_capture(capture)
+        return capture
     finally:
+        if reserved and launch_event is None:
+            launch_ledger.cancel_before_popen()
         if read_fd >= 0: os.close(read_fd)
         close_writer()
         close_stdin()
