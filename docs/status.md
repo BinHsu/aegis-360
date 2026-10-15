@@ -183,18 +183,18 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 834 tests run, 754 passed and 80 host/sandbox cases skipped.
-- Native fixture: eight host tests cover rows, retained identity and 33 adapter
-  case IDs; no confinement result.
-- Candidate/facade real-host integration: 34 tests pass; mutations are detected.
-- First/last selected packets retain actual other-packet leaves. Host raw probe
+- Full discovery: 836 tests run, 754 passed and 82 host/sandbox cases skipped.
+- Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
+- Candidate/facade real-host integration: 34 tests pass; mutations detected.
+  First/last selected packets retain other-packet leaves. Host raw probe
   uses exact 14 boolean keys; bad bindings or keys fail.
 - The private retained session binds 14 probes and policy/backend/runner hashes.
   All 33 adapter-owned fixture case types have separate native observations;
   64 host tests pass. Serial invocations yield a private byte-repeat record.
   A 37-case freezer hashes inputs; read proofs and prepared owners close on
-  preflight rejection; 87 related native host tests pass.
+  preflight rejection. A retained claim derives 29 fixed stimuli; four altered
+  rows fail before spawn. Native transport: 66 host tests pass; schedule pending.
 
 ## Next action
 
-Prepare the other 33 case inputs, execute the full frozen schedule, and derive case results and aggregate; keep public APIs closed.
+Prepare distinct retained claims for all 33 adapter cases, execute the full frozen schedule, and derive case results and aggregate; keep public APIs closed.

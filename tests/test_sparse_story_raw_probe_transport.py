@@ -41,9 +41,11 @@ from aegis360.sparse_story_raw_probe_transport import (  # noqa: E402
     _run_native_process,
 )
 from aegis360.sparse_story_runner_contract import MATRIX_KEYS  # noqa: E402
+from aegis360.sparse_story_runner_contract import CASE_SPECS  # noqa: E402
 from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
     _freeze_private_synthetic_case_manifest,
     _freeze_private_synthetic_manifest_with_prepared_owners,
+    _fixed_stimulus_from_retained_claim,
 )
 from tests.test_sparse_story_synthetic_plan import SyntheticCasePlanTests  # noqa: E402
 from tests import test_sparse_story_batch_policy as batch_policy_tests  # noqa: E402
@@ -367,6 +369,65 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 claim._run_fixed_synthetic_fd_case_once()
             session.close()
             self.assertFalse(inputs["batch_scratch"].root.exists())
+
+    def test_fixed_stimuli_come_from_the_retained_candidate(self):
+        for case_id in ("environment_exact", "bundle_read_allowed",
+                "scratch_write_allowed", "result_read_denied"):
+            with self.subTest(case_id=case_id), self.context(
+                    own_batch_scratch=True, coordinated=True) as inputs:
+                session = _open_retained_probed_batch(**inputs)
+                claim = session.claim_once()
+                source = _fixed_stimulus_from_retained_claim(claim, case_id,
+                    denial_source=inputs["denial_source"] if case_id ==
+                        "result_read_denied" else None)
+                planned = SyntheticCasePlanTests().stimuli()
+                planned[case_id] = source
+                _, manifest = _freeze_private_synthetic_case_manifest(
+                    adapter_manifest_sha256="a" * 64,
+                    repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+                row = next(row for row in manifest["cases"]
+                    if row["case_id"] == case_id)
+                with mock.patch("aegis360.sparse_story_raw_probe_transport._run_native_process"
+                        ) as launch:
+                    changed = {**row, "stimulus": {**row["stimulus"],
+                        "argv": [*row["stimulus"]["argv"], "wrong"]}}
+                    if case_id == "environment_exact":
+                        invoke = lambda frozen: claim._observe_fixed_synthetic_identity_case_once(
+                            case_id, frozen)
+                    elif case_id == "bundle_read_allowed":
+                        invoke = lambda frozen: claim._observe_fixed_allowed_read_once(
+                            case_id, frozen)
+                    elif case_id == "scratch_write_allowed":
+                        invoke = claim._run_fixed_synthetic_scratch_case_once
+                    else:
+                        invoke = lambda frozen: claim._observe_fixed_fullset_read_denial_once(
+                            case_id, inputs["denial_source"], frozen)
+                    with self.assertRaisesRegex(ValueError,
+                            "planned case differs from frozen"):
+                        invoke(changed)
+                    launch.assert_not_called()
+                session.close()
+
+    def test_all_fixed_adapter_stimulus_shapes_derive_from_live_candidate(self):
+        excluded = {"network_ipv4_denied", "network_ipv6_denied",
+            "unix_socket_denied", "outside_write_denied", "bundle_mutation",
+            "replacement_race", "single_invocation", "receipt_rebuild"}
+        with self.context(own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            claim = session.claim_once()
+            planned = SyntheticCasePlanTests().stimuli()
+            for case_id, _ in CASE_SPECS:
+                if case_id in excluded: continue
+                planned[case_id] = _fixed_stimulus_from_retained_claim(
+                    claim, case_id, denial_source=inputs["denial_source"]
+                    if case_id in {"neighbor_packet_read_denied",
+                        "result_read_denied"} else None)
+            self.assertEqual(len(CASE_SPECS) - len(excluded), 29)
+            _, manifest = _freeze_private_synthetic_case_manifest(
+                adapter_manifest_sha256="a" * 64,
+                repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
+            self.assertEqual(len(manifest["cases"]), 37)
+            session.close()
 
     def test_frozen_fd_stimulus_is_checked_before_native_spawn(self):
         planned = SyntheticCasePlanTests().stimuli()

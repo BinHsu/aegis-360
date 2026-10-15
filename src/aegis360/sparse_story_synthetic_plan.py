@@ -26,6 +26,66 @@ _PREPARED_OWNER_CASES = ("network_ipv4_denied", "network_ipv6_denied",
     "unix_socket_denied", "outside_write_denied")
 
 
+def _fixed_stimulus_from_retained_claim(claim, case_id, *, denial_source=None):
+    """Derive a fixed case's literal stimulus from its still-live candidate."""
+    from .sparse_story_probe_denials import (
+        _ClaimedProbedBatch, _retain_full_set_denials,
+    )
+    from .sparse_story_probe_context import (
+        _PROTOCOL_SENTINEL, _REPOSITORY_SENTINEL,
+    )
+    from .sparse_story_runner_contract import build_asset_manifest_shape
+
+    if (type(claim) is not _ClaimedProbedBatch or claim._invoked
+            or case_id in _COORDINATOR or case_id in _PREPARED_OWNER_CASES
+            or case_id not in {name for name, _ in CASE_SPECS}):
+        raise ValueError("fixed synthetic claim or case is invalid")
+    claim.revalidate()
+    candidate = claim._session._candidate
+    if denial_source is not None and case_id not in {
+            "neighbor_packet_read_denied", "result_read_denied"}:
+        raise ValueError("full-set source is unrelated to fixed case")
+    argv = ()
+    if case_id == "argv_literal":
+        argv = (";$(touch should-not-run)", "* ' \" \\")
+    elif case_id == "environment_exact":
+        argv = (candidate._private_home.identity.path,
+            candidate._private_tmpdir.identity.path)
+    elif case_id == "cwd_identity":
+        argv = (str(candidate._proofs[0]._root),)
+    elif case_id == "grandchild_containment":
+        argv = (str(claim._session._batch_scratch.root / "grandchild-marker"),)
+    elif case_id == "scratch_write_allowed":
+        target = claim._session._batch_scratch.root / "synthetic-write"
+        import os
+        try: os.lstat(target)
+        except FileNotFoundError: pass
+        else: raise ValueError("fixed synthetic scratch target already exists")
+        argv = (str(target),)
+    elif case_id in {"repository_read_denied", "protocol_read_denied"}:
+        argv = (str(_REPOSITORY_SENTINEL if case_id ==
+            "repository_read_denied" else _PROTOCOL_SENTINEL),)
+    elif case_id in {"bundle_read_allowed", "model_read_allowed",
+            "prompt_read_allowed"}:
+        index = {"bundle_read_allowed": 0, "model_read_allowed": 1,
+            "prompt_read_allowed": 2}[case_id]
+        leaf = candidate._allowed_probe_leaves()[index]
+        argv = (str(leaf.path), "hex:" + leaf.prefix.hex())
+    elif case_id in {"neighbor_packet_read_denied", "result_read_denied"}:
+        if type(denial_source) is not dict:
+            raise ValueError("fixed full-set source is missing")
+        with _retain_full_set_denials(candidate=candidate, **denial_source) as (
+                neighbor, result):
+            target = (neighbor if case_id == "neighbor_packet_read_denied"
+                else result)
+            argv = (str(target.path),)
+    stdin = b"x" * 60_000 if case_id == "concurrent_pipe_pressure" else b""
+    claim.revalidate()
+    return {"argv": argv, "stdin": stdin,
+        "support_manifest": build_asset_manifest_shape(
+            asset_kind="synthetic_support", entries=[])}
+
+
 def _freeze_private_synthetic_manifest_with_prepared_owners(*,
         adapter_manifest_sha256, repeat_packet_id, stimuli,
         prepared_owners):

@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-10-13T05:17:54+08:00
+Updated: 2026-10-15T08:20:39+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: c74078a
 Remote status: `git ls-remote origin refs/heads/main` confirmed
 `c74078ac79700f2f2c3732787cdac42e34cbffe8`; `handoff-contract` run
-38309194535 succeeded for that exact SHA. Local `main` has one unpublished commit.
+38309194535 succeeded for that exact SHA. Local `main` has unpublished commits.
 Working tree at checkpoint: clean after local commit; verify with `git status --short`.
 
 ## Objective
@@ -19,11 +19,12 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-Four prepared dynamic owners remain live while one 37-row shape is frozen. Their
-portable requests, packet IDs and literal argv match; the four corresponding
-native cases then execute through those same retained owners. Other 33 stimuli
-remain caller-provided shape inputs, so this is not a complete case result or
-aggregate. Related host suite: 87 pass; discovery: 834 run, 80 skips.
+The 29 fixed adapter case stimuli can now be derived from a live retained claim:
+literal argv, stdin, and empty support manifest come from the candidate and
+closed fixture contract. Four representative altered rows fail before native
+spawn. Four prepared dynamic owners remain live through freeze and execution.
+The four coordinator cases and a 37-case execution/result remain unbuilt.
+Native host transport: 66 pass; discovery: 836 run, 82 skips.
 
 A 37-case shape freezer hashes argv, stdin and support. Native `fd_hygiene`
 and closed no-owner cases can match frozen rows before spawn. Changed
@@ -123,11 +124,11 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@c74078a`; exact-SHA remote CI passed.
-- Local unpublished milestones: one after the published checkpoint.
+- Local unpublished milestones: two after the published checkpoint.
 
 ## Verified
 
-- Restricted full discovery: 834 tests run, 754 passed, 80 skips. Listener
+- Restricted full discovery: 836 tests run, 754 passed, 82 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -206,9 +207,9 @@ receipt or spawn authority has been created.
 ## Pending
 
 - The private claim covers all 33 adapter-owned case types as separate host
-  checks. Prepare the other 33 case inputs through retained candidates,
-  freeze the complete schedule before execution, then build result with four
-  coordinator-owned cases. Review the gate before model/media acquisition.
+  checks. Derive all 33 case inputs from distinct retained claims and four
+  prepared owners, freeze one complete schedule before execution, then build
+  results with four coordinator-owned cases. Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
