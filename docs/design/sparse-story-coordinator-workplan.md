@@ -55,3 +55,39 @@ and `docs/status.md`. It reviews worker diffs, runs relevant gates, resolves
 the common interface, implements the complete 37-row result only after all
 four coordinator observations have proven their required lifetime and bytes,
 and checks exact-commit CI only after an authorized push.
+
+## Next bounded prerequisites
+
+The three first workers completed private prerequisites at local `3ebaeb2`.
+They did not establish a full coordinator case result. The following tasks
+remain independent at the file level; the main agent will integrate their
+interfaces and keep authority-bearing public functions closed.
+
+### Transport launch event worker
+
+Exclusive writes: `src/aegis360/sparse_story_raw_probe_transport.py` and
+`tests/test_sparse_story_transport_event.py`. Retain a private event produced
+only after the native `Popen` call, bind it to that exact capture, and show a
+controlled test that distinguishes an actual one-shot launch from a fabricated
+capture or a second launch. Preserve existing process-group, pipe and timeout
+behavior. Do not serialize PID/path or claim a public invocation count.
+
+### Receipt input lineage worker
+
+Exclusive writes: `src/aegis360/sparse_story_batch_policy.py`,
+`src/aegis360/sparse_story_receipt_inputs.py`, and
+`tests/test_sparse_story_receipt_inputs.py`. Retain the already validated
+one-packet media-result hash on the exact candidate. Derive the six run-receipt
+input digests only from live request, retained asset/runtime proofs and policy;
+reject a changed selected leaf/request/root before returning private facts.
+Do not build or publish a run receipt and do not open public serializers.
+
+### Owned publication worker
+
+Exclusive writes: `src/aegis360/sparse_story_private_publication.py` and
+`tests/test_sparse_story_private_publication.py`. Build a private two-peer
+evidence/receipt publisher using exclusive creation, exact byte hashes and
+identity-guarded cleanup. A pre-existing destination or changed/replaced peer
+must never be overwritten or deleted; a controlled blind-delete mutation
+must fail. This is only a publication primitive until the main coordinator
+binds it to an attested adapter capture and result.

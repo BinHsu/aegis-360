@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-15T08:44:06+08:00
+Updated: 2026-10-15T08:45:23+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 3eeee16
@@ -238,7 +238,7 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-None. Three worker prerequisites were reviewed; no worker issued case PASS.
+Three workers own disjoint transport, receipt-input and publication briefs in the coordinator workplan.
 
 ## Safety and claims
 
