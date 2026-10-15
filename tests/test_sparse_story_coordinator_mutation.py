@@ -14,6 +14,7 @@ from aegis360.sparse_story_coordinator_mutation import (
     _EMPTY_SUPPORT_SHA, _publish_owned_selected_bundle_for_mutation,
 )
 from aegis360.sparse_story_media_tree import publish_sanitized_bundle
+from aegis360.sparse_story_raw_probe_transport import _NativeLaunchLedger
 
 
 class BundleMutationTests(unittest.TestCase):
@@ -46,14 +47,17 @@ class BundleMutationTests(unittest.TestCase):
                 "stdin_sha256": hashlib.sha256(b"").hexdigest(),
                 "support_manifest_sha256": _EMPTY_SUPPORT_SHA}}
         self.leaf = selected / self.owner._relative
+        self.ledger = _NativeLaunchLedger(self.candidate)
 
     def test_owned_selected_leaf_invalidates_trust_before_spawn(self):
         before = self.leaf.read_bytes()
         invoked = []
         observed = self.owner.observe_once(candidate=self.candidate,
-            frozen_row=self.row, spawn=lambda: invoked.append(True))
+            frozen_row=self.row, launch_ledger=self.ledger,
+            spawn=lambda: invoked.append(True))
         self.assertEqual(observed, "trust_invalid")
         self.assertEqual(invoked, [])
+        self.assertEqual(self.ledger.count, 0)
         self.assertEqual(self.leaf.read_bytes()[0], before[0] ^ 1)
         self.assertEqual(self.leaf.read_bytes()[1:], before[1:])
         self.assertTrue(self.leaf.exists())  # Never remove a changed input.
@@ -65,7 +69,8 @@ class BundleMutationTests(unittest.TestCase):
         before = self.leaf.read_bytes()
         with self.assertRaisesRegex(ValueError, "frozen"):
             self.owner.observe_once(candidate=self.candidate,
-                frozen_row=wrong, spawn=lambda: self.fail("spawned"))
+                frozen_row=wrong, launch_ledger=self.ledger,
+                spawn=lambda: self.fail("spawned"))
         self.assertEqual(self.leaf.read_bytes(), before)
         neighbor = self.owner._root / "unowned"
         self.owner._root.chmod(0o755)
@@ -73,7 +78,8 @@ class BundleMutationTests(unittest.TestCase):
         self.owner._root.chmod(0o555)
         with self.assertRaises(ValueError):
             self.owner.observe_once(candidate=self.candidate,
-                frozen_row=self.row, spawn=lambda: self.fail("spawned"))
+                frozen_row=self.row, launch_ledger=self.ledger,
+                spawn=lambda: self.fail("spawned"))
         self.assertEqual(neighbor.read_bytes(), b"preserve")
         self.assertEqual(self.leaf.read_bytes(), before)
 
@@ -83,8 +89,18 @@ class BundleMutationTests(unittest.TestCase):
                                return_value=baseline):
             with self.assertRaisesRegex(ValueError, "accepted by retained trust"):
                 self.owner.observe_once(candidate=self.candidate,
-                    frozen_row=self.row, spawn=lambda: self.fail("spawned"))
+                    frozen_row=self.row, launch_ledger=self.ledger,
+                    spawn=lambda: self.fail("spawned"))
         self.assertTrue(self.leaf.exists())
+
+    def test_consumed_launch_ledger_blocks_mutation_before_changing_leaf(self):
+        before = self.leaf.read_bytes()
+        self.ledger.count = 1  # Controlled duplicate-launch state.
+        with self.assertRaisesRegex(ValueError, "unavailable"):
+            self.owner.observe_once(candidate=self.candidate,
+                frozen_row=self.row, launch_ledger=self.ledger,
+                spawn=lambda: self.fail("spawned"))
+        self.assertEqual(self.leaf.read_bytes(), before)
 
 
 if __name__ == "__main__":

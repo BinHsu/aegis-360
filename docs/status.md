@@ -177,8 +177,7 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-
-- Full discovery: 863 tests run, 780 passed and 83 host/sandbox cases skipped.
+- Full discovery: 869 tests run, 785 passed and 84 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
 - Candidate/facade: 34 host tests pass; mutations detected. First/last packets
   retain other-packet leaves; raw probe checks 14 boolean keys and bindings.
@@ -192,8 +191,10 @@ specific directing question. No new video is currently awaiting owner review.
   pass ten focused tests but do not issue complete case results. A native Popen
   launch ledger, six live input hashes and two-peer exclusive publisher add 16
   passing focused tests. The 67-test native host transport gate passes with the
-  claim-level ledger. No private run receipt or full coordinator row yet.
+  claim-level ledger. A real native retained claim now builds and independently
+  rebuilds private run-receipt bytes; the exact publisher rejects a two-peer
+  replacement. No full coordinator row, aggregate or public authority yet.
 
 ## Next action
-Integrate private receipt from attested launch and retained inputs, then four
-coordinator cases, result and aggregate; keep public APIs closed.
+Integrate the private receipt with exact publication, then four coordinator
+cases, result and aggregate; keep public APIs closed.

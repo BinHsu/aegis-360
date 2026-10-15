@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .sparse_story_batch_policy import _BatchPolicyCandidate
 from .sparse_story_media_tree import publish_selected_one_packet_media_gate
+from .sparse_story_raw_probe_transport import _NativeLaunchLedger
 from .sparse_story_runner_contract import (
     build_asset_manifest_shape, canonical_asset_manifest_shape_bytes,
 )
@@ -34,11 +35,14 @@ class _OwnedSelectedBundleMutation:
         self._relative = relative
         self._used = False
 
-    def observe_once(self, *, candidate, frozen_row, spawn):
+    def observe_once(self, *, candidate, frozen_row, launch_ledger, spawn):
         if self._used:
             raise ValueError("selected mutation owner already used")
         if type(candidate) is not _BatchPolicyCandidate:
             raise ValueError("selected mutation candidate differs")
+        if type(launch_ledger) is not _NativeLaunchLedger:
+            raise ValueError("selected mutation launch ledger differs")
+        launch_ledger.assert_available(candidate)
         if not callable(spawn):
             raise ValueError("selected mutation spawn guard is missing")
         stimulus = frozen_row.get("stimulus") if type(frozen_row) is dict else None
@@ -101,6 +105,7 @@ class _OwnedSelectedBundleMutation:
         try:
             candidate.invocation_binding_sha256()
         except ValueError:
+            launch_ledger.assert_available(candidate)
             return "trust_invalid"
         # A cached or weakened trust validator must not turn the case green.
         raise ValueError("selected mutation was accepted by retained trust")

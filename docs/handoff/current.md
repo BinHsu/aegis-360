@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-15T11:45:00+08:00
+Updated: 2026-10-15T13:00:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 3eeee16
@@ -29,8 +29,12 @@ input hashes derive from retained request/media/runtime/model/prompt/policy;
 two peer bytes publish exclusively with exact identity-guarded cleanup. Sixteen
 new focused tests pass, including fabricated-capture, duplicate-launch and
 blind-unlink negative controls. The complete 67-test native host transport gate
-passes after four focused regression corrections. Full discovery: 863 run,
-780 passed, 83 skipped.
+passes after four focused regression corrections. A real retained native
+`fd_hygiene` claim builds and independently rebuilds private run-receipt bytes;
+changed bytes/capture/count fail. Actual two-peer replacement preserves both
+held originals and both replacements. Bundle mutation now requires an unused
+claim ledger. Full discovery: 869 run, 785 passed, 84 skipped; the new receipt
+host case also passes when enabled.
 The 33 frozen adapter rows still match their closed native
 observations; four coordinator rows have no full case result or aggregate.
 
@@ -110,12 +114,9 @@ cases, capability issuance and inference remain pending. No capability token,
 receipt or spawn authority has been created.
 
 ## Prior Skiing rejection
-
-- Frozen visual-state proposals at 46 and 297 seconds are independently
-  reviewed `no_semantic_change`; the unlabeled 200-second control alone is
-  `story_change`. Two reviewers agree on all five packets.
-- Numeric audit shows palette-dominated RGB scores 0.3114/0.3044 at 46/297 and
-  only 0.0230 at 200. The 297/337 pair is one A→B→A appearance excursion.
+- Proposals at 46/297 seconds are reviewed `no_semantic_change`; the 200-second
+  control is `story_change`. RGB scores 0.3114/0.3044 versus 0.0230 at 200;
+  the 297/337 pair is one A→B→A excursion. Reviewers agree on all five packets.
 - Do not rerun, retune or lower the 0.08 floor. The external public review bundle
   tree SHA is
   `7163a4f54c6daf919a40465dad785050ba0b12061da790b6a33096114c461159`.
@@ -128,7 +129,7 @@ receipt or spawn authority has been created.
 
 ## Verified
 
-- Restricted full discovery: 863 tests run, 780 passed, 83 skips. Listener
+- Restricted full discovery: 869 tests run, 785 passed, 84 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -207,9 +208,9 @@ receipt or spawn authority has been created.
 ## Pending
 
 - The private claim covers all 33 adapter-owned case types through one ordered
-  frozen native schedule. Integrate the launch event, six input facts and exact
-  owned publication into an adapter run receipt, then complete four coordinator
-  observations, case result and aggregate.
+  frozen native schedule. Integrate private run-receipt bytes with exact owned
+  publication, then complete four coordinator observations, case result and
+  aggregate. A full replacement-race case remains blocked by this integration.
   Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
@@ -236,9 +237,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 `ad6f29b1…2a567`. Never commit external artifacts.
 
 ## Active agents
-
-The three second-round workers have completed their disjoint briefs. Main agent
-is integrating their private prerequisites and owns the handoff.
+All delegated briefs are complete. Main agent integrated private prerequisites
+and owns the handoff.
 
 ## Safety and claims
 
