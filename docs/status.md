@@ -183,18 +183,18 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 
-- Full discovery: 837 tests run, 754 passed and 83 host/sandbox cases skipped.
+- Full discovery: 847 tests run, 764 passed and 83 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
-- Candidate/facade: 34 host tests pass; mutations detected. First/last
-  selected packets retain other-packet leaves. Host raw probe
-  uses exact 14 boolean keys; bad bindings or keys fail.
+- Candidate/facade: 34 host tests pass; mutations detected. First/last packets
+  retain other-packet leaves; raw probe checks 14 boolean keys and bindings.
 - The private retained session binds 14 probes and policy/backend/runner hashes.
   All 33 adapter-owned fixture case types have separate native observations;
   64 host tests pass. Serial invocations yield a private byte-repeat record.
   A 37-case freezer hashes inputs; read proofs and prepared owners close on
   preflight rejection. A retained claim derives 29 fixed stimuli; four altered
-  rows fail before spawn. Thirty-three live claims freeze adapter rows; one
-  frozen adapter rows run natively in order and match 33 expected observations.
+  rows fail before spawn. Thirty-three live claims freeze and run native adapter
+  rows in order; all 33 observations match. Three private coordinator helpers
+  pass ten focused tests but do not issue complete case results.
 
 ## Next action
-Implement four coordinator cases, then derive complete case results and aggregate; keep public APIs closed.
+Add attested launch/receipt/publication prerequisites, then complete four coordinator cases, result and aggregate; keep public APIs closed.

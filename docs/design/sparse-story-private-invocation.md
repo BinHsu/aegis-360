@@ -77,3 +77,32 @@ results, capability issuance or inference authority.
   content checks. A replaced or unexpected file must remain for inspection.
 
 No model or real-media acquisition follows from these checks.
+
+## Coordinator completion gap
+
+The ordered native fixture path now observes all 33 adapter-owned rows from
+distinct retained claims. The four coordinator-owned rows remain provisional.
+The retained session's `receipt_bytes()` is the isolation-probe capability
+receipt; it is not an adapter run receipt. Its `_invoked` flag and captured
+stdout bind the one-case path but do not independently count successful OS
+launches. `derive_run_receipt`, `canonical_run_receipt_bytes`, case-result
+derivation and aggregate derivation remain closed. A structural validator can
+check a proposed JSON shape, but cannot attest its producer.
+
+Before either `single_invocation` or `receipt_rebuild` may report
+`exact_rebuild`, the transport must retain a one-shot launch fact and an
+attested adapter capture. A private coordinator must derive every run-receipt
+input from the retained request, one-packet media proof, runtime/model/prompt
+manifests and runner policy, then independently rebuild its canonical bytes.
+The candidate currently validates the selected media result at construction
+but does not retain that result hash as a run-receipt field.
+
+Before `replacement_race` may report `replacement_preserved`, the coordinator
+must exclusively publish the actual adapter evidence and receipt as two owned
+peers, then prove that cleanup removes only those exact identities while a
+replacement survives. The existing sanitized-media publisher is an earlier
+input boundary and cannot substitute for this test. `bundle_mutation` must
+mutate only an owned synthetic selected bundle, observe retained trust fail
+before spawn, and preserve the changed leaf. Only after all four observations,
+two fresh byte-repeat runs and exact result reconstruction may the complete
+37-row case result and aggregate be considered. Public authority remains closed.

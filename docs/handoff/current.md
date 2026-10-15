@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-15T08:40:31+08:00
+Updated: 2026-10-15T08:44:06+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 3eeee16
@@ -19,13 +19,13 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-All 33 frozen adapter rows now execute in order through their distinct live
-claims and four prepared dynamic owners. Observed classifications match the
-closed case specification; each row verifies its frozen stimulus after native
-execution. Duplicate claims fail before freeze. Four coordinator rows remain
-caller-provided shapes, so no complete case result or aggregate is issued.
-The host fixture shortens its two intentional timeout cases to five seconds;
-the production runner keeps its 120-second bound. Focused 33-row host test passes.
+Three private coordinator prerequisites now have bounded checks: owned selected
+bundle mutation rejects retained trust before spawn; changed receipt/evidence
+peer names survive identity-guarded cleanup; cardinality audit binds a consumed
+claim, capture and frozen row without issuing an enum. Ten focused tests pass,
+including cached-validator and blind-unlink negative controls. Full discovery:
+847 run, 83 skipped. The 33 frozen adapter rows still match their closed native
+observations; four coordinator rows have no full case result or aggregate.
 
 A 37-case shape freezer hashes argv, stdin and support. Native `fd_hygiene`
 and closed no-owner cases can match frozen rows before spawn. Changed
@@ -125,11 +125,11 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@3eeee16`; exact-SHA remote CI passed.
-- Local unpublished milestones: handoff and coordinator workplan checkpoints.
+- Local unpublished milestones: handoff, workplan and private prerequisites.
 
 ## Verified
 
-- Restricted full discovery: 837 tests run, 754 passed, 83 skips. Listener
+- Restricted full discovery: 847 tests run, 764 passed, 83 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -197,7 +197,7 @@ receipt or spawn authority has been created.
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
 - Controlled mutation removing private-directory emptiness validation causes the
   nonempty-HOME regression to fail with `ValueError not raised`.
-- Cursor/Grok 4.7 High review received no result: two bounded requests timed out.
+- Cursor/Grok 4.7 High review received no result: three bounded requests timed out.
 
 ## Rejected
 
@@ -208,8 +208,10 @@ receipt or spawn authority has been created.
 ## Pending
 
 - The private claim covers all 33 adapter-owned case types through one ordered
-  frozen native schedule. Implement four coordinator-owned cases, then build
-  complete case results and aggregate. Review the gate before acquisition.
+  frozen native schedule. Add a transport-owned one-shot launch fact, derive an
+  adapter run receipt from retained inputs/capture, publish exact owned peers,
+  then complete four coordinator observations, case result and aggregate.
+  Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
@@ -236,9 +238,7 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-Three bounded local workers are assigned disjoint cardinality/rebuild, bundle
-mutation and replacement-race files. Briefs and success criteria are in
-`docs/design/sparse-story-coordinator-workplan.md`; main agent owns integration.
+None. Three worker prerequisites were reviewed; no worker issued case PASS.
 
 ## Safety and claims
 
