@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-10-15T08:31:49+08:00
+Updated: 2026-10-15T08:36:34+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: c74078a
+Baseline commit: 3eeee16
 Remote status: `git ls-remote origin refs/heads/main` confirmed
-`c74078ac79700f2f2c3732787cdac42e34cbffe8`; `handoff-contract` run
-38309194535 succeeded for that exact SHA. Local `main` has unpublished commits.
+`3eeee1626062dbe1a25a0650616c64af0f3e38f7`; `handoff-contract` run
+38660913858 succeeded for that exact SHA. Local `main` matches remote.
 Working tree at checkpoint: clean after local commit; verify with `git status --short`.
 
 ## Objective
@@ -124,8 +124,8 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published milestone: `BinHsu/aegis-360@c74078a`; exact-SHA remote CI passed.
-- Local unpublished milestones: four after the published checkpoint.
+- Published milestone: `BinHsu/aegis-360@3eeee16`; exact-SHA remote CI passed.
+- Local unpublished milestones: none at this checkpoint.
 
 ## Verified
 
