@@ -143,6 +143,64 @@ def _freeze_private_synthetic_adapter_schedule(*, adapter_manifest_sha256,
     return result
 
 
+def _execute_private_synthetic_adapter_schedule(*, frozen_manifest,
+        adapter_manifest_sha256, repeat_packet_id, fixed_claims,
+        prepared_owners, denial_sources, coordinator_stimuli):
+    """Observe 33 frozen fixture rows; never issue a result or receipt."""
+    from .sparse_story_probe_denials import _classify_fixed_synthetic_output
+
+    _, rebuilt = _freeze_private_synthetic_adapter_schedule(
+        adapter_manifest_sha256=adapter_manifest_sha256,
+        repeat_packet_id=repeat_packet_id, fixed_claims=fixed_claims,
+        prepared_owners=prepared_owners, denial_sources=denial_sources,
+        coordinator_stimuli=coordinator_stimuli)
+    if type(frozen_manifest) is not dict or frozen_manifest != rebuilt:
+        raise ValueError("frozen synthetic adapter schedule changed")
+    observations = []
+    identity = {"argv_literal", "environment_exact", "fd_hygiene",
+        "cwd_identity"}
+    network = {"network_ipv4_denied", "network_ipv6_denied",
+        "unix_socket_denied"}
+    denial = {"grandchild_containment", "outside_write_denied",
+        "repository_read_denied", "protocol_read_denied"}
+    fullset = {"neighbor_packet_read_denied", "result_read_denied"}
+    allowed = {"bundle_read_allowed", "model_read_allowed",
+        "prompt_read_allowed"}
+    for row in frozen_manifest["cases"]:
+        case_id = row["case_id"]
+        if case_id in _COORDINATOR: continue
+        claim = (prepared_owners[case_id].claim if case_id in
+            _PREPARED_OWNER_CASES else fixed_claims[case_id])
+        owner = prepared_owners.get(case_id)
+        if case_id in identity:
+            observed = claim._observe_fixed_synthetic_identity_case_once(
+                case_id, row)
+        elif case_id in network:
+            observed = claim._observe_fixed_synthetic_network_case_once(
+                case_id, row, owner)
+        elif case_id in denial:
+            observed = claim._observe_fixed_synthetic_denial_case_once(
+                case_id, row, owner)
+        elif case_id in fullset:
+            observed = claim._observe_fixed_fullset_read_denial_once(
+                case_id, denial_sources[case_id], row)
+        elif case_id in allowed:
+            observed = claim._observe_fixed_allowed_read_once(case_id, row)
+        elif case_id == "concurrent_pipe_pressure":
+            observed = _classify_fixed_synthetic_output(
+                claim._run_fixed_synthetic_pipe_case_once(row))
+        elif case_id == "scratch_write_allowed":
+            observed = ("isolation_allowed" if _classify_fixed_synthetic_output(
+                claim._run_fixed_synthetic_scratch_case_once(row)) == "success"
+                else "invocation_failure")
+        else:
+            observed = claim._observe_fixed_synthetic_output_case_once(
+                case_id, row)
+        claim._verify_frozen_case_stimulus(row)
+        observations.append((case_id, observed))
+    return tuple(observations)
+
+
 def _freeze_private_synthetic_manifest_with_prepared_owners(*,
         adapter_manifest_sha256, repeat_packet_id, stimuli,
         prepared_owners):

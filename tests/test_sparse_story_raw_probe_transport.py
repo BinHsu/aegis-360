@@ -46,6 +46,7 @@ from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
     _freeze_private_synthetic_case_manifest,
     _freeze_private_synthetic_manifest_with_prepared_owners,
     _freeze_private_synthetic_adapter_schedule,
+    _execute_private_synthetic_adapter_schedule,
     _fixed_stimulus_from_retained_claim,
 )
 from tests.test_sparse_story_synthetic_plan import SyntheticCasePlanTests  # noqa: E402
@@ -477,12 +478,26 @@ class RawProbeTransportHostTests(unittest.TestCase):
                     claim = (prepared[row["case_id"]].claim if row["case_id"]
                         in dynamic else fixed[row["case_id"]])
                     claim.revalidate()
-                fd_row = next(row for row in manifest["cases"]
-                    if row["case_id"] == "fd_hygiene")
-                fd_claim = fixed["fd_hygiene"]
-                capture = fd_claim._run_fixed_synthetic_fd_case_once(fd_row)
-                self.assertTrue(capture.completed, capture.reason)
-                fd_claim._verify_frozen_case_stimulus(fd_row)
+                changed = {**manifest, "cases": [
+                    {**manifest["cases"][0], "stimulus": {
+                        **manifest["cases"][0]["stimulus"],
+                        "stdin_sha256": "0" * 64}}, *manifest["cases"][1:]]}
+                with mock.patch(
+                        "aegis360.sparse_story_raw_probe_transport._run_native_process"
+                        ) as launch, self.assertRaisesRegex(ValueError,
+                        "frozen synthetic adapter schedule changed"):
+                    _execute_private_synthetic_adapter_schedule(
+                        frozen_manifest=changed, **parameters)
+                launch.assert_not_called()
+                with mock.patch(
+                        "aegis360.sparse_story_raw_probe_transport._TIMEOUT_NS",
+                        5_000_000_000):
+                    observations = _execute_private_synthetic_adapter_schedule(
+                        frozen_manifest=manifest, **parameters)
+                self.assertEqual(len(observations), 33)
+                self.assertEqual(observations,
+                    tuple((case_id, expected) for case_id, expected in CASE_SPECS
+                        if case_id not in coordinator))
 
     def test_frozen_fd_stimulus_is_checked_before_native_spawn(self):
         planned = SyntheticCasePlanTests().stimuli()

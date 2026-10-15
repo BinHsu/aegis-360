@@ -194,7 +194,7 @@ specific directing question. No new video is currently awaiting owner review.
   A 37-case freezer hashes inputs; read proofs and prepared owners close on
   preflight rejection. A retained claim derives 29 fixed stimuli; four altered
   rows fail before spawn. Thirty-three live claims freeze adapter rows; one
-  frozen fd row runs natively. Native transport: 67 host tests pass.
+  frozen adapter rows run natively in order and match 33 expected observations.
 
 ## Next action
-Execute all 33 frozen adapter rows, implement four coordinator cases, and derive case results and aggregate; keep public APIs closed.
+Implement four coordinator cases, then derive complete case results and aggregate; keep public APIs closed.

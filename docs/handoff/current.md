@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-15T08:24:00+08:00
+Updated: 2026-10-15T08:31:49+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: c74078a
@@ -19,12 +19,13 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-The 33 adapter case rows now freeze from distinct live retained claims and four
-prepared dynamic owners. The 29 fixed argv/stdin/support stimuli derive from
-the candidate and closed fixture contract. Duplicate claims fail; one frozen
-fd row runs through its same claim and matches before spawn. The four coordinator
-rows remain caller-provided shapes; full execution/results are still pending.
-Native host transport: 67 pass; discovery: 837 run, 83 skips.
+All 33 frozen adapter rows now execute in order through their distinct live
+claims and four prepared dynamic owners. Observed classifications match the
+closed case specification; each row verifies its frozen stimulus after native
+execution. Duplicate claims fail before freeze. Four coordinator rows remain
+caller-provided shapes, so no complete case result or aggregate is issued.
+The host fixture shortens its two intentional timeout cases to five seconds;
+the production runner keeps its 120-second bound. Focused 33-row host test passes.
 
 A 37-case shape freezer hashes argv, stdin and support. Native `fd_hygiene`
 and closed no-owner cases can match frozen rows before spawn. Changed
@@ -124,7 +125,7 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@c74078a`; exact-SHA remote CI passed.
-- Local unpublished milestones: three after the published checkpoint.
+- Local unpublished milestones: four after the published checkpoint.
 
 ## Verified
 
@@ -206,10 +207,9 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The private claim covers all 33 adapter-owned case types as separate host
-  checks; their frozen rows now derive from 33 retained claims. Execute the
-  complete frozen schedule, implement four coordinator-owned cases, then build
-  case results and aggregate. Review the gate before acquisition.
+- The private claim covers all 33 adapter-owned case types through one ordered
+  frozen native schedule. Implement four coordinator-owned cases, then build
+  complete case results and aggregate. Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
