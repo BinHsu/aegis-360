@@ -193,7 +193,7 @@ specific directing question. No new video is currently awaiting owner review.
   A real retained claim rebuilds private receipt bytes; exact publication and
   three coordinator fixture modes have ten focused host tests. Both exact-
   rebuild rows and replacement race have private native positives; no case result.
-  `cb2677b` exact-SHA CI passes the portable rename test and handoff gate.
+  `efb4b1a` exact-SHA CI run 38824860428 passes; remote `main` matches.
 
 ## Next action
 Complete four coordinator observations and exact case-result reconstruction

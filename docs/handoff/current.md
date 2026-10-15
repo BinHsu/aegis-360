@@ -1,15 +1,13 @@
 # Current handoff
 
-Updated: 2026-10-16T08:10:00+08:00
+Updated: 2026-10-16T08:45:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: cb2677b
+Baseline commit: efb4b1a
 Remote status: `git ls-remote origin refs/heads/main` confirmed
-`cb2677b7cb06a18e0ebdfbbe397269d0da9fe8d2`; `handoff-contract` run
-38824134141 succeeded for that exact SHA, including portable unit tests. Local
-`main` has two unpublished private checkpoints.
-Working tree at checkpoint: clean after local commit; verify with
-`git status --short --branch`.
+`efb4b1a5b8449804597fc55374201866f6e58189`; `handoff-contract` run
+38824860428 succeeded for that exact SHA, including portable unit tests.
+Working tree at checkpoint: verify with `git status --short --branch`.
 
 ## Objective
 
@@ -38,7 +36,8 @@ receipt/evidence bytes to the publisher; changed receipt/row rejects before
 publication, and original/replacement peers survive. No case result is issued.
 Two delegates hit a usage limit after delivery. The Linux-only test failure was
 fixed by a test-only rename substitute and exact-SHA CI is green; local
-discovery: 880 run, 791 passed, 89 skipped. No public authority opened.
+discovery: 880 run, 791 passed, 89 skipped. `34ba4d8` and `efb4b1a` are
+published and exact-SHA CI passed. No public authority opened.
 A 37-case shape freezer hashes argv, stdin and support. Changed stimuli block
 spawn; prepared owners close exact paths on row mismatch.
 The private claim exercises all 33 adapter-owned case types through the same
@@ -124,8 +123,9 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published `BinHsu/aegis-360@cb2677b` has green exact-SHA CI.
-- Next local task: integrate replacement-race receipt with exact publication.
+- Published `BinHsu/aegis-360@efb4b1a` has green exact-SHA CI.
+- Next local task: complete four coordinator observations and exact case-result
+  reconstruction before aggregate work.
 
 ## Verified
 
