@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-15T08:36:34+08:00
+Updated: 2026-10-15T08:40:31+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 3eeee16
@@ -125,7 +125,7 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@3eeee16`; exact-SHA remote CI passed.
-- Local unpublished milestones: none at this checkpoint.
+- Local unpublished milestones: handoff and coordinator workplan checkpoints.
 
 ## Verified
 
@@ -236,9 +236,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 
-None. The bounded protocol-boundary review and implementation audit completed.
-The reviewer changed no files and independently ran the eight initial candidate
-checks. Main agent integrated host evidence and added two more checks.
+Three bounded local workers are assigned disjoint cardinality/rebuild, bundle
+mutation and replacement-race files. Briefs and success criteria are in
+`docs/design/sparse-story-coordinator-workplan.md`; main agent owns integration.
 
 ## Safety and claims
 
