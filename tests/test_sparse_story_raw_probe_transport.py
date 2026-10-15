@@ -498,6 +498,22 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 self.assertEqual(observations,
                     tuple((case_id, expected) for case_id, expected in CASE_SPECS
                         if case_id not in coordinator))
+                from aegis360.sparse_story_private_adapter_rebuild import (
+                    _rebuild_private_adapter_observations,
+                )
+                rebuilt = _rebuild_private_adapter_observations(
+                    frozen_manifest=manifest, claims=fixed,
+                    prepared_owners=prepared)
+                self.assertFalse(rebuilt.authority)
+                self.assertEqual(
+                    tuple((row.case_id, row.observed_result)
+                          for row in rebuilt.rows), observations)
+                fixed["fd_hygiene"]._launch_ledger.count = 2
+                with self.assertRaises(ValueError):
+                    _rebuild_private_adapter_observations(
+                        frozen_manifest=manifest, claims=fixed,
+                        prepared_owners=prepared)
+                fixed["fd_hygiene"]._launch_ledger.count = 1
 
     def test_frozen_fd_stimulus_is_checked_before_native_spawn(self):
         planned = SyntheticCasePlanTests().stimuli()

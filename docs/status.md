@@ -177,24 +177,24 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-- Local full discovery: 880 tests run, 791 passed and 89 host/sandbox cases skipped.
+- Local full discovery: 892 tests run, 799 passed and 93 host/sandbox skips.
 - Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
 - Candidate/facade: 34 host tests pass; mutations detected. First/last packets
   retain other-packet leaves; raw probe checks 14 boolean keys and bindings.
 - The private retained session binds 14 probes and policy/backend/runner hashes.
   All 33 adapter-owned fixture case types have separate native observations;
-  64 host tests pass. Serial invocations yield a private byte-repeat record.
-  A 37-case freezer hashes inputs; read proofs and prepared owners close on
-  preflight rejection. A retained claim derives 29 fixed stimuli; four altered
-  rows fail before spawn. Thirty-three live claims freeze and run native adapter
-  rows in order; all 33 observations match. Three private coordinator helpers
-  pass ten focused tests but issue no complete case result. The Popen ledger,
+  A 37-case freezer hashes inputs; prepared owners close on preflight rejection.
+  Thirty-three live claims run native rows in order and reconstruct matching
+  results. Three coordinator modes have private receipt/capture positives.
+  The Popen ledger,
   six input hashes and two-peer publisher pass 67 native transport host tests.
-  A real retained claim rebuilds private receipt bytes; exact publication and
-  three coordinator fixture modes have ten focused host tests. Both exact-
-  rebuild rows and replacement race have private native positives; no case result.
+  A retained claim rebuilds private receipt bytes; exact rebuild and replacement
+  race have private native positives, with no case result.
   `efb4b1a` exact-SHA CI run 38824860428 passes; remote `main` matches.
+  New private 33-row capture rebuild passes the real Seatbelt host gate;
+  bundle trust rejection and fresh native stdout repeats pass host gates.
+  Collected 37-row proof has wrong execution order; no case result is issued.
 
 ## Next action
-Complete four coordinator observations and exact case-result reconstruction
-before aggregate work; keep public APIs closed.
+Execute the 37 frozen rows in order with ordinal evidence, then rebuild a
+private case result before aggregate work; keep public APIs closed.

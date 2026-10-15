@@ -125,3 +125,37 @@ def _publish_owned_selected_bundle_for_mutation(**inputs):
     owner = _OwnedSelectedBundleMutation(
         _TOKEN, root, (root_stat.st_dev, root_stat.st_ino), relative)
     return owner, result
+
+
+def _observe_claimed_selected_bundle_mutation_once(*, claim, owner, frozen_row):
+    """Observe one retained trust rejection without consuming spawn authority.
+
+    This is private negative evidence. The changed selected leaf remains in the
+    caller's synthetic workspace for inspection; no case result is issued.
+    """
+    from .sparse_story_probe_denials import _ClaimedProbedBatch
+
+    if (type(claim) is not _ClaimedProbedBatch
+            or type(owner) is not _OwnedSelectedBundleMutation
+            or claim._invoked or claim._last_stimulus is not None
+            or claim._session._invocation_capture is not None
+            or claim._session._prepared_owner is not None):
+        raise ValueError("bundle mutation requires one uninvoked retained claim")
+    claim.revalidate()
+    candidate = claim._session._candidate
+    if owner._root != candidate._proofs[0]._root:
+        raise ValueError("bundle mutation owner belongs to another claim")
+    launch_attempted = False
+
+    def reject_spawn():
+        nonlocal launch_attempted
+        launch_attempted = True
+        raise ValueError("bundle mutation attempted to spawn")
+
+    result = owner.observe_once(candidate=candidate, frozen_row=frozen_row,
+        launch_ledger=claim._launch_ledger, spawn=reject_spawn)
+    if (launch_attempted or claim._invoked
+            or claim._session._invocation_capture is not None
+            or claim._launch_ledger.count != 0):
+        raise ValueError("bundle mutation consumed native launch")
+    return result

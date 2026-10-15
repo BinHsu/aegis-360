@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-16T08:45:00+08:00
+Updated: 2026-10-16T09:02:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: efb4b1a
@@ -19,13 +19,14 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-Published `43e3752` contains six private prerequisites: selected-bundle
-mutation, identity-guarded peer cleanup, cardinality audit, real Popen one-shot
-ledger, six retained receipt input hashes and exclusive two-peer publication.
-A native `fd_hygiene` claim builds/rebuilds a private run receipt; changed
-bytes/capture/count fail. The 67-test native transport host gate passes. Full
-discovery at publication: 869 run, 785 passed, 84 skipped. The 33 adapter rows
-match closed native observations; four coordinator rows have no full result.
+Local private checkpoint after published `efb4b1a`: a claim-bound selected
+bundle mutation proves trust rejection before Popen; two fresh native claims
+produce byte-identical stdout; and the 33 adapter observations rebuild from
+retained captures, exact one-shot events and frozen stimuli. The real 33-case
+Seatbelt host gate passes. A private 37-row collector combines these with four
+coordinator proof objects, but its current two-phase execution does not follow
+the frozen manifest order. It grants no case result or aggregate. Replace that
+order before interpreting the collection as a complete schedule.
 
 Published `cb2677b` has three zero-argument coordinator fixture modes,
 an exact retained claim launch for each, private receipt/evidence publication,
@@ -124,12 +125,12 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published `BinHsu/aegis-360@efb4b1a` has green exact-SHA CI.
-- Next local task: complete four coordinator observations and exact case-result
-  reconstruction before aggregate work.
+- Next local task: dispatch all 37 frozen rows in manifest order with retained
+  owners and ordinal evidence before case-result reconstruction.
 
 ## Verified
 
-- Restricted full discovery: 880 tests run, 791 passed, 89 skips. Listener
+- Restricted full discovery: 892 tests run, 799 passed, 93 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -207,10 +208,9 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The private claim covers 33 adapter rows and three native coordinator modes.
-  All three launched coordinator modes have private receipt/capture positives.
-  Complete the four case observations, case result and aggregate. Current
-  private evidence does not issue full case results.
+- The private 37-row collection has no ordered execution proof or complete
+  native host run. Complete one ordered dispatcher, then exact case-result
+  reconstruction and aggregate. Current evidence issues no full case result.
   Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.

@@ -3,17 +3,27 @@
 import hashlib
 import json
 import os
+import stat
+import sys
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from tests import test_sparse_story_media_tree as media_helpers
 from tests import test_sparse_story_batch_policy as batch_helpers
 from tests.test_sparse_story_media_tree import local_rename
 from aegis360.sparse_story_coordinator_mutation import (
-    _EMPTY_SUPPORT_SHA, _publish_owned_selected_bundle_for_mutation,
+    _EMPTY_SUPPORT_SHA, _OwnedSelectedBundleMutation, _TOKEN,
+    _observe_claimed_selected_bundle_mutation_once,
+    _publish_owned_selected_bundle_for_mutation,
 )
 from aegis360.sparse_story_media_tree import publish_sanitized_bundle
+from aegis360.sparse_story_probe_denials import (
+    _ClaimedProbedBatch, _open_retained_probed_batch,
+)
 from aegis360.sparse_story_raw_probe_transport import _NativeLaunchLedger
 
 
@@ -101,6 +111,76 @@ class BundleMutationTests(unittest.TestCase):
                 frozen_row=self.row, launch_ledger=self.ledger,
                 spawn=lambda: self.fail("spawned"))
         self.assertEqual(self.leaf.read_bytes(), before)
+
+    def test_claim_bridge_rejects_other_owner_and_consumed_claim(self):
+        claim = object.__new__(_ClaimedProbedBatch)
+        claim._session = SimpleNamespace(_candidate=self.candidate,
+            _invocation_capture=None, _prepared_owner=None)
+        claim._invoked = False
+        claim._last_stimulus = None
+        claim._launch_ledger = self.ledger
+        claim.revalidate = lambda: None
+        before = self.leaf.read_bytes()
+        other = _OwnedSelectedBundleMutation(_TOKEN, self.fixture.base,
+            (0, 0), self.owner._relative)
+        with self.assertRaisesRegex(ValueError, "another claim"):
+            _observe_claimed_selected_bundle_mutation_once(
+                claim=claim, owner=other, frozen_row=self.row)
+        self.assertEqual(self.leaf.read_bytes(), before)
+        claim._invoked = True
+        with self.assertRaisesRegex(ValueError, "uninvoked"):
+            _observe_claimed_selected_bundle_mutation_once(
+                claim=claim, owner=self.owner, frozen_row=self.row)
+        self.assertEqual(self.leaf.read_bytes(), before)
+
+
+@unittest.skipUnless(os.uname().sysname == "Darwin"
+    and os.uname().machine == "arm64"
+    and os.environ.get("AEGIS_RUN_HOST_SEATBELT_TESTS") == "1",
+    "requires explicit Darwin host Seatbelt gate outside nested sandbox")
+class ClaimedBundleMutationHostTests(unittest.TestCase):
+    def test_real_retained_claim_rejects_changed_selected_leaf_before_spawn(self):
+        from tests import test_sparse_story_raw_probe_transport as host_tests
+
+        with host_tests.RawProbeTransportHostTests.context(
+                self, own_batch_scratch=True, coordinated=True) as inputs:
+            session = _open_retained_probed_batch(**inputs)
+            try:
+                claim = session.claim_once()
+                candidate = session._candidate
+                relative = json.loads(candidate._request_bytes)["media"][0]["path"]
+                root = candidate._proofs[0]._root
+                info = os.lstat(root)
+                self.assertTrue(stat.S_ISDIR(info.st_mode))
+                owner = _OwnedSelectedBundleMutation(_TOKEN, root,
+                    (info.st_dev, info.st_ino), relative)
+                row = {"case_id": "bundle_mutation",
+                    "expected_result": "trust_invalid", "stimulus": {
+                        "argv": [relative],
+                        "stdin_sha256": hashlib.sha256(b"").hexdigest(),
+                        "support_manifest_sha256": _EMPTY_SUPPORT_SHA}}
+                leaf = root / relative
+                before = leaf.read_bytes()
+                with mock.patch(
+                        "aegis360.sparse_story_raw_probe_transport.subprocess.Popen"
+                        ) as spawn:
+                    self.assertEqual(
+                        _observe_claimed_selected_bundle_mutation_once(
+                            claim=claim, owner=owner, frozen_row=row),
+                        "trust_invalid")
+                    spawn.assert_not_called()
+                self.assertEqual(claim._launch_ledger.count, 0)
+                self.assertFalse(claim._invoked)
+                self.assertIsNone(session._invocation_capture)
+                self.assertEqual(leaf.read_bytes()[0], before[0] ^ 1)
+                with self.assertRaises(ValueError):
+                    claim.revalidate()
+                with self.assertRaises(ValueError):
+                    _observe_claimed_selected_bundle_mutation_once(
+                        claim=claim, owner=owner, frozen_row=row)
+                self.assertTrue(leaf.exists())
+            finally:
+                session.close()
 
 
 if __name__ == "__main__":
