@@ -1,14 +1,15 @@
 # Current handoff
 
-Updated: 2026-10-15T13:00:00+08:00
+Updated: 2026-10-16T07:07:37+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 3eeee16
+Baseline commit: 43e3752
 Remote status: `git ls-remote origin refs/heads/main` confirmed
-`3eeee1626062dbe1a25a0650616c64af0f3e38f7`; `handoff-contract` run
-38660913858 succeeded for that exact SHA. Local `main` has unpublished commits;
-verify the current set with `git log origin/main..main`.
-Working tree at checkpoint: clean after local commit; verify with `git status`.
+`43e37526c0bbe1f2af8c135a2e0601f7176a1685`; `handoff-contract` run
+38675218388 succeeded for that exact SHA. Local `main` has one unpublished
+checkpoint commit; verify with `git log origin/main..main`.
+Working tree at checkpoint: clean after local commit;
+verify with `git status --short --branch`.
 
 ## Objective
 
@@ -20,23 +21,20 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-Six private coordinator prerequisites now have bounded checks: owned selected
-bundle mutation rejects retained trust before spawn; changed receipt/evidence
-peer names survive identity-guarded cleanup; cardinality audit binds a consumed
-claim, capture and frozen row without issuing an enum. A real Popen now records a
-one-shot launch event bound to the exact capture and claim ledger; six receipt
-input hashes derive from retained request/media/runtime/model/prompt/policy;
-two peer bytes publish exclusively with exact identity-guarded cleanup. Sixteen
-new focused tests pass, including fabricated-capture, duplicate-launch and
-blind-unlink negative controls. The complete 67-test native host transport gate
-passes after four focused regression corrections. A real retained native
-`fd_hygiene` claim builds and independently rebuilds private run-receipt bytes;
-changed bytes/capture/count fail. Actual two-peer replacement preserves both
-held originals and both replacements. Bundle mutation now requires an unused
-claim ledger. Full discovery: 869 run, 785 passed, 84 skipped; the new receipt
-host case also passes when enabled.
-The 33 frozen adapter rows still match their closed native
-observations; four coordinator rows have no full case result or aggregate.
+Published `43e3752` contains six private prerequisites: selected-bundle
+mutation, identity-guarded peer cleanup, cardinality audit, real Popen one-shot
+ledger, six retained receipt input hashes and exclusive two-peer publication.
+A native `fd_hygiene` claim builds/rebuilds a private run receipt; changed
+bytes/capture/count fail. The 67-test native transport host gate passes. Full
+discovery at publication: 869 run, 785 passed, 84 skipped. The 33 adapter rows
+match closed native observations; four coordinator rows have no full result.
+
+The next local integration has three zero-argument coordinator fixture modes,
+an exact retained claim launch for each, private receipt/evidence publication,
+and a fail-closed exact-rebuild helper. Nine focused native host tests pass;
+the exact-rebuild helper has no positive coordinator-row observation yet.
+Two delegates hit a usage limit after delivering their files, so scope is
+frozen for checkpoint. No public API or aggregate authority opened.
 
 A 37-case shape freezer hashes argv, stdin and support. Changed stimuli block
 spawn; prepared owners close exact paths on row mismatch.
@@ -123,9 +121,8 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published milestone: `BinHsu/aegis-360@3eeee16`; exact-SHA remote CI passed.
-- Local unpublished milestones: handoff, workplan and private prerequisites;
-  check exact local commits with `git log origin/main..main`.
+- Published milestone: `BinHsu/aegis-360@43e3752`; exact-SHA remote CI passed.
+- The next local work integrates the private receipt with exact owned publication.
 
 ## Verified
 
@@ -207,10 +204,10 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The private claim covers all 33 adapter-owned case types through one ordered
-  frozen native schedule. Integrate private run-receipt bytes with exact owned
-  publication, then complete four coordinator observations, case result and
-  aggregate. A full replacement-race case remains blocked by this integration.
+- The private claim covers 33 adapter rows and three native coordinator modes.
+  Bind actual coordinator captures to private receipts and publication, then
+  complete four case observations, case result and aggregate. Current
+  exact-rebuild tests still reject cross-binding without a positive row.
   Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
@@ -237,8 +234,8 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 `ad6f29b1…2a567`. Never commit external artifacts.
 
 ## Active agents
-All delegated briefs are complete. Main agent integrated private prerequisites
-and owns the handoff.
+No delegated work is running. Two delegates ended on usage limit after delivery;
+main agent owns the dirty files and checkpoint.
 
 ## Safety and claims
 

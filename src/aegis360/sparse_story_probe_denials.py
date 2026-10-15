@@ -446,6 +446,14 @@ class _ClaimedProbedBatch:
         return self._run_fixed_synthetic_case_once("scratch_write_allowed", b"",
             frozen_row=frozen_row)
 
+    def _run_coordinator_fixture_case_once(self, case_id, frozen_row):
+        """Launch only a closed coordinator fixture mode under its own row."""
+        if case_id not in {"replacement_race", "single_invocation",
+                "receipt_rebuild"}:
+            raise ValueError("coordinator fixture case is invalid")
+        return self._run_fixed_synthetic_case_once(case_id, b"",
+            frozen_row=frozen_row)
+
     def _run_fixed_synthetic_case_once(self, case_id, request_bytes,
             frozen_row=None):
         capture = self._execute_fixed_synthetic_case_once(case_id,
@@ -581,7 +589,8 @@ class _ClaimedProbedBatch:
                     "stdout_forbidden_field", "stdout_extra_field",
                     "stdout_limit_minus_one", "stdout_limit_exact",
                     "stdout_limit_plus_one", "stderr_nonempty", "nonzero_exit",
-                    "signal_exit", "wall_timeout", "term_ignore_kill"}
+                    "signal_exit", "wall_timeout", "term_ignore_kill",
+                    "replacement_race", "single_invocation", "receipt_rebuild"}
                     or request_bytes != b"")):
             raise ValueError("fixed synthetic case is invalid")
         if self._invoked:
@@ -595,6 +604,8 @@ class _ClaimedProbedBatch:
             "stdout_extra_field", "stdout_limit_minus_one", "stdout_limit_exact",
             "stdout_limit_plus_one", "stderr_nonempty", "nonzero_exit",
             "signal_exit", "wall_timeout", "term_ignore_kill"}
+        preflight_cases.update({"replacement_race", "single_invocation",
+            "receipt_rebuild"})
         if (frozen_row is not None and case_id not in preflight_cases
                 and (type(prepared_owner) is not _PreparedFixedSyntheticOwner
                     or case_id not in {"network_ipv4_denied",

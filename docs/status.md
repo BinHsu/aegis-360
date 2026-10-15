@@ -188,13 +188,13 @@ specific directing question. No new video is currently awaiting owner review.
   preflight rejection. A retained claim derives 29 fixed stimuli; four altered
   rows fail before spawn. Thirty-three live claims freeze and run native adapter
   rows in order; all 33 observations match. Three private coordinator helpers
-  pass ten focused tests but do not issue complete case results. A native Popen
-  launch ledger, six live input hashes and two-peer exclusive publisher add 16
-  passing focused tests. The 67-test native host transport gate passes with the
-  claim-level ledger. A real native retained claim now builds and independently
-  rebuilds private run-receipt bytes; the exact publisher rejects a two-peer
-  replacement. No full coordinator row, aggregate or public authority yet.
+  pass ten focused tests but issue no complete case result. The Popen ledger,
+  six input hashes and two-peer publisher pass 67 native transport host tests.
+  A real retained claim rebuilds private receipt bytes; exact publication and
+  three coordinator fixture modes have nine focused host tests. No positive
+  coordinator exact-rebuild row, aggregate or public authority yet.
 
 ## Next action
-Integrate the private receipt with exact publication, then four coordinator
-cases, result and aggregate; keep public APIs closed.
+After the usage-limit checkpoint, prove actual coordinator-row receipts and
+publication, then four case observations, result and aggregate; keep public
+APIs closed.

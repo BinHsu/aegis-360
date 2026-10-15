@@ -252,7 +252,12 @@ int main(int argc, char **argv) {
         if (argc == 5 && strcmp(case_id, "grandchild_containment") == 0)
             return grandchild_case(argv[4]);
         if (argc != 4) return 64;
-        if (strcmp(case_id, "fd_hygiene") == 0) {
+        /* These coordinator cases emit only ordinary adapter bytes. The
+           coordinator alone observes replacement, invocation and rebuild. */
+        if (strcmp(case_id, "fd_hygiene") == 0 ||
+                strcmp(case_id, "replacement_race") == 0 ||
+                strcmp(case_id, "single_invocation") == 0 ||
+                strcmp(case_id, "receipt_rebuild") == 0) {
             if (fd_hygiene() != 0) return 65;
             return emit_case_bytes(abstain, sizeof(abstain) - 1U);
         }
