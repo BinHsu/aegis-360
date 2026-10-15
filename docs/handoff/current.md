@@ -1,14 +1,14 @@
 # Current handoff
 
-Updated: 2026-10-16T07:35:00+08:00
+Updated: 2026-10-16T07:55:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: d4b5f5a
+Baseline commit: cb2677b
 Remote status: `git ls-remote origin refs/heads/main` confirmed
-`d4b5f5a3cf5f92f1c4820411796de863977a4c8c`; `handoff-contract` run
-38823772698 failed portable tests for that SHA. Handoff check passed; Linux
-cannot run the unmocked macOS exclusive rename in one portable test.
-Working tree at checkpoint: clean after local fix commit; verify with
+`cb2677b7cb06a18e0ebdfbbe397269d0da9fe8d2`; `handoff-contract` run
+38824134141 succeeded for that exact SHA, including portable unit tests. Local
+`main` has one unpublished coordinator-row checkpoint.
+Working tree at checkpoint: clean after local commit; verify with
 `git status --short --branch`.
 
 ## Objective
@@ -29,13 +29,14 @@ bytes/capture/count fail. The 67-test native transport host gate passes. Full
 discovery at publication: 869 run, 785 passed, 84 skipped. The 33 adapter rows
 match closed native observations; four coordinator rows have no full result.
 
-Published `d4b5f5a` has three zero-argument coordinator fixture modes,
+Published `cb2677b` has three zero-argument coordinator fixture modes,
 an exact retained claim launch for each, private receipt/evidence publication,
-and a fail-closed exact-rebuild helper. Nine focused native host tests pass;
-the exact-rebuild helper has no positive coordinator-row observation yet.
-Two delegates hit a usage limit after delivery. The Linux-only test failure is
-fixed locally using a test-only rename substitute; full local discovery now
-passes 878 run, 791 passed, 87 skipped. No public authority opened.
+and a fail-closed exact-rebuild helper. Ten focused native host tests pass;
+both exact-rebuild rows now bind their own real capture and receipt, while
+cross-row relabeling fails. No complete case result is issued.
+Two delegates hit a usage limit after delivery. The Linux-only test failure was
+fixed by a test-only rename substitute and exact-SHA CI is green; local
+discovery: 879 run, 791 passed, 88 skipped. No public authority opened.
 
 A 37-case shape freezer hashes argv, stdin and support. Changed stimuli block
 spawn; prepared owners close exact paths on row mismatch.
@@ -122,12 +123,12 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Remote `BinHsu/aegis-360@d4b5f5a` has red exact-SHA CI; do not advance scope.
-- Local unpublished fix changes only the portable test and this checkpoint.
+- Published `BinHsu/aegis-360@cb2677b` has green exact-SHA CI.
+- Next local task: integrate replacement-race receipt with exact publication.
 
 ## Verified
 
-- Restricted full discovery: 878 tests run, 791 passed, 87 skips. Listener
+- Restricted full discovery: 879 tests run, 791 passed, 88 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -208,7 +209,7 @@ receipt or spawn authority has been created.
 - The private claim covers 33 adapter rows and three native coordinator modes.
   Bind actual coordinator captures to private receipts and publication, then
   complete four case observations, case result and aggregate. Current
-  exact-rebuild tests still reject cross-binding without a positive row.
+  exact-rebuild rows have private positives but no full case result.
   Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.

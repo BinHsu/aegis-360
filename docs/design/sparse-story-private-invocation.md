@@ -92,8 +92,10 @@ and aggregate authority APIs remain closed.
 Before either `single_invocation` or `receipt_rebuild` may report
 `exact_rebuild`, its own frozen row must match the actual native event suffix,
 one-shot ledger, capture and independently rebuilt private receipt. The generic
-helper rejects relabeling an `fd_hygiene` receipt as either coordinator row;
-positive coordinator-row receipt evidence remains pending.
+helper rejects relabeling an `fd_hygiene` receipt as either coordinator row.
+Both coordinator rows now pass real native host checks with their own capture,
+one-shot event and independently rebuilt receipt; cross-row relabeling fails.
+This remains private evidence, not a complete case result.
 
 Before `replacement_race` may report `replacement_preserved`, its own native
 capture and private receipt must be bound to exclusive evidence/receipt peers,
