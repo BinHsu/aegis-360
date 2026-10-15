@@ -1,15 +1,15 @@
 # Current handoff
 
-Updated: 2026-10-16T07:07:37+08:00
+Updated: 2026-10-16T07:35:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 43e3752
+Baseline commit: d4b5f5a
 Remote status: `git ls-remote origin refs/heads/main` confirmed
-`43e37526c0bbe1f2af8c135a2e0601f7176a1685`; `handoff-contract` run
-38675218388 succeeded for that exact SHA. Local `main` has one unpublished
-checkpoint commit; verify with `git log origin/main..main`.
-Working tree at checkpoint: clean after local commit;
-verify with `git status --short --branch`.
+`d4b5f5a3cf5f92f1c4820411796de863977a4c8c`; `handoff-contract` run
+38823772698 failed portable tests for that SHA. Handoff check passed; Linux
+cannot run the unmocked macOS exclusive rename in one portable test.
+Working tree at checkpoint: clean after local fix commit; verify with
+`git status --short --branch`.
 
 ## Objective
 
@@ -29,12 +29,13 @@ bytes/capture/count fail. The 67-test native transport host gate passes. Full
 discovery at publication: 869 run, 785 passed, 84 skipped. The 33 adapter rows
 match closed native observations; four coordinator rows have no full result.
 
-The next local integration has three zero-argument coordinator fixture modes,
+Published `d4b5f5a` has three zero-argument coordinator fixture modes,
 an exact retained claim launch for each, private receipt/evidence publication,
 and a fail-closed exact-rebuild helper. Nine focused native host tests pass;
 the exact-rebuild helper has no positive coordinator-row observation yet.
-Two delegates hit a usage limit after delivering their files, so scope is
-frozen for checkpoint. No public API or aggregate authority opened.
+Two delegates hit a usage limit after delivery. The Linux-only test failure is
+fixed locally using a test-only rename substitute; full local discovery now
+passes 878 run, 791 passed, 87 skipped. No public authority opened.
 
 A 37-case shape freezer hashes argv, stdin and support. Changed stimuli block
 spawn; prepared owners close exact paths on row mismatch.
@@ -121,12 +122,12 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published milestone: `BinHsu/aegis-360@43e3752`; exact-SHA remote CI passed.
-- The next local work integrates the private receipt with exact owned publication.
+- Remote `BinHsu/aegis-360@d4b5f5a` has red exact-SHA CI; do not advance scope.
+- Local unpublished fix changes only the portable test and this checkpoint.
 
 ## Verified
 
-- Restricted full discovery: 869 tests run, 785 passed, 84 skips. Listener
+- Restricted full discovery: 878 tests run, 791 passed, 87 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -235,7 +236,7 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 
 ## Active agents
 No delegated work is running. Two delegates ended on usage limit after delivery;
-main agent owns the dirty files and checkpoint.
+main agent owns the CI fix and checkpoint.
 
 ## Safety and claims
 

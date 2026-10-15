@@ -27,6 +27,13 @@ from tests import test_sparse_story_raw_probe_transport as host_tests
 from tests import test_sparse_story_synthetic_plan as plan_tests
 
 
+def _portable_exclusive_rename(source, destination):
+    """Test-only rename substitute for CI hosts without renamex_np."""
+    if Path(destination).exists():
+        raise ValueError("destination already exists")
+    os.rename(source, destination)
+
+
 def _portable_receipt():
     """Test double for publication mechanics; never treated as native evidence."""
     capture = SimpleNamespace(stdout=b'{"sample":1}')
@@ -64,6 +71,11 @@ class PrivateRunPublicationPortableTests(unittest.TestCase):
             return_value="success")
         self.rebuild.start(); self.classify.start()
         self.addCleanup(self.rebuild.stop); self.addCleanup(self.classify.stop)
+        rename = mock.patch(
+            "aegis360.sparse_story_private_publication._rename_exclusive",
+            side_effect=_portable_exclusive_rename)
+        rename.start()
+        self.addCleanup(rename.stop)
 
     def test_exact_two_peers_and_hashes(self):
         pair = self.owner.publish_once(receipt=self.receipt, frozen_row=self.row)

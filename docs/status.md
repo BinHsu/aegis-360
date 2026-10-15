@@ -177,7 +177,7 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-- Full discovery: 869 tests run, 785 passed and 84 host/sandbox cases skipped.
+- Local full discovery: 878 tests run, 791 passed and 87 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
 - Candidate/facade: 34 host tests pass; mutations detected. First/last packets
   retain other-packet leaves; raw probe checks 14 boolean keys and bindings.
@@ -192,9 +192,9 @@ specific directing question. No new video is currently awaiting owner review.
   six input hashes and two-peer publisher pass 67 native transport host tests.
   A real retained claim rebuilds private receipt bytes; exact publication and
   three coordinator fixture modes have nine focused host tests. No positive
-  coordinator exact-rebuild row, aggregate or public authority yet.
+  coordinator exact-rebuild row, aggregate or public authority yet. The
+  `d4b5f5a` Linux CI failed one portable rename test; it is fixed locally.
 
 ## Next action
-After the usage-limit checkpoint, prove actual coordinator-row receipts and
-publication, then four case observations, result and aggregate; keep public
-APIs closed.
+Fix and verify exact-SHA CI for the published checkpoint before coordinator-row
+receipts or aggregate work; keep public APIs closed.
