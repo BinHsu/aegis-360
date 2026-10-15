@@ -86,6 +86,63 @@ def _fixed_stimulus_from_retained_claim(claim, case_id, *, denial_source=None):
             asset_kind="synthetic_support", entries=[])}
 
 
+def _freeze_private_synthetic_adapter_schedule(*, adapter_manifest_sha256,
+        repeat_packet_id, fixed_claims, prepared_owners, denial_sources,
+        coordinator_stimuli):
+    """Freeze all 33 adapter rows from distinct retained claims and owners."""
+    from .sparse_story_probe_denials import _ClaimedProbedBatch
+    from .sparse_story_runner_contract import build_asset_manifest_shape
+
+    fixed_ids = ({case_id for case_id, _ in CASE_SPECS}
+        - set(_PREPARED_OWNER_CASES) - _COORDINATOR)
+    if (type(fixed_claims) is not dict or set(fixed_claims) != fixed_ids
+            or type(denial_sources) is not dict
+            or set(denial_sources) != {"neighbor_packet_read_denied",
+                "result_read_denied"}
+            or type(coordinator_stimuli) is not dict
+            or set(coordinator_stimuli) != _COORDINATOR
+            or type(prepared_owners) is not dict
+            or set(prepared_owners) != set(_PREPARED_OWNER_CASES)):
+        raise ValueError("retained synthetic schedule is incomplete")
+    claims = {case_id: fixed_claims[case_id] for case_id in fixed_ids}
+    for case_id, owner in prepared_owners.items():
+        from .sparse_story_probe_denials import _PreparedFixedSyntheticOwner
+        if type(owner) is not _PreparedFixedSyntheticOwner or owner.case_id != case_id:
+            raise ValueError("prepared synthetic owner differs")
+        claims[case_id] = owner.claim
+    if (any(type(claim) is not _ClaimedProbedBatch or claim._invoked
+            for claim in claims.values())
+            or len({id(claim) for claim in claims.values()}) != 33
+            or len({id(claim._session._candidate) for claim in claims.values()}) != 33):
+        raise ValueError("retained synthetic claims are duplicated or consumed")
+    request_shape = None
+    for claim in claims.values():
+        claim.revalidate()
+        request = json.loads(claim._session._candidate._request_bytes)
+        if request["packet_id"] != repeat_packet_id:
+            raise ValueError("retained synthetic packet ID differs")
+        for role in ("model", "prompt_schema"):
+            request[role].pop("root_path")
+        if request_shape is None: request_shape = request
+        elif request != request_shape:
+            raise ValueError("retained synthetic requests differ")
+    empty = build_asset_manifest_shape(asset_kind="synthetic_support", entries=[])
+    stimuli = dict(coordinator_stimuli)
+    for case_id in fixed_ids:
+        stimuli[case_id] = _fixed_stimulus_from_retained_claim(
+            claims[case_id], case_id,
+            denial_source=denial_sources.get(case_id))
+    for case_id, owner in prepared_owners.items():
+        stimuli[case_id] = {"argv": owner.argv, "stdin": b"",
+            "support_manifest": empty}
+    result = _freeze_private_synthetic_manifest_with_prepared_owners(
+        adapter_manifest_sha256=adapter_manifest_sha256,
+        repeat_packet_id=repeat_packet_id, stimuli=stimuli,
+        prepared_owners=prepared_owners)
+    for claim in claims.values(): claim.revalidate()
+    return result
+
+
 def _freeze_private_synthetic_manifest_with_prepared_owners(*,
         adapter_manifest_sha256, repeat_packet_id, stimuli,
         prepared_owners):

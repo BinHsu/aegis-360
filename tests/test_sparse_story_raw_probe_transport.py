@@ -45,6 +45,7 @@ from aegis360.sparse_story_runner_contract import CASE_SPECS  # noqa: E402
 from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
     _freeze_private_synthetic_case_manifest,
     _freeze_private_synthetic_manifest_with_prepared_owners,
+    _freeze_private_synthetic_adapter_schedule,
     _fixed_stimulus_from_retained_claim,
 )
 from tests.test_sparse_story_synthetic_plan import SyntheticCasePlanTests  # noqa: E402
@@ -428,6 +429,60 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 repeat_packet_id="packet-" + "b" * 20, stimuli=planned)
             self.assertEqual(len(manifest["cases"]), 37)
             session.close()
+
+    def test_thirty_three_live_claims_freeze_adapter_schedule(self):
+        dynamic = {"network_ipv4_denied", "network_ipv6_denied",
+            "unix_socket_denied", "outside_write_denied"}
+        coordinator = {"bundle_mutation", "replacement_race",
+            "single_invocation", "receipt_rebuild"}
+        with ExitStack() as stack:
+            fixed, prepared, denial_sources, live_by_facade = {}, {}, {}, {}
+            for case_id, _ in CASE_SPECS:
+                if case_id in coordinator: continue
+                inputs = stack.enter_context(self.context(
+                    own_batch_scratch=True, coordinated=True, expose_live=True))
+                live_by_facade[id(inputs["candidate"]._facade)] = inputs.pop(
+                    "_fixture_live")
+                session = _open_retained_probed_batch(**inputs)
+                stack.callback(session.close)
+                claim = session.claim_once()
+                if case_id in dynamic:
+                    prepared[case_id] = claim._prepare_fixed_synthetic_owned_case(
+                        case_id)
+                else:
+                    fixed[case_id] = claim
+                if case_id in {"neighbor_packet_read_denied",
+                        "result_read_denied"}:
+                    denial_sources[case_id] = inputs["denial_source"]
+            planned = SyntheticCasePlanTests().stimuli()
+            packet_id = json.loads(next(iter(fixed.values()))._session
+                ._candidate._request_bytes)["packet_id"]
+            parameters = dict(adapter_manifest_sha256="a" * 64,
+                repeat_packet_id=packet_id, fixed_claims=fixed,
+                prepared_owners=prepared, denial_sources=denial_sources,
+                coordinator_stimuli={case_id: planned[case_id]
+                    for case_id in coordinator})
+            with mock.patch("aegis360.sparse_story_batch_policy._require_live",
+                    side_effect=lambda facade: live_by_facade[id(facade)]):
+                with self.assertRaisesRegex(ValueError, "duplicated"):
+                    _freeze_private_synthetic_adapter_schedule(**{
+                        **parameters, "fixed_claims": {**fixed,
+                            "fd_hygiene": fixed["argv_literal"]}})
+                encoded, manifest = _freeze_private_synthetic_adapter_schedule(
+                    **parameters)
+                self.assertTrue(encoded)
+                self.assertEqual(len(manifest["cases"]), 37)
+                for row in manifest["cases"]:
+                    if row["case_id"] in coordinator: continue
+                    claim = (prepared[row["case_id"]].claim if row["case_id"]
+                        in dynamic else fixed[row["case_id"]])
+                    claim.revalidate()
+                fd_row = next(row for row in manifest["cases"]
+                    if row["case_id"] == "fd_hygiene")
+                fd_claim = fixed["fd_hygiene"]
+                capture = fd_claim._run_fixed_synthetic_fd_case_once(fd_row)
+                self.assertTrue(capture.completed, capture.reason)
+                fd_claim._verify_frozen_case_stimulus(fd_row)
 
     def test_frozen_fd_stimulus_is_checked_before_native_spawn(self):
         planned = SyntheticCasePlanTests().stimuli()

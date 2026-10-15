@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-15T08:20:39+08:00
+Updated: 2026-10-15T08:24:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: c74078a
@@ -19,12 +19,12 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-The 29 fixed adapter case stimuli can now be derived from a live retained claim:
-literal argv, stdin, and empty support manifest come from the candidate and
-closed fixture contract. Four representative altered rows fail before native
-spawn. Four prepared dynamic owners remain live through freeze and execution.
-The four coordinator cases and a 37-case execution/result remain unbuilt.
-Native host transport: 66 pass; discovery: 836 run, 82 skips.
+The 33 adapter case rows now freeze from distinct live retained claims and four
+prepared dynamic owners. The 29 fixed argv/stdin/support stimuli derive from
+the candidate and closed fixture contract. Duplicate claims fail; one frozen
+fd row runs through its same claim and matches before spawn. The four coordinator
+rows remain caller-provided shapes; full execution/results are still pending.
+Native host transport: 67 pass; discovery: 837 run, 83 skips.
 
 A 37-case shape freezer hashes argv, stdin and support. Native `fd_hygiene`
 and closed no-owner cases can match frozen rows before spawn. Changed
@@ -124,11 +124,11 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published milestone: `BinHsu/aegis-360@c74078a`; exact-SHA remote CI passed.
-- Local unpublished milestones: two after the published checkpoint.
+- Local unpublished milestones: three after the published checkpoint.
 
 ## Verified
 
-- Restricted full discovery: 836 tests run, 754 passed, 82 skips. Listener
+- Restricted full discovery: 837 tests run, 754 passed, 83 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -207,9 +207,9 @@ receipt or spawn authority has been created.
 ## Pending
 
 - The private claim covers all 33 adapter-owned case types as separate host
-  checks. Derive all 33 case inputs from distinct retained claims and four
-  prepared owners, freeze one complete schedule before execution, then build
-  results with four coordinator-owned cases. Review the gate before acquisition.
+  checks; their frozen rows now derive from 33 retained claims. Execute the
+  complete frozen schedule, implement four coordinator-owned cases, then build
+  case results and aggregate. Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
