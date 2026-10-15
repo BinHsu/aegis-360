@@ -177,7 +177,7 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-- Local full discovery: 879 tests run, 791 passed and 88 host/sandbox cases skipped.
+- Local full discovery: 880 tests run, 791 passed and 89 host/sandbox cases skipped.
 - Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
 - Candidate/facade: 34 host tests pass; mutations detected. First/last packets
   retain other-packet leaves; raw probe checks 14 boolean keys and bindings.
@@ -192,9 +192,9 @@ specific directing question. No new video is currently awaiting owner review.
   six input hashes and two-peer publisher pass 67 native transport host tests.
   A real retained claim rebuilds private receipt bytes; exact publication and
   three coordinator fixture modes have ten focused host tests. Both exact-
-  rebuild rows now have private native positives; no case result or aggregate.
+  rebuild rows and replacement race have private native positives; no case result.
   `cb2677b` exact-SHA CI passes the portable rename test and handoff gate.
 
 ## Next action
-Bind replacement-race receipt to exact owned publication before complete case
-results or aggregate work; keep public APIs closed.
+Complete four coordinator observations and exact case-result reconstruction
+before aggregate work; keep public APIs closed.

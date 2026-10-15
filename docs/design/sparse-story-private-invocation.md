@@ -99,9 +99,11 @@ This remains private evidence, not a complete case result.
 
 Before `replacement_race` may report `replacement_preserved`, its own native
 capture and private receipt must be bound to exclusive evidence/receipt peers,
-then replacements must survive refused cleanup. The publisher and a separate
-replacement observation each have bounded checks; their exact case integration
-remains pending. `bundle_mutation` changes only an owned selected bundle and
+then replacements must survive refused cleanup. A real native
+`replacement_race` claim now binds its own receipt and capture bytes to that
+publisher; changed receipt or row fails before publication, and both originals
+and replacements survive. This remains private evidence, not a case result.
+`bundle_mutation` changes only an owned selected bundle and
 proves trust failure before spawn. Only after all four observations, two fresh
 byte-repeat runs and exact result reconstruction may the 37-row result and
 aggregate be considered. Public authority remains closed.
