@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-10-16T09:37:00+08:00
+Updated: 2026-10-16T10:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: efb4b1a
+Baseline commit: 0522221
 Remote status: `git ls-remote origin refs/heads/main` confirmed
-`efb4b1a5b8449804597fc55374201866f6e58189`; `handoff-contract` run
-38824860428 succeeded for that exact SHA, including portable unit tests.
+`0522221d5235da620dfdf60f80abd448c3908b7b`; `handoff-contract` run
+38850495066 succeeded for that exact SHA, including portable unit tests.
 Working tree at checkpoint: verify with `git status --short --branch`.
 
 ## Objective
@@ -124,7 +124,7 @@ receipt or spawn authority has been created.
 
 ## Repository state
 
-- Published `BinHsu/aegis-360@efb4b1a` has green exact-SHA CI.
+- Published `BinHsu/aegis-360@0522221` has green exact-SHA CI.
 - Aggregate gaps are recorded in `docs/design/sparse-story-private-aggregate-gap.md`.
   Next: one schedule-bound synthetic packet and exact peer publication.
 

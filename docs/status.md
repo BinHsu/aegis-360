@@ -189,7 +189,7 @@ specific directing question. No new video is currently awaiting owner review.
   The Popen ledger,
   six input hashes and two-peer publisher pass 67 native transport host tests.
   Exact rebuild and replacement race have private native positives.
-  `efb4b1a` exact-SHA CI run 38824860428 passes; remote `main` matches.
+  `0522221` exact-SHA CI run 38850495066 passes; remote `main` matches.
   New private 33-row capture rebuild passes the real Seatbelt host gate;
   bundle trust rejection and fresh native stdout repeats pass host gates.
   Ordered 37-row Seatbelt gate passes; fresh repeats yield a private 37-pass
