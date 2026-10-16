@@ -38,6 +38,7 @@ from aegis360.sparse_story_private_scheduled_publication import (  # noqa: E402
 )
 from aegis360.sparse_story_private_gate_evidence import (  # noqa: E402
     _bind_private_synthetic_gate_evidence,
+    _finalize_private_synthetic_gate_once,
 )
 from aegis360.sparse_story_private_run_publication import _OwnedPrivateRunRoot  # noqa: E402
 from aegis360.sparse_story_probe_denials import _open_retained_probed_batch  # noqa: E402
@@ -232,6 +233,12 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                         repeat_proof=replace(repeat,
                             _first_claim=observed.rows[2].proof.claim),
                         prepared_owners=prepared)
+                finalized = _finalize_private_synthetic_gate_once(gate)
+                self.assertFalse(finalized.authority)
+                self.assertEqual(len(finalized.input_hashes), 5)
+                self.assertIs(finalized.revalidate(), finalized)
+                with self.assertRaises(ValueError):
+                    gate.revalidate()
 
 
 if __name__ == "__main__":

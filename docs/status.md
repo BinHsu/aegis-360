@@ -187,13 +187,12 @@ specific directing question. No new video is currently awaiting owner review.
   tests. Public capability, case-result and aggregate remain closed.
   New private 33-row capture rebuild passes the real Seatbelt host gate;
   bundle trust rejection and fresh native stdout repeats pass host gates.
-  Ordered 37-row Seatbelt gate passes; fresh repeats yield a private 37-pass
-  result. Altered ledger and result bytes reject; authority stays closed.
 
 ## Next action
 The private 40-claim proof joins the 37 ordered cases, two repeats and one
 separate scheduled packet with live runtime, schedule, backend, policy,
-capability receipt and peer hashes. Review
+capability receipt and peer hashes. All 40 owned sessions close and the
+private final snapshot rechecks publication peers. Review
 public case-result and capability authority prerequisites against the
 protocol, then design aggregate publication. The separate scheduled synthetic
 packet, its private receipt and exclusive evidence/receipt peers now pass the

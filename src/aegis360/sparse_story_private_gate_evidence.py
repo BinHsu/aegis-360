@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import stat
 from dataclasses import dataclass, field
 
 from .sparse_story_private_case_result import (
@@ -109,3 +111,65 @@ def _bind_private_synthetic_gate_evidence(*, case_result, publication):
         hashlib.sha256(schedule._claim.receipt_bytes()).hexdigest(),
         publication.receipt_sha256, publication.evidence_sha256)
     return proof.revalidate()
+
+
+_FINALIZED_TOKEN = object()
+
+
+class _PrivateFinalizedSyntheticGate:
+    """Retain exact private hashes only after all 40 owned sessions close."""
+
+    __slots__ = ("_token", "_sessions", "_publication", "packet_id",
+        "input_hashes", "case_result_sha256", "receipt_sha256",
+        "evidence_sha256", "authority")
+
+    def __init__(self, token, sessions, publication, source):
+        if token is not _FINALIZED_TOKEN:
+            raise TypeError("finalized gate requires owned cleanup")
+        self._token = token
+        self._sessions = sessions
+        self._publication = publication
+        self.packet_id = source.packet_id
+        self.input_hashes = tuple((key, getattr(source, key)) for key in (
+            "schedule_sha256", "backend_manifest_sha256",
+            "runner_policy_sha256", "compiled_policy_sha256",
+            "capability_receipt_sha256"))
+        self.case_result_sha256 = source.case_result_sha256
+        self.receipt_sha256 = source.receipt_sha256
+        self.evidence_sha256 = source.evidence_sha256
+        self.authority = False
+        self.revalidate()
+
+    def revalidate(self):
+        owner = self._publication.owner
+        info = os.lstat(owner.root)
+        if (self._token is not _FINALIZED_TOKEN or self.authority is not False
+                or len(self._sessions) != 40
+                or len({id(session) for session in self._sessions}) != 40
+                or any(not session._closed or not session._batch_scratch.closed
+                    for session in self._sessions)
+                or not owner._used
+                or (info.st_dev, info.st_ino) != owner._identity
+                or not stat.S_ISDIR(info.st_mode)
+                or stat.S_IMODE(info.st_mode) != 0o700
+                or set(os.listdir(owner.root)) != {
+                    "evidence.json", "receipt.json"}
+                or self._publication.pair.revalidate() != (
+                    self.evidence_sha256, self.receipt_sha256)):
+            raise ValueError("private gate cleanup or publication differs")
+        return self
+
+
+def _finalize_private_synthetic_gate_once(proof):
+    if type(proof) is not _PrivateSyntheticGateEvidence:
+        raise TypeError("private gate finalization requires exact live proof")
+    proof.revalidate()
+    case_claims = [row.proof.claim for row in proof.case_result._complete.rows]
+    repeat = proof.case_result._repeat
+    claims = [*case_claims, repeat._first_claim, repeat._second_claim,
+        proof.publication.receipt._schedule._claim]
+    sessions = tuple(claim._session for claim in claims)
+    for session in sessions:
+        session.close()
+    return _PrivateFinalizedSyntheticGate(_FINALIZED_TOKEN, sessions,
+        proof.publication, proof)
