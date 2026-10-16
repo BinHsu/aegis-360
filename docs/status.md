@@ -180,8 +180,9 @@ specific directing question. No new video is currently awaiting owner review.
 - Latest local portable discovery: 911 tests, 814 passed, 97 skipped. Two
   scheduled-packet Seatbelt host tests and one combined 40-claim host gate pass,
   including runtime-manifest mismatch rejection and no-spawn owned cleanup.
-  The normal fixture reads bounded stdin through EOF; semantic request
-  interpretation is unproven.
+  A mutation of the old finalized proof accepted a changed case-result hash;
+  the fix rejects changed hashes and recreated scratch paths on the host.
+  The normal fixture reads bounded stdin through EOF without interpretation.
 - The private retained session and ordered 37-case result pass native host gates;
   separate scheduled packet invocation and private receipt/peers pass two host
   tests. Public capability, case-result and aggregate remain closed.

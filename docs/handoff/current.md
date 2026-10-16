@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-16T16:00:00+08:00
+Updated: 2026-10-16T13:12:19+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -35,12 +35,15 @@ tests, 814 passed and 97 skipped. A private proof now revalidates all 40
 distinct claims against the case result, scheduled publication, packet ID,
 live runtime manifest, schedule, backend, runner/compiled policy and capability
 receipt hashes. The 40 owned sessions then close; a private finalized snapshot
-rechecks the published peers after closure. Public aggregate authority remains
-closed.
-Public capability, case-result and aggregate authority remain closed.
-The attempted Cursor/Grok review of current uncommitted code was rejected by
-automatic approval review: earlier consent covered four older commits, and the
-1:4 usage preference did not identify this new payload. No code was sent.
+rechecks the published peers and scratch-root absence after closure. A controlled
+mutation showed the old finalized proof accepted a changed case-result hash;
+the final snapshot now seals its retained fields and rejects that mutation. A
+recreated scratch path also rejects. Public capability, case-result and aggregate
+authority remain closed. Cursor/Grok 4.7 High CLI authenticated and completed
+plain-text, one-file read and small synthetic-review health checks. Two repo
+file-reading reviews timed out silently; one exact inline-source review emitted
+540 thinking events in 120 seconds but no tool call or final answer. No model
+review result exists. The source file was sent under owner code 489.
 
 Earlier local private ordered 37-case execution, two fresh repeats and a
 private 37-pass result remain intact. `BinHsu/aegis-360@0522221` is published

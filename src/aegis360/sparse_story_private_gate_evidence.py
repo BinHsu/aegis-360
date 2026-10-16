@@ -121,32 +121,49 @@ class _PrivateFinalizedSyntheticGate:
 
     __slots__ = ("_token", "_sessions", "_publication", "packet_id",
         "input_hashes", "case_result_sha256", "receipt_sha256",
-        "evidence_sha256", "authority")
+        "evidence_sha256", "authority", "_seal")
+
+    def __setattr__(self, _name, _value):
+        raise TypeError("finalized private gate is immutable")
+
+    def _seal_hash(self):
+        payload = (self.packet_id, self.input_hashes,
+            self.case_result_sha256, self.receipt_sha256,
+            self.evidence_sha256, id(self._publication), tuple(
+                (id(session), str(session._batch_scratch.root),
+                    session._batch_scratch.root_identity)
+                for session in self._sessions))
+        return hashlib.sha256(json.dumps(payload,
+            separators=(",", ":")).encode()).hexdigest()
 
     def __init__(self, token, sessions, publication, source):
         if token is not _FINALIZED_TOKEN:
             raise TypeError("finalized gate requires owned cleanup")
-        self._token = token
-        self._sessions = sessions
-        self._publication = publication
-        self.packet_id = source.packet_id
-        self.input_hashes = tuple((key, getattr(source, key)) for key in (
+        object.__setattr__(self, "_token", token)
+        object.__setattr__(self, "_sessions", sessions)
+        object.__setattr__(self, "_publication", publication)
+        object.__setattr__(self, "packet_id", source.packet_id)
+        object.__setattr__(self, "input_hashes", tuple((key, getattr(source, key)) for key in (
             "schedule_sha256", "backend_manifest_sha256",
             "runner_policy_sha256", "compiled_policy_sha256",
-            "capability_receipt_sha256"))
-        self.case_result_sha256 = source.case_result_sha256
-        self.receipt_sha256 = source.receipt_sha256
-        self.evidence_sha256 = source.evidence_sha256
-        self.authority = False
+            "capability_receipt_sha256")))
+        object.__setattr__(self, "case_result_sha256", source.case_result_sha256)
+        object.__setattr__(self, "receipt_sha256", source.receipt_sha256)
+        object.__setattr__(self, "evidence_sha256", source.evidence_sha256)
+        object.__setattr__(self, "authority", False)
+        object.__setattr__(self, "_seal", self._seal_hash())
         self.revalidate()
 
     def revalidate(self):
         owner = self._publication.owner
         info = os.lstat(owner.root)
         if (self._token is not _FINALIZED_TOKEN or self.authority is not False
+                or self._seal != self._seal_hash()
                 or len(self._sessions) != 40
                 or len({id(session) for session in self._sessions}) != 40
                 or any(not session._closed or not session._batch_scratch.closed
+                    for session in self._sessions)
+                or any(os.path.lexists(session._batch_scratch.root)
                     for session in self._sessions)
                 or not owner._used
                 or (info.st_dev, info.st_ino) != owner._identity

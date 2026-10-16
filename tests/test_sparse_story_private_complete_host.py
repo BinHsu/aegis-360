@@ -237,6 +237,20 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                 self.assertFalse(finalized.authority)
                 self.assertEqual(len(finalized.input_hashes), 5)
                 self.assertIs(finalized.revalidate(), finalized)
+                original_hash = finalized.case_result_sha256
+                with self.assertRaises(TypeError):
+                    finalized.case_result_sha256 = "0" * 64
+                object.__setattr__(finalized, "case_result_sha256", "0" * 64)
+                with self.assertRaises(ValueError):
+                    finalized.revalidate()
+                object.__setattr__(finalized, "case_result_sha256", original_hash)
+                restored = finalized._sessions[0]._batch_scratch.root
+                restored.mkdir()
+                try:
+                    with self.assertRaises(ValueError):
+                        finalized.revalidate()
+                finally:
+                    restored.rmdir()
                 with self.assertRaises(ValueError):
                     gate.revalidate()
 
