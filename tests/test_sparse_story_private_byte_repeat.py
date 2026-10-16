@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from aegis360.sparse_story_private_byte_repeat import (  # noqa: E402
     _observe_private_native_byte_repeat,
+    _revalidate_private_native_byte_repeat,
 )
 from aegis360.sparse_story_probe_denials import (  # noqa: E402
     _ClaimedProbedBatch, _open_retained_probed_batch,
@@ -66,6 +67,15 @@ class NativeByteRepeatHostTests(unittest.TestCase):
                         observed = _observe_private_native_byte_repeat(
                             first_claim=first_claim, second_claim=second_claim,
                             frozen_row=row, repeat_packet_id=packet_id)
+                        self.assertIs(
+                            _revalidate_private_native_byte_repeat(observed), observed)
+                        with self.assertRaisesRegex(ValueError, "hashes differ"):
+                            _revalidate_private_native_byte_repeat(replace(
+                                observed, second_stdout_sha256="0" * 64))
+                        second_claim._launch_ledger.count = 2
+                        with self.assertRaises(ValueError):
+                            _revalidate_private_native_byte_repeat(observed)
+                        second_claim._launch_ledger.count = 1
                     self.assertEqual(observed.packet_id, packet_id)
                     self.assertEqual(observed.case_id, "fd_hygiene")
                     self.assertTrue(observed.equal)

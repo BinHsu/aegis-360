@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .sparse_story_coordinator_cardinality import _audit_private_synthetic_cardinality
 from .sparse_story_probe_denials import _ClaimedProbedBatch
@@ -21,6 +21,9 @@ class _PrivateNativeByteRepeat:
     first_stdout_sha256: str
     second_stdout_sha256: str
     equal: bool
+    _first_claim: _ClaimedProbedBatch = field(repr=False, compare=False)
+    _second_claim: _ClaimedProbedBatch = field(repr=False, compare=False)
+    _frozen_row: dict = field(repr=False, compare=False)
 
 
 def _observe_private_native_byte_repeat(*, first_claim, second_claim,
@@ -85,5 +88,46 @@ def _observe_private_native_byte_repeat(*, first_claim, second_claim,
                     "packet_id") != repeat_packet_id):
             raise ValueError("byte repeat capture or packet changed")
         digests.append(hashlib.sha256(capture.stdout).hexdigest())
-    return _PrivateNativeByteRepeat(repeat_packet_id, "fd_hygiene",
-        digests[0], digests[1], digests[0] == digests[1])
+    result = _PrivateNativeByteRepeat(repeat_packet_id, "fd_hygiene",
+        digests[0], digests[1], digests[0] == digests[1],
+        first_claim, second_claim, frozen_row)
+    _revalidate_private_native_byte_repeat(result)
+    return result
+
+
+def _revalidate_private_native_byte_repeat(proof):
+    """Recheck both retained captures before using private repeat facts."""
+    if (type(proof) is not _PrivateNativeByteRepeat
+            or type(proof.packet_id) is not str
+            or PACKET.fullmatch(proof.packet_id) is None
+            or proof.case_id != "fd_hygiene"
+            or type(proof._frozen_row) is not dict
+            or proof._frozen_row.get("case_id") != "fd_hygiene"
+            or proof._first_claim is proof._second_claim):
+        raise ValueError("private byte repeat proof is invalid")
+    digests = []
+    for claim in (proof._first_claim, proof._second_claim):
+        if type(claim) is not _ClaimedProbedBatch:
+            raise ValueError("private byte repeat claim differs")
+        claim.revalidate()
+        capture = claim._session._invocation_capture
+        facts = _audit_private_synthetic_cardinality(
+            claim=claim, frozen_row=proof._frozen_row)
+        if capture is not facts.capture or not capture.stdout:
+            raise ValueError("private byte repeat capture differs")
+        event = _verify_native_launch_event(capture,
+            candidate=claim._session._candidate,
+            suffix=("--aegis-synthetic-case", "fd_hygiene", "--"))
+        if (event._ledger is not claim._launch_ledger
+                or claim._launch_ledger.count != 1):
+            raise ValueError("private byte repeat launch differs")
+        packet_id = json.loads(claim._session._candidate._request_bytes).get(
+            "packet_id")
+        if packet_id != proof.packet_id:
+            raise ValueError("private byte repeat packet differs")
+        digests.append(hashlib.sha256(capture.stdout).hexdigest())
+    if (proof.first_stdout_sha256 != digests[0]
+            or proof.second_stdout_sha256 != digests[1]
+            or proof.equal is not (digests[0] == digests[1])):
+        raise ValueError("private byte repeat hashes differ")
+    return proof

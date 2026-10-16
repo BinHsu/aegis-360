@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-16T09:02:00+08:00
+Updated: 2026-10-16T09:24:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: efb4b1a
@@ -19,14 +19,14 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-Local private checkpoint after published `efb4b1a`: a claim-bound selected
-bundle mutation proves trust rejection before Popen; two fresh native claims
-produce byte-identical stdout; and the 33 adapter observations rebuild from
-retained captures, exact one-shot events and frozen stimuli. The real 33-case
-Seatbelt host gate passes. A private 37-row collector combines these with four
-coordinator proof objects, but its current two-phase execution does not follow
-the frozen manifest order. It grants no case result or aggregate. Replace that
-order before interpreting the collection as a complete schedule.
+Local private checkpoint after published `efb4b1a`: one retained dispatcher
+preflights 37 distinct claims/selected roots and executes every frozen row in
+manifest order with ordinal evidence. All 33 adapter rows rebuild from native
+captures/one-shot events; four coordinator rows bind mutation, replacement and
+exact-rebuild proofs. Two extra fresh native claims reproduce stdout bytes.
+Private case-result shape rebuilds 37 passed rows and equal repeat hashes.
+Real Seatbelt 39-claim host gate and repeat recheck pass; changed ledger,
+result bytes, ordinals or claim reuse reject. Public authority stays closed.
 
 Published `cb2677b` has three zero-argument coordinator fixture modes,
 an exact retained claim launch for each, private receipt/evidence publication,
@@ -125,12 +125,12 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published `BinHsu/aegis-360@efb4b1a` has green exact-SHA CI.
-- Next local task: dispatch all 37 frozen rows in manifest order with retained
-  owners and ordinal evidence before case-result reconstruction.
+- Next local task: identify aggregate and public-authority prerequisites from
+  the protocol without model or media acquisition.
 
 ## Verified
 
-- Restricted full discovery: 892 tests run, 799 passed, 93 skips. Listener
+- Restricted full discovery: 896 tests run, 801 passed, 95 skips. Listener
   subcases skipped because the shell sandbox denies local listener binds.
 - Escalated host fixture: eight tests pass, including the three live-listener
   network cases and owned-child fork marker. No sandbox-confinement authority.
@@ -208,9 +208,9 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The private 37-row collection has no ordered execution proof or complete
-  native host run. Complete one ordered dispatcher, then exact case-result
-  reconstruction and aggregate. Current evidence issues no full case result.
+- The ordered 37-row private result has one native host integration pass and
+  no public case-result validation or aggregate. Its real production authority,
+  wider host repeatability and aggregate prerequisites remain pending.
   Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.

@@ -177,7 +177,7 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-- Local full discovery: 892 tests run, 799 passed and 93 host/sandbox skips.
+- Local full discovery: 896 tests run, 801 passed and 95 host/sandbox skips.
 - Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
 - Candidate/facade: 34 host tests pass; mutations detected. First/last packets
   retain other-packet leaves; raw probe checks 14 boolean keys and bindings.
@@ -188,13 +188,13 @@ specific directing question. No new video is currently awaiting owner review.
   results. Three coordinator modes have private receipt/capture positives.
   The Popen ledger,
   six input hashes and two-peer publisher pass 67 native transport host tests.
-  A retained claim rebuilds private receipt bytes; exact rebuild and replacement
-  race have private native positives, with no case result.
+  Exact rebuild and replacement race have private native positives.
   `efb4b1a` exact-SHA CI run 38824860428 passes; remote `main` matches.
   New private 33-row capture rebuild passes the real Seatbelt host gate;
   bundle trust rejection and fresh native stdout repeats pass host gates.
-  Collected 37-row proof has wrong execution order; no case result is issued.
+  Ordered 37-row Seatbelt gate passes; fresh repeats yield a private 37-pass
+  result. Altered ledger and result bytes reject; authority stays closed.
 
 ## Next action
-Execute the 37 frozen rows in order with ordinal evidence, then rebuild a
-private case result before aggregate work; keep public APIs closed.
+Identify aggregate prerequisites against the protocol and retained proofs;
+keep public authority closed.
