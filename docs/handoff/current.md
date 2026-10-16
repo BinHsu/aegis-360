@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-16T09:24:00+08:00
+Updated: 2026-10-16T09:37:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: efb4b1a
@@ -125,8 +125,8 @@ receipt or spawn authority has been created.
 ## Repository state
 
 - Published `BinHsu/aegis-360@efb4b1a` has green exact-SHA CI.
-- Next local task: identify aggregate and public-authority prerequisites from
-  the protocol without model or media acquisition.
+- Aggregate gaps are recorded in `docs/design/sparse-story-private-aggregate-gap.md`.
+  Next: one schedule-bound synthetic packet and exact peer publication.
 
 ## Verified
 
@@ -208,9 +208,9 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The ordered 37-row private result has one native host integration pass and
-  no public case-result validation or aggregate. Its real production authority,
-  wider host repeatability and aggregate prerequisites remain pending.
+- The ordered private case result has native host evidence but no public
+  authority or aggregate. Scheduled packet invocation and exact peer publication
+  remain separate from the 37 fixture calls; see the aggregate gap design note.
   Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.

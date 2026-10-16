@@ -196,5 +196,5 @@ specific directing question. No new video is currently awaiting owner review.
   result. Altered ledger and result bytes reject; authority stays closed.
 
 ## Next action
-Identify aggregate prerequisites against the protocol and retained proofs;
-keep public authority closed.
+Bind one scheduled synthetic packet invocation to exclusive receipt/evidence
+publication; keep public authority closed.
