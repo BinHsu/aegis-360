@@ -182,12 +182,12 @@ specific directing question. No new video is currently awaiting owner review.
   including runtime-manifest mismatch rejection and no-spawn owned cleanup.
   A mutation of the old finalized proof accepted a changed case-result hash;
   the fix rejects changed hashes and recreated scratch paths on the host.
-  The normal fixture reads bounded stdin through EOF without interpretation.
+  Dual-model review: missing publication raised FileNotFoundError on old code;
+  it now raises ValueError in the green host case.
 - The private retained session and ordered 37-case result pass native host gates;
-  separate scheduled packet invocation and private receipt/peers pass two host
-  tests. Public capability, case-result and aggregate remain closed.
-  New private 33-row capture rebuild passes the real Seatbelt host gate;
-  bundle trust rejection and fresh native stdout repeats pass host gates.
+  scheduled packet receipt/peers pass two host tests. Public authority remains closed.
+  Private 33-row capture rebuild, bundle trust rejection and fresh native
+  stdout repeats pass host gates.
 
 ## Next action
 The private 40-claim proof joins the 37 ordered cases, two repeats and one

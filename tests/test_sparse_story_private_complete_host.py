@@ -251,6 +251,15 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                         finalized.revalidate()
                 finally:
                     restored.rmdir()
+                missing_publication = scheduled_owner.root.with_name(
+                    scheduled_owner.root.name + "-temporarily-missing")
+                scheduled_owner.root.rename(missing_publication)
+                try:
+                    with self.assertRaisesRegex(ValueError,
+                            "private gate cleanup or publication differs"):
+                        finalized.revalidate()
+                finally:
+                    missing_publication.rename(scheduled_owner.root)
                 with self.assertRaises(ValueError):
                     gate.revalidate()
 

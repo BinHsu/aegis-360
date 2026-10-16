@@ -156,7 +156,12 @@ class _PrivateFinalizedSyntheticGate:
 
     def revalidate(self):
         owner = self._publication.owner
-        info = os.lstat(owner.root)
+        try:
+            info = os.lstat(owner.root)
+            published_names = set(os.listdir(owner.root))
+        except OSError as error:
+            raise ValueError(
+                "private gate cleanup or publication differs") from error
         if (self._token is not _FINALIZED_TOKEN or self.authority is not False
                 or self._seal != self._seal_hash()
                 or len(self._sessions) != 40
@@ -169,7 +174,7 @@ class _PrivateFinalizedSyntheticGate:
                 or (info.st_dev, info.st_ino) != owner._identity
                 or not stat.S_ISDIR(info.st_mode)
                 or stat.S_IMODE(info.st_mode) != 0o700
-                or set(os.listdir(owner.root)) != {
+                or published_names != {
                     "evidence.json", "receipt.json"}
                 or self._publication.pair.revalidate() != (
                     self.evidence_sha256, self.receipt_sha256)):

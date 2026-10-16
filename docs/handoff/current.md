@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-16T13:12:19+08:00
+Updated: 2026-10-16T13:20:34+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -38,12 +38,15 @@ receipt hashes. The 40 owned sessions then close; a private finalized snapshot
 rechecks the published peers and scratch-root absence after closure. A controlled
 mutation showed the old finalized proof accepted a changed case-result hash;
 the final snapshot now seals its retained fields and rejects that mutation. A
-recreated scratch path also rejects. Public capability, case-result and aggregate
-authority remain closed. Cursor/Grok 4.7 High CLI authenticated and completed
-plain-text, one-file read and small synthetic-review health checks. Two repo
-file-reading reviews timed out silently; one exact inline-source review emitted
-540 thinking events in 120 seconds but no tool call or final answer. No model
-review result exists. The source file was sent under owner code 489.
+recreated scratch path also rejects. A Claude Opus 5 and Cursor/Grok 4.7 High
+dual read-only review under owner code 754 used identical inline source. Claude
+completed in 99 seconds and identified a publication-root error-contract bug;
+a controlled old-code host case failed with FileNotFoundError, and the fix now
+returns ValueError with the host case green. Cursor again timed out after 120
+seconds with only thinking events. Claude's schedule-hash concern is covered
+by scheduled publication revalidation; coordinated in-process mutation of the
+object and its seal is outside the snapshot's evidence claim. Public capability,
+case-result and aggregate authority remain closed.
 
 Earlier local private ordered 37-case execution, two fresh repeats and a
 private 37-pass result remain intact. `BinHsu/aegis-360@0522221` is published
@@ -134,7 +137,9 @@ defined, not a public protocol schema. No model or media was acquired.
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
 - Controlled mutation removing private-directory emptiness validation causes the
   nonempty-HOME regression to fail with `ValueError not raised`.
-- Cursor/Grok 4.7 High review received no result: three bounded requests timed out.
+- Cursor/Grok 4.7 High received no review result in four bounded code requests.
+  Claude Opus 5 completed one bounded dual-batch review; the missing-publication
+  finding was reproduced red on the old code and passes after the fix.
 
 ## Rejected
 
@@ -158,7 +163,7 @@ cd ~/Documents/aegis-360
 git status --short --branch
 python3 -m unittest discover -s tests -q
 python3 -m unittest tests.test_sparse_story_projection tests.test_sparse_story_media_tree -q
-AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_raw_probe_transport -v
+AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_private_complete_host -v
 python3 scripts/check_handoff.py
 git diff --check
 git status --short
