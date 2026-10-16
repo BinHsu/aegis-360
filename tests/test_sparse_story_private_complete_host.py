@@ -27,6 +27,18 @@ from aegis360.sparse_story_private_case_result import (  # noqa: E402
     _rebuild_private_synthetic_case_result,
     _revalidate_private_synthetic_case_result,
 )
+from aegis360.sparse_story_private_packet_schedule import (  # noqa: E402
+    _PrivateSyntheticPacketSchedule,
+)
+from aegis360.sparse_story_private_scheduled_receipt import (  # noqa: E402
+    _build_private_scheduled_run_receipt,
+)
+from aegis360.sparse_story_private_scheduled_publication import (  # noqa: E402
+    _publish_private_scheduled_packet_once,
+)
+from aegis360.sparse_story_private_gate_evidence import (  # noqa: E402
+    _bind_private_synthetic_gate_evidence,
+)
 from aegis360.sparse_story_private_run_publication import _OwnedPrivateRunRoot  # noqa: E402
 from aegis360.sparse_story_probe_denials import _open_retained_probed_batch  # noqa: E402
 from aegis360.sparse_story_runner_contract import CASE_SPECS  # noqa: E402
@@ -105,11 +117,25 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                 repeat_session = _open_retained_probed_batch(**repeat_inputs)
                 stack.callback(repeat_session.close)
                 repeat_claims.append(repeat_session.claim_once())
+            scheduled_inputs = stack.enter_context(
+                host_tests.RawProbeTransportHostTests.context(
+                    self, own_batch_scratch=True, coordinated=True,
+                    expose_live=True))
+            scheduled_live = scheduled_inputs.pop("_fixture_live")
+            live_by_facade[id(scheduled_inputs["candidate"]._facade)] = (
+                scheduled_live)
+            scheduled_session = _open_retained_probed_batch(**scheduled_inputs)
+            stack.callback(scheduled_session.close)
+            scheduled_claim = scheduled_session.claim_once()
+            parameters["adapter_manifest_sha256"] = (
+                scheduled_live._adapter_binding._runtime.backend_identity()[2])
             def retained_live(facade):
                 return live_by_facade[id(facade)]
             with mock.patch("aegis360.sparse_story_batch_policy._require_live",
                     side_effect=retained_live), mock.patch(
                     "aegis360.sparse_story_receipt_inputs._require_live",
+                    side_effect=retained_live), mock.patch(
+                    "aegis360.sparse_story_private_gate_evidence._require_live",
                     side_effect=retained_live), mock.patch(
                     "aegis360.sparse_story_raw_probe_transport._TIMEOUT_NS",
                     5_000_000_000):
@@ -166,6 +192,32 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                 self.assertTrue(all(row["passed"]
                     for row in result_value["cases"]))
                 self.assertTrue(result_value["repeatability"]["equal"])
+                scheduled = _PrivateSyntheticPacketSchedule(
+                    scheduled_claim, manifest)
+                self.assertEqual(scheduled.packet_id, packet_id)
+                self.assertNotIn(id(scheduled_claim),
+                    {id(row.proof.claim) for row in observed.rows}
+                    | {id(claim) for claim in repeat_claims})
+                scheduled_capture = scheduled_claim._run_private_scheduled_packet_once(
+                    scheduled)
+                self.assertTrue(scheduled_capture.completed)
+                scheduled_receipt = _build_private_scheduled_run_receipt(
+                    scheduled)
+                scheduled_owner = _OwnedPrivateRunRoot(private_parent)
+                scheduled_publication = _publish_private_scheduled_packet_once(
+                    owner=scheduled_owner, receipt=scheduled_receipt)
+                self.assertEqual(scheduled_publication.revalidate(), (
+                    scheduled_publication.evidence_sha256,
+                    scheduled_publication.receipt_sha256))
+                gate = _bind_private_synthetic_gate_evidence(
+                    case_result=private_result,
+                    publication=scheduled_publication)
+                self.assertFalse(gate.authority)
+                self.assertIs(gate.revalidate(), gate)
+                with self.assertRaises(ValueError):
+                    replace(gate, case_result_sha256="0" * 64).revalidate()
+                with self.assertRaises(ValueError):
+                    replace(gate, packet_id="packet-" + "0" * 20).revalidate()
                 with self.assertRaises(ValueError):
                     _rebuild_private_synthetic_case_result(
                         frozen_manifest=manifest, complete_proof=observed,

@@ -29,9 +29,15 @@ rebuilds from live facts; exclusive evidence/receipt peers publish and
 revalidate. Changed schedule or manifest rejects before spawn, changed receipt
 rejects before publication, replaced peer refuses cleanup without deleting the
 replacement, and a second launch is blocked. A controlled no-spawn failure
-consumes the claim but permits exact owned scratch cleanup. Two Seatbelt host
-tests pass; portable discovery runs 911 tests, 814 passed and 97 skipped.
+consumes the claim but permits exact owned scratch cleanup. Two scheduled-packet Seatbelt host
+tests and one combined 40-claim host gate pass; portable discovery runs 911
+tests, 814 passed and 97 skipped. A private proof now revalidates all 40
+distinct claims against the case result, scheduled publication, packet ID and
+live runtime manifest. Public aggregate authority remains closed.
 Public capability, case-result and aggregate authority remain closed.
+The attempted Cursor/Grok review of current uncommitted code was rejected by
+automatic approval review: earlier consent covered four older commits, and the
+1:4 usage preference did not identify this new payload. No code was sent.
 
 Earlier local private ordered 37-case execution, two fresh repeats and a
 private 37-pass result remain intact. `BinHsu/aegis-360@0522221` is published

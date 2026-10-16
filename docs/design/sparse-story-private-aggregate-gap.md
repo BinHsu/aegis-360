@@ -6,8 +6,8 @@ The protocol's `synthetic_gate` aggregate is a runner-operational claim for one
 scheduled packet. It needs a validated capability receipt, exact retained
 schedule and manifests, one packet invocation with published receipt/evidence,
 the complete synthetic case result, and owned cleanup before an aggregate can
-be published. The 37 fixture cases and two fresh repeats are separate private
-evidence; they do not themselves constitute the scheduled packet row.
+be published. The 37 fixture cases, two fresh repeats, and the scheduled packet are now
+bound by a private 40-claim proof. That proof is not a public aggregate.
 
 | Protocol prerequisite | Current evidence | Remaining boundary |
 | --- | --- | --- |
@@ -15,7 +15,7 @@ evidence; they do not themselves constitute the scheduled packet row.
 | Isolation capability | One retained native probe has 14 observed boolean outcomes and private receipt bytes. | Public capability derivation/validation remains closed. Bind the actual installed-policy evidence to the scheduled packet before an authority claim. |
 | Scheduled packet invocation | One separate normal-mode synthetic packet runs through the retained native launcher with the exact request bytes, a one-shot ordinary-mode ledger event and group-absence proof. The private schedule binds the live runtime manifest. | The fixture consumes bounded stdin through EOF but does not parse the request; this is transport evidence, not semantic request interpretation. Public invocation authority remains closed. |
 | Receipt and evidence publication | The scheduled packet has its own private receipt and exclusive evidence/receipt peers. Exact bytes revalidate; replacement refuses cleanup and preserves the replacement. | Public receipt/publication authority remains closed. |
-| Aggregate inputs and publication | Shape validator fixes the hashes, one ordered packet row, lifecycle stage and pass/reject/invalid precedence. | Derive hashes from retained schedule/backend/policy/capability/case/publication proofs, publish the final aggregate exclusively and read it back. Public aggregate APIs remain closed. |
+| Aggregate inputs and publication | A private live proof joins the 37 cases, two repeats and distinct scheduled packet to the same packet ID, manifest, runtime, receipt and evidence. One 40-claim Seatbelt host test passes. | Derive and validate public capability, case-result and aggregate authority, publish the aggregate exclusively and read it back. Public aggregate APIs remain closed. |
 
 Next bounded implementation: independently review the remaining public case-result,
 capability and aggregate authority boundaries. The private schedule shape has no

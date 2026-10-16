@@ -178,12 +178,10 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
 - Latest local portable discovery: 911 tests, 814 passed, 97 skipped. Two
-  scheduled-packet Seatbelt host tests pass, including runtime-manifest mismatch
-  rejection and no-spawn owned cleanup. The normal fixture reads bounded stdin
+  scheduled-packet Seatbelt host tests and one combined 40-claim host gate pass,
+  including runtime-manifest mismatch rejection and no-spawn owned cleanup.
+  The normal fixture reads bounded stdin
   through EOF; semantic request interpretation is unproven.
-- Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
-- Candidate/facade: 34 host tests pass; mutations detected. First/last packets
-  retain other-packet leaves; raw probe checks 14 boolean keys and bindings.
 - The private retained session and ordered 37-case result pass native host gates;
   separate scheduled packet invocation and private receipt/peers pass two host
   tests. Public capability, case-result and aggregate remain closed.
@@ -194,7 +192,9 @@ specific directing question. No new video is currently awaiting owner review.
   result. Altered ledger and result bytes reject; authority stays closed.
 
 ## Next action
-Review public case-result and capability authority prerequisites against the
+The private 40-claim proof joins the 37 ordered cases, two repeats and one
+separate scheduled packet with live runtime, receipt and peer hashes. Review
+public case-result and capability authority prerequisites against the
 protocol, then design aggregate publication. The separate scheduled synthetic
 packet, its private receipt and exclusive evidence/receipt peers now pass the
 Seatbelt host gate. Public authority remains closed.
