@@ -182,8 +182,8 @@ specific directing question. No new video is currently awaiting owner review.
   including runtime-manifest mismatch rejection and no-spawn owned cleanup.
   A mutation of the old finalized proof accepted a changed case-result hash;
   the fix rejects changed hashes and recreated scratch paths on the host.
-  Dual-model review: missing publication raised FileNotFoundError on old code;
-  it now raises ValueError in the green host case.
+  Review controls: missing publication and substituted owner/peer paths fail
+  on old code and pass after fixes; three affected host tests are green.
 - The private retained session and ordered 37-case result pass native host gates;
   scheduled packet receipt/peers pass two host tests. Public authority remains closed.
   Private 33-row capture rebuild, bundle trust rejection and fresh native
@@ -193,8 +193,8 @@ specific directing question. No new video is currently awaiting owner review.
 The private 40-claim proof joins the 37 ordered cases, two repeats and one
 separate scheduled packet with live runtime, schedule, backend, policy,
 capability receipt and peer hashes. All 40 owned sessions close and the
-private final snapshot rechecks publication peers. Review
-public case-result and capability authority prerequisites against the
-protocol, then design aggregate publication. The separate scheduled synthetic
+private final snapshot rechecks exact owner/peer paths. Read-only audits
+identified live-proof derivation as the next capability and case-result
+boundary; implement and mutation-test those before aggregate publication. The separate scheduled synthetic
 packet, its private receipt and exclusive evidence/receipt peers now pass the
 Seatbelt host gate. Public authority remains closed.

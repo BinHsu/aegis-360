@@ -176,6 +176,10 @@ class _PrivateFinalizedSyntheticGate:
                 or stat.S_IMODE(info.st_mode) != 0o700
                 or published_names != {
                     "evidence.json", "receipt.json"}
+                or self._publication.pair._evidence.path
+                    != owner.root / "evidence.json"
+                or self._publication.pair._receipt.path
+                    != owner.root / "receipt.json"
                 or self._publication.pair.revalidate() != (
                     self.evidence_sha256, self.receipt_sha256)):
             raise ValueError("private gate cleanup or publication differs")

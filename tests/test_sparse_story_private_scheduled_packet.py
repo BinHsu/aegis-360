@@ -147,6 +147,21 @@ class ScheduledPacketHostTests(unittest.TestCase):
                             capture.stdout)
                         self.assertEqual((owner.root / "receipt.json").read_bytes(),
                             receipt.bytes)
+                        with tempfile.TemporaryDirectory(dir=temporary) as other:
+                            other_root = Path(other)
+                            (other_root / "evidence.json").write_bytes(b"other")
+                            (other_root / "receipt.json").write_bytes(b"other")
+                            original_root = owner.root
+                            original_identity = owner._identity
+                            info = os.lstat(other_root)
+                            owner.root = other_root
+                            owner._identity = (info.st_dev, info.st_ino)
+                            try:
+                                with self.assertRaises(ValueError):
+                                    published.revalidate()
+                            finally:
+                                owner.root = original_root
+                                owner._identity = original_identity
                         held = owner.root / "held-evidence.json"
                         os.rename(owner.root / "evidence.json", held)
                         replacement = owner.root / "evidence.json"

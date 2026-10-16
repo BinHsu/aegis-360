@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-16T13:20:34+08:00
+Updated: 2026-10-16T13:37:04+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -38,14 +38,19 @@ receipt hashes. The 40 owned sessions then close; a private finalized snapshot
 rechecks the published peers and scratch-root absence after closure. A controlled
 mutation showed the old finalized proof accepted a changed case-result hash;
 the final snapshot now seals its retained fields and rejects that mutation. A
-recreated scratch path also rejects. A Claude Opus 5 and Cursor/Grok 4.7 High
-dual read-only review under owner code 754 used identical inline source. Claude
-completed in 99 seconds and identified a publication-root error-contract bug;
-a controlled old-code host case failed with FileNotFoundError, and the fix now
-returns ValueError with the host case green. Cursor again timed out after 120
-seconds with only thinking events. Claude's schedule-hash concern is covered
-by scheduled publication revalidation; coordinated in-process mutation of the
-object and its seal is outside the snapshot's evidence claim. Public capability,
+recreated scratch path also rejects. Claude Opus 5 found a missing-publication
+error-contract bug; old code raised FileNotFoundError and the fixed host case
+passes with ValueError. Under owner code 840, three Grok 4.7 Fast efforts ran
+concurrently on the same 26,018-byte prompt from `ed48dac`: Low finished in
+191 seconds with three findings; Medium and High reached 540 seconds with
+thinking events but no result. Low's publication owner/peer path substitution
+was reproduced red on the host (`ValueError not raised`); both private scheduled
+publication and finalized gate now require the owner's exact peer paths, with
+three affected host tests green. Low's schedule-candidate split is rejected by
+upstream `schedule.revalidate`; its pre-close scratch rename is rejected by
+identity-bound cleanup. Claude's schedule-hash concern is covered by schedule
+rebuild; coordinated mutation of object and seal is outside this snapshot's
+evidence claim. Portable discovery: 911 tests, 97 skipped. Public capability,
 case-result and aggregate authority remain closed.
 
 Earlier local private ordered 37-case execution, two fresh repeats and a
@@ -137,9 +142,10 @@ defined, not a public protocol schema. No model or media was acquired.
   extra-neighbor-leaf regression to fail with `ValueError not raised`.
 - Controlled mutation removing private-directory emptiness validation causes the
   nonempty-HOME regression to fail with `ValueError not raised`.
-- Cursor/Grok 4.7 High received no review result in four bounded code requests.
-  Claude Opus 5 completed one bounded dual-batch review; the missing-publication
-  finding was reproduced red on the old code and passes after the fix.
+- Three simultaneous Cursor Fast-effort reviews: Low returned one confirmed
+  defect in 191 seconds; Medium/High had no final answer at 540 seconds. The
+  owner/peer substitution red control and three green host tests distinguish
+  the fix. Claude Opus 5 separately found the missing-root error mismatch.
 
 ## Rejected
 
@@ -152,8 +158,10 @@ defined, not a public protocol schema. No model or media was acquired.
 - The ordered private case result and separate scheduled packet have native host
   evidence but no public capability, case-result or aggregate authority. See
   the aggregate gap design note.
-  Review the gate before acquisition.
-  Public authority APIs stay closed; no acquisition is authorized.
+  Read-only audits found shape checks but no public proof derivation. Next
+  implement capability and case-result authority from retained live proofs,
+  separately, with mutation controls; then bind the aggregate. Public APIs
+  stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands

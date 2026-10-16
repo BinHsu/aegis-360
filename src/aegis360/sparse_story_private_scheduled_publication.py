@@ -39,6 +39,10 @@ class _PrivateScheduledPublication:
         if ((info.st_dev, info.st_ino) != self.owner._identity
                 or not stat.S_ISDIR(info.st_mode)
                 or stat.S_IMODE(info.st_mode) != 0o700
+                or self.pair._evidence.path
+                    != self.owner.root / "evidence.json"
+                or self.pair._receipt.path
+                    != self.owner.root / "receipt.json"
                 or set(os.listdir(self.owner.root)) != {
                     "evidence.json", "receipt.json"}
                 or self.pair.revalidate() != expected

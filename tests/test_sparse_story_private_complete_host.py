@@ -260,6 +260,21 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                         finalized.revalidate()
                 finally:
                     missing_publication.rename(scheduled_owner.root)
+                with tempfile.TemporaryDirectory(dir=private_parent) as other:
+                    other_root = Path(other)
+                    (other_root / "evidence.json").write_bytes(b"other")
+                    (other_root / "receipt.json").write_bytes(b"other")
+                    original_root = scheduled_owner.root
+                    original_identity = scheduled_owner._identity
+                    info = os.lstat(other_root)
+                    scheduled_owner.root = other_root
+                    scheduled_owner._identity = (info.st_dev, info.st_ino)
+                    try:
+                        with self.assertRaises(ValueError):
+                            finalized.revalidate()
+                    finally:
+                        scheduled_owner.root = original_root
+                        scheduled_owner._identity = original_identity
                 with self.assertRaises(ValueError):
                     gate.revalidate()
 
