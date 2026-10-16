@@ -219,6 +219,8 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     replace(gate, packet_id="packet-" + "0" * 20).revalidate()
                 with self.assertRaises(ValueError):
+                    replace(gate, capability_receipt_sha256="0" * 64).revalidate()
+                with self.assertRaises(ValueError):
                     _rebuild_private_synthetic_case_result(
                         frozen_manifest=manifest, complete_proof=observed,
                         repeat_proof=replace(repeat,

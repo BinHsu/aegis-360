@@ -180,12 +180,11 @@ specific directing question. No new video is currently awaiting owner review.
 - Latest local portable discovery: 911 tests, 814 passed, 97 skipped. Two
   scheduled-packet Seatbelt host tests and one combined 40-claim host gate pass,
   including runtime-manifest mismatch rejection and no-spawn owned cleanup.
-  The normal fixture reads bounded stdin
-  through EOF; semantic request interpretation is unproven.
+  The normal fixture reads bounded stdin through EOF; semantic request
+  interpretation is unproven.
 - The private retained session and ordered 37-case result pass native host gates;
   separate scheduled packet invocation and private receipt/peers pass two host
   tests. Public capability, case-result and aggregate remain closed.
-  `0522221` exact-SHA CI run 38850495066 passes; remote `main` matches.
   New private 33-row capture rebuild passes the real Seatbelt host gate;
   bundle trust rejection and fresh native stdout repeats pass host gates.
   Ordered 37-row Seatbelt gate passes; fresh repeats yield a private 37-pass
@@ -193,7 +192,8 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 The private 40-claim proof joins the 37 ordered cases, two repeats and one
-separate scheduled packet with live runtime, receipt and peer hashes. Review
+separate scheduled packet with live runtime, schedule, backend, policy,
+capability receipt and peer hashes. Review
 public case-result and capability authority prerequisites against the
 protocol, then design aggregate publication. The separate scheduled synthetic
 packet, its private receipt and exclusive evidence/receipt peers now pass the

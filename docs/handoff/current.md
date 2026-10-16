@@ -32,8 +32,9 @@ replacement, and a second launch is blocked. A controlled no-spawn failure
 consumes the claim but permits exact owned scratch cleanup. Two scheduled-packet Seatbelt host
 tests and one combined 40-claim host gate pass; portable discovery runs 911
 tests, 814 passed and 97 skipped. A private proof now revalidates all 40
-distinct claims against the case result, scheduled publication, packet ID and
-live runtime manifest. Public aggregate authority remains closed.
+distinct claims against the case result, scheduled publication, packet ID,
+live runtime manifest, schedule, backend, runner/compiled policy and capability
+receipt hashes. Public aggregate authority remains closed.
 Public capability, case-result and aggregate authority remain closed.
 The attempted Cursor/Grok review of current uncommitted code was rejected by
 automatic approval review: earlier consent covered four older commits, and the

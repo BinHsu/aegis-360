@@ -5,6 +5,7 @@ This is live synthetic evidence, not a capability or public aggregate.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass, field
 
@@ -23,6 +24,11 @@ class _PrivateSyntheticGateEvidence:
     publication: _PrivateScheduledPublication = field(repr=False)
     packet_id: str
     case_result_sha256: str
+    schedule_sha256: str
+    backend_manifest_sha256: str
+    runner_policy_sha256: str
+    compiled_policy_sha256: str
+    capability_receipt_sha256: str
     receipt_sha256: str
     evidence_sha256: str
     authority: bool = False
@@ -41,6 +47,20 @@ class _PrivateSyntheticGateEvidence:
         repeat_claims = [self.case_result._repeat._first_claim,
             self.case_result._repeat._second_claim]
         scheduled_claim = schedule._claim
+        candidate = schedule._candidate
+        capability = scheduled_claim.receipt_bytes()
+        capability_value = json.loads(capability)
+        derived_inputs = {
+            "schedule_sha256": schedule.schedule_sha256,
+            "backend_manifest_sha256": hashlib.sha256(
+                candidate._backend_bytes).hexdigest(),
+            "runner_policy_sha256": hashlib.sha256(
+                candidate._runner_policy_bytes).hexdigest(),
+            "compiled_policy_sha256": hashlib.sha256(
+                candidate._policy_bytes()).hexdigest(),
+            "capability_receipt_sha256": hashlib.sha256(
+                capability).hexdigest(),
+        }
         if (schedule._case_manifest is not manifest
                 or schedule.case_manifest_sha256
                     != self.case_result._complete.manifest_sha256
@@ -55,6 +75,14 @@ class _PrivateSyntheticGateEvidence:
                     [*case_claims, *repeat_claims, scheduled_claim]}) != 40
                 or self.packet_id != schedule.packet_id
                 or self.case_result_sha256 != self.case_result.sha256
+                or any(getattr(self, key) != value
+                    for key, value in derived_inputs.items())
+                or capability_value["backend_manifest_sha256"]
+                    != derived_inputs["backend_manifest_sha256"]
+                or capability_value["runner_policy_sha256"]
+                    != derived_inputs["runner_policy_sha256"]
+                or capability_value["compiled_policy_sha256"]
+                    != derived_inputs["compiled_policy_sha256"]
                 or self.receipt_sha256 != receipt_sha
                 or self.evidence_sha256 != evidence_sha):
             raise ValueError("private gate case result and packet differ")
@@ -71,7 +99,13 @@ def _bind_private_synthetic_gate_evidence(*, case_result, publication):
     if (type(case_result) is not _PrivateCaseResultRebuild
             or type(publication) is not _PrivateScheduledPublication):
         raise TypeError("private gate requires result and publication proofs")
+    schedule = publication.receipt._schedule
+    candidate = schedule._candidate
     proof = _PrivateSyntheticGateEvidence(case_result, publication,
-        publication.receipt._schedule.packet_id, case_result.sha256,
+        schedule.packet_id, case_result.sha256, schedule.schedule_sha256,
+        hashlib.sha256(candidate._backend_bytes).hexdigest(),
+        hashlib.sha256(candidate._runner_policy_bytes).hexdigest(),
+        hashlib.sha256(candidate._policy_bytes()).hexdigest(),
+        hashlib.sha256(schedule._claim.receipt_bytes()).hexdigest(),
         publication.receipt_sha256, publication.evidence_sha256)
     return proof.revalidate()
