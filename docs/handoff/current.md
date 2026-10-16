@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-16T10:00:00+08:00
+Updated: 2026-10-16T16:00:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -19,100 +19,24 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-Local private checkpoint after published `efb4b1a`: one retained dispatcher
-preflights 37 distinct claims/selected roots and executes every frozen row in
-manifest order with ordinal evidence. All 33 adapter rows rebuild from native
-captures/one-shot events; four coordinator rows bind mutation, replacement and
-exact-rebuild proofs. Two extra fresh native claims reproduce stdout bytes.
-Private case-result shape rebuilds 37 passed rows and equal repeat hashes.
-Real Seatbelt 39-claim host gate and repeat recheck pass; changed ledger,
-result bytes, ordinals or claim reuse reject. Public authority stays closed.
+Local private scheduled synthetic packet milestone after published `0522221`:
+a retained one-packet private schedule binds the claim, canonical request,
+case manifest and live synthetic runtime manifest. One separate normal-mode
+native invocation transfers the exact bounded retained request through EOF,
+records one ordinary-mode launch and verifies group absence. The fixture reads
+stdin through EOF but does not interpret the request. Its own private receipt
+rebuilds from live facts; exclusive evidence/receipt peers publish and
+revalidate. Changed schedule or manifest rejects before spawn, changed receipt
+rejects before publication, replaced peer refuses cleanup without deleting the
+replacement, and a second launch is blocked. A controlled no-spawn failure
+consumes the claim but permits exact owned scratch cleanup. Two Seatbelt host
+tests pass; portable discovery runs 911 tests, 814 passed and 97 skipped.
+Public capability, case-result and aggregate authority remain closed.
 
-Published `cb2677b` has three zero-argument coordinator fixture modes,
-an exact retained claim launch for each, private receipt/evidence publication,
-and a fail-closed exact-rebuild helper. Ten focused native host tests pass;
-both exact-rebuild rows now bind their own real capture and receipt, while
-cross-row relabeling fails. A native `replacement_race` claim now binds actual
-receipt/evidence bytes to the publisher; changed receipt/row rejects before
-publication, and original/replacement peers survive. No case result is issued.
-Two delegates hit a usage limit after delivery. The Linux-only test failure was
-fixed by a test-only rename substitute and exact-SHA CI is green; local
-discovery: 880 run, 791 passed, 89 skipped. `34ba4d8` and `efb4b1a` are
-published and exact-SHA CI passed. No public authority opened.
-A 37-case shape freezer hashes argv, stdin and support. Changed stimuli block
-spawn; prepared owners close exact paths on row mismatch.
-The private claim exercises all 33 adapter-owned case types through the same
-native launcher and policy. Selected reads use exact bytes; denied reads use
-real leaves/files and live listeners. Outcomes are classified from observations.
-These checks do not yet produce a case result or aggregate.
-
-The private batch candidate retains exact request, runner-policy and enforcement-
-policy bytes; uid/gid; launcher, runtime, model and prompt roots; selected media;
-and empty private HOME/TMPDIR identities. A validated 6/24-packet set can publish
-one selected bundle without replacement. The candidate retains it, and a changed
-selected leaf invalidates the binding. The candidate grants no spawn authority.
-
-The private raw probe runs the same retained native launcher, runtime and policy
-through a bounded policy pipe and process group. Completion requires pre/post
-root and sentinel checks, all 21 transcript rows, and exactly the contract's 14
-boolean `True` matrix keys. Sixteen host tests cover the positive native path,
-malformed/false rows, wrong keys or truthy integers, changed request/sentinel
-facts, timeout, stdout ceiling, a surviving descendant and TERM-ignore/KILL.
-Controlled mutations confirm the descendant, KILL and stdout tests detect their
-target defects. These are transport and finite primitive observations, not an
-installed-policy receipt or model-invocation authority.
-
-The full-set denial helper verifies the media result and tree, retains an actual
-other-packet PNG and full-set result file, and rechecks them with the candidate
-binding after probing. Native host positives now select both the first and last
-packets from the six-packet set, each with a real other-packet read target.
-Repository/protocol probes use fixed actual source files.
-One-packet smoke now uses a private, non-media decoy leaf outside policy roots;
-it is explicitly not an actual other packet. Its owner retains the leaf and
-removes it only after the probe leader is reaped and exact facts revalidate.
-Changed content is preserved, pre-reap cleanup is refused, and allowed-root
-placement is rejected. Outside-write sentinel now also has an owner that
-creates a private tree, retains its identity and bytes, and removes only the
-exact owned tree after child reap. Changed content is preserved. Host positive
-tests exercise this cleanup. The listener owner now creates a private root,
-retains exact live sockets, and removes the exact owned tree only after child
-reap. An unexpected child is preserved. A scratch file owner now creates the
-rename source exclusively and removes the exact source and expected write only
-after child reap and postvalidation. It rechecks full file facts immediately
-before deletion and preserves a replaced write file. A new batch scratch owner
-creates an exact private root and empty HOME/TMPDIR, binds one candidate, and
-removes only that tree after the native group is absent, full-set denial proof
-has exited and the candidate has closed. Changed trees and a different candidate
-are rejected. A native timeout with no scratch output also cleans this root
-after group absence and candidate closure; changed private HOME stays in place.
-The private owned-run path now ties these owners to the exact probe context,
-cleans each after a reaped child, and turns cleanup refusal into incomplete raw
-probe status. When no scratch write was created, exact pre-probe state allows
-source-only cleanup after reap. Cleanup now also requires confirmed process-group
-absence; a reaped leader alone is insufficient. It creates no capability or
-public authority.
-The private full-set coordinator now enters and exits the actual retained
-denial proofs around the owned raw probe, closes the exact candidate only after
-proof exit, then cleans its bound batch scratch root. Native success and timeout
-cases pass. A changed full-set result is rejected before launch; a changed
-private HOME after probing invalidates completion and preserves the tree.
-On a prelaunch full-set proof failure, the coordinator closes the candidate
-and abandons the exact outside, scratch, listener and batch-scratch owners;
-it preserves unverified filesystem trees. A candidate-close exception also
-abandons batch scratch rather than claiming cleanup.
-Native host tests now exercise that close exception and a full-set result
-mutation after probe execution: both reject completion, close retained owners
-and preserve the unverified batch root.
-A controlled capture with no process-group absence proof leaves the batch,
-outside, scratch and listener trees intact and returns incomplete cleanup.
-If the owned scratch-file cleanup refuses, the outer batch root remains intact
-with the source file, and the coordinator returns incomplete cleanup.
-
-The rejected direct-spawn transport spike at `eea5881` is historical evidence;
-its weak process ownership and incomplete cleanup are not restored. The signed
-synthetic adapter covers 33 adapter-owned case IDs, while four coordinator-owned
-cases, capability issuance and inference remain pending. No capability token,
-receipt or spawn authority has been created.
+Earlier local private ordered 37-case execution, two fresh repeats and a
+private 37-pass result remain intact. `BinHsu/aegis-360@0522221` is published
+with exact-SHA green CI. The private synthetic schedule format is locally
+defined, not a public protocol schema. No model or media was acquired.
 
 ## Prior Skiing rejection
 - Proposals at 46/297 seconds are reviewed `no_semantic_change`; the 200-second
@@ -126,7 +50,7 @@ receipt or spawn authority has been created.
 
 - Published `BinHsu/aegis-360@0522221` has green exact-SHA CI.
 - Aggregate gaps are recorded in `docs/design/sparse-story-private-aggregate-gap.md`.
-  Next: one schedule-bound synthetic packet and exact peer publication.
+  Next: review public case-result/capability prerequisites and aggregate publication.
 
 ## Verified
 
@@ -208,9 +132,9 @@ receipt or spawn authority has been created.
 
 ## Pending
 
-- The ordered private case result has native host evidence but no public
-  authority or aggregate. Scheduled packet invocation and exact peer publication
-  remain separate from the 37 fixture calls; see the aggregate gap design note.
+- The ordered private case result and separate scheduled packet have native host
+  evidence but no public capability, case-result or aggregate authority. See
+  the aggregate gap design note.
   Review the gate before acquisition.
   Public authority APIs stay closed; no acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
@@ -237,8 +161,9 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 `ad6f29b1…2a567`. Never commit external artifacts.
 
 ## Active agents
-No delegated work is running. Two delegates ended on usage limit after delivery;
-main agent owns the CI fix and checkpoint.
+No delegated work is running. Independent read-only reviews of the scheduled
+packet identified runtime-manifest binding and no-spawn cleanup gaps; both were
+fixed and tested locally.
 
 ## Safety and claims
 

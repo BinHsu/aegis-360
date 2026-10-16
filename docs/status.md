@@ -177,18 +177,16 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-- Local full discovery: 896 tests run, 801 passed and 95 host/sandbox skips.
+- Latest local portable discovery: 911 tests, 814 passed, 97 skipped. Two
+  scheduled-packet Seatbelt host tests pass, including runtime-manifest mismatch
+  rejection and no-spawn owned cleanup. The normal fixture reads bounded stdin
+  through EOF; semantic request interpretation is unproven.
 - Native fixture: eight host tests cover rows, identity and 33 adapter cases; no confinement result.
 - Candidate/facade: 34 host tests pass; mutations detected. First/last packets
   retain other-packet leaves; raw probe checks 14 boolean keys and bindings.
-- The private retained session binds 14 probes and policy/backend/runner hashes.
-  All 33 adapter-owned fixture case types have separate native observations;
-  A 37-case freezer hashes inputs; prepared owners close on preflight rejection.
-  Thirty-three live claims run native rows in order and reconstruct matching
-  results. Three coordinator modes have private receipt/capture positives.
-  The Popen ledger,
-  six input hashes and two-peer publisher pass 67 native transport host tests.
-  Exact rebuild and replacement race have private native positives.
+- The private retained session and ordered 37-case result pass native host gates;
+  separate scheduled packet invocation and private receipt/peers pass two host
+  tests. Public capability, case-result and aggregate remain closed.
   `0522221` exact-SHA CI run 38850495066 passes; remote `main` matches.
   New private 33-row capture rebuild passes the real Seatbelt host gate;
   bundle trust rejection and fresh native stdout repeats pass host gates.
@@ -196,5 +194,7 @@ specific directing question. No new video is currently awaiting owner review.
   result. Altered ledger and result bytes reject; authority stays closed.
 
 ## Next action
-Bind one scheduled synthetic packet invocation to exclusive receipt/evidence
-publication; keep public authority closed.
+Review public case-result and capability authority prerequisites against the
+protocol, then design aggregate publication. The separate scheduled synthetic
+packet, its private receipt and exclusive evidence/receipt peers now pass the
+Seatbelt host gate. Public authority remains closed.

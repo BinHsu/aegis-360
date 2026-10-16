@@ -161,7 +161,7 @@ def _close_streams(process):
 def _retained_launch_spec(candidate, suffix: tuple[str, ...], policy_fd: int):
     """Build the same exact launcher/identity/policy arguments for every mode."""
     if (type(candidate) is not batch_policy._BatchPolicyCandidate
-            or type(suffix) is not tuple or not suffix
+            or type(suffix) is not tuple
             or any(type(value) is not str or not value or "\x00" in value
                    for value in suffix)
             or type(policy_fd) is not int or policy_fd <= 2):
@@ -195,6 +195,9 @@ def _retained_launch_spec(candidate, suffix: tuple[str, ...], policy_fd: int):
 def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
         request_bytes=None, launch_ledger=None) -> _RawProbeCapture:
     """Bounded native launch retaining the leader through group teardown."""
+    if (suffix == () and (launch_ledger is None
+            or request_bytes != candidate._request_bytes)):
+        raise ValueError("ordinary adapter launch requires exact retained request and ledger")
     if (request_bytes is not None
             and (type(request_bytes) is not bytes or len(request_bytes) > 1_048_576)):
         raise ValueError("native request bytes are invalid")

@@ -21,6 +21,25 @@ static int emit_case_bytes(const char *bytes, size_t length) {
     return fwrite(bytes, 1, length, stdout) == length ? 0 : 74;
 }
 
+static int ordinary_request(void) {
+    /* Match the native transport's one MiB request ceiling. Read through EOF
+       before answering so a partial request never receives a result. */
+    static const size_t limit = 1048576U;
+    unsigned char buffer[4096];
+    size_t received = 0;
+    for (;;) {
+        size_t count = fread(buffer, 1, sizeof(buffer), stdin);
+        if (count > limit - received) return 65;
+        received += count;
+        if (count < sizeof(buffer)) {
+            if (ferror(stdin)) return 65;
+            if (feof(stdin)) break;
+        }
+    }
+    if (received == 0) return 65;
+    return emit_case_bytes(abstain, sizeof(abstain) - 1U);
+}
+
 static int emit_padded_case(size_t total) {
     char spaces[256];
     memset(spaces, ' ', sizeof(spaces));
@@ -207,6 +226,7 @@ static int grandchild_case(const char *marker) {
 }
 
 int main(int argc, char **argv) {
+    if (argc == 1) return ordinary_request();
     if (argc == 20 && strcmp(argv[1], "--aegis-isolation-probe") == 0) {
         char *translated[21];
         for (int i = 0; i < argc; ++i) translated[i] = argv[i];

@@ -63,7 +63,11 @@ class SyntheticAdapterFixtureTests(unittest.TestCase):
             self.assertEqual((case.returncode, case.stderr), (0, b""))
             self.assertIsNone(select_failure_reason(missing_anchor=False,
                 invocation_failed=False, raw_output=case.stdout))
-            for suffix in ([], ["--aegis-synthetic-case", "bad", "--"],
+            empty_request = subprocess.run([str(self.executable)], input=b"",
+                                           capture_output=True, timeout=5)
+            self.assertEqual((empty_request.returncode, empty_request.stdout,
+                              empty_request.stderr), (65, b"", b""))
+            for suffix in (["--aegis-synthetic-case", "bad", "--"],
                            ["--aegis-isolation-probe"],
                            ["--aegis-synthetic-case", "argv_literal", "--", "extra"],
                            ["--aegis-synthetic-case", "argv_literal", "--"]):

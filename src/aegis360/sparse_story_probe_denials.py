@@ -454,6 +454,52 @@ class _ClaimedProbedBatch:
         return self._run_fixed_synthetic_case_once(case_id, b"",
             frozen_row=frozen_row)
 
+    def _run_private_scheduled_packet_once(self, schedule):
+        """Run one ordinary synthetic packet from its exact retained request."""
+        from . import sparse_story_batch_policy as batch_policy
+        from .sparse_story_private_packet_schedule import _PrivateSyntheticPacketSchedule
+        from .sparse_story_raw_probe_transport import _run_native_process
+
+        if (type(schedule) is not _PrivateSyntheticPacketSchedule
+                or schedule._claim is not self or self._invoked
+                or self._last_stimulus is not None
+                or self._session._invocation_capture is not None
+                or self._session._prepared_owner is not None):
+            raise ValueError("scheduled packet requires one uninvoked retained claim")
+        schedule.revalidate()
+        self.revalidate()
+        candidate = self._session._candidate
+        live = batch_policy._require_live(candidate._facade)
+        if live._adapter_binding._runtime._entrypoint != "bin/aegis-synthetic-adapter":
+            raise ValueError("scheduled synthetic packet requires fixture runtime")
+        request = candidate._request_bytes
+        if type(request) is not bytes or not 1 <= len(request) <= 1_048_576:
+            raise ValueError("scheduled packet request is invalid")
+        self._invoked = True
+        self._session._invocation_started = True
+
+        def postvalidate():
+            self.revalidate()
+            if candidate._request_bytes != request:
+                raise ValueError("scheduled packet request changed")
+
+        try:
+            capture = _run_native_process(candidate, (), postvalidate=postvalidate,
+                request_bytes=request, launch_ledger=self._launch_ledger)
+        except BaseException:
+            if self._launch_ledger.count == 0:
+                # No process was recorded. The claim stays spent, but the
+                # retained scratch can be closed through the no-spawn path.
+                self._session._invocation_started = False
+            raise
+        self._session._invocation_capture = capture
+        self.revalidate()
+        schedule.revalidate(allow_invoked=True)
+        if capture.completed:
+            from .sparse_story_semantics import _strict_raw
+            _strict_raw(capture.stdout)
+        return capture
+
     def _run_fixed_synthetic_case_once(self, case_id, request_bytes,
             frozen_row=None):
         capture = self._execute_fixed_synthetic_case_once(case_id,
