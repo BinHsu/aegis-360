@@ -158,8 +158,9 @@ def canonical_case_result_bytes(value, *, proof):
     return canonical_bytes(value)
 
 
-def canonical_run_result_bytes(*args, **kwargs):
-    raise AuthorityUnavailable("aggregate serialization requires coordinator-owned raw proofs")
+def canonical_run_result_bytes(value, *, proof=None):
+    validate_run_result(value, proof=proof)
+    return _canonical(value)
 def _is_sha(value): return isinstance(value, str) and SHA.fullmatch(value) is not None
 
 
@@ -677,8 +678,46 @@ def validate_run_result_shape(value):
         raise ValueError("pre-invocation failure has invocation")
 
 
-def derive_run_result(*args, **kwargs):
-    raise AuthorityUnavailable("aggregate authority requires coordinator-owned raw proofs")
+def derive_run_result(*, proof=None, **unsupported):
+    """Derive only the completed, cleaned one-packet synthetic gate."""
+    from .sparse_story_private_gate_evidence import _PrivateFinalizedSyntheticGate
+
+    if unsupported or type(proof) is not _PrivateFinalizedSyntheticGate:
+        raise AuthorityUnavailable("aggregate requires a finalized synthetic gate")
+    proof.revalidate()
+    inputs = dict(proof.input_hashes)
+    receipt = json.loads(proof._run_receipt_bytes)
+    result = derive_case_result(proof=proof)
+    manifest = json.loads(proof._case_manifest_bytes)
+    capability = json.loads(proof._capability_bytes)
+    if (receipt["packet_id"] != proof.packet_id
+            or receipt["execution"]["invocation_count"] != 1
+            or receipt["execution"]["invocation_failed"]
+            or receipt["execution"]["stdout_sha256"] != proof.evidence_sha256
+            or capability["backend_manifest_sha256"]
+                != inputs["backend_manifest_sha256"]
+            or capability["compiled_policy_sha256"]
+                != inputs["compiled_policy_sha256"]
+            or capability["runner_policy_sha256"]
+                != inputs["runner_policy_sha256"]
+            or result["repeatability"]["packet_id"] != proof.packet_id
+            or not result["repeatability"]["equal"]
+            or any(row["passed"] is not True for row in result["cases"])):
+        raise ValueError("finalized synthetic gate is not a pass")
+    value = {"schema_version": RUN_RESULT_SCHEMA, "run_kind": "synthetic_gate",
+        "inputs": {**inputs,
+            "synthetic_adapter_manifest_sha256": manifest[
+                "synthetic_adapter_manifest_sha256"],
+            "synthetic_case_manifest_sha256": proof.case_manifest_sha256,
+            "synthetic_case_result_sha256": proof.case_result_sha256,
+            "failure_stage": "none"},
+        "packets": [{"packet_id": proof.packet_id, "invocation_count": 1,
+            "receipt_sha256": proof.receipt_sha256,
+            "evidence_sha256": proof.evidence_sha256}],
+        "runner_outcome": "pass", "privacy": dict(PRIVACY),
+        "authority": dict(RESULT_AUTHORITY)}
+    validate_run_result_shape(value)
+    return value
 
 
 def build_run_result(*args, **kwargs):
@@ -686,8 +725,12 @@ def build_run_result(*args, **kwargs):
     raise AuthorityUnavailable("aggregate construction requires coordinator-owned raw proofs")
 
 
-def validate_run_result(*args, **inputs):
-    raise AuthorityUnavailable("authoritative aggregate validation requires raw proofs")
+def validate_run_result(value=None, *, proof=None, **unsupported):
+    if unsupported or value is None:
+        raise AuthorityUnavailable("aggregate requires a finalized synthetic gate")
+    validate_run_result_shape(value)
+    if _canonical(value) != _canonical(derive_run_result(proof=proof)):
+        raise ValueError("aggregate differs from finalized synthetic gate")
 
 
 def derive_runner_outcome(*args, **kwargs):

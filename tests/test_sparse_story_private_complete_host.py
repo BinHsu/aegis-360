@@ -42,10 +42,15 @@ from aegis360.sparse_story_private_gate_evidence import (  # noqa: E402
     _finalize_private_synthetic_gate_once,
 )
 from aegis360.sparse_story_private_run_publication import _OwnedPrivateRunRoot  # noqa: E402
+from aegis360.sparse_story_synthetic_aggregate_publication import (  # noqa: E402
+    _OwnedSyntheticAggregateRoot,
+)
 from aegis360.sparse_story_probe_denials import _open_retained_probed_batch  # noqa: E402
 from aegis360.sparse_story_runner_contract import (  # noqa: E402
     CASE_SPECS, canonical_bytes, canonical_case_result_bytes,
-    derive_case_result, validate_case_result, validate_case_result_shape,
+    canonical_run_result_bytes, derive_case_result, derive_run_result,
+    validate_case_result, validate_case_result_shape, validate_run_result,
+    validate_run_result_shape,
 )
 from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
     _freeze_private_synthetic_adapter_schedule,
@@ -265,6 +270,24 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                 self.assertFalse(finalized.authority)
                 self.assertEqual(len(finalized.input_hashes), 5)
                 self.assertIs(finalized.revalidate(), finalized)
+                aggregate = derive_run_result(proof=finalized)
+                self.assertEqual(aggregate["runner_outcome"], "pass")
+                self.assertEqual(aggregate["packets"][0]["packet_id"], packet_id)
+                validate_run_result(aggregate, proof=finalized)
+                encoded_aggregate = canonical_run_result_bytes(aggregate,
+                    proof=finalized)
+                changed_aggregate = json.loads(encoded_aggregate)
+                changed_aggregate["inputs"]["capability_receipt_sha256"] = "0" * 64
+                validate_run_result_shape(changed_aggregate)
+                with self.assertRaises(ValueError):
+                    validate_run_result(changed_aggregate, proof=finalized)
+                aggregate_owner = _OwnedSyntheticAggregateRoot(private_parent)
+                published_aggregate = aggregate_owner.publish_once(proof=finalized)
+                self.assertEqual(published_aggregate.revalidate(), encoded_aggregate)
+                self.assertEqual((aggregate_owner.root / "result.json").read_bytes(),
+                    encoded_aggregate)
+                with self.assertRaises(ValueError):
+                    aggregate_owner.publish_once(proof=finalized)
                 snapshot_bytes = finalized._case_result_bytes
                 snapshot_hash = finalized.case_result_sha256
                 alternate_snapshot = json.loads(snapshot_bytes)
@@ -300,6 +323,8 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                 try:
                     with self.assertRaises(ValueError):
                         finalized.revalidate()
+                    with self.assertRaises(ValueError):
+                        published_aggregate.revalidate()
                 finally:
                     restored.rmdir()
                 missing_publication = scheduled_owner.root.with_name(

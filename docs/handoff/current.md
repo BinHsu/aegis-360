@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-17T17:10:03+08:00
+Updated: 2026-10-17T17:15:03+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -19,31 +19,21 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-Public scheduled run-receipt derivation and validation now require the exact
-live published pair and native capture; a shape-valid changed receipt,
-replaced peer or closed owner fails. Before the ordinary packet call, the
-schedule captures publicly validated capability bytes. Before closing all 40
-owners, the finalizer captures publicly validated run-receipt bytes; its
-in-process snapshot seals both alongside case result and manifest, and checks
-their hashes after cleanup. The combined three-case scheduled/40-owner host
-gate passes. Portable discovery initially found two old test assumptions
-(public receipt still closed; synthetic fake schedule without a validated
-capability); both were corrected, and 911 tests now pass with 97 skipped.
-Public aggregate authority and its publisher remain closed.
-
-Public capability derivation, validation and serialization now require the
-exact live, uninvoked synthetic schedule and revalidate its native probe event,
-14 raw outcomes and policy-bound receipt. Host controls reject a copied capture,
-changed policy, shape-valid divergent receipt and closed owner; the two-case
-scheduled host module passes. Public case-result authority accepts the live
-39-claim proof and a separate post-cleanup branch backed by an in-process
-sealed snapshot of canonical result/manifest bytes. A shape-valid altered
-result with a recomputed hash fails both boundaries. The native 40-owner host
-gate passes; portable discovery runs 911 tests with 97 skipped. The public
-aggregate and scheduled run receipt remain closed. The snapshot carries prior
-validation across cleanup; it is not a cryptographic signature. The Claude
-Opus 5.5 review, rejected `allow default` control and unresolved policy
-attribution scope are recorded in the aggregate gap design note.
+The completed local synthetic gate now derives a one-packet public
+`synthetic_gate=pass` aggregate only from the exact 40-owner finalized proof.
+Before cleanup, public capability, scheduled run receipt and case-result bytes
+were validated; the finalized in-process snapshot seals those bytes plus exact
+private schedule lineage, manifest and published peer hashes. After cleanup it
+rechecks all 40 scratch roots absent and the exact two scheduled peers. The
+aggregate publisher writes one exclusive `result.json` under an owned root and
+reads the exact bytes back. A shape-valid changed capability hash and a
+recreated scratch path reject authority/publication. The native 40-owner host
+gate and portable discovery (911 tests, 97 skipped) pass. This is local
+runner-operational synthetic evidence only: no real model/media acquisition,
+semantic result, Stage A/B run or production render. The next acceptance gate
+is authorized push followed by exact-SHA green CI. Claude Opus 5.5's policy
+attribution question and the rejected `allow default` proposal are recorded in
+the aggregate boundary design note; no kernel attestation is claimed.
 
 Local private scheduled synthetic packet milestone after published `0522221`:
 a retained one-packet private schedule binds the claim, canonical request,
@@ -181,12 +171,11 @@ defined, not a public protocol schema. No model or media was acquired.
 
 ## Pending
 
-- Public capability is scoped to the live uninvoked synthetic schedule;
-  public run receipt is scoped to the live published pair; public case result
-  has live and finalized-snapshot branches. Aggregate authority remains closed.
-  Next derive the aggregate from the exact finalized proof, publish it
-  exclusively, then read it back. See the aggregate gap
-  design note. No acquisition is authorized.
+- The completed synthetic gate aggregate and its exact-byte publication pass
+  locally. Push and verify green CI for the exact commit before starting the
+  next milestone. Stage A/B, semantic output, real media/model acquisition and
+  production rendering remain outside this result. See the aggregate boundary
+  design note.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands

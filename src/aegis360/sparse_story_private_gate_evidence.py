@@ -121,7 +121,7 @@ class _PrivateFinalizedSyntheticGate:
 
     __slots__ = ("_token", "_sessions", "_publication", "packet_id",
         "input_hashes", "case_result_sha256", "case_manifest_sha256",
-        "_case_result_bytes", "_case_manifest_bytes", "_capability_bytes",
+        "_case_result_bytes", "_case_manifest_bytes", "_schedule_bytes", "_capability_bytes",
         "_run_receipt_bytes", "receipt_sha256",
         "evidence_sha256", "authority", "_seal")
 
@@ -133,6 +133,7 @@ class _PrivateFinalizedSyntheticGate:
             self.case_result_sha256, self.case_manifest_sha256,
             hashlib.sha256(self._case_result_bytes).hexdigest(),
             hashlib.sha256(self._case_manifest_bytes).hexdigest(),
+            hashlib.sha256(self._schedule_bytes).hexdigest(),
             hashlib.sha256(self._capability_bytes).hexdigest(),
             hashlib.sha256(self._run_receipt_bytes).hexdigest(),
             self.receipt_sha256,
@@ -144,7 +145,7 @@ class _PrivateFinalizedSyntheticGate:
             separators=(",", ":")).encode()).hexdigest()
 
     def __init__(self, token, sessions, publication, source,
-            case_result_bytes, case_manifest_bytes, capability_bytes,
+            case_result_bytes, case_manifest_bytes, schedule_bytes, capability_bytes,
             run_receipt_bytes):
         if token is not _FINALIZED_TOKEN:
             raise TypeError("finalized gate requires owned cleanup")
@@ -161,6 +162,7 @@ class _PrivateFinalizedSyntheticGate:
             source.case_result._complete.manifest_sha256)
         object.__setattr__(self, "_case_result_bytes", case_result_bytes)
         object.__setattr__(self, "_case_manifest_bytes", case_manifest_bytes)
+        object.__setattr__(self, "_schedule_bytes", schedule_bytes)
         object.__setattr__(self, "_capability_bytes", capability_bytes)
         object.__setattr__(self, "_run_receipt_bytes", run_receipt_bytes)
         object.__setattr__(self, "receipt_sha256", source.receipt_sha256)
@@ -177,6 +179,7 @@ class _PrivateFinalizedSyntheticGate:
         )
         if (type(self._case_result_bytes) is not bytes
                 or type(self._case_manifest_bytes) is not bytes
+                or type(self._schedule_bytes) is not bytes
                 or type(self._capability_bytes) is not bytes
                 or type(self._run_receipt_bytes) is not bytes):
             raise ValueError("private gate case result snapshot differs")
@@ -190,6 +193,9 @@ class _PrivateFinalizedSyntheticGate:
                 repeat_packet_id=manifest.get("repeat_packet_id"))
             result_bytes = canonical_case_result_shape_bytes(result,
                 case_manifest=manifest)
+            schedule_bytes = json.dumps(json.loads(self._schedule_bytes),
+                allow_nan=False, ensure_ascii=True, sort_keys=True,
+                separators=(",", ":")).encode()
             capability_bytes = canonical_capability_receipt_shape_bytes(
                 json.loads(self._capability_bytes))
             run_receipt_bytes = canonical_run_receipt_shape_bytes(
@@ -207,6 +213,9 @@ class _PrivateFinalizedSyntheticGate:
                 or self._seal != self._seal_hash()
                 or self._case_manifest_bytes != manifest_bytes
                 or self._case_result_bytes != result_bytes
+                or self._schedule_bytes != schedule_bytes
+                or hashlib.sha256(schedule_bytes).hexdigest()
+                    != dict(self.input_hashes)["schedule_sha256"]
                 or self._capability_bytes != capability_bytes
                 or self._run_receipt_bytes != run_receipt_bytes
                 or hashlib.sha256(capability_bytes).hexdigest()
@@ -264,7 +273,11 @@ def _finalize_private_synthetic_gate_once(proof):
                 != proof.case_result._complete.manifest_sha256):
         raise ValueError("live case result snapshot differs")
     schedule = proof.publication.receipt._schedule
-    schedule.revalidate(allow_invoked=True)
+    schedule_bytes = schedule.revalidate(allow_invoked=True)
+    if (schedule_bytes != schedule.schedule_bytes
+            or hashlib.sha256(schedule_bytes).hexdigest()
+                != proof.schedule_sha256):
+        raise ValueError("validated private schedule snapshot differs")
     capability_bytes = schedule._validated_capability_bytes
     if (type(capability_bytes) is not bytes
             or capability_bytes != schedule._claim.receipt_bytes()
@@ -287,4 +300,4 @@ def _finalize_private_synthetic_gate_once(proof):
         session.close()
     return _PrivateFinalizedSyntheticGate(_FINALIZED_TOKEN, sessions,
         proof.publication, proof, case_result_bytes, case_manifest_bytes,
-        capability_bytes, run_receipt_bytes)
+        schedule_bytes, capability_bytes, run_receipt_bytes)

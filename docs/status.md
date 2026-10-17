@@ -190,10 +190,10 @@ specific directing question. No new video is currently awaiting owner review.
   stdout repeats pass host gates.
 
 ## Next action
-Public capability authority is scoped to a live uninvoked synthetic schedule;
-public run receipt to the live published pair; public case result to a live
-proof or separately sealed post-cleanup snapshot. The final snapshot retains
-validated capability and receipt bytes across cleanup. Portable discovery
-passes 911 with 97 skipped; the combined 40-owner/scheduled host gate passes.
-Next derive public aggregate authority from the exact finalized proof, publish
-exclusively and read back. The aggregate remains closed; see the design gap.
+The completed one-packet synthetic gate now derives a public
+`synthetic_gate=pass` aggregate from the exact finalized 40-owner proof and
+publishes one exclusive `result.json` with exact-byte readback. A changed
+capability hash or recreated scratch path rejects authority. Portable
+discovery passes 911 with 97 skipped; the native 40-owner host gate passes.
+Next publish this local milestone only with owner send code, then verify green
+CI for the exact pushed SHA. Stage A/B and semantic results remain closed.
