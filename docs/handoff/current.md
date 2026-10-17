@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-16T13:37:04+08:00
+Updated: 2026-10-17T11:52:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -18,6 +18,18 @@ direction is cheap-signal scheduling followed by sparse, closed semantic
 observations without per-frame VLM inference.
 
 ## Last completed milestone
+
+The retained private capability receipt now checks the exact native probe
+launch event and the retained `--aegis-isolation-probe` suffix on every rebuild.
+A copied capture and changed mode both fail the host regression. The first
+host run exposed a suffix-lifetime error because owned sentinels had already
+closed; retaining the suffix before the launch fixed it. The focused host test
+passes, the raw-probe host module runs 67 tests with none skipped, and portable
+discovery runs 911 tests with 97 skipped. This tightens private evidence only;
+public capability, case-result and aggregate authority remain closed. Read-only
+parallel audits found that case-result authority needs a live 39-claim proof,
+while capability authority still needs an explicit installed-policy evidence
+review before opening its public API.
 
 Local private scheduled synthetic packet milestone after published `0522221`:
 a retained one-packet private schedule binds the claim, canonical request,
@@ -159,9 +171,10 @@ defined, not a public protocol schema. No model or media was acquired.
   evidence but no public capability, case-result or aggregate authority. See
   the aggregate gap design note.
   Read-only audits found shape checks but no public proof derivation. Next
-  implement capability and case-result authority from retained live proofs,
-  separately, with mutation controls; then bind the aggregate. Public APIs
-  stay closed; no acquisition is authorized.
+  review exact installed-policy evidence, then implement capability and
+  case-result authority from retained live proofs separately, with mutation
+  controls; then bind the aggregate. Public APIs stay closed; no acquisition
+  is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
@@ -171,6 +184,7 @@ cd ~/Documents/aegis-360
 git status --short --branch
 python3 -m unittest discover -s tests -q
 python3 -m unittest tests.test_sparse_story_projection tests.test_sparse_story_media_tree -q
+AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_raw_probe_transport -q
 AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_private_complete_host -v
 python3 scripts/check_handoff.py
 git diff --check

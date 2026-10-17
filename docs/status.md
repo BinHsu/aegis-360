@@ -190,11 +190,10 @@ specific directing question. No new video is currently awaiting owner review.
   stdout repeats pass host gates.
 
 ## Next action
-The private 40-claim proof joins the 37 ordered cases, two repeats and one
-separate scheduled packet with live runtime, schedule, backend, policy,
-capability receipt and peer hashes. All 40 owned sessions close and the
-private final snapshot rechecks exact owner/peer paths. Read-only audits
-identified live-proof derivation as the next capability and case-result
-boundary; implement and mutation-test those before aggregate publication. The separate scheduled synthetic
-packet, its private receipt and exclusive evidence/receipt peers now pass the
-Seatbelt host gate. Public authority remains closed.
+The private capability receipt now rejects a copied native probe capture or
+changed probe-mode suffix. The raw-probe host module passes 67 tests; portable
+discovery passes 911 with 97 skipped. Review how the launcher establishes
+installation of the exact policy bytes before opening public capability
+authority. Separately derive case-result authority from the live 39-claim
+proof with a shape-valid mutation control. Only then bind the aggregate.
+Public capability, case-result and aggregate authority remain closed.

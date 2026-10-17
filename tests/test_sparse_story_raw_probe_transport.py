@@ -288,6 +288,18 @@ class RawProbeTransportHostTests(unittest.TestCase):
                 hashlib.sha256(candidate._runner_policy_bytes).hexdigest())
             self.assertEqual(set(receipt["matrix"]), set(MATRIX_KEYS))
             self.assertTrue(all(value is True for value in receipt["matrix"].values()))
+            original_capture = session._capture
+            session._capture = replace(original_capture)
+            with self.assertRaisesRegex(ValueError, "launch event"):
+                session.revalidate()
+            session._capture = original_capture
+            session.revalidate()
+            original_suffix = session._probe_suffix
+            session._probe_suffix = ("--aegis-synthetic-case",)
+            with self.assertRaisesRegex(ValueError, "mode differs"):
+                session.revalidate()
+            session._probe_suffix = original_suffix
+            session.revalidate()
             with self.assertRaisesRegex(ValueError, "already claimed"):
                 session.claim_once()
             self.assertFalse(inputs["outside"].root.exists())

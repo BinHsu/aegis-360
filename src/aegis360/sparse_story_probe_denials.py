@@ -224,13 +224,14 @@ class _RetainedProbedBatch:
     """
 
     def __init__(self, candidate, batch_scratch, capture, binding, receipt_bytes,
-                 probe_prefixes):
+                 probe_prefixes, probe_suffix):
         self._candidate = candidate
         self._batch_scratch = batch_scratch
         self._capture = capture
         self._binding = binding
         self._receipt_bytes = receipt_bytes
         self._probe_prefixes = probe_prefixes
+        self._probe_suffix = probe_suffix
         self._closed = False
         self._claimed = False
         self._invocation_started = False
@@ -245,7 +246,7 @@ class _RetainedProbedBatch:
                 or self._candidate._binding_bytes() != self._binding):
             raise ValueError("retained probe batch changed")
         if _rebuild_private_probe_receipt(self._candidate, self._capture,
-                self._probe_prefixes) != self._receipt_bytes:
+                self._probe_prefixes, self._probe_suffix) != self._receipt_bytes:
             raise ValueError("retained probe receipt changed")
         self._batch_scratch.revalidate()
 
@@ -849,11 +850,13 @@ class _PrivateSyntheticObservation:
         raise TypeError("private observations cannot be pickled")
 
 
-def _rebuild_private_probe_receipt(candidate, capture, prefixes):
+def _rebuild_private_probe_receipt(candidate, capture, prefixes, suffix):
     from .sparse_story_probe_transcript import (
         _check_probe_row_values, parse_isolation_probe_transcript,
     )
-    from .sparse_story_raw_probe_transport import _RawProbeCapture
+    from .sparse_story_raw_probe_transport import (
+        _RawProbeCapture, _verify_native_launch_event,
+    )
     from .sparse_story_runner_contract import (
         CAPABILITY_SCHEMA, MATRIX_KEYS, canonical_capability_receipt_shape_bytes,
     )
@@ -865,6 +868,10 @@ def _rebuild_private_probe_receipt(candidate, capture, prefixes):
             or capture.returncode != 0 or type(prefixes) is not tuple
             or len(prefixes) != 3 or any(type(value) is not bytes for value in prefixes)):
         raise ValueError("private probe receipt inputs are invalid")
+    if (type(suffix) is not tuple or not suffix
+            or suffix[0] != "--aegis-isolation-probe"):
+        raise ValueError("private probe mode differs")
+    _verify_native_launch_event(capture, candidate=candidate, suffix=suffix)
     rows = parse_isolation_probe_transcript(capture.stdout)
     matrix = _check_probe_row_values(rows, bundle_prefix=prefixes[0],
         model_prefix=prefixes[1], prompt_prefix=prefixes[2])
@@ -945,6 +952,7 @@ def _open_retained_probed_batch(*, candidate, batch_scratch, outside,
                 protocol=protocol, neighbor=neighbor, result=result,
                 outside=outside.snapshot, scratch=scratch.snapshot,
                 listeners=listeners.listeners)
+            suffix = context.argv_suffix()
             capture = _run_owned_raw_probe(context, outside=outside,
                 scratch=scratch, listeners=listeners)
         if not capture.completed:
@@ -953,9 +961,10 @@ def _open_retained_probed_batch(*, candidate, batch_scratch, outside,
         batch_scratch.revalidate()
         bundle, model, prompt = context.allowed
         prefixes = (bundle.prefix, model.prefix, prompt.prefix)
-        receipt_bytes = _rebuild_private_probe_receipt(candidate, capture, prefixes)
+        receipt_bytes = _rebuild_private_probe_receipt(
+            candidate, capture, prefixes, suffix)
         session = _RetainedProbedBatch(candidate, batch_scratch, capture, binding,
-            receipt_bytes, prefixes)
+            receipt_bytes, prefixes, suffix)
         session.revalidate()
         return session
     except BaseException:
