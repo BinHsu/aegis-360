@@ -31,13 +31,20 @@ semantic evidence sparse and prohibits the model from commanding the camera.
 
 ## Next implementation boundary
 
-Implement a dependency-free lineage builder that exact-rebuilds the six
-private packets from a frozen execution manifest, source, timeline, grid and
-selection evidence. Rejected IDs, hashes, centers, view order or rows must fail
-before a packet reaches the existing projection gate. Synthetic fixtures can
-prove this contract without reading media or invoking a model. Then build the
-real Skiing timeline/grid and six diagnostic packets, and only after their
-lineage is verified make the sanitized PNG inputs.
+The dependency-free `sparse_story_stage_a_lineage.py` now rebuilds six
+ordered private packets from a frozen manifest and caller-supplied source,
+timeline and grid evidence. It hashes exact raw manifest/timeline/grid JSON
+bytes, rejects duplicate keys and nonfinite values, and checks selected
+proposal IDs/timestamps, rational centers, cardinal view order, row offsets and
+packet hashes. A controlled mutation is accepted by the old shape validator
+but rejected by exact lineage. Five focused tests and full portable discovery
+(919 tests, 97 skipped) pass. The manifest schema is explicitly `synthetic.v1`:
+this is a preflight contract, not a real source or semantic claim.
+
+Next, verify source bytes against the declared source SHA-256 and exact-rebuild
+each v2 timeline from its upstream scene/reaction evidence. Then build the real
+Skiing timeline/grid and six diagnostic packets, and only after their lineage
+is verified make sanitized PNG inputs. No model has run.
 
 The runner's frozen v1 asset rule requires a directly executable ARM64 Mach-O
 entrypoint. The installed MLX Python script cannot be passed as that runtime.

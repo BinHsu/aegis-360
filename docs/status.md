@@ -5,9 +5,9 @@
 The synthetic adapter gate is published at `BinHsu/aegis-360@4478a4d` with
 exact-SHA green CI. It proves runner operation on a synthetic fixture, not
 semantic model quality. A neutral Stage A prompt/schema bundle now matches the 11-field binder. The
-installed 2.2B weight leaf matches its manifest hash. Stage A still needs
-source-derived private packets and a native model adapter; the next milestone
-is the six-packet lineage builder.
+installed 2.2B weight leaf matches its manifest hash. The six-packet lineage preflight now exact-rebuilds packet bytes from frozen
+raw JSON evidence. Stage A still needs verified source and upstream timeline
+derivation, genuine packets and a native model adapter.
 
 The offline analysis-to-render architecture targets the M4/16 GB Mac.
 The frozen Skiing chapter proposal failed blind review; it remains rejected.
