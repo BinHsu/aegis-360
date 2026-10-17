@@ -15,7 +15,9 @@ semantic evidence sparse and prohibits the model from commanding the camera.
 
 - The installed SmolVLM2 2.2B MLX BF16 `model.safetensors` has the size and
   SHA-256 in `model-manifests/manifest.toml`. This verifies that one weight leaf,
-  not the complete closed model asset tree or runtime compatibility.
+  not the complete closed model asset tree or runtime compatibility. The local
+  Old Ghost Road and Skiing original media also match both size and SHA-256 in
+  `benchmarks/manifest.toml`; no new asset was acquired.
 - Old Ghost Road and Skiing originals and earlier experiment outputs exist under
   the configured external data root. No real successor private packet was found.
   The current private packet API validates supplied structure; it does not
@@ -41,10 +43,18 @@ but rejected by exact lineage. Five focused tests and full portable discovery
 (919 tests, 97 skipped) pass. The manifest schema is explicitly `synthetic.v1`:
 this is a preflight contract, not a real source or semantic claim.
 
-Next, verify source bytes against the declared source SHA-256 and exact-rebuild
-each v2 timeline from its upstream scene/reaction evidence. Then build the real
-Skiing timeline/grid and six diagnostic packets, and only after their lineage
-is verified make sanitized PNG inputs. No model has run.
+The new `sparse_story_stage_a_timeline_proof.py` exact-rebuilds a supplied v2
+timeline from raw grid, scene-candidate and optional reaction JSON bytes. It
+rejects a changed event ID even when the timeline hash is recomputed. Four
+focused tests pass, and the four existing Old Ghost v2–v5 timeline artifacts
+each rebuild from their paired grid/candidate files. This proves derivation
+from those supplied upstream JSON files, not that the scene candidates were
+extracted correctly from source pixels. Full portable discovery now runs 923
+tests with 97 skips.
+
+Next, build the real Skiing grid and timeline, freeze the six selections,
+revalidate their source and upstream evidence, and derive genuine private
+packets. Only then make sanitized PNG inputs. No model has run.
 
 The runner's frozen v1 asset rule requires a directly executable ARM64 Mach-O
 entrypoint. The installed MLX Python script cannot be passed as that runtime.

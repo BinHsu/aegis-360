@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-17T17:45:03+08:00
+Updated: 2026-10-17T17:47:05+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 4478a4d
@@ -32,8 +32,10 @@ gate and portable discovery (911 tests, 97 skipped) pass. This is local
 runner-operational synthetic evidence only: no real model/media acquisition,
 semantic result, Stage A/B run or production render. The remote push and exact-SHA green CI are complete. The local Stage A prompt/schema and synthetic six-packet lineage preflight
 now pass. The installed SmolVLM2 2.2B weight leaf matches its manifest size
-and SHA-256. Stage A still lacks source-byte and upstream timeline proofs,
-genuine private packets, a full model/prompt asset proof and native adapter. Claude Opus 5.5's policy
+and SHA-256. Old Ghost and Skiing media bytes match the benchmark manifest; four existing
+Old Ghost v2–v5 timelines rebuild from their paired upstream JSON. Stage A
+still lacks Skiing grid/timeline, genuine private packets, a full model/prompt
+asset proof and native adapter. Claude Opus 5.5's policy
 attribution question and the rejected `allow default` proposal are recorded in
 the aggregate boundary design note; no kernel attestation is claimed.
 
@@ -178,8 +180,9 @@ defined, not a public protocol schema. No model or media was acquired.
   bundle passes three contract tests; the installed 2.2B weight leaf matches
   its manifest hash. No real successor private packets or normal-mode VLM
   adapter exist. The pure six-packet lineage preflight now passes with raw-byte binding and
-  controlled shape-valid mutation rejection. Next: source-byte and upstream
-  timeline proofs, then real packet preparation; no implicit acquisition or inference.
+  controlled shape-valid mutation rejection. The Old Ghost and Skiing originals match benchmark hashes; four Old Ghost
+  timelines rebuild from upstream JSON with the new pure preflight gate. Next:
+  Skiing grid/timeline and real packet preparation; no implicit acquisition or inference.
   See `docs/design/sparse-story-stage-a-readiness.md`.
 - No production render or retuning of rejected descriptors is authorized.
 
@@ -189,7 +192,7 @@ defined, not a public protocol schema. No model or media was acquired.
 cd ~/Documents/aegis-360
 git status --short --branch
 python3 -m unittest discover -s tests -q
-python3 -m unittest tests.test_sparse_story_stage_a_prompt_bundle tests.test_sparse_story_stage_a_lineage -v
+python3 -m unittest tests.test_sparse_story_stage_a_prompt_bundle tests.test_sparse_story_stage_a_lineage tests.test_sparse_story_stage_a_timeline_proof -v
 python3 -m unittest tests.test_sparse_story_projection tests.test_sparse_story_media_tree -q
 AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_raw_probe_transport -q
 AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_private_scheduled_packet -q
