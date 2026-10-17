@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-17T11:52:00+08:00
+Updated: 2026-10-17T16:54:49+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -18,6 +18,17 @@ direction is cheap-signal scheduling followed by sparse, closed semantic
 observations without per-frame VLM inference.
 
 ## Last completed milestone
+
+One bounded Claude Opus 5.5 design review completed from the owner-approved
+2,421-byte prompt; the returned model ID, terminal completion and no-tool
+result were checked. Its proposed `allow default` differential control was
+not run or adopted because the frozen renderer excludes it and real forbidden
+operations could be allowed. Existing backend manifest already binds backend
+binary, launcher manifest and OS build. Source review confirms the private
+scheduled path already checks candidate, policy, native ordinary-mode event
+and request; public derivation from those proofs remains closed. The
+undocumented `sandbox-exec` failure claim is unverified. The design gap records
+the result and limits. Public authority remains closed.
 
 The retained private capability receipt now checks the exact native probe
 launch event and the retained `--aegis-isolation-probe` suffix on every rebuild.

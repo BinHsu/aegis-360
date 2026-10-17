@@ -190,10 +190,11 @@ specific directing question. No new video is currently awaiting owner review.
   stdout repeats pass host gates.
 
 ## Next action
-The private capability receipt now rejects a copied native probe capture or
-changed probe-mode suffix. The raw-probe host module passes 67 tests; portable
-discovery passes 911 with 97 skipped. Review how the launcher establishes
-installation of the exact policy bytes before opening public capability
-authority. Separately derive case-result authority from the live 39-claim
-proof with a shape-valid mutation control. Only then bind the aggregate.
-Public capability, case-result and aggregate authority remain closed.
+The private capability receipt rejects copied captures and changed probe mode;
+67 raw-probe host tests pass, and portable discovery passes 911 with 97 skipped.
+The independent review raised policy-attribution and scheduled-launch binding
+questions. Its `allow default` control was not run or adopted because it could
+permit forbidden operations. The private scheduled native event and policy
+binding already revalidate. Derive public capability and separate case-result
+authority from live proofs with mutation controls. Public APIs remain closed. See the
+aggregate-gap design record for evidence and limits.

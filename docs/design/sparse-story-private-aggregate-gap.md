@@ -25,6 +25,35 @@ private bytes without a separately validated authority. The scheduled fixture
 proves request transfer and EOF at the transport layer, not that the child
 interpreted the canonical request. No model or real media acquisition follows.
 
+## Capability authority review, 2026-10-17
+
+A bounded Claude Opus 5.5 design review separated launcher handoff, observed
+Seatbelt behavior and attribution. The local launcher verifies exact policy
+bytes and passes them to `sandbox-exec -p`; the retained native event and 14
+sentinel outcomes support this host-bound claim. They are not a kernel
+attestation of installed bytes or a universal confinement proof. The reviewer
+proposed an `allow default` differential run to expose denials caused by an
+outer sandbox or ordinary filesystem permissions. We did not run or adopt that
+proposal: the frozen renderer explicitly excludes `allow default`, and such a
+run could permit real forbidden read, write, process or socket operations.
+Any future attribution control needs separately bounded harmless sentinels and
+the same ownership and cleanup guarantees. This is an unsettled design question,
+not a requirement silently added to the accepted protocol.
+
+The review also questioned binding a probe to a later adapter launch. Local
+source review confirms that the backend manifest already binds the backend
+executable hash, launcher runtime manifest and OS build, while the candidate
+revalidates policy and retained roots. The private scheduled path already
+revalidates its exact candidate binding, ordinary-mode native launch event,
+request and policy before publication; its host test observes one such launch.
+The remaining work is to derive a public claim from those retained live proofs
+without silently widening their scope. The native runtime is verified by path before
+`sandbox-exec` executes it; the accepted protocol already records this
+pathname-exec gap. Keep the public API closed until the exact claim and its
+limits are explicit and tested. The review's assertion about undocumented
+`sandbox-exec` failure semantics was not independently verified and is not
+used as authority.
+
 References: `docs/experiments/sparse-story-semantic-successor-v1-2026-09-07.md`
 (Isolated adapter-runner synthetic gate; exact subordinate contracts),
 `docs/design/sparse-story-private-invocation.md`, ADR 0010.
