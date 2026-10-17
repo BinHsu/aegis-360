@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-17T17:05:02+08:00
+Updated: 2026-10-17T17:10:03+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -18,6 +18,18 @@ direction is cheap-signal scheduling followed by sparse, closed semantic
 observations without per-frame VLM inference.
 
 ## Last completed milestone
+
+Public scheduled run-receipt derivation and validation now require the exact
+live published pair and native capture; a shape-valid changed receipt,
+replaced peer or closed owner fails. Before the ordinary packet call, the
+schedule captures publicly validated capability bytes. Before closing all 40
+owners, the finalizer captures publicly validated run-receipt bytes; its
+in-process snapshot seals both alongside case result and manifest, and checks
+their hashes after cleanup. The combined three-case scheduled/40-owner host
+gate passes. Portable discovery initially found two old test assumptions
+(public receipt still closed; synthetic fake schedule without a validated
+capability); both were corrected, and 911 tests now pass with 97 skipped.
+Public aggregate authority and its publisher remain closed.
 
 Public capability derivation, validation and serialization now require the
 exact live, uninvoked synthetic schedule and revalidate its native probe event,
@@ -169,11 +181,11 @@ defined, not a public protocol schema. No model or media was acquired.
 
 ## Pending
 
-- Public capability is scoped to the live uninvoked synthetic schedule, and
-  public case-result authority has live and finalized-snapshot branches.
-  Aggregate and public scheduled receipt/publication authority remain closed.
-  Next derive the public scheduled receipt and aggregate from exact proofs,
-  publish the aggregate exclusively, then read it back. See the aggregate gap
+- Public capability is scoped to the live uninvoked synthetic schedule;
+  public run receipt is scoped to the live published pair; public case result
+  has live and finalized-snapshot branches. Aggregate authority remains closed.
+  Next derive the aggregate from the exact finalized proof, publish it
+  exclusively, then read it back. See the aggregate gap
   design note. No acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 

@@ -41,6 +41,9 @@ class _Claim:
     def revalidate(self):
         return None
 
+    def receipt_bytes(self):
+        return b"capability"
+
 
 class PrivatePacketScheduleTests(unittest.TestCase):
     def setUp(self):
@@ -127,6 +130,7 @@ class PrivatePacketScheduleTests(unittest.TestCase):
 
     def test_only_one_normal_launch_can_postvalidate(self):
         schedule = self.schedule()
+        schedule._validated_capability_bytes = self.claim.receipt_bytes()
         self.claim._invoked = True
         self.claim._session._invocation_started = True
         self.claim._launch_ledger.count = 1

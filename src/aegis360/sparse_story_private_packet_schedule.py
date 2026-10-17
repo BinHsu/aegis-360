@@ -22,7 +22,8 @@ class _PrivateSyntheticPacketSchedule:
     """
 
     __slots__ = ("_claim", "_candidate", "_case_manifest", "_manifest_bytes",
-        "_request_bytes", "_binding_sha256", "packet_id", "request_sha256",
+        "_request_bytes", "_binding_sha256", "_validated_capability_bytes",
+        "packet_id", "request_sha256",
         "projection_sha256", "case_manifest_sha256", "schedule_bytes",
         "schedule_sha256")
 
@@ -72,6 +73,7 @@ class _PrivateSyntheticPacketSchedule:
         self._manifest_bytes = manifest_bytes
         self._request_bytes = request_bytes
         self._binding_sha256 = binding_sha256
+        self._validated_capability_bytes = None
         self.packet_id = packet_id
         self.request_sha256 = request_sha256
         self.projection_sha256 = projection_sha256
@@ -93,7 +95,9 @@ class _PrivateSyntheticPacketSchedule:
         if allow_invoked:
             if (not claim._invoked or not claim._session._invocation_started
                     or count != 1 or claim._launch_ledger._event is None
-                    or claim._launch_ledger._event.mode != "adapter"):
+                    or claim._launch_ledger._event.mode != "adapter"
+                    or type(self._validated_capability_bytes) is not bytes
+                    or self._validated_capability_bytes != claim.receipt_bytes()):
                 raise ValueError("private scheduled invocation is absent")
             capture = claim._session._invocation_capture
             if capture is not None:

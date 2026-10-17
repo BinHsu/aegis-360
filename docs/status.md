@@ -191,9 +191,9 @@ specific directing question. No new video is currently awaiting owner review.
 
 ## Next action
 Public capability authority is scoped to a live uninvoked synthetic schedule;
-public case-result authority accepts its live proof and a separately sealed
-post-cleanup snapshot. Host controls reject copied captures, changed policy and
-shape-valid divergent results. Portable discovery passes 911 with 97 skipped;
-the 40-owner host gate passes. Next derive the public scheduled receipt and
-aggregate from exact proofs, publish exclusively and read back. The aggregate
-and public scheduled receipt remain closed; see the aggregate-gap design note.
+public run receipt to the live published pair; public case result to a live
+proof or separately sealed post-cleanup snapshot. The final snapshot retains
+validated capability and receipt bytes across cleanup. Portable discovery
+passes 911 with 97 skipped; the combined 40-owner/scheduled host gate passes.
+Next derive public aggregate authority from the exact finalized proof, publish
+exclusively and read back. The aggregate remains closed; see the design gap.

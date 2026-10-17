@@ -146,8 +146,10 @@ def canonical_capability_receipt_bytes(value, *, schedule=None):
     return _canonical(value)
 
 
-def canonical_run_receipt_bytes(*args, **kwargs):
-    raise AuthorityUnavailable("run receipt serialization requires an attested capture and coordinator")
+def canonical_run_receipt_bytes(value, *, publication=None):
+    """Serialize only a receipt backed by live, published native evidence."""
+    validate_run_receipt(value, publication=publication)
+    return _canonical(value)
 
 
 def canonical_case_result_bytes(value, *, proof):
@@ -491,8 +493,27 @@ def derive_capability_receipt(*, schedule=None, **unsupported):
     return json.loads(_scheduled_capability_bytes(schedule))
 
 
-def derive_run_receipt(*args, **kwargs):
-    raise AuthorityUnavailable("run receipt authority requires an attested capture and coordinator")
+def _scheduled_run_receipt_bytes(publication):
+    from .sparse_story_private_scheduled_publication import _PrivateScheduledPublication
+
+    if type(publication) is not _PrivateScheduledPublication:
+        raise AuthorityUnavailable(
+            "run receipt requires an exact scheduled publication proof")
+    try:
+        publication.revalidate()
+    except OSError as error:
+        raise ValueError("scheduled publication is unavailable") from error
+    return publication.receipt.bytes
+
+
+def derive_run_receipt(*, publication=None, **unsupported):
+    if unsupported:
+        raise AuthorityUnavailable(
+            "run receipt requires an exact scheduled publication proof")
+    encoded = _scheduled_run_receipt_bytes(publication)
+    value = json.loads(encoded)
+    validate_run_receipt_shape(value)
+    return value
 
 
 def validate_capability_receipt(value, *, schedule=None):
@@ -501,8 +522,11 @@ def validate_capability_receipt(value, *, schedule=None):
         raise ValueError("capability differs from scheduled probe")
 
 
-def validate_run_receipt(*args, **kwargs):
-    raise AuthorityUnavailable("run receipt validation requires an attested capture and coordinator")
+def validate_run_receipt(value, *, publication=None):
+    expected = _scheduled_run_receipt_bytes(publication)
+    validate_run_receipt_shape(value)
+    if _canonical(value) != expected:
+        raise ValueError("run receipt differs from scheduled publication")
 
 
 def build_case_manifest(*, synthetic_adapter_manifest_sha256: str,

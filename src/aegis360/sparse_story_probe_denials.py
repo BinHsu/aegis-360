@@ -476,6 +476,12 @@ class _ClaimedProbedBatch:
         request = candidate._request_bytes
         if type(request) is not bytes or not 1 <= len(request) <= 1_048_576:
             raise ValueError("scheduled packet request is invalid")
+        from .sparse_story_runner_contract import (
+            canonical_capability_receipt_bytes, derive_capability_receipt,
+        )
+        capability = derive_capability_receipt(schedule=schedule)
+        schedule._validated_capability_bytes = canonical_capability_receipt_bytes(
+            capability, schedule=schedule)
         self._invoked = True
         self._session._invocation_started = True
 

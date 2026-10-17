@@ -121,7 +121,8 @@ class _PrivateFinalizedSyntheticGate:
 
     __slots__ = ("_token", "_sessions", "_publication", "packet_id",
         "input_hashes", "case_result_sha256", "case_manifest_sha256",
-        "_case_result_bytes", "_case_manifest_bytes", "receipt_sha256",
+        "_case_result_bytes", "_case_manifest_bytes", "_capability_bytes",
+        "_run_receipt_bytes", "receipt_sha256",
         "evidence_sha256", "authority", "_seal")
 
     def __setattr__(self, _name, _value):
@@ -132,6 +133,8 @@ class _PrivateFinalizedSyntheticGate:
             self.case_result_sha256, self.case_manifest_sha256,
             hashlib.sha256(self._case_result_bytes).hexdigest(),
             hashlib.sha256(self._case_manifest_bytes).hexdigest(),
+            hashlib.sha256(self._capability_bytes).hexdigest(),
+            hashlib.sha256(self._run_receipt_bytes).hexdigest(),
             self.receipt_sha256,
             self.evidence_sha256, id(self._publication), tuple(
                 (id(session), str(session._batch_scratch.root),
@@ -141,7 +144,8 @@ class _PrivateFinalizedSyntheticGate:
             separators=(",", ":")).encode()).hexdigest()
 
     def __init__(self, token, sessions, publication, source,
-            case_result_bytes, case_manifest_bytes):
+            case_result_bytes, case_manifest_bytes, capability_bytes,
+            run_receipt_bytes):
         if token is not _FINALIZED_TOKEN:
             raise TypeError("finalized gate requires owned cleanup")
         object.__setattr__(self, "_token", token)
@@ -157,6 +161,8 @@ class _PrivateFinalizedSyntheticGate:
             source.case_result._complete.manifest_sha256)
         object.__setattr__(self, "_case_result_bytes", case_result_bytes)
         object.__setattr__(self, "_case_manifest_bytes", case_manifest_bytes)
+        object.__setattr__(self, "_capability_bytes", capability_bytes)
+        object.__setattr__(self, "_run_receipt_bytes", run_receipt_bytes)
         object.__setattr__(self, "receipt_sha256", source.receipt_sha256)
         object.__setattr__(self, "evidence_sha256", source.evidence_sha256)
         object.__setattr__(self, "authority", False)
@@ -165,10 +171,14 @@ class _PrivateFinalizedSyntheticGate:
 
     def revalidate(self):
         from .sparse_story_runner_contract import (
+            canonical_capability_receipt_shape_bytes,
             canonical_case_manifest_bytes, canonical_case_result_shape_bytes,
+            canonical_run_receipt_shape_bytes,
         )
         if (type(self._case_result_bytes) is not bytes
-                or type(self._case_manifest_bytes) is not bytes):
+                or type(self._case_manifest_bytes) is not bytes
+                or type(self._capability_bytes) is not bytes
+                or type(self._run_receipt_bytes) is not bytes):
             raise ValueError("private gate case result snapshot differs")
         try:
             manifest = json.loads(self._case_manifest_bytes)
@@ -180,6 +190,10 @@ class _PrivateFinalizedSyntheticGate:
                 repeat_packet_id=manifest.get("repeat_packet_id"))
             result_bytes = canonical_case_result_shape_bytes(result,
                 case_manifest=manifest)
+            capability_bytes = canonical_capability_receipt_shape_bytes(
+                json.loads(self._capability_bytes))
+            run_receipt_bytes = canonical_run_receipt_shape_bytes(
+                json.loads(self._run_receipt_bytes))
         except (AttributeError, TypeError, ValueError) as error:
             raise ValueError("private gate case result snapshot differs") from error
         owner = self._publication.owner
@@ -193,6 +207,12 @@ class _PrivateFinalizedSyntheticGate:
                 or self._seal != self._seal_hash()
                 or self._case_manifest_bytes != manifest_bytes
                 or self._case_result_bytes != result_bytes
+                or self._capability_bytes != capability_bytes
+                or self._run_receipt_bytes != run_receipt_bytes
+                or hashlib.sha256(capability_bytes).hexdigest()
+                    != dict(self.input_hashes)["capability_receipt_sha256"]
+                or hashlib.sha256(run_receipt_bytes).hexdigest()
+                    != self.receipt_sha256
                 or hashlib.sha256(manifest_bytes).hexdigest()
                     != self.case_manifest_sha256
                 or hashlib.sha256(result_bytes).hexdigest()
@@ -222,7 +242,9 @@ class _PrivateFinalizedSyntheticGate:
 
 def _finalize_private_synthetic_gate_once(proof):
     from .sparse_story_runner_contract import (
+        canonical_capability_receipt_shape_bytes,
         canonical_case_manifest_bytes, canonical_case_result_bytes,
+        canonical_run_receipt_bytes,
     )
     if type(proof) is not _PrivateSyntheticGateEvidence:
         raise TypeError("private gate finalization requires exact live proof")
@@ -241,6 +263,21 @@ def _finalize_private_synthetic_gate_once(proof):
             or hashlib.sha256(case_manifest_bytes).hexdigest()
                 != proof.case_result._complete.manifest_sha256):
         raise ValueError("live case result snapshot differs")
+    schedule = proof.publication.receipt._schedule
+    schedule.revalidate(allow_invoked=True)
+    capability_bytes = schedule._validated_capability_bytes
+    if (type(capability_bytes) is not bytes
+            or capability_bytes != schedule._claim.receipt_bytes()
+            or canonical_capability_receipt_shape_bytes(
+                json.loads(capability_bytes)) != capability_bytes
+            or hashlib.sha256(capability_bytes).hexdigest()
+                != proof.capability_receipt_sha256):
+        raise ValueError("validated capability snapshot differs")
+    receipt_value = json.loads(proof.publication.receipt.bytes)
+    run_receipt_bytes = canonical_run_receipt_bytes(receipt_value,
+        publication=proof.publication)
+    if hashlib.sha256(run_receipt_bytes).hexdigest() != proof.receipt_sha256:
+        raise ValueError("validated run receipt snapshot differs")
     case_claims = [row.proof.claim for row in proof.case_result._complete.rows]
     repeat = proof.case_result._repeat
     claims = [*case_claims, repeat._first_claim, repeat._second_claim,
@@ -249,4 +286,5 @@ def _finalize_private_synthetic_gate_once(proof):
     for session in sessions:
         session.close()
     return _PrivateFinalizedSyntheticGate(_FINALIZED_TOKEN, sessions,
-        proof.publication, proof, case_result_bytes, case_manifest_bytes)
+        proof.publication, proof, case_result_bytes, case_manifest_bytes,
+        capability_bytes, run_receipt_bytes)

@@ -32,6 +32,8 @@ from aegis360.sparse_story_raw_probe_transport import _run_native_process  # noq
 from aegis360.sparse_story_runner_contract import (  # noqa: E402
     canonical_capability_receipt_bytes, derive_capability_receipt,
     validate_capability_receipt, validate_capability_receipt_shape,
+    canonical_run_receipt_bytes, derive_run_receipt, validate_run_receipt,
+    validate_run_receipt_shape,
 )
 from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
     _freeze_private_synthetic_case_manifest,
@@ -169,6 +171,16 @@ class ScheduledPacketHostTests(unittest.TestCase):
                         self.assertEqual(published.revalidate(), (
                             hashlib.sha256(capture.stdout).hexdigest(),
                             hashlib.sha256(receipt.bytes).hexdigest()))
+                        result = derive_run_receipt(publication=published)
+                        validate_run_receipt(result, publication=published)
+                        self.assertEqual(canonical_run_receipt_bytes(result,
+                            publication=published), receipt.bytes)
+                        divergent = json.loads(receipt.bytes)
+                        divergent["execution"]["stdout_sha256"] = "0" * 64
+                        validate_run_receipt_shape(divergent)
+                        with self.assertRaises(ValueError):
+                            validate_run_receipt(divergent,
+                                publication=published)
                         self.assertEqual((owner.root / "evidence.json").read_bytes(),
                             capture.stdout)
                         self.assertEqual((owner.root / "receipt.json").read_bytes(),
@@ -195,6 +207,8 @@ class ScheduledPacketHostTests(unittest.TestCase):
                         replacement.chmod(0o444)
                         with self.assertRaises((ValueError, PublicationIncomplete)):
                             published.revalidate()
+                        with self.assertRaises((ValueError, PublicationIncomplete)):
+                            derive_run_receipt(publication=published)
                         with self.assertRaises(PublicationIncomplete):
                             published.pair.cleanup()
                         self.assertEqual(replacement.read_bytes(), b"replacement")
@@ -208,6 +222,8 @@ class ScheduledPacketHostTests(unittest.TestCase):
                 session.close()
             with self.assertRaises(ValueError):
                 derive_capability_receipt(schedule=schedule)
+            with self.assertRaises(ValueError):
+                derive_run_receipt(publication=published)
 
 
 if __name__ == "__main__":
