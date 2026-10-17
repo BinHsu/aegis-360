@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "aegis360.sparse-story-raw-observation.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "early_state_coherence", "late_state_coherence", "activity_relation", "setting_relation", "anonymous_participant_configuration", "transition_support", "viewpoint_change", "foreground_rearrangement", "exposure_or_palette_change", "capture_or_projection_artifact"],
+  "properties": {
+    "status": {"type": "string", "enum": ["observed", "abstain"]},
+    "early_state_coherence": {"type": "string", "enum": ["observed", "not_observed", "unclear"]},
+    "late_state_coherence": {"type": "string", "enum": ["observed", "not_observed", "unclear"]},
+    "activity_relation": {"type": "string", "enum": ["same", "changed", "unclear"]},
+    "setting_relation": {"type": "string", "enum": ["same", "changed", "unclear"]},
+    "anonymous_participant_configuration": {"type": "string", "enum": ["same", "changed", "unclear"]},
+    "transition_support": {"type": "string", "enum": ["supports", "contradicts", "insufficient"]},
+    "viewpoint_change": {"type": "string", "enum": ["present", "absent", "unclear"]},
+    "foreground_rearrangement": {"type": "string", "enum": ["present", "absent", "unclear"]},
+    "exposure_or_palette_change": {"type": "string", "enum": ["present", "absent", "unclear"]},
+    "capture_or_projection_artifact": {"type": "string", "enum": ["present", "absent", "unclear"]}
+  },
+  "if": {"properties": {"status": {"const": "abstain"}}, "required": ["status"]},
+  "then": {"properties": {
+    "early_state_coherence": {"const": "unclear"},
+    "late_state_coherence": {"const": "unclear"},
+    "activity_relation": {"const": "unclear"},
+    "setting_relation": {"const": "unclear"},
+    "anonymous_participant_configuration": {"const": "unclear"},
+    "transition_support": {"const": "insufficient"},
+    "viewpoint_change": {"const": "unclear"},
+    "foreground_rearrangement": {"const": "unclear"},
+    "exposure_or_palette_change": {"const": "unclear"},
+    "capture_or_projection_artifact": {"const": "unclear"}
+  }}
+}

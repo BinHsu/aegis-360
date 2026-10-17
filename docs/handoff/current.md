@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-10-17T17:15:03+08:00
+Updated: 2026-10-17T18:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 0522221
+Baseline commit: 4478a4d
 Remote status: `git ls-remote origin refs/heads/main` confirmed
-`0522221d5235da620dfdf60f80abd448c3908b7b`; `handoff-contract` run
-38850495066 succeeded for that exact SHA, including portable unit tests.
+`4478a4d672dd0399e551e0005c888ffe87db646b`; `handoff-contract` run
+39021685116 succeeded for that exact SHA, including portable unit tests.
 Working tree at checkpoint: verify with `git status --short --branch`.
 
 ## Objective
@@ -30,8 +30,10 @@ reads the exact bytes back. A shape-valid changed capability hash and a
 recreated scratch path reject authority/publication. The native 40-owner host
 gate and portable discovery (911 tests, 97 skipped) pass. This is local
 runner-operational synthetic evidence only: no real model/media acquisition,
-semantic result, Stage A/B run or production render. The next acceptance gate
-is authorized push followed by exact-SHA green CI. Claude Opus 5.5's policy
+semantic result, Stage A/B run or production render. The remote push and exact-SHA green CI are complete. The next gate is to
+prepare bounded Stage A smoke inputs. The installed SmolVLM2 2.2B weight
+leaf matches its manifest size and SHA-256; Stage A still lacks genuine
+private packets, a full model/prompt asset proof and a native adapter. Claude Opus 5.5's policy
 attribution question and the rejected `allow default` proposal are recorded in
 the aggregate boundary design note; no kernel attestation is claimed.
 
@@ -84,9 +86,10 @@ defined, not a public protocol schema. No model or media was acquired.
 
 ## Repository state
 
-- Published `BinHsu/aegis-360@0522221` has green exact-SHA CI.
+- Published `BinHsu/aegis-360@4478a4d` has green exact-SHA CI
+  (`handoff-contract` run 39021685116).
 - Aggregate gaps are recorded in `docs/design/sparse-story-private-aggregate-gap.md`.
-  Next: review public case-result/capability prerequisites and aggregate publication.
+  The local synthetic aggregate is complete; Stage A smoke is the next gate.
 
 ## Verified
 
@@ -171,11 +174,12 @@ defined, not a public protocol schema. No model or media was acquired.
 
 ## Pending
 
-- The completed synthetic gate aggregate and its exact-byte publication pass
-  locally. Push and verify green CI for the exact commit before starting the
-  next milestone. Stage A/B, semantic output, real media/model acquisition and
-  production rendering remain outside this result. See the aggregate boundary
-  design note.
+- Published `4478a4d` has exact-SHA green CI. The local Stage A prompt/schema
+  bundle passes three contract tests; the installed 2.2B weight leaf matches
+  its manifest hash. No real successor private packets or normal-mode VLM
+  adapter exist. The next milestone is a pure six-packet lineage builder,
+  followed by real packet preparation; no implicit acquisition or inference.
+  See `docs/design/sparse-story-stage-a-readiness.md`.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
@@ -184,6 +188,7 @@ defined, not a public protocol schema. No model or media was acquired.
 cd ~/Documents/aegis-360
 git status --short --branch
 python3 -m unittest discover -s tests -q
+python3 -m unittest tests.test_sparse_story_stage_a_prompt_bundle -v
 python3 -m unittest tests.test_sparse_story_projection tests.test_sparse_story_media_tree -q
 AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_raw_probe_transport -q
 AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_private_scheduled_packet -q

@@ -2,15 +2,15 @@
 
 ## Current conclusion
 
-The repository has an offline analysis-to-render architecture for monoscopic
-equirectangular input on the M4/16 GB Mac. Motion onset and the active scene
-threshold fail to recover gradual Skiing story states. A lossless
-960x480/10-fps FFV1 proxy preserves bounded direct-source pixels and lineage.
-A deterministic 1-fps visual-state stream derives 616 path-free compact rows
-from the full proxy in 22.93 seconds. Its values remained uninspected until the
-persistent-state proposal policy and blind review protocol were frozen. The
-policy then ran once, emitted two review-only proposals and was not retuned.
-Blind review rejects both while independently detecting one control transition.
+The synthetic adapter gate is published at `BinHsu/aegis-360@4478a4d` with
+exact-SHA green CI. It proves runner operation on a synthetic fixture, not
+semantic model quality. A neutral Stage A prompt/schema bundle now matches the 11-field binder. The
+installed 2.2B weight leaf matches its manifest hash. Stage A still needs
+source-derived private packets and a native model adapter; the next milestone
+is the six-packet lineage builder.
+
+The offline analysis-to-render architecture targets the M4/16 GB Mac.
+The frozen Skiing chapter proposal failed blind review; it remains rejected.
 
 ## Accepted evidence
 
