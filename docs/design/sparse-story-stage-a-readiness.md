@@ -52,9 +52,22 @@ from those supplied upstream JSON files, not that the scene candidates were
 extracted correctly from source pixels. Full portable discovery now runs 923
 tests with 97 skips.
 
-Next, build the real Skiing grid and timeline, freeze the six selections,
-revalidate their source and upstream evidence, and derive genuine private
-packets. Only then make sanitized PNG inputs. No model has run.
+The real-input in-memory preflight derives a Skiing grid and zero-event
+timeline from the existing 10-fps scene-events JSON. It combines Old Ghost v5
+at 205.6 seconds as one proposal with five controls. Six private packets and
+six adapter projections rebuild; the proposed manifest SHA-256 is
+`5b5cfa39fa0d1cb0600ccca2f8c029d8ad16f4449d35f4e018e8fffc5a98a465`.
+The Skiing zero-event result exposes a cheap-signal recall gap, not a story
+classification. The deterministic builder at
+`scripts/build_stage_a_preflight_bundle.py` passes a real-input no-write dry
+run. It rehashes both source files before and after packet preparation,
+exact-rebuilds the Old Ghost timeline, derives the Skiing zero-event timeline,
+and prepares fourteen bundle files. The stable salt is a mode-0600 local
+ignored file; it is never in the bundle or report. The dry-run adapter-index
+SHA-256 is `41fe1ee21e1c7ad0c3325842222826e61a5953dc35d39309d3c54cbe49f841bb`.
+This is a prepared bundle, not a published input. Publish the exact bundle
+only after an action-specific code for the external output, then make
+sanitized PNG inputs. No model has run.
 
 The runner's frozen v1 asset rule requires a directly executable ARM64 Mach-O
 entrypoint. The installed MLX Python script cannot be passed as that runtime.

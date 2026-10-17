@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-17T17:47:05+08:00
+Updated: 2026-10-18T07:36:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 4478a4d
@@ -33,9 +33,16 @@ runner-operational synthetic evidence only: no real model/media acquisition,
 semantic result, Stage A/B run or production render. The remote push and exact-SHA green CI are complete. The local Stage A prompt/schema and synthetic six-packet lineage preflight
 now pass. The installed SmolVLM2 2.2B weight leaf matches its manifest size
 and SHA-256. Old Ghost and Skiing media bytes match the benchmark manifest; four existing
-Old Ghost v2–v5 timelines rebuild from their paired upstream JSON. Stage A
-still lacks Skiing grid/timeline, genuine private packets, a full model/prompt
-asset proof and native adapter. Claude Opus 5.5's policy
+Old Ghost v2–v5 timelines rebuild from their paired upstream JSON. An in-memory real-input preflight now derives the Skiing grid and zero-event
+timeline from its existing scene-events, combines them with Old Ghost v5,
+and rebuilds six private packets and six projections. Its manifest hash is
+`5b5cfa39fa0d1cb0600ccca2f8c029d8ad16f4449d35f4e018e8fffc5a98a465`;
+roles are one proposal and five controls. The deterministic fourteen-file
+builder passed a real-input no-write dry run with stable local mode-0600 salt;
+the adapter-index hash is
+`41fe1ee21e1c7ad0c3325842222826e61a5953dc35d39309d3c54cbe49f841bb`.
+It has not been published as a durable external artifact. Stage A still lacks a real packet output bundle,
+full model/prompt asset proof and native adapter. Claude Opus 5.5's policy
 attribution question and the rejected `allow default` proposal are recorded in
 the aggregate boundary design note; no kernel attestation is claimed.
 
@@ -181,8 +188,10 @@ defined, not a public protocol schema. No model or media was acquired.
   its manifest hash. No real successor private packets or normal-mode VLM
   adapter exist. The pure six-packet lineage preflight now passes with raw-byte binding and
   controlled shape-valid mutation rejection. The Old Ghost and Skiing originals match benchmark hashes; four Old Ghost
-  timelines rebuild from upstream JSON with the new pure preflight gate. Next:
-  Skiing grid/timeline and real packet preparation; no implicit acquisition or inference.
+  timelines rebuild from upstream JSON with the new pure preflight gate. The in-memory Skiing zero-event timeline and six-packet real-input preflight
+  pass. The atomic bundle builder passes six synthetic tests and a real-input
+  no-write dry run; the next task is an action-specific code for external
+  output, then exact readback. No model inference.
   See `docs/design/sparse-story-stage-a-readiness.md`.
 - No production render or retuning of rejected descriptors is authorized.
 

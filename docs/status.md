@@ -2,16 +2,12 @@
 
 ## Current conclusion
 
-The synthetic adapter gate is published at `BinHsu/aegis-360@4478a4d` with
-exact-SHA green CI. It proves runner operation on a synthetic fixture, not
-semantic model quality. A neutral Stage A prompt/schema bundle now matches the 11-field binder. The
-installed 2.2B weight leaf matches its manifest hash. The six-packet lineage preflight now exact-rebuilds packet bytes from frozen
-raw JSON evidence. Both local source files match the benchmark manifest, and the four existing
-Old Ghost timelines exact-rebuild from upstream JSON. Stage A still needs
-Skiing grid/timeline, genuine packets and a native model adapter.
-
-The offline analysis-to-render architecture targets the M4/16 GB Mac.
-The frozen Skiing chapter proposal failed blind review; it remains rejected.
+The synthetic adapter gate is published at `BinHsu/aegis-360@4478a4d`
+with exact-SHA green CI. Local Stage A work has a closed prompt/schema, a
+verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs,
+and a six-packet real-input dry run with fourteen prepared bundle files. It still needs a durable input bundle
+and a native adapter; no semantic model has run. The frozen Skiing chapter
+proposal remains rejected.
 
 ## Accepted evidence
 
