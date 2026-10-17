@@ -253,12 +253,12 @@ class SparseStoryRunnerContractTests(unittest.TestCase):
         self.assertEqual(canonical_case_result_shape_bytes(result, case_manifest=manifest),
                          canonical_bytes(result))
         with self.assertRaises(AuthorityUnavailable):
-            canonical_case_result_bytes(result, case_manifest=manifest)
+            canonical_case_result_bytes(result, proof=None)
         self.assertTrue(all(row["passed"] for row in result["cases"]))
         with self.assertRaises(AuthorityUnavailable):
-            derive_case_result(observed_results=observed)
+            derive_case_result(proof=None)
         with self.assertRaises(AuthorityUnavailable):
-            validate_case_result(result, case_manifest=manifest)
+            validate_case_result(result, proof=None)
         with self.assertRaises(AuthorityUnavailable):
             derive_synthetic_run_result(case_manifest=manifest,
                 case_result=result, trust_valid=True)

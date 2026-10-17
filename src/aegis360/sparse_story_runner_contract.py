@@ -148,8 +148,10 @@ def canonical_run_receipt_bytes(*args, **kwargs):
     raise AuthorityUnavailable("run receipt serialization requires an attested capture and coordinator")
 
 
-def canonical_case_result_bytes(*args, **kwargs):
-    raise AuthorityUnavailable("case result serialization requires coordinator-owned execution proofs")
+def canonical_case_result_bytes(value, *, proof):
+    """Serialize a result only while its exact coordinator proof is live."""
+    validate_case_result(value, proof=proof)
+    return canonical_bytes(value)
 
 
 def canonical_run_result_bytes(*args, **kwargs):
@@ -523,12 +525,28 @@ def validate_case_result_shape(value, *, case_manifest: Mapping[str, object]):
         raise ValueError("case repeatability shape is invalid")
 
 
-def derive_case_result(*args, **kwargs):
-    raise AuthorityUnavailable("case observations require coordinator-owned execution proofs")
+def derive_case_result(*, proof):
+    """Rebuild the 37 cases and two repeats from retained native evidence."""
+    from .sparse_story_private_case_result import (
+        _PrivateCaseResultRebuild, _revalidate_private_synthetic_case_result,
+    )
+
+    if type(proof) is not _PrivateCaseResultRebuild:
+        raise AuthorityUnavailable(
+            "case observations require coordinator-owned execution proofs")
+    _revalidate_private_synthetic_case_result(proof)
+    value = json.loads(proof.bytes)
+    validate_case_result_shape(value, case_manifest=proof._manifest)
+    return value
 
 
-def validate_case_result(*args, **kwargs):
-    raise AuthorityUnavailable("case PASS validation requires coordinator-owned execution proofs")
+def validate_case_result(value, *, proof):
+    """Require exact equality with a result rebuilt from live owner proofs."""
+    rebuilt = derive_case_result(proof=proof)
+    validate_case_result_shape(value, case_manifest=proof._manifest)
+    if canonical_bytes(value) != canonical_bytes(rebuilt):
+        raise ValueError("case result differs from live execution proofs")
+    return None
 
 
 def validate_run_result_shape(value):

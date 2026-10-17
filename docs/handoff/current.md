@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-17T16:54:49+08:00
+Updated: 2026-10-17T16:59:04+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -18,6 +18,16 @@ direction is cheap-signal scheduling followed by sparse, closed semantic
 observations without per-frame VLM inference.
 
 ## Last completed milestone
+
+Live-only public case-result derivation, validation and serialization now
+require the exact retained private 37-case/two-repeat proof. A shape-valid
+divergent result fails authority validation; altering the proof's bytes and
+hash also fails, and all public calls expire after the 40 owned sessions
+close. The focused native host gate passed, 10 contract tests passed, and
+portable discovery passes 911 tests with 97 skipped. The aggregate remains
+closed; the private finalized snapshot hash is not yet durable public
+case-result authority. The parallel implementation changed only the contract
+and two test files, and main-agent diff review found no authority widening.
 
 One bounded Claude Opus 5.5 design review completed from the owner-approved
 2,421-byte prompt; the returned model ID, terminal completion and no-tool
@@ -179,13 +189,12 @@ defined, not a public protocol schema. No model or media was acquired.
 ## Pending
 
 - The ordered private case result and separate scheduled packet have native host
-  evidence but no public capability, case-result or aggregate authority. See
+  evidence; public case-result authority is live-only, while capability and
+  aggregate authority remain closed. See
   the aggregate gap design note.
-  Read-only audits found shape checks but no public proof derivation. Next
-  review exact installed-policy evidence, then implement capability and
-  case-result authority from retained live proofs separately, with mutation
-  controls; then bind the aggregate. Public APIs stay closed; no acquisition
-  is authorized.
+  Next derive public capability from the scheduled live proof with mutation
+  controls, then resolve durable case-result authority across cleanup before
+  binding the aggregate. No acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands

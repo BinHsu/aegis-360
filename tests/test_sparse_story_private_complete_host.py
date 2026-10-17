@@ -1,5 +1,6 @@
 """Real Seatbelt integration of the ordered private synthetic case dispatcher."""
 
+import hashlib
 import json
 import os
 import sys
@@ -42,7 +43,10 @@ from aegis360.sparse_story_private_gate_evidence import (  # noqa: E402
 )
 from aegis360.sparse_story_private_run_publication import _OwnedPrivateRunRoot  # noqa: E402
 from aegis360.sparse_story_probe_denials import _open_retained_probed_batch  # noqa: E402
-from aegis360.sparse_story_runner_contract import CASE_SPECS  # noqa: E402
+from aegis360.sparse_story_runner_contract import (  # noqa: E402
+    CASE_SPECS, canonical_bytes, canonical_case_result_bytes,
+    derive_case_result, validate_case_result, validate_case_result_shape,
+)
 from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
     _freeze_private_synthetic_adapter_schedule,
 )
@@ -189,6 +193,22 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                     _revalidate_private_synthetic_case_result(replace(
                         private_result, bytes=private_result.bytes + b" "))
                 result_value = json.loads(private_result.bytes)
+                self.assertEqual(derive_case_result(proof=private_result),
+                    result_value)
+                validate_case_result(result_value, proof=private_result)
+                self.assertEqual(canonical_case_result_bytes(result_value,
+                    proof=private_result), private_result.bytes)
+                alternate = json.loads(private_result.bytes)
+                alternate["cases"][0]["observed_result"] = "schema_violation"
+                alternate["cases"][0]["passed"] = False
+                validate_case_result_shape(alternate, case_manifest=manifest)
+                with self.assertRaises(ValueError):
+                    validate_case_result(alternate, proof=private_result)
+                altered_bytes = canonical_bytes(alternate)
+                altered_proof = replace(private_result, bytes=altered_bytes,
+                    sha256=hashlib.sha256(altered_bytes).hexdigest())
+                with self.assertRaises(ValueError):
+                    derive_case_result(proof=altered_proof)
                 self.assertEqual(len(result_value["cases"]), 37)
                 self.assertTrue(all(row["passed"]
                     for row in result_value["cases"]))
@@ -234,6 +254,8 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                             _first_claim=observed.rows[2].proof.claim),
                         prepared_owners=prepared)
                 finalized = _finalize_private_synthetic_gate_once(gate)
+                with self.assertRaises(ValueError):
+                    derive_case_result(proof=private_result)
                 self.assertFalse(finalized.authority)
                 self.assertEqual(len(finalized.input_hashes), 5)
                 self.assertIs(finalized.revalidate(), finalized)

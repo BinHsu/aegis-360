@@ -192,9 +192,7 @@ specific directing question. No new video is currently awaiting owner review.
 ## Next action
 The private capability receipt rejects copied captures and changed probe mode;
 67 raw-probe host tests pass, and portable discovery passes 911 with 97 skipped.
-The independent review raised policy-attribution and scheduled-launch binding
-questions. Its `allow default` control was not run or adopted because it could
-permit forbidden operations. The private scheduled native event and policy
-binding already revalidate. Derive public capability and separate case-result
-authority from live proofs with mutation controls. Public APIs remain closed. See the
-aggregate-gap design record for evidence and limits.
+Public case-result authority now rejects shape-valid divergence and expires
+after owner cleanup. Derive public capability from the scheduled live proof,
+then resolve durable case-result authority before aggregate publication. The
+aggregate-gap design record contains the independent review and its limits.
