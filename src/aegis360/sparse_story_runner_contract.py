@@ -140,8 +140,10 @@ def canonical_adapter_request_bytes(*args, **kwargs):
     raise AuthorityUnavailable("request serialization requires exact index and retained-root proofs")
 
 
-def canonical_capability_receipt_bytes(*args, **kwargs):
-    raise AuthorityUnavailable("capability serialization requires coordinator-owned raw probe proofs")
+def canonical_capability_receipt_bytes(value, *, schedule=None):
+    """Serialize only the capability of a live, uninvoked synthetic schedule."""
+    validate_capability_receipt(value, schedule=schedule)
+    return _canonical(value)
 
 
 def canonical_run_receipt_bytes(*args, **kwargs):
@@ -454,16 +456,49 @@ def validate_run_receipt_shape(value):
         raise ValueError("run receipt shape is invalid")
 
 
-def derive_capability_receipt(*args, **kwargs):
-    raise AuthorityUnavailable("capability authority requires coordinator-owned raw probe proofs")
+def _scheduled_capability_bytes(schedule):
+    from .sparse_story_private_packet_schedule import _PrivateSyntheticPacketSchedule
+    from .sparse_story_probe_denials import _rebuild_private_probe_receipt
+    from .sparse_story_raw_probe_transport import _verify_native_launch_event
+
+    if type(schedule) is not _PrivateSyntheticPacketSchedule:
+        raise AuthorityUnavailable("capability requires an exact synthetic schedule")
+    schedule.revalidate()
+    session = schedule._claim._session
+    candidate = schedule._candidate
+    capture = session._capture
+    event = capture.launch_event
+    if (event is None or event.mode != "isolation_probe"
+            or not isinstance(event._suffix, tuple)
+            or not event._suffix
+            or event._suffix[0] != "--aegis-isolation-probe"):
+        raise ValueError("scheduled isolation probe launch is absent")
+    _verify_native_launch_event(capture, candidate=candidate,
+        suffix=event._suffix)
+    if (capture.completed is not True or capture.group_gone is not True
+            or capture.postcheck_passed is not True or capture.returncode != 0):
+        raise ValueError("scheduled isolation probe is incomplete")
+    rebuilt = _rebuild_private_probe_receipt(candidate, capture,
+        session._probe_prefixes, session._probe_suffix)
+    if rebuilt != schedule._claim.receipt_bytes():
+        raise ValueError("scheduled capability receipt differs")
+    return rebuilt
+
+
+def derive_capability_receipt(*, schedule=None, **unsupported):
+    if unsupported:
+        raise AuthorityUnavailable("capability requires an exact synthetic schedule")
+    return json.loads(_scheduled_capability_bytes(schedule))
 
 
 def derive_run_receipt(*args, **kwargs):
     raise AuthorityUnavailable("run receipt authority requires an attested capture and coordinator")
 
 
-def validate_capability_receipt(*args, **kwargs):
-    raise AuthorityUnavailable("capability validation requires coordinator-owned raw probe proofs")
+def validate_capability_receipt(value, *, schedule=None):
+    validate_capability_receipt_shape(value)
+    if _canonical(value) != _scheduled_capability_bytes(schedule):
+        raise ValueError("capability differs from scheduled probe")
 
 
 def validate_run_receipt(*args, **kwargs):
@@ -526,24 +561,31 @@ def validate_case_result_shape(value, *, case_manifest: Mapping[str, object]):
 
 
 def derive_case_result(*, proof):
-    """Rebuild the 37 cases and two repeats from retained native evidence."""
+    """Return a live rebuild or its exact post-cleanup sealed snapshot."""
     from .sparse_story_private_case_result import (
         _PrivateCaseResultRebuild, _revalidate_private_synthetic_case_result,
     )
+    from .sparse_story_private_gate_evidence import _PrivateFinalizedSyntheticGate
 
-    if type(proof) is not _PrivateCaseResultRebuild:
+    if type(proof) is _PrivateCaseResultRebuild:
+        _revalidate_private_synthetic_case_result(proof)
+        encoded = proof.bytes
+        manifest = proof._manifest
+    elif type(proof) is _PrivateFinalizedSyntheticGate:
+        proof.revalidate()
+        encoded = proof._case_result_bytes
+        manifest = json.loads(proof._case_manifest_bytes)
+    else:
         raise AuthorityUnavailable(
             "case observations require coordinator-owned execution proofs")
-    _revalidate_private_synthetic_case_result(proof)
-    value = json.loads(proof.bytes)
-    validate_case_result_shape(value, case_manifest=proof._manifest)
+    value = json.loads(encoded)
+    validate_case_result_shape(value, case_manifest=manifest)
     return value
 
 
 def validate_case_result(value, *, proof):
-    """Require exact equality with a result rebuilt from live owner proofs."""
+    """Require exact equality with live evidence or its sealed cleanup snapshot."""
     rebuilt = derive_case_result(proof=proof)
-    validate_case_result_shape(value, case_manifest=proof._manifest)
     if canonical_bytes(value) != canonical_bytes(rebuilt):
         raise ValueError("case result differs from live execution proofs")
     return None

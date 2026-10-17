@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-17T16:59:04+08:00
+Updated: 2026-10-17T17:05:02+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 0522221
@@ -19,38 +19,19 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-Live-only public case-result derivation, validation and serialization now
-require the exact retained private 37-case/two-repeat proof. A shape-valid
-divergent result fails authority validation; altering the proof's bytes and
-hash also fails, and all public calls expire after the 40 owned sessions
-close. The focused native host gate passed, 10 contract tests passed, and
-portable discovery passes 911 tests with 97 skipped. The aggregate remains
-closed; the private finalized snapshot hash is not yet durable public
-case-result authority. The parallel implementation changed only the contract
-and two test files, and main-agent diff review found no authority widening.
-
-One bounded Claude Opus 5.5 design review completed from the owner-approved
-2,421-byte prompt; the returned model ID, terminal completion and no-tool
-result were checked. Its proposed `allow default` differential control was
-not run or adopted because the frozen renderer excludes it and real forbidden
-operations could be allowed. Existing backend manifest already binds backend
-binary, launcher manifest and OS build. Source review confirms the private
-scheduled path already checks candidate, policy, native ordinary-mode event
-and request; public derivation from those proofs remains closed. The
-undocumented `sandbox-exec` failure claim is unverified. The design gap records
-the result and limits. Public authority remains closed.
-
-The retained private capability receipt now checks the exact native probe
-launch event and the retained `--aegis-isolation-probe` suffix on every rebuild.
-A copied capture and changed mode both fail the host regression. The first
-host run exposed a suffix-lifetime error because owned sentinels had already
-closed; retaining the suffix before the launch fixed it. The focused host test
-passes, the raw-probe host module runs 67 tests with none skipped, and portable
-discovery runs 911 tests with 97 skipped. This tightens private evidence only;
-public capability, case-result and aggregate authority remain closed. Read-only
-parallel audits found that case-result authority needs a live 39-claim proof,
-while capability authority still needs an explicit installed-policy evidence
-review before opening its public API.
+Public capability derivation, validation and serialization now require the
+exact live, uninvoked synthetic schedule and revalidate its native probe event,
+14 raw outcomes and policy-bound receipt. Host controls reject a copied capture,
+changed policy, shape-valid divergent receipt and closed owner; the two-case
+scheduled host module passes. Public case-result authority accepts the live
+39-claim proof and a separate post-cleanup branch backed by an in-process
+sealed snapshot of canonical result/manifest bytes. A shape-valid altered
+result with a recomputed hash fails both boundaries. The native 40-owner host
+gate passes; portable discovery runs 911 tests with 97 skipped. The public
+aggregate and scheduled run receipt remain closed. The snapshot carries prior
+validation across cleanup; it is not a cryptographic signature. The Claude
+Opus 5.5 review, rejected `allow default` control and unresolved policy
+attribution scope are recorded in the aggregate gap design note.
 
 Local private scheduled synthetic packet milestone after published `0522221`:
 a retained one-packet private schedule binds the claim, canonical request,
@@ -188,13 +169,12 @@ defined, not a public protocol schema. No model or media was acquired.
 
 ## Pending
 
-- The ordered private case result and separate scheduled packet have native host
-  evidence; public case-result authority is live-only, while capability and
-  aggregate authority remain closed. See
-  the aggregate gap design note.
-  Next derive public capability from the scheduled live proof with mutation
-  controls, then resolve durable case-result authority across cleanup before
-  binding the aggregate. No acquisition is authorized.
+- Public capability is scoped to the live uninvoked synthetic schedule, and
+  public case-result authority has live and finalized-snapshot branches.
+  Aggregate and public scheduled receipt/publication authority remain closed.
+  Next derive the public scheduled receipt and aggregate from exact proofs,
+  publish the aggregate exclusively, then read it back. See the aggregate gap
+  design note. No acquisition is authorized.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
@@ -205,6 +185,7 @@ git status --short --branch
 python3 -m unittest discover -s tests -q
 python3 -m unittest tests.test_sparse_story_projection tests.test_sparse_story_media_tree -q
 AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_raw_probe_transport -q
+AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_private_scheduled_packet -q
 AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_private_complete_host -v
 python3 scripts/check_handoff.py
 git diff --check

@@ -6,6 +6,7 @@ import os
 import sys
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from unittest import mock
 
@@ -28,6 +29,10 @@ from aegis360.sparse_story_private_scheduled_publication import (  # noqa: E402
 from aegis360.sparse_story_private_publication import PublicationIncomplete  # noqa: E402
 from aegis360.sparse_story_probe_denials import _open_retained_probed_batch  # noqa: E402
 from aegis360.sparse_story_raw_probe_transport import _run_native_process  # noqa: E402
+from aegis360.sparse_story_runner_contract import (  # noqa: E402
+    canonical_capability_receipt_bytes, derive_capability_receipt,
+    validate_capability_receipt, validate_capability_receipt_shape,
+)
 from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
     _freeze_private_synthetic_case_manifest,
 )
@@ -96,6 +101,27 @@ class ScheduledPacketHostTests(unittest.TestCase):
                     spawn.assert_not_called()
                     manifest["synthetic_adapter_manifest_sha256"] = runtime_sha
                     schedule = _PrivateSyntheticPacketSchedule(claim, manifest)
+                    capability = derive_capability_receipt(schedule=schedule)
+                    validate_capability_receipt(capability, schedule=schedule)
+                    self.assertEqual(canonical_capability_receipt_bytes(
+                        capability, schedule=schedule), claim.receipt_bytes())
+                    divergent = json.loads(claim.receipt_bytes())
+                    divergent["compiled_policy_sha256"] = "0" * 64
+                    validate_capability_receipt_shape(divergent)
+                    with self.assertRaises(ValueError):
+                        validate_capability_receipt(divergent, schedule=schedule)
+                    original_capture = session._capture
+                    session._capture = replace(original_capture)
+                    try:
+                        with self.assertRaises(ValueError):
+                            derive_capability_receipt(schedule=schedule)
+                    finally:
+                        session._capture = original_capture
+                    original_policy = session._candidate._policy_bytes
+                    with mock.patch.object(type(session._candidate),
+                            "_policy_bytes", lambda self: original_policy() + b" "):
+                        with self.assertRaises(ValueError):
+                            derive_capability_receipt(schedule=schedule)
                     digest = schedule.schedule_sha256
                     schedule.schedule_sha256 = "0" * 64
                     with mock.patch(
@@ -180,6 +206,8 @@ class ScheduledPacketHostTests(unittest.TestCase):
                     spawn.assert_not_called()
             finally:
                 session.close()
+            with self.assertRaises(ValueError):
+                derive_capability_receipt(schedule=schedule)
 
 
 if __name__ == "__main__":

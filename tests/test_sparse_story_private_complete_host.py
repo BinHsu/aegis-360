@@ -256,8 +256,37 @@ class CompletePrivateCaseHostTests(unittest.TestCase):
                 finalized = _finalize_private_synthetic_gate_once(gate)
                 with self.assertRaises(ValueError):
                     derive_case_result(proof=private_result)
+                self.assertEqual(derive_case_result(proof=finalized), result_value)
+                validate_case_result(result_value, proof=finalized)
+                self.assertEqual(canonical_case_result_bytes(result_value,
+                    proof=finalized), private_result.bytes)
+                with self.assertRaises(ValueError):
+                    validate_case_result(alternate, proof=finalized)
                 self.assertFalse(finalized.authority)
                 self.assertEqual(len(finalized.input_hashes), 5)
+                self.assertIs(finalized.revalidate(), finalized)
+                snapshot_bytes = finalized._case_result_bytes
+                snapshot_hash = finalized.case_result_sha256
+                alternate_snapshot = json.loads(snapshot_bytes)
+                alternate_snapshot["cases"][0]["observed_result"] = "schema_violation"
+                alternate_snapshot["cases"][0]["passed"] = False
+                validate_case_result_shape(alternate_snapshot,
+                    case_manifest=manifest)
+                changed_snapshot = canonical_bytes(alternate_snapshot)
+                object.__setattr__(finalized, "_case_result_bytes",
+                    changed_snapshot)
+                object.__setattr__(finalized, "case_result_sha256",
+                    hashlib.sha256(changed_snapshot).hexdigest())
+                try:
+                    with self.assertRaises(ValueError):
+                        finalized.revalidate()
+                    with self.assertRaises(ValueError):
+                        derive_case_result(proof=finalized)
+                finally:
+                    object.__setattr__(finalized, "_case_result_bytes",
+                        snapshot_bytes)
+                    object.__setattr__(finalized, "case_result_sha256",
+                        snapshot_hash)
                 self.assertIs(finalized.revalidate(), finalized)
                 original_hash = finalized.case_result_sha256
                 with self.assertRaises(TypeError):

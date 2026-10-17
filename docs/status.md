@@ -185,14 +185,15 @@ specific directing question. No new video is currently awaiting owner review.
   Review controls: missing publication and substituted owner/peer paths fail
   on old code and pass after fixes; three affected host tests are green.
 - The private retained session and ordered 37-case result pass native host gates;
-  scheduled packet receipt/peers pass two host tests. Public authority remains closed.
+  scheduled packet receipt/peers pass two host tests. Aggregate authority remains closed.
   Private 33-row capture rebuild, bundle trust rejection and fresh native
   stdout repeats pass host gates.
 
 ## Next action
-The private capability receipt rejects copied captures and changed probe mode;
-67 raw-probe host tests pass, and portable discovery passes 911 with 97 skipped.
-Public case-result authority now rejects shape-valid divergence and expires
-after owner cleanup. Derive public capability from the scheduled live proof,
-then resolve durable case-result authority before aggregate publication. The
-aggregate-gap design record contains the independent review and its limits.
+Public capability authority is scoped to a live uninvoked synthetic schedule;
+public case-result authority accepts its live proof and a separately sealed
+post-cleanup snapshot. Host controls reject copied captures, changed policy and
+shape-valid divergent results. Portable discovery passes 911 with 97 skipped;
+the 40-owner host gate passes. Next derive the public scheduled receipt and
+aggregate from exact proofs, publish exclusively and read back. The aggregate
+and public scheduled receipt remain closed; see the aggregate-gap design note.
