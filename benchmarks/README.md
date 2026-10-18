@@ -31,6 +31,12 @@ Set an external data root before acquisition or processing:
 export AEGIS_DATA_DIR=/path/to/aegis-data
 ```
 
+Use a real external root such as `/Volumes/<disk>/aegis-360-items/` for source
+media, models, proxies, extracted frames and rendered/sanitized media bundles.
+The checkout under `~/Documents/aegis-360` holds code and small hash-only
+records; its gitignored `outputs/` is not a durable real-media destination.
+Bounded synthetic test fixtures may use temporary directories.
+
 Do not encode a developer's absolute path in scripts, manifests, logs, or
 decision traces. Acquisition will be an explicit future command; tests must not
 download these files automatically.

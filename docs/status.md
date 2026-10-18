@@ -8,8 +8,9 @@ The synthetic adapter gate has exact-SHA green CI at
 verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs,
 and a six-packet real-input bundle: fourteen JSON files published to external
 storage, then read back against the exact approved plan. Two local closed
-sanitized-media runs now match across all 36 images. External media publication,
-the current-OS backend proof and a native adapter remain; no semantic model
+sanitized-media runs match across all 36 images; the canonical bundle was
+published to the configured T7 data root and independently read back.
+The current-OS backend proof and a native adapter remain; no semantic model
 has run. The frozen Skiing chapter
 proposal remains rejected.
 
@@ -133,16 +134,10 @@ packets with 6:2 story/no-change classes, but minimum story score
 0.04363508 is below maximum no-change score 0.06806761. This descriptor is not a
 monotonic story-change ranker and grants no boundary, camera or render authority.
 
-The model-neutral sparse story semantic successor protocol and synthetic
-schema/binder implementation passed independent audits. Strict raw-byte binding,
-closed operational failures and failure-bound abstention now have executable
-coverage. The sanitized private-to-public projection also passes its synthetic
-gate with complete-set binding and salted role-neutral ordering. The closed
-synthetic media-tree gate now passes too: sanitized PNG leaves are input-derived,
-published atomically without replacement, continuously descriptor-bound through
-result publication and fail closed under mutation. No model or real media has
-been acquired and neither Stage A nor Stage B has run, so this remains contract
-evidence rather than semantic evidence.
+The sparse story schema, binder, role-neutral projection and closed media-tree
+gate have executable coverage. The Stage A real-media inputs are published on
+T7, but neither Stage A nor Stage B semantic inference has run; media-input
+authority is not semantic evidence.
 
 The audited runner now has non-authoritative codecs, bounded capture and retained
 asset proof, but no backend/coordinator or process-isolation/model-invocation claim.
@@ -173,11 +168,11 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-- Latest local portable discovery on macOS 27.0.1: 944 tests, 97 skipped,
-  one OS-backend error. The installed `/usr/bin/sandbox-exec` has an additional
-  ARM64 slice outside the frozen parser's single-subtype contract; no native
-  invocation authority is claimed on this OS. The Stage A focused media suite
-  passes 22 tests. Earlier on the prior OS, 911 tests (814 passed, 97 skipped) and two
+- Latest local portable discovery on macOS 27.0.1: 946 tests, 97 skipped,
+  no errors. A host test now requires fail-closed rejection of the installed
+  `/usr/bin/sandbox-exec` additional ARM64 slice; native invocation authority
+  remains closed on this OS. Stage A focused media tests pass. Earlier on the
+  prior OS, 911 tests (814 passed, 97 skipped) and two
   scheduled-packet Seatbelt host tests and one combined 40-claim host gate pass,
   including runtime-manifest mismatch rejection and no-spawn owned cleanup.
   A mutation of the old finalized proof accepted a changed case-result hash;
@@ -190,10 +185,12 @@ specific directing question. No new video is currently awaiting owner review.
   stdout repeats pass host gates.
 
 ## Next action
-The Stage A real-media input gate now has two byte-identical local runs: six
+The Stage A real-media input gate has two byte-identical local runs: six
 packets, 36 sanitized 960x540 PNGs, bundle tree
 `fd65c7a5436829fadfd78a89b64d361f59a8934a98c8d3f3022dce3cebe6c5b1`
 and result `c48862d316cbb5e3f05bc704d4eda5bcf7dd7d5269f0b9ca4db3be9962f6d80c`.
-The next action is owner-code-gated external media publication under an exact
-target/hash plan, followed by native backend review for macOS 27.0.1 and a
-pinned/audited native VLM adapter. No model invocation occurred.
+The external T7 publication has the same hashes and exact readback. Two
+misplaced local pixel-bearing verification bundles await authorized cleanup;
+the repo harness now requires real-media CLI outputs under an explicit
+external data root. Native backend review for macOS 27.0.1 and a pinned/audited
+native VLM adapter remain. No model invocation occurred.

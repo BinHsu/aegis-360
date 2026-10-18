@@ -44,6 +44,20 @@ def multi_fat(rows):
     return bytes(result)
 
 
+def host_arm64_subtypes(path):
+    """Inspect only the fat table, independently of the production validator."""
+    with path.open("rb") as source:
+        magic, count = struct.unpack(">II", source.read(8))
+        if magic != 0xCAFEBABE or not 1 <= count <= 32:
+            raise AssertionError("unreviewed host Mach-O container")
+        table = source.read(count * 20)
+    if len(table) != count * 20:
+        raise AssertionError("truncated host Mach-O table")
+    return tuple(struct.unpack_from(">IIIII", table, offset)[1]
+                 for offset in range(0, len(table), 20)
+                 if struct.unpack_from(">I", table, offset)[0] == 0x0100000C)
+
+
 class FakeNative:
     def __init__(self, build="25F84"):
         self.build = build
@@ -86,6 +100,14 @@ class OSBackendParserTests(unittest.TestCase):
             (0x0100000C, _CPU_SUBTYPE_ARM64E_RAW, 8192, thin()),
         ])
         with self.assertRaisesRegex(ValueError, "duplicated"):
+            self.validate(content)
+
+    def test_new_arm64_subtype_does_not_silently_expand_host_proof(self):
+        content = multi_fat([
+            (0x0100000C, _CPU_SUBTYPE_ARM64E_RAW, 4096, thin()),
+            (0x0100000C, 0x8000000C, 8192, thin(0x8000000C)),
+        ])
+        with self.assertRaisesRegex(ValueError, "host ARM64 raw subtype"):
             self.validate(content)
 
     def test_fat_container_negative_matrix(self):
@@ -174,14 +196,22 @@ class OSBackendParserTests(unittest.TestCase):
             return real_open(path, selected_flags, *args, **kwargs)
         with mock.patch("aegis360.sparse_story_os_backend.os.open",
                         side_effect=observed):
-            with _observe_test_os_backend(
-                    native=FakeNative(plist["ProductBuildVersion"])) as proof:
-                proof.revalidate()
+            subtypes = host_arm64_subtypes(Path("/usr/bin/sandbox-exec"))
+            if subtypes == (_CPU_SUBTYPE_ARM64E_RAW,):
+                with _observe_test_os_backend(
+                        native=FakeNative(plist["ProductBuildVersion"])) as proof:
+                    proof.revalidate()
+            elif subtypes == (_CPU_SUBTYPE_ARM64E_RAW, 0x8000000C):
+                with self.assertRaisesRegex(ValueError, "host ARM64 raw subtype"):
+                    _observe_test_os_backend(native=FakeNative(plist["ProductBuildVersion"]))
+            else:
+                self.fail(f"unreviewed host ARM64 subtype set: {subtypes}")
         self.assertEqual(len(flags), 4)
         self.assertTrue(all(value & os.O_NOFOLLOW and value & os.O_CLOEXEC
                             for value in flags))
-        with self.assertRaisesRegex(ValueError, "kernel build"):
-            _observe_test_os_backend(native=FakeNative("wrong-build"))
+        if subtypes == (_CPU_SUBTYPE_ARM64E_RAW,):
+            with self.assertRaisesRegex(ValueError, "kernel build"):
+                _observe_test_os_backend(native=FakeNative("wrong-build"))
 
     def test_node_predicates_reject_nonregular_and_bad_mount_or_ownership(self):
         def fact(mode=stat.S_IFREG | 0o444, uid=0, gid=0, nlink=1, flags=0x80000):

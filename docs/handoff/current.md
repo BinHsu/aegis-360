@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-18T16:00:00+08:00
+Updated: 2026-10-18T15:51:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 2eb1201
+Baseline commit: 383cbf7
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -18,28 +18,30 @@ observations without per-frame VLM inference.
 
 ## Last completed milestone
 
-The local Stage A real-media input preflight exact-rebuilt and compared all
-fourteen previously published JSON files, then rendered six packets / 36 rows
-serially from manifest-hashed Old Ghost Road and Skiing sources. Private row
-times and four cardinal views produced sanitized 960x540 RGB PNGs. Two
-independent local publications under gitignored `outputs/` have identical
-bundle-tree SHA-256
+The Stage A real-media preflight exact-rebuilt and compared fourteen published
+JSON files, then rendered six packets / 36 sanitized 960x540 PNGs from
+manifest-hashed Old Ghost Road and Skiing sources. Two local runs and the
+owner-authorized T7 publication have the same bundle-tree SHA-256
 `fd65c7a5436829fadfd78a89b64d361f59a8934a98c8d3f3022dce3cebe6c5b1`
 and result SHA-256
 `c48862d316cbb5e3f05bc704d4eda5bcf7dd7d5269f0b9ca4db3be9962f6d80c`.
-The second run used both hashes as prepublication expectations. A changed
-preflight member and changed approved hash reject before rendering/publication,
-respectively. Three representative 2x2 images were visually inspected. See
-`docs/experiments/stage-a-media-preflight-2026-10-18.md`.
+The external root was independently read back with exactly 37 files, expected
+modes and hashes. Three representative 2x2 images were visually inspected.
+See `docs/experiments/stage-a-media-preflight-2026-10-18.md`.
 
-A full portable discovery on macOS 27.0.1 ran 944 tests with 97 skips and one
-unrelated OS-backend error: the installed `/usr/bin/sandbox-exec` has an extra
-ARM64 fat slice outside the frozen single-subtype parser. Native invocation
-proof is not established on this OS. No model ran and no external media output
-was written. Rejected alternative: direct older structural-renderer output,
-which lacks the closed media-tree authority. Next publish the exact media tree
-externally only after owner send code, then review the changed OS backend and
-pin/audit the native adapter.
+The owner clarified that the T7 `aegis-360-items` root is the project's
+external asset space. Source media, models, proxies and pixel/audio-bearing
+outputs belong there; checkout `outputs/` is for small plans/salts only. Two
+mistaken 19 MiB local verification bundles remain pending exact-target cleanup.
+The runner CLI now requires an explicit external data root and rejects durable
+outputs outside it. The prior error was treating gitignore as a storage rule.
+
+Full portable discovery on macOS 27.0.1 ran 946 tests with 97 skips and no
+errors after the host test was corrected to expect fail-closed rejection of
+`/usr/bin/sandbox-exec`'s extra ARM64 subtype. Native invocation proof is not
+established on this OS. No model ran. Next verify and clean the exact local
+pixel-bearing duplicates with owner authorization, then review the changed OS
+backend and pin/audit the native adapter.
 
 ## Prior Skiing rejection
 - Proposals at 46/297 seconds are reviewed `no_semantic_change`; the 200-second
@@ -62,9 +64,9 @@ pin/audit the native adapter.
   native 40-owner host gate passed; exact-SHA remote CI green at `4b78e1a`.
 - Stage A preflight: fourteen-file external bundle readback matched the
   authorized plan; source and weight hashes matched manifests.
-- Current local media acquisition: two real-media runs produce the same closed
-  tree and result hashes. Focused media tests: 22 passed. Full discovery:
-  944 run, 97 skipped, one unrelated OS-backend failure on macOS 27.0.1.
+- Current media acquisition: two local runs and one T7 publication produce
+  the same closed hashes. Full discovery: 946 tests, 97 skipped, no failures.
+  The host proof still rejects macOS 27.0.1.
 
 ## Rejected
 
@@ -74,8 +76,8 @@ pin/audit the native adapter.
 
 ## Pending
 
-- The local media tree awaits owner-code-gated publication to the external
-  data root. The current OS requires a new bounded backend feasibility review;
+- Two misplaced local media trees need exact-target cleanup after the verified
+  external replacement. The current OS requires a new bounded backend review;
   native invocation authority is closed. A pinned/audited native adapter and
   full runtime asset proof remain missing. No model inference.
 - No production render or retuning of rejected descriptors is authorized.
@@ -89,7 +91,7 @@ python3 -m unittest tests.test_sparse_story_stage_a_render -v
 python3 -m unittest tests.test_stage_a_media_preflight -v
 python3 -m unittest tests.test_stage_a_preflight_bundle -v
 python3 scripts/check_handoff.py
-# Full discovery currently has one OS-backend error on macOS 27.0.1.
+# Host test expects fail-closed proof on macOS 27.0.1.
 python3 -m unittest tests.test_sparse_story_os_backend -v
 git diff --check
 git status --short

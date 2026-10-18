@@ -75,13 +75,13 @@ row acquisition path. The bundle-facing runner first exact-rebuilds and compares
 all fourteen published preflight JSON files. It checks source hashes before and
 after rendering, uses private row time and four cardinal views, and passes each
 960x540 RGB PNG through the closed sanitizer. Two independent real-media runs
-produced the same 36-image tree and result hash under gitignored local outputs;
-three representative images were visually inspected. See
-`docs/experiments/stage-a-media-preflight-2026-10-18.md`. External media
-publication still needs owner code. Full portable discovery on macOS 27.0.1
-has one unrelated OS-backend parser failure due a new ARM64 slice in the
-installed `/usr/bin/sandbox-exec`; this blocks native invocation authority on
-the current OS. No model has run.
+produced the same 36-image tree and result hash; the canonical external T7
+publication matches both. Three representative images were visually inspected.
+See `docs/experiments/stage-a-media-preflight-2026-10-18.md`. Two misplaced
+local pixel-bearing verification bundles await exact cleanup. Full portable
+discovery passes 946 tests with 97 skips on macOS 27.0.1. The host test now
+expects fail-closed rejection of `/usr/bin/sandbox-exec`'s new ARM64 subtype;
+native invocation authority remains closed on this OS. No model has run.
 
 The runner's frozen v1 asset rule requires a directly executable ARM64 Mach-O
 entrypoint. The installed MLX Python script cannot be passed as that runtime.

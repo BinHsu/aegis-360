@@ -21,6 +21,16 @@ from aegis360.sparse_story_stage_a_render import render_stage_a_payloads  # noqa
 from build_stage_a_preflight_bundle import _salt, prepare_bundle  # noqa: E402
 
 
+def validate_output_placement(output_root: Path, data_root: Path) -> None:
+    if (not output_root.is_absolute() or not data_root.is_absolute()
+            or not data_root.is_dir() or data_root.is_symlink()):
+        raise ValueError("external data root and output must be absolute directories")
+    resolved_data = data_root.resolve(strict=True)
+    resolved_output = output_root.resolve(strict=False)
+    if resolved_output == resolved_data or not resolved_output.is_relative_to(resolved_data):
+        raise ValueError("media output must be under the external data root")
+
+
 def preview_hashes(index: dict, payloads: list[tuple[str, bytes]]) -> tuple[str, str]:
     leaves = {"adapter-index.json": canonical_index_bytes(index)}
     inputs = []
@@ -109,6 +119,7 @@ def run(*, preflight_root: Path, old_source: Path, old_grid: Path,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--data-root", required=True, type=Path)
     for name in ("preflight-root", "old-source", "old-grid", "old-scenes",
                  "old-timeline", "ski-source", "ski-scene-events",
                  "salt-file", "output-root"):
@@ -117,7 +128,9 @@ def main() -> int:
     parser.add_argument("--expected-result-sha256")
     args = parser.parse_args()
     try:
-        report = run(**{key.replace("-", "_"): value for key, value in vars(args).items()})
+        validate_output_placement(args.output_root, args.data_root)
+        inputs = vars(args).copy(); inputs.pop("data_root")
+        report = run(**inputs)
     except (OSError, ValueError, KeyError, TypeError) as error:
         parser.exit(2, f"Stage A media preflight failed: {error}\n")
     print(json.dumps(report, sort_keys=True))

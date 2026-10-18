@@ -1,6 +1,6 @@
 # Stage A real-media input preflight, 2026-10-18
 
-Status: local media-input gate only; no semantic model or Stage A outcome.
+Status: external sanitized media-input gate; no semantic model or Stage A outcome.
 
 ## Inputs and method
 
@@ -36,21 +36,33 @@ inspected: both source scenes contain distinct cardinal content, with no
 obvious blank panels or major codec corruption. This is a spot check, not a
 complete image-quality review.
 
-The local bundles are under the gitignored `outputs/stage-a-media-preflight/`
-directory. They are private transient input artifacts, not repository content.
-The closed result grants only sanitized transient-media input authority.
+The canonical bundle is under `AEGIS_DATA_DIR/outputs/stage-a-media-oldghost-skiing-v1/`.
+The owner authorized the exact external publication with `送 457`; immediately
+before launch the plan/target binding, script, salt, commit and destination
+absence were checked. The external root was read back independently: exactly
+37 files, directory mode 0700, sealed bundle mode 0555, result mode 0444,
+and the same tree/result hashes. The closed result grants only sanitized
+transient-media input authority.
+
+Two 19 MiB local verification copies were mistakenly placed under the
+checkout's gitignored `outputs/stage-a-media-preflight/`. Gitignore prevents
+commit, but does not make a checkout the correct durable location for pixels.
+The external copy is verified as the replacement; local copies await an exact
+cleanup authorization and must not be used as the canonical input.
 
 ## Limits and next gate
 
 No model was invoked. A native adapter, full runtime asset proof and Stage A
-smoke remain pending. The full portable test discovery on this host ran 944
-tests with 97 skips and one unrelated OS-backend failure: macOS 27.0.1 has an
+smoke remain pending. The first full portable discovery on this host ran 944
+tests with 97 skips and one OS-backend failure: macOS 27.0.1 has an
 additional ARM64 fat slice in `/usr/bin/sandbox-exec`, while the frozen backend
 parser accepts exactly one ARM64E subtype. The older native-host proof must be
-reviewed for this OS before it can grant invocation authority. The media gate
-does not depend on that proof.
+reviewed for this OS before it can grant invocation authority. After updating
+the host test to expect fail-closed rejection and adding the external-placement
+guard, discovery ran 946 tests with
+97 skips and no errors. The media gate does not depend on that proof.
 
-The next external-media publication is a separate write to the configured
-data volume. It needs an exact target/hash plan and owner send code. Source
-pixels must remain outside Git and the local duplicates need an owner-approved
-cleanup plan after a verified replacement exists.
+The portable host test now recognizes the new ARM64 subtype layout and asserts
+that the frozen parser rejects it. This preserves the invocation boundary; it
+does not make the backend compatible with macOS 27.0.1. A pinned/audited native
+adapter and full model/prompt asset proof remain separate work.

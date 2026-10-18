@@ -2,6 +2,7 @@
 
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -9,12 +10,23 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from build_stage_a_preflight_bundle import prepare_bundle  # noqa: E402
-from run_stage_a_media_preflight import run  # noqa: E402
+from run_stage_a_media_preflight import run, validate_output_placement  # noqa: E402
 from tests.test_sparse_story_media_tree import image  # noqa: E402
 from tests.test_stage_a_preflight_bundle import StageABundleTests  # noqa: E402
 
 
 class StageAMediaPreflightTests(unittest.TestCase):
+    def test_external_output_placement_rejects_documents_and_symlink_escape(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory); data_root = base / "aegis-360-items"
+            data_root.mkdir()
+            validate_output_placement(data_root / "outputs" / "new", data_root)
+            with self.assertRaisesRegex(ValueError, "under the external data root"):
+                validate_output_placement(base / "Documents" / "aegis-360" / "outputs" / "new", data_root)
+            (data_root / "escape").symlink_to(base)
+            with self.assertRaisesRegex(ValueError, "under the external data root"):
+                validate_output_placement(data_root / "escape" / "new", data_root)
+
     def fixture(self):
         fixture = StageABundleTests(); fixture.setUp()
         self.addCleanup(fixture.doCleanups)

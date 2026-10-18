@@ -141,6 +141,21 @@ obligations separate from the repository's code license.
   paths. Temporary frames and identity embeddings must have a documented
   lifecycle and cleanup policy.
 
+## Repository data placement
+
+- Keep source code, tests, documentation, manifests, small local configuration,
+  salts and hash-only plans in `~/Documents/aegis-360`.
+- Put source media, model weights, proxies, extracted frames, sanitized PNG
+  bundles, rendered video, recordings and other pixel/audio-bearing or large
+  generated assets under `AEGIS_DATA_DIR` on external storage, normally
+  `/Volumes/<disk>/aegis-360-items/`. A gitignored `outputs/` path inside the
+  checkout is not the default home for these assets.
+- Tests may use bounded temporary synthetic fixtures. A real-media runner must
+  reject a durable output path outside the configured external data root.
+- Before removing misplaced assets, verify an exact external replacement and
+  follow the destructive-operation authorization rule above. Never treat a
+  successful copy or matching checksum as permission to delete the original.
+
 ## Licensing
 
 The intended repository license is Apache-2.0. Review licenses independently
