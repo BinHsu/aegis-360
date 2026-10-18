@@ -2,12 +2,15 @@
 
 ## Current conclusion
 
-The synthetic adapter gate and Stage A preflight builder are published at
-`BinHsu/aegis-360@4b78e1a` with exact-SHA green CI. Stage A has a closed prompt/schema, a
+The synthetic adapter gate has exact-SHA green CI at
+`BinHsu/aegis-360@4b78e1a`; the Stage A preflight bundle evidence is in
+`BinHsu/aegis-360@621c195` (CI for that SHA was not rechecked this turn). Stage A has a closed prompt/schema, a
 verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs,
 and a six-packet real-input bundle: fourteen JSON files published to external
-storage, then read back against the exact approved plan. It still needs
-sanitized PNG inputs and a native adapter; no semantic model has run. The frozen Skiing chapter
+storage, then read back against the exact approved plan. Two local closed
+sanitized-media runs now match across all 36 images. External media publication,
+the current-OS backend proof and a native adapter remain; no semantic model
+has run. The frozen Skiing chapter
 proposal remains rejected.
 
 ## Accepted evidence
@@ -152,16 +155,11 @@ passes independent ABI/parser/identity audit. A private launcher/backend binding
 also passes lifecycle/provenance audit but public authority APIs remain closed.
 A registry-backed facade creates both proofs internally without caller-provided facts.
 
-Three independent macOS backend reviews reject signed App Sandbox and a bare VM
-for the frozen v1 contract. App Sandbox exposes no canonical compiled-policy
-artifact, permits broader container writes and does not provide the exact
-post-bootstrap fork/exec boundary; a VM alone does not deny guest fork, exec or
-AF_UNIX. Deprecated Seatbelt remains a host-bound feasibility candidate only.
-The clarified operation-level contract hashes exact policy-input bytes rather
-than claiming opaque kernel bytes, enumerates system-read rules, defines live
-socket and compound write sentinels, and limits exec denial to a separate
-forbidden executable after one native-Mach-O bootstrap. No capability authority
-is granted by these clarifications.
+Three independent macOS reviews reject signed App Sandbox and a bare VM for
+the frozen v1 contract. Deprecated Seatbelt remains a host-bound feasibility
+candidate. The operation-level contract hashes exact policy-input bytes,
+enumerates system reads and sentinels, and limits post-bootstrap exec denial.
+No capability authority is granted by these clarifications.
 
 The synthetic Seatbelt harness now classifies the final host candidate
 `feasible` on macOS 26.5.2/arm64 after two exact dyld-log-driven literal read
@@ -175,7 +173,11 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-- Latest local portable discovery: 911 tests, 814 passed, 97 skipped. Two
+- Latest local portable discovery on macOS 27.0.1: 944 tests, 97 skipped,
+  one OS-backend error. The installed `/usr/bin/sandbox-exec` has an additional
+  ARM64 slice outside the frozen parser's single-subtype contract; no native
+  invocation authority is claimed on this OS. The Stage A focused media suite
+  passes 22 tests. Earlier on the prior OS, 911 tests (814 passed, 97 skipped) and two
   scheduled-packet Seatbelt host tests and one combined 40-claim host gate pass,
   including runtime-manifest mismatch rejection and no-spawn owned cleanup.
   A mutation of the old finalized proof accepted a changed case-result hash;
@@ -188,11 +190,10 @@ specific directing question. No new video is currently awaiting owner review.
   stdout repeats pass host gates.
 
 ## Next action
-The synthetic gate and fourteen-file Stage A JSON preflight are published at
-`BinHsu/aegis-360@4b78e1a` with exact-SHA green CI. A local trusted row
-renderer now binds private time and cardinal geometry to public media refs,
-checks source hashes around serial FFmpeg rendering, and sanitizes each PNG.
-Its focused tests and one synthetic FFmpeg smoke pass. Next connect the
-published JSON bundle to this renderer, validate the full real-media payload
-set, and publish through the closed media-tree gate only after a concrete
-external-write plan and owner send code. No model invocation occurred.
+The Stage A real-media input gate now has two byte-identical local runs: six
+packets, 36 sanitized 960x540 PNGs, bundle tree
+`fd65c7a5436829fadfd78a89b64d361f59a8934a98c8d3f3022dce3cebe6c5b1`
+and result `c48862d316cbb5e3f05bc704d4eda5bcf7dd7d5269f0b9ca4db3be9962f6d80c`.
+The next action is owner-code-gated external media publication under an exact
+target/hash plan, followed by native backend review for macOS 27.0.1 and a
+pinned/audited native VLM adapter. No model invocation occurred.
