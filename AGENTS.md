@@ -158,6 +158,14 @@ obligations separate from the repository's code license.
   actual tool accepts explicit package, scratch and cache paths and keeps
   generated state on T7. This placement rule does not itself authorize a new
   network acquisition or third-party execution.
+- For a new network acquisition into T7, prepare the exact source URLs,
+  versions or commits, full T7 destinations, allowed actions and exclusions.
+  Show that plan and its hash with a fresh three-digit `送 NNN` code, following
+  the global external-change gate. One code may cover an explicitly listed
+  bounded batch. Recheck the unchanged plan and destinations immediately
+  before acquisition, then verify the acquired sources. Do not request a
+  separate code merely to use the already approved T7 location for routine
+  local project writes.
 - Tests may use bounded temporary synthetic fixtures. A real-media runner must
   reject a durable output path outside the configured external data root.
 - Before removing misplaced assets, verify an exact external replacement and

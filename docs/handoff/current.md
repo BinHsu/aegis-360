@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-18T18:16:26+08:00
+Updated: 2026-10-19T04:58:38+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 71dbd84
@@ -105,6 +105,10 @@ Automatic approval review rejected both source-only clone attempts: a general
 "continue" was not explicit authorization for this new network acquisition.
 Neither dependency was downloaded. Obtain approval for the exact two-target
 batch before retrying; no indirect workaround.
+`AGENTS.md` now makes the global external-change send-code gate explicit for
+new network acquisitions into T7, while retaining standing location approval
+for routine local writes. One fresh code can authorize the listed two-source
+batch after its exact plan and hash are shown.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
