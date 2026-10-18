@@ -188,10 +188,11 @@ specific directing question. No new video is currently awaiting owner review.
   stdout repeats pass host gates.
 
 ## Next action
-The completed one-packet synthetic gate now derives a public
-`synthetic_gate=pass` aggregate from the exact finalized 40-owner proof and
-publishes one exclusive `result.json` with exact-byte readback. A changed
-capability hash or recreated scratch path rejects authority. Portable
-discovery passes 911 with 97 skipped; the native 40-owner host gate passes.
-Next publish this local milestone only with owner send code, then verify green
-CI for the exact pushed SHA. Stage A/B and semantic results remain closed.
+The synthetic gate and fourteen-file Stage A JSON preflight are published at
+`BinHsu/aegis-360@4b78e1a` with exact-SHA green CI. A local trusted row
+renderer now binds private time and cardinal geometry to public media refs,
+checks source hashes around serial FFmpeg rendering, and sanitizes each PNG.
+Its focused tests and one synthetic FFmpeg smoke pass. Next connect the
+published JSON bundle to this renderer, validate the full real-media payload
+set, and publish through the closed media-tree gate only after a concrete
+external-write plan and owner send code. No model invocation occurred.

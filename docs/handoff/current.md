@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-18T09:03:00+08:00
+Updated: 2026-10-18T12:00:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 4b78e1a
@@ -18,6 +18,19 @@ direction is cheap-signal scheduling followed by sparse, closed semantic
 observations without per-frame VLM inference.
 
 ## Last completed milestone
+
+Local Stage A row-render acquisition milestone: `sparse_story_stage_a_render.py`
+exact-rebuilds the public index from private packets, verifies source hashes
+before and after rendering, uses exact decimal source times and four private
+cardinal views, bounds each serial FFmpeg PNG capture to 16 MiB/90 seconds,
+and passes 960x540 RGB output to the closed PNG sanitizer. Two focused tests
+pass. A synthetic ERP FFmpeg command produced a 2,720-byte sanitizer-valid
+PNG. Rejected alternative: reusing the older structural renderer's direct
+output directory publication, which lacks this protocol's closed media-tree
+authority. No real Stage A media was rendered, no model ran and no external
+output changed. Next connect the published fourteen-file preflight bundle and
+the two manifest-bound media leaves to the row renderer, validate all 36
+payloads, then prepare the exact external publication plan.
 
 The completed local synthetic gate now derives a one-packet public
 `synthetic_gate=pass` aggregate only from the exact 40-owner finalized proof.
@@ -108,78 +121,13 @@ defined, not a public protocol schema. No model or media was acquired.
 
 ## Verified
 
-- Restricted full discovery: 896 tests run, 801 passed, 95 skips. Listener
-  subcases skipped because the shell sandbox denies local listener binds.
-- Escalated host fixture: eight tests pass, including the three live-listener
-  network cases and owned-child fork marker. No sandbox-confinement authority.
-- A controlled probe-mode name mutation makes the original mode fail with exit 64.
-- The allowed-leaf selector returns request-bound paths/byte prefixes; changing
-  a retained model leaf makes its call fail.
-- Closed raw-transcript parser and provisional row checks: five focused tests
-  pass; malformed order and altered values are detected.
-- Outside sentinel snapshot: three focused tests detect create, overwrite,
-  truncate, rename, unlink, name replacement and mode change.
-- Forbidden-read snapshot: four focused tests cover identity/content mutation,
-  symlink/mode rejection and real repo/protocol file retention.
-- Scratch snapshot: three focused tests cover expected write and rejected source,
-  marker and private-directory changes. Escalated listener host gate: three tests
-  pass, including successful connections to all three listener families.
-- Escalated batch-policy host gate: 16 tests pass, including exact probe argv,
-  disjointness, fixed source leaves and post-execution neighbor mutation rejection.
-- Escalated raw transport host gate: twelve tests pass, including 21-row
-  evaluation, malformed/false-row rejection, timeout, post-exit mutation,
-  owned-descendant teardown, TERM-ignore/KILL, stdout ceiling, changed binding
-  and mutation of a real other-packet leaf. Wrong matrix keys and non-boolean
-  truthy values are rejected.
-  Suppressing group KILL fails both relevant lifecycle regressions.
-- Full-set selection: two focused tests pass. Selected first/last packet
-  bundles publish and validate; changed full result and replacement are rejected.
-- Batch candidate integration: packet six selected from a six-packet set is
-  retained; policy excludes the full-set root and a changed selected leaf fails.
-- Retained full-set denials: two focused tests pass; changed result bytes/file
-  and a selected packet absent from the full set fail before probe context use.
-- One-packet decoy: two focused tests cover exact cleanup after reap, changed
-  content preservation and allowed-root overlap rejection; host smoke passes.
-- Outside owner: two focused tests cover exact after-reap cleanup, refusal to
-  clean before reap and changed-content preservation. Twelve raw transport host
-  tests pass with the owner; positive paths remove its exact tree.
-- Listener owner: two focused host tests cover after-reap cleanup and unexpected
-  child preservation. Seventeen listener/raw transport host tests pass, including
-  positive owner cleanup through the native launcher. The initial long AF_UNIX
-  path failed; the short owned name is verified on the host.
-- Scratch file owner: four focused tests cover exact cleanup after reap,
-  pre-reap/changed-output preservation and a replaced write file after snapshot
-  closure and missing-write source-only cleanup. Corrected rename replacement
-  passes portable CI. Sixteen native
-  raw transport host tests pass; positive paths
-  remove both exact probe-created files.
-- Owned raw-probe path: one cleanup-refusal host test forces incomplete status
-  while unaffected owned trees are removed. A missing reap proof closes owners
-  without deleting their paths. A native timeout before policy delivery remains
-  incomplete while the source and unaffected owned trees are removed after reap.
-  A controlled capture with a reaped leader but live group preserves all owned
-  paths and returns incomplete cleanup status.
-- Owned batch scratch root: two focused tests cover exact candidate binding,
-  closed-candidate/group requirement and changed-tree/private-HOME preservation.
-  Native success and no-write timeout cases remove the exact root only after
-  probe cleanup, denial-proof exit and candidate close. Eighteen raw transport
-  host tests pass.
-- Full-set coordinator covers success, timeout, source mutation and cleanup
-  refusal in the current 29-test native raw-transport suite.
-- Private retained session and fixed synthetic transport: 64 native host tests
-  pass, including changed HOME, timeout, simultaneous pipes, exact scratch
-  cleanup, changed content and missing inference group proof.
-- The native retained-session case also confirms one-time claim rejection and
-  private receipt hashes/matrix; claim and receipt fail after terminal close.
-- Focused candidate/facade real-host integration: 34 tests run, all passed.
-- Controlled mutation returning cached policy without revalidation causes the
-  extra-neighbor-leaf regression to fail with `ValueError not raised`.
-- Controlled mutation removing private-directory emptiness validation causes the
-  nonempty-HOME regression to fail with `ValueError not raised`.
-- Three simultaneous Cursor Fast-effort reviews: Low returned one confirmed
-  defect in 191 seconds; Medium/High had no final answer at 540 seconds. The
-  owner/peer substitution red control and three green host tests distinguish
-  the fix. Claude Opus 5 separately found the missing-root error mismatch.
+- Published synthetic gate: 911 portable tests (814 passed, 97 skipped),
+  native 40-owner host gate passed; exact-SHA remote CI green at `4b78e1a`.
+- Stage A preflight: fourteen-file external bundle readback matched the
+  authorized plan; source and weight hashes matched manifests.
+- Current local row acquisition: two focused tests passed; installed FFmpeg
+  rendered one synthetic ERP row to a sanitizer-valid PNG. Real media and
+  bundle publication remain untested.
 
 ## Rejected
 
@@ -207,6 +155,7 @@ defined, not a public protocol schema. No model or media was acquired.
 ```sh
 cd ~/Documents/aegis-360
 git status --short --branch
+python3 -m unittest tests.test_sparse_story_stage_a_render -v
 python3 -m unittest tests.test_stage_a_preflight_bundle -v
 python3 scripts/check_handoff.py
 # External Stage A bundle is published; verify its exact file hashes before use.
