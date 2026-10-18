@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-18T18:15:11+08:00
+Updated: 2026-10-18T18:16:26+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 4353171
+Baseline commit: 71dbd84
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -99,6 +99,12 @@ package/scratch/cache path flags, but no build was run to verify placement.
 SwiftPM `--help` unexpectedly created a two-file `.build` marker under the
 Documents checkout; it was moved intact to the T7 build area and the checkout
 is clean of that cache. Future SwiftPM probes need T7 paths from the outset.
+The official `mlx-swift` `0.32.3` and `swift-syntax` `602.0.0` tag refs resolved
+read-only to the commits in `docs/design/sparse-story-stage-a-readiness.md`.
+Automatic approval review rejected both source-only clone attempts: a general
+"continue" was not explicit authorization for this new network acquisition.
+Neither dependency was downloaded. Obtain approval for the exact two-target
+batch before retrying; no indirect workaround.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
@@ -116,9 +122,9 @@ git diff --check
 git status --short
 ```
 
-Next owner decision: whether to acquire exact Swift dependency sources for a
-separate audit. Do not build or execute until that graph and the host backend
-are reviewed.
+Next owner decision: explicit authorization for the exact two-tag Swift
+dependency source-only acquisition recorded in the readiness design. Do not
+build, resolve transitives or execute under that approval.
 
 ## External artifacts
 

@@ -191,6 +191,7 @@ external data root. The OS-backend proof now passes; the VLM adapter and
 invocation gate remain; no model ran.
 Owner-approved `mlx-swift-lm` `3.32.3` source review is complete; exact
 dependencies, build and execution remain unverified (see
-`docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md`). Next decision:
-bounded Swift dependency acquisition. Native invocation remains closed;
+`docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md`). Automatic review
+rejected the two-tag dependency clone without explicit owner approval; no
+dependency was downloaded. Native invocation remains closed;
 source, future package cache and build outputs belong under T7.

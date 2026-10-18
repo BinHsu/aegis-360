@@ -54,6 +54,6 @@ Source: <https://github.com/ml-explore/mlx-swift-lm/tree/3.32.3>.
 The source-only acquisition is complete. Building a native adapter requires a
 separate bounded acquisition of exact Swift dependency sources and a review of
 their manifests, licenses, hooks, vendored code and offline behavior. The
-macOS 27.0.1 `sandbox-exec` backend remains fail-closed independently; static
-source compatibility grants no native invocation authority. Do not infer a
+macOS 27.0.1 `sandbox-exec` backend has since passed its retained host proof;
+static source compatibility still grants no native invocation authority. Do not infer a
 Stage A semantic result from this audit.

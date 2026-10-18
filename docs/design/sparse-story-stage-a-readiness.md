@@ -133,3 +133,18 @@ Even `swift build --help` created a small `.build` cache in the invocation
 directory on this host. That exact two-file cache was moved to the T7 build
 area; future SwiftPM probes should run from the T7 checkout with explicit
 scratch/cache paths and a clean Documents worktree check.
+
+The next proposed source-only batch has exactly two official targets:
+
+| Source and tag | Remote tag commit | T7 destination |
+| --- | --- | --- |
+| `ml-explore/mlx-swift` `0.32.3` | `19601207e9a0de51e03ee6ec0c3c5f3784275075` | `sources/mlx-swift-0.32.3/` |
+| `swiftlang/swift-syntax` `602.0.0` | `4799286537280063c85a32f09884cfbca301b1a1` | `sources/swift-syntax-602.0.0/` |
+
+Both tags were checked with read-only `git ls-remote`; neither source was
+acquired. Automatic approval review rejected the attempted clone commands
+because the user's general request to continue did not explicitly authorize
+these new network downloads. Obtain explicit approval for this exact batch
+before fetching. Then verify resolved commits, trees, licenses, manifests and
+hooks in the T7 source checkouts. Do not resolve transitives, build, execute
+third-party code or run the model under this batch.
