@@ -104,8 +104,8 @@ acquired source; a release listing is not a local source audit. Swift 6.4 and
 Swift Package Manager are available through Command Line Tools, but an Xcode
 app is not selected. Neither fact proves this package will compile here.
 
-The first network step, if the owner explicitly requests it, is a source-only
-fetch of that tag into an isolated scratch directory under `/private/tmp`.
+The first approved network step fetched only that tag into an isolated scratch
+directory under `/private/tmp` for inspection.
 Record the resolved full commit and tree hashes, remote URL, license, source
 inventory, package manifest, declared dependency revisions and any build or
 plugin hooks. Do not run `swift build`, resolve packages, execute an example,
@@ -124,3 +124,12 @@ That source-only step completed with owner approval on 2026-10-18. The resolved
 commit and tree, declared graph, source findings and scanner limits are in
 `docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md`. Dependency sources,
 build and invocation remain outside the completed scope.
+The canonical checkout has since been copied and verified at
+`/Volumes/T7/aegis-360-items/sources/mlx-swift-lm-3.32.3`. Any acquired Swift
+dependencies and future package scratch/cache/build products belong under
+the same T7 project root. SwiftPM 6.4 exposes explicit `--package-path`,
+`--scratch-path` and `--cache-path` options; no build has exercised them yet.
+Even `swift build --help` created a small `.build` cache in the invocation
+directory on this host. That exact two-file cache was moved to the T7 build
+area; future SwiftPM probes should run from the T7 checkout with explicit
+scratch/cache paths and a clean Documents worktree check.

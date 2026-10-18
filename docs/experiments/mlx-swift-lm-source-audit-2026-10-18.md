@@ -15,6 +15,12 @@ The commit carries a GitHub GPG signature, but `git verify-commit` could not
 establish trust: the sandbox could not access local GnuPG keyboxd and no public
 key was available. The tag is lightweight in this checkout.
 
+After inspection, the source checkout was copied to
+`/Volumes/T7/aegis-360-items/sources/mlx-swift-lm-3.32.3`.
+Readback there matched the full commit and tree above and had a clean Git
+status. The scratch copy was not deleted; it is not the canonical build source.
+No dependency or build output has been created by this audit.
+
 Source: <https://github.com/ml-explore/mlx-swift-lm/tree/3.32.3>.
 `Package.swift` SHA-256:
 `2b6698d6625eb832aacf4ec59ed32f587e7ae06f3020932ce6a70b9483abc02a`.

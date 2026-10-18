@@ -192,9 +192,9 @@ and result `c48862d316cbb5e3f05bc704d4eda5bcf7dd7d5269f0b9ca4db3be9962f6d80c`.
 The external T7 publication has the same hashes and exact readback. Two
 misplaced local pixel-bearing verification bundles were removed under owner
 code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
-external data root. Native backend review for macOS 27.0.1 and a pinned/audited
-native VLM adapter remain. No model invocation occurred.
-Owner-approved source-only `mlx-swift-lm` `3.32.3` review is complete; exact
+external data root. Native backend and VLM adapter remain; no model ran.
+Owner-approved `mlx-swift-lm` `3.32.3` source review is complete; exact
 dependencies, build and execution remain unverified (see
 `docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md`). Next decision:
-bounded Swift dependency acquisition. macOS 27.0.1 proof remains fail-closed.
+bounded Swift dependency acquisition. macOS 27.0.1 proof remains fail-closed;
+source, future package cache and build outputs belong under T7.

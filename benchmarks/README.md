@@ -36,6 +36,10 @@ media, models, proxies, extracted frames and rendered/sanitized media bundles.
 The checkout under `~/Documents/aegis-360` holds code and small hash-only
 records; its gitignored `outputs/` is not a durable real-media destination.
 Bounded synthetic test fixtures may use temporary directories.
+Acquired third-party source used to build this project, package caches, build
+scratch and compiled products also belong under the T7 project data root,
+with `sources/` for source checkouts and a separate build/cache area. The
+repository's own tracked code remains under Documents.
 
 Do not encode a developer's absolute path in scripts, manifests, logs, or
 decision traces. Acquisition will be an explicit future command; tests must not

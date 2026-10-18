@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-18T16:24:13+08:00
+Updated: 2026-10-18T17:28:48+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 88840a8
+Baseline commit: 1c0250f
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -89,6 +89,16 @@ Syft did not inventory them, Trivy recognized zero language files, and Semgrep
 failed before scanning. See
 `docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md`. No build,
 dependency acquisition or model invocation occurred.
+The owner clarified that third-party source intended for compilation and the
+entire package cache/build scratch/products belong under the T7 project root,
+without recurring location approval. The verified canonical source copy is
+under the T7 project root's `sources/mlx-swift-lm-3.32.3`; its commit/tree
+match the audited checkout. `AGENTS.md` now distinguishes the repository's
+tracked source in Documents from acquired build inputs on T7. SwiftPM 6.4 has
+package/scratch/cache path flags, but no build was run to verify placement.
+SwiftPM `--help` unexpectedly created a two-file `.build` marker under the
+Documents checkout; it was moved intact to the T7 build area and the checkout
+is clean of that cache. Future SwiftPM probes need T7 paths from the outset.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands

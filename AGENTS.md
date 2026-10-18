@@ -143,13 +143,21 @@ obligations separate from the repository's code license.
 
 ## Repository data placement
 
-- Keep source code, tests, documentation, manifests, small local configuration,
-  salts and hash-only plans in `~/Documents/aegis-360`.
+- Keep this repository's source code, tests, documentation, manifests, small
+  local configuration, salts and hash-only plans in `~/Documents/aegis-360`.
 - Put source media, model weights, proxies, extracted frames, sanitized PNG
-  bundles, rendered video, recordings and other pixel/audio-bearing or large
-  generated assets under `AEGIS_DATA_DIR` on external storage, normally
+  bundles, rendered video, recordings, acquired third-party source intended
+  for compilation, dependency caches, build scratch and compiled products
+  under `AEGIS_DATA_DIR` on external storage, normally
   `/Volumes/<disk>/aegis-360-items/`. A gitignored `outputs/` path inside the
   checkout is not the default home for these assets.
+- For this project, `/Volumes/T7/aegis-360-items/` is the approved external
+  working space; routine scoped writes there do not need a new location
+  approval. Use its `sources/` area for acquired third-party source and a
+  dedicated T7 build/cache area for compilation. Before building, verify the
+  actual tool accepts explicit package, scratch and cache paths and keeps
+  generated state on T7. This placement rule does not itself authorize a new
+  network acquisition or third-party execution.
 - Tests may use bounded temporary synthetic fixtures. A real-media runner must
   reject a durable output path outside the configured external data root.
 - Before removing misplaced assets, verify an exact external replacement and
