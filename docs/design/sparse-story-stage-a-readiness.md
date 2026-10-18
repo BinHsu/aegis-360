@@ -95,3 +95,27 @@ isolation or model-asset rule by treating a Python wrapper as a native adapter.
 Primary upstream references:
 - https://github.com/ml-explore/mlx-swift-lm/blob/main/Libraries/MLXVLM/Models/SmolVLM2.swift
 - https://github.com/ml-explore/mlx-swift-lm/blob/main/Libraries/MLXLMCommon/ModelFactory.swift
+
+## Bounded native-adapter source review plan
+
+Candidate: official `ml-explore/mlx-swift-lm` tag `3.32.3`. The upstream tag,
+commit, dependency graph, license and compatibility must be verified from the
+acquired source; a release listing is not a local source audit. Swift 6.4 and
+Swift Package Manager are available through Command Line Tools, but an Xcode
+app is not selected. Neither fact proves this package will compile here.
+
+The first network step, if the owner explicitly requests it, is a source-only
+fetch of that tag into an isolated scratch directory under `/private/tmp`.
+Record the resolved full commit and tree hashes, remote URL, license, source
+inventory, package manifest, declared dependency revisions and any build or
+plugin hooks. Do not run `swift build`, resolve packages, execute an example,
+load the model, or contact a model registry during this step. Run local static
+scanners against the acquired tree where useful; report their coverage and
+limits. Any later dependency acquisition or execution needs a separate bounded
+review of the exact graph and offline behavior.
+
+Keep the current fail-closed macOS 27.0.1 native backend proof unchanged until
+a host-specific ABI and invocation review establishes the new subtype's
+meaning. Stage A semantic smoke stays blocked until both that proof and an
+audited adapter are ready. Media and model assets stay under T7; source audit
+scratch stays outside the checkout and contains no benchmark pixels.

@@ -194,3 +194,6 @@ misplaced local pixel-bearing verification bundles were removed under owner
 code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
 external data root. Native backend review for macOS 27.0.1 and a pinned/audited
 native VLM adapter remain. No model invocation occurred.
+Next: owner-directed source-only acquisition of official `mlx-swift-lm` tag
+`3.32.3` for local audit; no build, dependency resolution or execution. The
+macOS 27.0.1 backend proof remains fail-closed.

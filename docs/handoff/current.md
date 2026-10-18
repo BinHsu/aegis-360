@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-18T16:00:00+08:00
+Updated: 2026-10-18T16:04:11+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f01fb6a
+Baseline commit: 770e323
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -81,6 +81,11 @@ pin/audit the native adapter.
   The current OS requires a new bounded backend review;
   native invocation authority is closed. A pinned/audited native adapter and
   full runtime asset proof remain missing. No model inference.
+The next proposed step is a source-only fetch of official `mlx-swift-lm` tag
+`3.32.3` into isolated `/private/tmp` for hash, license, dependency and hook
+review. The repo's network-acquisition rule requires an explicit owner action
+for this fetch. No build, dependency resolution or model invocation is included.
+See `docs/design/sparse-story-stage-a-readiness.md`.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
@@ -97,6 +102,10 @@ python3 -m unittest tests.test_sparse_story_os_backend -v
 git diff --check
 git status --short
 ```
+
+After the owner authorizes the source-only fetch, first verify the upstream
+tag/remote and resolved full commit, then acquire only that source into an
+isolated scratch directory. Do not proceed to build or dependency acquisition.
 
 ## External artifacts
 
