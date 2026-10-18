@@ -1,12 +1,12 @@
 # Current handoff
 
-Updated: 2026-10-18T08:47:00+08:00
+Updated: 2026-10-18T09:03:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 4478a4d
+Baseline commit: 4b78e1a
 Remote status: `git ls-remote origin refs/heads/main` confirmed
-`4478a4d672dd0399e551e0005c888ffe87db646b`; `handoff-contract` run
-39021685116 succeeded for that exact SHA, including portable unit tests.
+`4b78e1ad8981f70d102b7dce70abea176c084935`; `handoff-contract` run
+39084248607 succeeded for that exact SHA, including portable unit tests.
 Working tree at checkpoint: verify with `git status --short --branch`.
 
 ## Objective
@@ -42,12 +42,13 @@ deterministic fourteen-file builder, which passed a real-input no-write dry
 run with stable local mode-0600 salt;
 the adapter-index hash is
 `41fe1ee21e1c7ad0c3325842222826e61a5953dc35d39309d3c54cbe49f841bb`.
-An approved publication attempt with code `送 991` failed at `tempfile.mkdtemp`
-with `PermissionError: Operation not permitted` because this agent sandbox
-cannot write the external output directory. The target and staging
-directory were confirmed absent afterwards. The code is consumed and must not
-be reused. It has not been published as a durable external artifact. Stage A still lacks a real packet output bundle,
-full model/prompt asset proof and native adapter. Claude Opus 5.5's policy
+The Stage A bundle is now published under the external output root with exactly
+fourteen JSON files. Code `送 745` authorized the escalated write after the
+unprivileged attempt failed; every file was read back against the plan, with
+directory mode 0700 and file modes 0600. The execution-manifest hash is
+`5b5cfa39fa0d1cb0600ccca2f8c029d8ad16f4449d35f4e018e8fffc5a98a465`.
+Stage A still lacks sanitized PNG inputs, full model/prompt asset proof and a
+native adapter. No semantic model has run. Claude Opus 5.5's policy
 attribution question and the rejected `allow default` proposal are recorded in
 the aggregate boundary design note; no kernel attestation is claimed.
 
@@ -188,18 +189,16 @@ defined, not a public protocol schema. No model or media was acquired.
 
 ## Pending
 
-- Published `4478a4d` has exact-SHA green CI. The local Stage A prompt/schema
+- Published `4b78e1a` has exact-SHA green CI. The local Stage A prompt/schema
   bundle passes three contract tests; the installed 2.2B weight leaf matches
   its manifest hash. No real successor private packets or normal-mode VLM
   adapter exist. The pure six-packet lineage preflight now passes with raw-byte binding and
   controlled shape-valid mutation rejection. The Old Ghost and Skiing originals match benchmark hashes; four Old Ghost
   timelines rebuild from upstream JSON with the new pure preflight gate. The in-memory Skiing zero-event timeline and six-packet real-input preflight
   pass. The atomic bundle builder passes six synthetic tests and a real-input
-  no-write dry run. Approved code `送 991` reached the sandbox boundary before
-  any file was created; the target remained absent. Resume by checking the
-  target, re-running the dry run, and preparing a fresh exact plan/code for a
-  permitted write path or user-run script. Then publish and read back. No
-  model inference.
+  no-write dry run. Code `送 745` published all fourteen JSON files through
+  sandbox escalation; exact readback passed. The next bounded work is sanitized
+  PNG inputs and a pinned/audited native adapter. No model inference.
   See `docs/design/sparse-story-stage-a-readiness.md`.
 - No production render or retuning of rejected descriptors is authorized.
 
@@ -210,8 +209,7 @@ cd ~/Documents/aegis-360
 git status --short --branch
 python3 -m unittest tests.test_stage_a_preflight_bundle -v
 python3 scripts/check_handoff.py
-# External Stage A bundle target remains absent as of this checkpoint.
-# Resume only with a fresh plan/code; prior code 991 is consumed.
+# External Stage A bundle is published; verify its exact file hashes before use.
 python3 -m unittest discover -s tests -q
 python3 -m unittest tests.test_sparse_story_stage_a_prompt_bundle tests.test_sparse_story_stage_a_lineage tests.test_sparse_story_stage_a_timeline_proof -v
 python3 -m unittest tests.test_sparse_story_projection tests.test_sparse_story_media_tree -q

@@ -65,8 +65,9 @@ exact-rebuilds the Old Ghost timeline, derives the Skiing zero-event timeline,
 and prepares fourteen bundle files. The stable salt is a mode-0600 local
 ignored file; it is never in the bundle or report. The dry-run adapter-index
 SHA-256 is `41fe1ee21e1c7ad0c3325842222826e61a5953dc35d39309d3c54cbe49f841bb`.
-This is a prepared bundle, not a published input. Publish the exact bundle
-only after an action-specific code for the external output, then make
+Code `送 745` authorized publication of the exact fourteen-file bundle to
+external storage. Every published file was read back against the dry-run
+hashes; the directory is mode 0700 and the files are mode 0600. Next make
 sanitized PNG inputs. No model has run.
 
 The runner's frozen v1 asset rule requires a directly executable ARM64 Mach-O
