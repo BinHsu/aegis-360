@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-18T17:28:48+08:00
+Updated: 2026-10-18T18:15:11+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 1c0250f
+Baseline commit: 4353171
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -38,11 +38,12 @@ the external replacement remains intact; local `outputs/` measures 60 KiB.
 The runner CLI now requires an explicit external data root and rejects durable
 outputs outside it. The prior error was treating gitignore as a storage rule.
 
-Full portable discovery on macOS 27.0.1 ran 946 tests with 97 skips and no
-errors after the host test was corrected to expect fail-closed rejection of
-`/usr/bin/sandbox-exec`'s extra ARM64 subtype. Native invocation proof is not
-established on this OS. No model ran. Next review the changed OS backend and
-pin/audit the native adapter.
+The macOS 27.0.1 OS-backend parser now recognizes the SDK-documented
+ARM64E/ARM64E_X1 pair and validates both slices. Old code rejects this host;
+the updated retained host proof passes. Full discovery ran 947 tests with 97
+skips and no failures. See
+`docs/experiments/sparse-story-os-backend-arm64e-x1-2026-10-18.md`. This is a
+backend proof only; native adapter and model invocation remain closed.
 
 ## Prior Skiing rejection
 - Proposals at 46/297 seconds are reviewed `no_semantic_change`; the 200-second
@@ -66,8 +67,8 @@ pin/audit the native adapter.
 - Stage A preflight: fourteen-file external bundle readback matched the
   authorized plan; source and weight hashes matched manifests.
 - Current media acquisition: two local runs and one T7 publication produce
-  the same closed hashes. Full discovery: 946 tests, 97 skipped, no failures.
-  The host proof still rejects macOS 27.0.1.
+  the same closed hashes. Full discovery: 947 tests, 97 skipped, no failures.
+  The macOS 27.0.1 retained OS-backend host proof passes.
 
 ## Rejected
 
@@ -78,8 +79,7 @@ pin/audit the native adapter.
 ## Pending
 
 - Local media duplicates are removed; T7 is the canonical media location.
-  The current OS requires a new bounded backend review;
-  native invocation authority is closed. A pinned/audited native adapter and
+  Native invocation authority is closed. A pinned/audited native adapter and
   full runtime asset proof remain missing. No model inference.
 The owner approved the source-only official `mlx-swift-lm` `3.32.3` fetch. It
 resolved to commit `3b339ad6e3b3f44c8121ecff5131c7fd55e075e6`, tree

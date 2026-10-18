@@ -168,17 +168,12 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-- Latest local portable discovery on macOS 27.0.1: 946 tests, 97 skipped,
-  no errors. A host test now requires fail-closed rejection of the installed
-  `/usr/bin/sandbox-exec` additional ARM64 slice; native invocation authority
-  remains closed on this OS. Stage A focused media tests pass. Earlier on the
-  prior OS, 911 tests (814 passed, 97 skipped) and two
-  scheduled-packet Seatbelt host tests and one combined 40-claim host gate pass,
-  including runtime-manifest mismatch rejection and no-spawn owned cleanup.
-  A mutation of the old finalized proof accepted a changed case-result hash;
-  the fix rejects changed hashes and recreated scratch paths on the host.
-  Review controls: missing publication and substituted owner/peer paths fail
-  on old code and pass after fixes; three affected host tests are green.
+- Latest local portable discovery on macOS 27.0.1: 947 tests, 97 skipped,
+  no errors. The installed SDK names the additional ARM64E_X1 slice; the
+  parser validates both slices, and the retained host proof passes. Native
+  invocation authority remains closed. See
+  `docs/experiments/sparse-story-os-backend-arm64e-x1-2026-10-18.md`.
+  Earlier host-gate and mutation evidence is retained in its experiment record.
 - The private retained session and ordered 37-case result pass native host gates;
   scheduled packet receipt/peers pass two host tests. Aggregate authority remains closed.
   Private 33-row capture rebuild, bundle trust rejection and fresh native
@@ -192,9 +187,10 @@ and result `c48862d316cbb5e3f05bc704d4eda5bcf7dd7d5269f0b9ca4db3be9962f6d80c`.
 The external T7 publication has the same hashes and exact readback. Two
 misplaced local pixel-bearing verification bundles were removed under owner
 code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
-external data root. Native backend and VLM adapter remain; no model ran.
+external data root. The OS-backend proof now passes; the VLM adapter and
+invocation gate remain; no model ran.
 Owner-approved `mlx-swift-lm` `3.32.3` source review is complete; exact
 dependencies, build and execution remain unverified (see
 `docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md`). Next decision:
-bounded Swift dependency acquisition. macOS 27.0.1 proof remains fail-closed;
+bounded Swift dependency acquisition. Native invocation remains closed;
 source, future package cache and build outputs belong under T7.

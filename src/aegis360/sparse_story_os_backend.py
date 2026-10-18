@@ -19,6 +19,7 @@ _SF_RESTRICTED = 0x00080000
 _MNT_RDONLY = 0x00000001
 _CPU_TYPE_ARM64 = 0x0100000C
 _CPU_SUBTYPE_ARM64E_RAW = 0x80000002
+_CPU_SUBTYPE_ARM64E_X1_RAW = 0x8000000C
 _MH_EXECUTE = 2
 _MAX_BACKEND = 16 * 1024 ** 3
 _MAX_PLIST = 65536
@@ -162,13 +163,17 @@ def _validate_universal_backend(fd: int, file_size: int) -> None:
             raise ValueError("fat architecture alignment is invalid")
         ranges.append((offset, offset + size))
         if cpu == _CPU_TYPE_ARM64:
-            if subtype != _CPU_SUBTYPE_ARM64E_RAW:
+            if subtype not in (_CPU_SUBTYPE_ARM64E_RAW, _CPU_SUBTYPE_ARM64E_X1_RAW):
                 raise ValueError("host ARM64 raw subtype is invalid")
             selected.append((offset, size, subtype))
-    if len(selected) != 1 or any(a < d and c < b for i, (a, b) in enumerate(ranges)
-                                for c, d in ranges[i + 1:]):
+    selected_subtypes = {subtype for _, _, subtype in selected}
+    if (selected_subtypes not in ({_CPU_SUBTYPE_ARM64E_RAW},
+                                  {_CPU_SUBTYPE_ARM64E_RAW, _CPU_SUBTYPE_ARM64E_X1_RAW})
+            or any(a < d and c < b for i, (a, b) in enumerate(ranges)
+                   for c, d in ranges[i + 1:])):
         raise ValueError("fat architecture selection is ambiguous")
-    _validate_thin(fd, *selected[0])
+    for slice_facts in selected:
+        _validate_thin(fd, *slice_facts)
 
 
 def _hash_fd(fd: int, maximum: int) -> tuple[int, str, bytes]:

@@ -12,7 +12,8 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from aegis360.sparse_story_os_backend import (  # noqa: E402
-    _CPU_SUBTYPE_ARM64E_RAW, _DarwinNative, _MountFacts, _OSBackendProof,
+    _CPU_SUBTYPE_ARM64E_RAW, _CPU_SUBTYPE_ARM64E_X1_RAW, _DarwinNative,
+    _MountFacts, _OSBackendProof,
     _check_nodes, _check_records, _identity, _observe_os_backend,
     _observe_test_os_backend,
     _validate_universal_backend,
@@ -102,13 +103,30 @@ class OSBackendParserTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "duplicated"):
             self.validate(content)
 
-    def test_new_arm64_subtype_does_not_silently_expand_host_proof(self):
+    def test_documented_arm64e_x1_pair_validates_both_slices(self):
         content = multi_fat([
             (0x0100000C, _CPU_SUBTYPE_ARM64E_RAW, 4096, thin()),
-            (0x0100000C, 0x8000000C, 8192, thin(0x8000000C)),
+            (0x0100000C, _CPU_SUBTYPE_ARM64E_X1_RAW, 8192,
+             thin(_CPU_SUBTYPE_ARM64E_X1_RAW)),
+        ])
+        self.validate(content)
+        malformed = multi_fat([
+            (0x0100000C, _CPU_SUBTYPE_ARM64E_RAW, 4096, thin()),
+            (0x0100000C, _CPU_SUBTYPE_ARM64E_X1_RAW, 8192,
+             thin(_CPU_SUBTYPE_ARM64E_RAW)),
+        ])
+        with self.assertRaisesRegex(ValueError, "slice identity"):
+            self.validate(malformed)
+
+    def test_unknown_or_lone_arm64e_x1_subtype_stays_closed(self):
+        content = multi_fat([
+            (0x0100000C, _CPU_SUBTYPE_ARM64E_RAW, 4096, thin()),
+            (0x0100000C, 0x8000000D, 8192, thin(0x8000000D)),
         ])
         with self.assertRaisesRegex(ValueError, "host ARM64 raw subtype"):
             self.validate(content)
+        with self.assertRaisesRegex(ValueError, "selection is ambiguous"):
+            self.validate(fat(subtype=_CPU_SUBTYPE_ARM64E_X1_RAW))
 
     def test_fat_container_negative_matrix(self):
         cases = {
@@ -201,17 +219,17 @@ class OSBackendParserTests(unittest.TestCase):
                 with _observe_test_os_backend(
                         native=FakeNative(plist["ProductBuildVersion"])) as proof:
                     proof.revalidate()
-            elif subtypes == (_CPU_SUBTYPE_ARM64E_RAW, 0x8000000C):
-                with self.assertRaisesRegex(ValueError, "host ARM64 raw subtype"):
-                    _observe_test_os_backend(native=FakeNative(plist["ProductBuildVersion"]))
+            elif subtypes == (_CPU_SUBTYPE_ARM64E_RAW, _CPU_SUBTYPE_ARM64E_X1_RAW):
+                with _observe_test_os_backend(
+                        native=FakeNative(plist["ProductBuildVersion"])) as proof:
+                    proof.revalidate()
             else:
                 self.fail(f"unreviewed host ARM64 subtype set: {subtypes}")
         self.assertEqual(len(flags), 4)
         self.assertTrue(all(value & os.O_NOFOLLOW and value & os.O_CLOEXEC
                             for value in flags))
-        if subtypes == (_CPU_SUBTYPE_ARM64E_RAW,):
-            with self.assertRaisesRegex(ValueError, "kernel build"):
-                _observe_test_os_backend(native=FakeNative("wrong-build"))
+        with self.assertRaisesRegex(ValueError, "kernel build"):
+            _observe_test_os_backend(native=FakeNative("wrong-build"))
 
     def test_node_predicates_reject_nonregular_and_bad_mount_or_ownership(self):
         def fact(mode=stat.S_IFREG | 0o444, uid=0, gid=0, nlink=1, flags=0x80000):
