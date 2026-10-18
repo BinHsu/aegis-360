@@ -5,7 +5,10 @@
 The synthetic adapter gate is published at `BinHsu/aegis-360@4478a4d`
 with exact-SHA green CI. Local Stage A work has a closed prompt/schema, a
 verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs,
-and a six-packet real-input dry run with fourteen prepared bundle files. It still needs a durable input bundle
+and a six-packet real-input dry run with fourteen prepared bundle files. The
+approved external publication attempt stopped at the agent sandbox before
+creating any file; the output target was confirmed absent and code `送 991`
+is consumed. It still needs a durable input bundle
 and a native adapter; no semantic model has run. The frozen Skiing chapter
 proposal remains rejected.
 

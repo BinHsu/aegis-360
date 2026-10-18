@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-18T07:36:00+08:00
+Updated: 2026-10-18T08:47:00+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 4478a4d
@@ -37,11 +37,16 @@ Old Ghost v2–v5 timelines rebuild from their paired upstream JSON. An in-memor
 timeline from its existing scene-events, combines them with Old Ghost v5,
 and rebuilds six private packets and six projections. Its manifest hash is
 `5b5cfa39fa0d1cb0600ccca2f8c029d8ad16f4449d35f4e018e8fffc5a98a465`;
-roles are one proposal and five controls. The deterministic fourteen-file
-builder passed a real-input no-write dry run with stable local mode-0600 salt;
+roles are one proposal and five controls. Local commit `126938d` contains the
+deterministic fourteen-file builder, which passed a real-input no-write dry
+run with stable local mode-0600 salt;
 the adapter-index hash is
 `41fe1ee21e1c7ad0c3325842222826e61a5953dc35d39309d3c54cbe49f841bb`.
-It has not been published as a durable external artifact. Stage A still lacks a real packet output bundle,
+An approved publication attempt with code `送 991` failed at `tempfile.mkdtemp`
+with `PermissionError: Operation not permitted` because this agent sandbox
+cannot write the external output directory. The target and staging
+directory were confirmed absent afterwards. The code is consumed and must not
+be reused. It has not been published as a durable external artifact. Stage A still lacks a real packet output bundle,
 full model/prompt asset proof and native adapter. Claude Opus 5.5's policy
 attribution question and the rejected `allow default` proposal are recorded in
 the aggregate boundary design note; no kernel attestation is claimed.
@@ -190,8 +195,11 @@ defined, not a public protocol schema. No model or media was acquired.
   controlled shape-valid mutation rejection. The Old Ghost and Skiing originals match benchmark hashes; four Old Ghost
   timelines rebuild from upstream JSON with the new pure preflight gate. The in-memory Skiing zero-event timeline and six-packet real-input preflight
   pass. The atomic bundle builder passes six synthetic tests and a real-input
-  no-write dry run; the next task is an action-specific code for external
-  output, then exact readback. No model inference.
+  no-write dry run. Approved code `送 991` reached the sandbox boundary before
+  any file was created; the target remained absent. Resume by checking the
+  target, re-running the dry run, and preparing a fresh exact plan/code for a
+  permitted write path or user-run script. Then publish and read back. No
+  model inference.
   See `docs/design/sparse-story-stage-a-readiness.md`.
 - No production render or retuning of rejected descriptors is authorized.
 
@@ -200,12 +208,13 @@ defined, not a public protocol schema. No model or media was acquired.
 ```sh
 cd ~/Documents/aegis-360
 git status --short --branch
+python3 -m unittest tests.test_stage_a_preflight_bundle -v
+python3 scripts/check_handoff.py
+# External Stage A bundle target remains absent as of this checkpoint.
+# Resume only with a fresh plan/code; prior code 991 is consumed.
 python3 -m unittest discover -s tests -q
 python3 -m unittest tests.test_sparse_story_stage_a_prompt_bundle tests.test_sparse_story_stage_a_lineage tests.test_sparse_story_stage_a_timeline_proof -v
 python3 -m unittest tests.test_sparse_story_projection tests.test_sparse_story_media_tree -q
-AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_raw_probe_transport -q
-AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_private_scheduled_packet -q
-AEGIS_RUN_HOST_SEATBELT_TESTS=1 python3 -m unittest tests.test_sparse_story_private_complete_host -v
 python3 scripts/check_handoff.py
 git diff --check
 git status --short
@@ -223,6 +232,12 @@ proof is `outputs/structural-blind-selection/old-ghost-road-v1.json` with SHA
 No delegated work is running. Independent read-only reviews of the scheduled
 packet identified runtime-manifest binding and no-spawn cleanup gaps; both were
 fixed and tested locally.
+
+The owner requested a post-reboot Zellij resume command. The local session is
+`vitreous-hill`; `scripts/resume_zellij_after_reboot.sh` checks the checkout,
+Zellij installation and nesting, then attaches without creating a replacement
+or force-running restored commands. Shell syntax and a stubbed safe path pass;
+an actual reboot/reattach is unverified.
 
 ## Safety and claims
 
