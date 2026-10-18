@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-19T04:58:38+08:00
+Updated: 2026-10-19T05:05:31+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 71dbd84
+Baseline commit: 2819a76
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -108,7 +108,9 @@ batch before retrying; no indirect workaround.
 The agent-neutral global engineering contract already defines the send-code
 gate for external changes. The earlier repo-local restatement was removed as
 redundant; the repo policy retains only the T7 domain boundary. The exact two-source
-plan and its fresh code were shown; the code has not been used.
+plan remains unchanged. Its first code was revoked because the accompanying
+message did not present the full material change; a fresh code is pending.
+Neither dependency has been downloaded.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
@@ -120,7 +122,7 @@ python3 -m unittest tests.test_sparse_story_stage_a_render -v
 python3 -m unittest tests.test_stage_a_media_preflight -v
 python3 -m unittest tests.test_stage_a_preflight_bundle -v
 python3 scripts/check_handoff.py
-# Host test expects fail-closed proof on macOS 27.0.1.
+# The macOS 27.0.1 retained backend proof passes; invocation remains closed.
 python3 -m unittest tests.test_sparse_story_os_backend -v
 git diff --check
 git status --short
