@@ -105,10 +105,10 @@ Automatic approval review rejected both source-only clone attempts: a general
 "continue" was not explicit authorization for this new network acquisition.
 Neither dependency was downloaded. Obtain approval for the exact two-target
 batch before retrying; no indirect workaround.
-`AGENTS.md` now makes the global external-change send-code gate explicit for
-new network acquisitions into T7, while retaining standing location approval
-for routine local writes. One fresh code can authorize the listed two-source
-batch after its exact plan and hash are shown.
+The agent-neutral global engineering contract already defines the send-code
+gate for external changes. The earlier repo-local restatement was removed as
+redundant; the repo policy retains only the T7 domain boundary. The exact two-source
+plan and its fresh code were shown; the code has not been used.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
