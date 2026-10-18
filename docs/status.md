@@ -190,7 +190,7 @@ packets, 36 sanitized 960x540 PNGs, bundle tree
 `fd65c7a5436829fadfd78a89b64d361f59a8934a98c8d3f3022dce3cebe6c5b1`
 and result `c48862d316cbb5e3f05bc704d4eda5bcf7dd7d5269f0b9ca4db3be9962f6d80c`.
 The external T7 publication has the same hashes and exact readback. Two
-misplaced local pixel-bearing verification bundles await authorized cleanup;
-the repo harness now requires real-media CLI outputs under an explicit
+misplaced local pixel-bearing verification bundles were removed under owner
+code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
 external data root. Native backend review for macOS 27.0.1 and a pinned/audited
 native VLM adapter remain. No model invocation occurred.

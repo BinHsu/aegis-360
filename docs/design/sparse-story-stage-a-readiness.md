@@ -78,7 +78,8 @@ after rendering, uses private row time and four cardinal views, and passes each
 produced the same 36-image tree and result hash; the canonical external T7
 publication matches both. Three representative images were visually inspected.
 See `docs/experiments/stage-a-media-preflight-2026-10-18.md`. Two misplaced
-local pixel-bearing verification bundles await exact cleanup. Full portable
+local pixel-bearing verification bundles were removed after exact replacement
+verification and owner authorization. Full portable
 discovery passes 946 tests with 97 skips on macOS 27.0.1. The host test now
 expects fail-closed rejection of `/usr/bin/sandbox-exec`'s new ARM64 subtype;
 native invocation authority remains closed on this OS. No model has run.

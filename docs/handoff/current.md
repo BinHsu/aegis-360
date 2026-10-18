@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-18T15:51:00+08:00
+Updated: 2026-10-18T16:00:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 383cbf7
+Baseline commit: f01fb6a
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -32,16 +32,17 @@ See `docs/experiments/stage-a-media-preflight-2026-10-18.md`.
 The owner clarified that the T7 `aegis-360-items` root is the project's
 external asset space. Source media, models, proxies and pixel/audio-bearing
 outputs belong there; checkout `outputs/` is for small plans/salts only. Two
-mistaken 19 MiB local verification bundles remain pending exact-target cleanup.
+mistaken 19 MiB local verification bundles were removed under owner code
+`送 473` after dry-run per-leaf comparison with T7. Both roots are absent and
+the external replacement remains intact; local `outputs/` measures 60 KiB.
 The runner CLI now requires an explicit external data root and rejects durable
 outputs outside it. The prior error was treating gitignore as a storage rule.
 
 Full portable discovery on macOS 27.0.1 ran 946 tests with 97 skips and no
 errors after the host test was corrected to expect fail-closed rejection of
 `/usr/bin/sandbox-exec`'s extra ARM64 subtype. Native invocation proof is not
-established on this OS. No model ran. Next verify and clean the exact local
-pixel-bearing duplicates with owner authorization, then review the changed OS
-backend and pin/audit the native adapter.
+established on this OS. No model ran. Next review the changed OS backend and
+pin/audit the native adapter.
 
 ## Prior Skiing rejection
 - Proposals at 46/297 seconds are reviewed `no_semantic_change`; the 200-second
@@ -76,8 +77,8 @@ backend and pin/audit the native adapter.
 
 ## Pending
 
-- Two misplaced local media trees need exact-target cleanup after the verified
-  external replacement. The current OS requires a new bounded backend review;
+- Local media duplicates are removed; T7 is the canonical media location.
+  The current OS requires a new bounded backend review;
   native invocation authority is closed. A pinned/audited native adapter and
   full runtime asset proof remain missing. No model inference.
 - No production render or retuning of rejected descriptors is authorized.

@@ -47,8 +47,11 @@ transient-media input authority.
 Two 19 MiB local verification copies were mistakenly placed under the
 checkout's gitignored `outputs/stage-a-media-preflight/`. Gitignore prevents
 commit, but does not make a checkout the correct durable location for pixels.
-The external copy is verified as the replacement; local copies await an exact
-cleanup authorization and must not be used as the canonical input.
+The owner authorized exact-target cleanup with `送 473` after a dry run checked
+every local leaf against the verified external replacement. Both local bundle
+roots were removed; their absence and the intact external tree/result were
+read back. The checkout's ignored `outputs/` then measured 60 KiB, containing
+small plans and salt rather than real-media pixels.
 
 ## Limits and next gate
 
