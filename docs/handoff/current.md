@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-18T16:04:11+08:00
+Updated: 2026-10-18T16:24:13+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 770e323
+Baseline commit: 88840a8
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -81,11 +81,14 @@ pin/audit the native adapter.
   The current OS requires a new bounded backend review;
   native invocation authority is closed. A pinned/audited native adapter and
   full runtime asset proof remain missing. No model inference.
-The next proposed step is a source-only fetch of official `mlx-swift-lm` tag
-`3.32.3` into isolated `/private/tmp` for hash, license, dependency and hook
-review. The repo's network-acquisition rule requires an explicit owner action
-for this fetch. No build, dependency resolution or model invocation is included.
-See `docs/design/sparse-story-stage-a-readiness.md`.
+The owner approved the source-only official `mlx-swift-lm` `3.32.3` fetch. It
+resolved to commit `3b339ad6e3b3f44c8121ecff5131c7fd55e075e6`, tree
+`bbba5542694fbf2eaa3e8cfd053aa0e7edb8f79b`; the isolated checkout is
+clean. The declared Swift dependencies have ranges and no resolution lock.
+Syft did not inventory them, Trivy recognized zero language files, and Semgrep
+failed before scanning. See
+`docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md`. No build,
+dependency acquisition or model invocation occurred.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
@@ -103,9 +106,9 @@ git diff --check
 git status --short
 ```
 
-After the owner authorizes the source-only fetch, first verify the upstream
-tag/remote and resolved full commit, then acquire only that source into an
-isolated scratch directory. Do not proceed to build or dependency acquisition.
+Next owner decision: whether to acquire exact Swift dependency sources for a
+separate audit. Do not build or execute until that graph and the host backend
+are reviewed.
 
 ## External artifacts
 

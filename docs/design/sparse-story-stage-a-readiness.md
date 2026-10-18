@@ -119,3 +119,8 @@ a host-specific ABI and invocation review establishes the new subtype's
 meaning. Stage A semantic smoke stays blocked until both that proof and an
 audited adapter are ready. Media and model assets stay under T7; source audit
 scratch stays outside the checkout and contains no benchmark pixels.
+
+That source-only step completed with owner approval on 2026-10-18. The resolved
+commit and tree, declared graph, source findings and scanner limits are in
+`docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md`. Dependency sources,
+build and invocation remain outside the completed scope.
