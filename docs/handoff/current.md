@@ -1,12 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-18T12:00:00+08:00
+Updated: 2026-10-18T15:29:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 4b78e1a
-Remote status: `git ls-remote origin refs/heads/main` confirmed
-`4b78e1ad8981f70d102b7dce70abea176c084935`; `handoff-contract` run
-39084248607 succeeded for that exact SHA, including portable unit tests.
+Baseline commit: 2eb1201
+Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
+claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
 
 ## Objective
