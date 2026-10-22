@@ -127,9 +127,14 @@ checkout stayed clean. The stage (about 50 MiB) and log are preserved; see
 `docs/experiments/mlx-swift-offline-build-attempt-2026-10-22.md`. Code
 `送 635` is used. No retry occurred.
 
-Next action: inspect SwiftPM's `--disable-sandbox` and the outer policy's
-read/write scope, then prepare a new exact offline T7 build plan and code.
-Do not treat the failed attempt as a compiler compatibility result.
+Next action: present the prepared one-shot v2 offline build plan and fresh
+code `送 836` for owner decision. The ignored local plan is
+`outputs/approval/swift-stage-a-offline-build-v2-2026-10-22.json`, SHA-256
+`64336a2486209af06eb3bf8d525f5df0c43f5234c2af30c5ed42ecb6fc86e1df`.
+Read-only preflight passed: v2 stage absent, v1 preserved, six commits clean,
+three edits unique, T7 free 743.9 GiB. This plan adds SwiftPM
+`--disable-sandbox` under the outer network-denying sandbox; compiler/plugin
+local file access must be disclosed. Do not run it before the fresh code.
 
 ## External artifacts
 
