@@ -137,6 +137,6 @@ checkouts are now on T7 at the specified paths, with clean worktrees and
 matching commits. The static audit and tree/package hashes are in
 `docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
 `mlx-swift` needs two pinned but unfetched Git submodules (`mlx` and `mlx-c`)
-and an exact `swift-numerics` version; no build or model run is ready. A
-read-only tag query for `swift-numerics` failed at DNS on 2026-10-22. Pin and
-review that remaining graph before requesting one bounded acquisition batch.
+and an exact `swift-numerics` version; no build or model run is ready. The subsequent read-only tag query fixed `swift-numerics` `1.0.0` at
+`1e5cbc4e2142677d6695036a748344c8edb83e5c`. The exact three-source
+acquisition plan awaits a fresh owner code; no source in that batch was fetched.

@@ -29,6 +29,7 @@ gitlinks, and visible build/plugin declarations. It does not establish full
 transitive supply-chain safety, host compatibility, successful compilation,
 offline runtime behavior, native adapter integration, or semantic correctness.
 The next bounded step is to pin the missing sources and inspect their nested
-graph before proposing an acquisition. A read-only GitHub tag query for
-`swift-numerics` failed with DNS resolution on this host on 2026-10-22; no
-version or commit was inferred from that failure.
+graph before proposing an acquisition. The first read-only GitHub tag query for `swift-numerics` failed with DNS
+resolution in the sandbox. A later read-only query succeeded and verified
+tag `1.0.0` at `1e5cbc4e2142677d6695036a748344c8edb83e5c`.
+This is a ref observation, not a source or compatibility audit.

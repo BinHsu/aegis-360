@@ -195,5 +195,6 @@ see `docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md` and
 `docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
 `mlx-swift` still lacks two Git submodules and the pinned `swift-numerics`
 source. No SwiftPM resolution, build, native invocation, or model inference
-has run. The read-only numerics tag lookup failed at DNS; the next source
-batch cannot be specified exactly until that ref can be verified.
+has run. A later read-only numerics tag lookup fixed `1.0.0` at
+`1e5cbc4e2142677d6695036a748344c8edb83e5c`. The next bounded
+three-source acquisition plan is prepared but awaits a fresh owner code.
