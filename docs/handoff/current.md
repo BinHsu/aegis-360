@@ -105,12 +105,15 @@ under T7 `sources/` at pinned commits. The static audit is
 `docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
 `mlx-swift` requires two absent pinned Git submodules (`mlx` and `mlx-c`)
 and an unpinned `swift-numerics` dependency. No SwiftPM resolution, build,
-third-party code execution or model inference ran. A later read-only numerics tag query fixed `1.0.0` at
-`1e5cbc4e2142677d6695036a748344c8edb83e5c`. Code `送 148` is
-used. The next exact three-source plan is prepared in ignored local
-`outputs/approval/swift-remaining-source-batch-2026-10-22.json` with SHA-256
-`e5d0ac715d8b6b221433099a779eaf020f9f27708aa8313523ad4e42d61f6a90`;
-no source in it has been acquired.
+third-party code execution or model inference ran. The owner approved the exact three-source batch with `送 229`. The `mlx`,
+`mlx-c` and `swift-numerics` checkouts are on T7 at matching commits with
+clean worktrees. See
+`docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`.
+Code `送 229` is used. The trees are not placed in `mlx-swift` gitlink paths;
+no SwiftPM resolution, build, native adapter, or model inference ran.
+Standalone upstream CMake declares network fetches and was not executed.
+Any later build needs an exact offline T7 integration/cache/scratch plan and
+fresh code for external build outputs.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
@@ -128,9 +131,9 @@ git diff --check
 git status --short
 ```
 
-Next action: present the prepared exact three-source acquisition plan and
-fresh code to the owner. Do not acquire, build, resolve or execute under
-`送 148`.
+Next action: prepare the bounded offline SwiftPM integration and build plan
+with exact T7 paths, dependency map and output limits. Build outputs on T7
+need a fresh code; neither `送 148` nor `送 229` authorizes them.
 
 ## External artifacts
 

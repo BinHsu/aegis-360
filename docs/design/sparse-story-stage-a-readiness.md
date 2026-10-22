@@ -138,5 +138,8 @@ matching commits. The static audit and tree/package hashes are in
 `docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
 `mlx-swift` needs two pinned but unfetched Git submodules (`mlx` and `mlx-c`)
 and an exact `swift-numerics` version; no build or model run is ready. The subsequent read-only tag query fixed `swift-numerics` `1.0.0` at
-`1e5cbc4e2142677d6695036a748344c8edb83e5c`. The exact three-source
-acquisition plan awaits a fresh owner code; no source in that batch was fetched.
+`1e5cbc4e2142677d6695036a748344c8edb83e5c`. The owner approved the three-source batch with `送 229`; all exact checkouts
+are on T7 and audited in
+`docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`. The
+checkouts have not been integrated into `mlx-swift` gitlink paths, and no
+SwiftPM resolution, build, native adapter or model run has occurred.

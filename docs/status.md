@@ -5,8 +5,7 @@
 The synthetic adapter gate has exact-SHA green CI at
 `BinHsu/aegis-360@4b78e1a`; the Stage A preflight bundle evidence is in
 `BinHsu/aegis-360@621c195` (CI for that SHA was not rechecked this turn). Stage A has a closed prompt/schema, a
-verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs,
-and a six-packet real-input bundle: fourteen JSON files published to external
+verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs and a six-packet real-input bundle: fourteen JSON files published to external
 storage, then read back against the exact approved plan. Two local closed
 sanitized-media runs match across all 36 images; the canonical bundle was
 published to the configured T7 data root and independently read back.
@@ -190,11 +189,12 @@ code `送 473` after exact comparison with T7; the repo harness requires real-me
 external data root. The OS-backend proof now passes; the VLM adapter and
 invocation gate remain; no model ran.
 The owner-approved `mlx-swift-lm` `3.32.3`, `mlx-swift` `0.32.3`, and
-`swift-syntax` `602.0.0` sources are on T7 with verified checkout commits;
-see `docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md` and
+`swift-syntax` `602.0.0` sources are on T7; see `docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md` and
 `docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
 `mlx-swift` still lacks two Git submodules and the pinned `swift-numerics`
 source. No SwiftPM resolution, build, native invocation, or model inference
 has run. A later read-only numerics tag lookup fixed `1.0.0` at
-`1e5cbc4e2142677d6695036a748344c8edb83e5c`. The next bounded
-three-source acquisition plan is prepared but awaits a fresh owner code.
+`1e5cbc4e2142677d6695036a748344c8edb83e5c`. The owner approved and the three remaining source trees were acquired
+exactly; see `docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`.
+They are not integrated into `mlx-swift`; the next gate is an offline T7
+integration/build plan, not model inference.
