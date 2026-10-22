@@ -131,9 +131,13 @@ git diff --check
 git status --short
 ```
 
-Next action: prepare the bounded offline SwiftPM integration and build plan
-with exact T7 paths, dependency map and output limits. Build outputs on T7
-need a fresh code; neither `送 148` nor `送 229` authorizes them.
+Next action: present the prepared offline T7 SwiftPM integration/build plan
+for owner code `送 635`. The ignored local plan is
+`outputs/approval/swift-stage-a-offline-build-2026-10-22.json`, SHA-256
+`d2bed5cbd8364ee61820e72617034525087f384d5c26fe374805f69c68e2a8d1`.
+Read-only preflight passed: all six source commits/worktrees match, three
+manifest replacements are unique, stage root is absent, and T7 has 743.9 GiB
+free. Do not stage or build before this fresh code is returned.
 
 ## External artifacts
 
