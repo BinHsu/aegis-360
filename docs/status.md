@@ -189,9 +189,11 @@ misplaced local pixel-bearing verification bundles were removed under owner
 code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
 external data root. The OS-backend proof now passes; the VLM adapter and
 invocation gate remain; no model ran.
-Owner-approved `mlx-swift-lm` `3.32.3` source review is complete; exact
-dependencies, build and execution remain unverified (see
-`docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md`). Automatic review
-rejected the two-tag dependency clone without explicit owner approval; no
-dependency was downloaded. Native invocation remains closed;
-source, future package cache and build outputs belong under T7.
+The owner-approved `mlx-swift-lm` `3.32.3`, `mlx-swift` `0.32.3`, and
+`swift-syntax` `602.0.0` sources are on T7 with verified checkout commits;
+see `docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md` and
+`docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
+`mlx-swift` still lacks two Git submodules and the pinned `swift-numerics`
+source. No SwiftPM resolution, build, native invocation, or model inference
+has run. The read-only numerics tag lookup failed at DNS; the next source
+batch cannot be specified exactly until that ref can be verified.

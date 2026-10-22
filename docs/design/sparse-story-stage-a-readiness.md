@@ -80,16 +80,15 @@ publication matches both. Three representative images were visually inspected.
 See `docs/experiments/stage-a-media-preflight-2026-10-18.md`. Two misplaced
 local pixel-bearing verification bundles were removed after exact replacement
 verification and owner authorization. Full portable
-discovery passes 946 tests with 97 skips on macOS 27.0.1. The host test now
-expects fail-closed rejection of `/usr/bin/sandbox-exec`'s new ARM64 subtype;
-native invocation authority remains closed on this OS. No model has run.
+discovery passes 946 tests with 97 skips on macOS 27.0.1. The macOS 27.0.1 ARM64E_X1 parser and retained OS-backend proof now pass;
+native invocation authority remains closed. No model has run.
 
 The runner's frozen v1 asset rule requires a directly executable ARM64 Mach-O
 entrypoint. The installed MLX Python script cannot be passed as that runtime.
 The official MLX Swift LM project includes a SmolVLM2 implementation and a
 local-directory loader, making a native Swift adapter a plausible candidate,
-not a verified one. Its source/dependencies are not installed or authorized by
-this checkpoint; pin and audit them before acquisition. Do not relax the
+not a verified one. Its source and two first-level dependencies are now acquired and statically
+audited; the remaining native build graph still needs pinning and review. Do not relax the
 isolation or model-asset rule by treating a Python wrapper as a native adapter.
 
 Primary upstream references:
@@ -114,10 +113,9 @@ scanners against the acquired tree where useful; report their coverage and
 limits. Any later dependency acquisition or execution needs a separate bounded
 review of the exact graph and offline behavior.
 
-Keep the current fail-closed macOS 27.0.1 native backend proof unchanged until
-a host-specific ABI and invocation review establishes the new subtype's
-meaning. Stage A semantic smoke stays blocked until both that proof and an
-audited adapter are ready. Media and model assets stay under T7; source audit
+The macOS 27.0.1 retained OS-backend proof now passes both ARM64E slices;
+Stage A semantic smoke stays blocked until an audited native adapter and
+invocation proof are ready. Media and model assets stay under T7; source audit
 scratch stays outside the checkout and contains no benchmark pixels.
 
 That source-only step completed with owner approval on 2026-10-18. The resolved
@@ -134,17 +132,11 @@ directory on this host. That exact two-file cache was moved to the T7 build
 area; future SwiftPM probes should run from the T7 checkout with explicit
 scratch/cache paths and a clean Documents worktree check.
 
-The next proposed source-only batch has exactly two official targets:
-
-| Source and tag | Remote tag commit | T7 destination |
-| --- | --- | --- |
-| `ml-explore/mlx-swift` `0.32.3` | `19601207e9a0de51e03ee6ec0c3c5f3784275075` | `sources/mlx-swift-0.32.3/` |
-| `swiftlang/swift-syntax` `602.0.0` | `4799286537280063c85a32f09884cfbca301b1a1` | `sources/swift-syntax-602.0.0/` |
-
-Both tags were checked with read-only `git ls-remote`; neither source was
-acquired. Automatic approval review rejected the attempted clone commands
-because the user's general request to continue did not explicitly authorize
-these new network downloads. Obtain explicit approval for this exact batch
-before fetching. Then verify resolved commits, trees, licenses, manifests and
-hooks in the T7 source checkouts. Do not resolve transitives, build, execute
-third-party code or run the model under this batch.
+The owner authorized the exact two-source batch with `送 148`. Both tagged
+checkouts are now on T7 at the specified paths, with clean worktrees and
+matching commits. The static audit and tree/package hashes are in
+`docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
+`mlx-swift` needs two pinned but unfetched Git submodules (`mlx` and `mlx-c`)
+and an exact `swift-numerics` version; no build or model run is ready. A
+read-only tag query for `swift-numerics` failed at DNS on 2026-10-22. Pin and
+review that remaining graph before requesting one bounded acquisition batch.

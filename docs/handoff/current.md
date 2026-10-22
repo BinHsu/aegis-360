@@ -1,6 +1,6 @@
 # Current handoff
 
-Updated: 2026-10-19T05:05:31+08:00
+Updated: 2026-10-22T09:11:37+08:00
 Repository: aegis-360
 Branch: main
 Baseline commit: 2819a76
@@ -99,18 +99,15 @@ package/scratch/cache path flags, but no build was run to verify placement.
 SwiftPM `--help` unexpectedly created a two-file `.build` marker under the
 Documents checkout; it was moved intact to the T7 build area and the checkout
 is clean of that cache. Future SwiftPM probes need T7 paths from the outset.
-The official `mlx-swift` `0.32.3` and `swift-syntax` `602.0.0` tag refs resolved
-read-only to the commits in `docs/design/sparse-story-stage-a-readiness.md`.
-Automatic approval review rejected both source-only clone attempts: a general
-"continue" was not explicit authorization for this new network acquisition.
-Neither dependency was downloaded. Obtain approval for the exact two-target
-batch before retrying; no indirect workaround.
-The agent-neutral global engineering contract already defines the send-code
-gate for external changes. The earlier repo-local restatement was removed as
-redundant; the repo policy retains only the T7 domain boundary. The exact two-source
-plan remains unchanged. Its first code was revoked because the accompanying
-message did not present the full material change; a fresh code is pending.
-Neither dependency has been downloaded.
+The owner authorized the exact two-source acquisition with `送 148`. The
+`mlx-swift` `0.32.3` and `swift-syntax` `602.0.0` clean checkouts now reside
+under T7 `sources/` at pinned commits. The static audit is
+`docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
+`mlx-swift` requires two absent pinned Git submodules (`mlx` and `mlx-c`)
+and an unpinned `swift-numerics` dependency. No SwiftPM resolution, build,
+third-party code execution or model inference ran. The read-only numerics tag
+query failed because GitHub DNS resolution was unavailable. Code `送 148` is
+used; a further exact acquisition needs a new bounded plan and code.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
@@ -128,9 +125,9 @@ git diff --check
 git status --short
 ```
 
-Next owner decision: explicit authorization for the exact two-tag Swift
-dependency source-only acquisition recorded in the readiness design. Do not
-build, resolve transitives or execute under that approval.
+Next action: when GitHub ref lookup is available, pin and inspect the exact
+remaining dependency graph, then present one bounded source-only acquisition
+plan and fresh code. Do not acquire, build, resolve or execute under `送 148`.
 
 ## External artifacts
 
