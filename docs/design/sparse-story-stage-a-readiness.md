@@ -143,3 +143,11 @@ are on T7 and audited in
 `docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`. The
 checkouts have not been integrated into `mlx-swift` gitlink paths, and no
 SwiftPM resolution, build, native adapter or model run has occurred.
+
+The first owner-approved offline T7 `MLXVLM` compile attempt (`送 635`)
+failed before source compilation: SwiftPM's inner `sandbox-exec` could not
+apply beneath the outer network-denying sandbox. The preserved 50 MiB stage
+and exact log hash are in
+`docs/experiments/mlx-swift-offline-build-attempt-2026-10-22.md`.
+No model ran; compilation compatibility is still unknown. The one-shot code
+is spent. A second attempt needs a separately reviewed isolation/build plan.

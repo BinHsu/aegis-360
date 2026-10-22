@@ -188,13 +188,9 @@ misplaced local pixel-bearing verification bundles were removed under owner
 code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
 external data root. The OS-backend proof now passes; the VLM adapter and
 invocation gate remain; no model ran.
-The owner-approved `mlx-swift-lm` `3.32.3`, `mlx-swift` `0.32.3`, and
-`swift-syntax` `602.0.0` sources are on T7; see `docs/experiments/mlx-swift-lm-source-audit-2026-10-18.md` and
-`docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
-`mlx-swift` still lacks two Git submodules and the pinned `swift-numerics`
-source. No SwiftPM resolution, build, native invocation, or model inference
-has run. A later read-only numerics tag lookup fixed `1.0.0` at
-`1e5cbc4e2142677d6695036a748344c8edb83e5c`. The owner approved and the three remaining source trees were acquired
-exactly; see `docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`.
-They are not integrated into `mlx-swift`; the next gate is an offline T7
-integration/build plan, not model inference.
+The pinned MLX Swift LM, Swift, syntax, numerics, MLX and MLX-C sources are
+on T7; see `docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`.
+An isolated T7 copy integrated them. The first offline `MLXVLM` attempt
+failed at SwiftPM inner `sandbox-exec`, before compilation; see
+`docs/experiments/mlx-swift-offline-build-attempt-2026-10-22.md`. No model
+ran; a revised isolation/build plan is next.

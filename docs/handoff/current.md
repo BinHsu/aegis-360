@@ -99,45 +99,37 @@ package/scratch/cache path flags, but no build was run to verify placement.
 SwiftPM `--help` unexpectedly created a two-file `.build` marker under the
 Documents checkout; it was moved intact to the T7 build area and the checkout
 is clean of that cache. Future SwiftPM probes need T7 paths from the outset.
-The owner authorized the exact two-source acquisition with `送 148`. The
-`mlx-swift` `0.32.3` and `swift-syntax` `602.0.0` clean checkouts now reside
-under T7 `sources/` at pinned commits. The static audit is
-`docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md`.
-`mlx-swift` requires two absent pinned Git submodules (`mlx` and `mlx-c`)
-and an unpinned `swift-numerics` dependency. No SwiftPM resolution, build,
-third-party code execution or model inference ran. The owner approved the exact three-source batch with `送 229`. The `mlx`,
-`mlx-c` and `swift-numerics` checkouts are on T7 at matching commits with
-clean worktrees. See
+The owner-approved `mlx-swift` `0.32.3`, `swift-syntax` `602.0.0`,
+`mlx`, `mlx-c`, and `swift-numerics` `1.0.0` source checkouts are on T7 at
+pinned commits with clean worktrees. The two source audits are
+`docs/experiments/mlx-swift-dependency-source-audit-2026-10-22.md` and
 `docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`.
-Code `送 229` is used. The trees are not placed in `mlx-swift` gitlink paths;
-no SwiftPM resolution, build, native adapter, or model inference ran.
-Standalone upstream CMake declares network fetches and was not executed.
-Any later build needs an exact offline T7 integration/cache/scratch plan and
-fresh code for external build outputs.
+The first isolated offline `MLXVLM` attempt is described below. Standalone
+upstream CMake was not run. Native invocation and model inference remain
+closed.
 - No production render or retuning of rejected descriptors is authorized.
 
 ## Next commands
 
 ```sh
 cd ~/Documents/aegis-360
-git status --short --branch
-python3 -m unittest tests.test_sparse_story_stage_a_render -v
-python3 -m unittest tests.test_stage_a_media_preflight -v
-python3 -m unittest tests.test_stage_a_preflight_bundle -v
 python3 scripts/check_handoff.py
-# The macOS 27.0.1 retained backend proof passes; invocation remains closed.
-python3 -m unittest tests.test_sparse_story_os_backend -v
-git diff --check
-git status --short
+git status --short --branch
+# Read the preserved build log before preparing a revised build plan.
 ```
 
-Next action: present the prepared offline T7 SwiftPM integration/build plan
-for owner code `送 635`. The ignored local plan is
-`outputs/approval/swift-stage-a-offline-build-2026-10-22.json`, SHA-256
-`d2bed5cbd8364ee61820e72617034525087f384d5c26fe374805f69c68e2a8d1`.
-Read-only preflight passed: all six source commits/worktrees match, three
-manifest replacements are unique, stage root is absent, and T7 has 743.9 GiB
-free. Do not stage or build before this fresh code is returned.
+The owner approved the exact offline T7 build with `送 635`. An isolated
+stage copied the six pinned sources and applied exactly three path-dependency
+manifest edits. One network-denied `MLXVLM` target attempt exited 1 after
+26.4 seconds when SwiftPM's nested `sandbox-exec` failed to apply while
+compiling its manifest. No source compiled, no model ran, and the Documents
+checkout stayed clean. The stage (about 50 MiB) and log are preserved; see
+`docs/experiments/mlx-swift-offline-build-attempt-2026-10-22.md`. Code
+`送 635` is used. No retry occurred.
+
+Next action: inspect SwiftPM's `--disable-sandbox` and the outer policy's
+read/write scope, then prepare a new exact offline T7 build plan and code.
+Do not treat the failed attempt as a compiler compatibility result.
 
 ## External artifacts
 
