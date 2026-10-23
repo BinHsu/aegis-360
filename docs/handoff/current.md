@@ -165,9 +165,18 @@ T7; its 907,713,236-byte DMG SHA-256 is
 and passed `hdiutil verify`. Apple also retained about 881 MiB in the system
 MobileAsset tree. `-showComponent` reports installed and a mounted cryptex;
 direct mounted `metal --version` works, but the Xcode stub still says missing.
-No import command or MLX build ran. The exact next candidate is an import of
-the verified T7 exported bundle, under a fresh scoped code. Do not claim source
-compatibility.
+Import of the verified T7 exported bundle returned exit 70, "Asset is already
+installed". The Xcode `metal` stub still reports missing. Direct invocation
+of the mounted compiler successfully compiled a small synthetic Metal kernel
+when its module-cache path was set explicitly; this proves only compiler
+operation, not MLX compatibility. A sanitized, public-facts-only Claude
+review suggested version or registration mismatch; those remain hypotheses.
+The single network-denied, isolated v3 `MLXVLM` build exited 1 after 12.6
+seconds. SwiftPM reached `steel_attention.metal` but invoked an absolute
+Xcode compiler stub, bypassing the PATH wrapper. The preserved stage has
+`build.log` and `status.json`. Inspect how SwiftPM chooses this absolute tool
+before any retry; do not change the signed Xcode app without a replacement
+route. No model inference is planned.
 
 ## External artifacts
 

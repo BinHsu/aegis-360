@@ -188,13 +188,11 @@ misplaced local pixel-bearing verification bundles were removed under owner
 code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
 external data root. The OS-backend proof now passes; the VLM adapter and
 invocation gate remain; no model ran.
-Pinned MLX Swift sources are on T7; see
-`docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`.
-The isolated build v1 failed at nested Seatbelt; v2 reached planning but
-stopped at missing `metal`. The owner-approved Xcode 27.2 RC app is on T7,
-with valid version/build and deep signature; its license is accepted. The
-first-launch setup succeeded under `送 226`. The `送 151` Metal Toolchain
-download/export put a verified bundle on T7 and about 881 MiB in Apple's
-system MobileAsset tree. It is mounted, but the scoped `metal` stub still
-reports it missing. No import or model run occurred. See
+Pinned MLX Swift sources are on T7. Build v1 failed at nested Seatbelt; v2
+stopped at missing `metal`. Xcode 27.2 RC is installed on T7 with valid deep
+signature, accepted license and completed first launch. Metal Toolchain 27B47
+is mounted, but Xcode's `metal` stub still reports it missing; import says
+"Asset is already installed". A direct compiler probe passed. Isolated v3
+reached a Metal source but failed because SwiftPM invoked the absolute Xcode
+stub, bypassing the PATH wrapper. No model ran. See
 `docs/design/stage-a-metal-toolchain-route.md`.

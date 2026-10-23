@@ -1,6 +1,6 @@
 # Stage A Metal compiler route
 
-Status: Xcode 27.2 RC app installed on T7; optional Metal Toolchain pending.
+Status: Xcode 27.2 RC and Metal Toolchain 27B47 installed; Xcode's compiler stub fails.
 
 On 2026-10-23, the owner supplied the official
 `Xcode_27.2_Release_Candidate.xip` download and approved the exact T7
@@ -61,6 +61,17 @@ after bypassing the xcrun cache. The ordinary Xcode tool path is therefore
 not yet verified. Xcode's local `-help` specifies
 `-importComponent metalToolchain -importPath <bundlepath>` for the exported
 bundle; Apple documentation describes import as the next separate step.
+
+The approved import attempt returned exit 70, `Asset is already installed`.
+The mounted compiler compiled a synthetic Metal kernel after an explicit
+`-fmodules-cache-path` flag. The one isolated, network-denied v3 SwiftPM
+`MLXVLM` build copied the pinned source snapshot to T7 and reached
+`steel_attention.metal`, but exited 1 after 12.6 seconds. Its log shows an
+absolute invocation of Xcode's `XcodeDefault.xctoolchain/usr/bin/metal`,
+which bypassed the PATH wrapper for the mounted compiler. No `.air` output
+or model inference resulted. The v3 stage retains its `build.log` and
+`status.json` under the T7 project root. A public-facts-only Claude review
+suggested version or registration problems, but neither is confirmed.
 
 The owner-approved offline `MLXVLM` build v2 reached Metal build planning
 and failed because the host cannot spawn `metal`. The selected developer
