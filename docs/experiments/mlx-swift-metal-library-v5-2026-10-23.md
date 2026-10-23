@@ -30,3 +30,17 @@ target build succeeded separately, but did not package a metallib.
 
 This is a compiler and Metal API load proof. It does not prove MLX resource
 bundle integration, GPU operation, model loading or semantic inference.
+
+## Follow-up GPU smoke
+
+`scripts/run_mlx_gpu_smoke_v6.py` created a separate T7 package that depends
+only on the same hashed local `mlx-swift` source. It compiled a tiny
+`tools/check_mlx_gpu_smoke.swift` executable with SwiftPM's native backend,
+then set `GPU.metallib` to the v5 library and evaluated an array addition on
+the GPU. The build and run were network denied. The run exited zero and
+printed `MLX GPU add: [2, 4, 6]`; total elapsed time was 70.902 seconds.
+The v6 T7 stage retains `build.log`, `run.log`, and `status.json`.
+
+This verifies one MLX GPU operation with the custom metallib. The override
+was explicit; default bundle discovery, VLM model loading, semantic output,
+and memory or sustained-performance behavior remain unverified.

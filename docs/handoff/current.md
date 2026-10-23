@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-23T13:38:10+08:00
+Updated: 2026-10-23T13:41:39+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 27926ed
+Baseline commit: 75a416f
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -115,7 +115,7 @@ closed.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-rg -n 'default.metallib|mlx-swift_Cmlx.bundle' "$AEGIS_DATA_DIR/build/mlx-swift-lm-stage-a-3.32.3-v4/packages/mlx-swift/Source/Cmlx/mlx/mlx/backend/metal/device.cpp"
+rg -n 'native invocation|model inference|Stage A' docs/adr docs/design docs/handoff/current.md
 ```
 
 The owner approved the exact offline T7 build with `送 635`. An isolated
@@ -195,6 +195,13 @@ The Metal API loaded 232 functions on Apple M4. See
 `docs/experiments/mlx-swift-metal-library-v5-2026-10-23.md`. Next determine
 the MLX resource-bundle integration and run a bounded offline non-model GPU
 smoke before opening semantic inference. No model ran.
+
+The bounded v6 smoke built a separate executable from the same pinned local
+source and used `GPU.metallib` to point at the v5 library. Its network-denied
+GPU array add exited zero with `[2, 4, 6]` in 70.902 seconds including the
+build. Default bundle discovery and VLM inference remain unverified. Next
+inspect the accepted Stage A native-invocation boundary before preparing an
+offline model smoke; do not infer model readiness from the array result.
 
 ## External artifacts
 

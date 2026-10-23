@@ -192,6 +192,7 @@ Pinned MLX Swift sources are on T7. Xcode 27.2 RC and Metal Toolchain 27B47
 are installed; Xcode's `metal` stub still reports the component missing.
 Offline v4 native SwiftPM built `MLXVLM` in 87.3 seconds without a metallib.
 Offline v5 compiled ten shaders and linked `default.metallib`; a Metal API
-probe loaded 232 functions on Apple M4. Resource-bundle integration, GPU
-execution and model inference remain unverified. See
+probe loaded 232 functions on Apple M4. A separate v6 MLX GPU array add
+returned `[2, 4, 6]` with an explicit metallib override. Default bundle
+discovery and model inference remain unverified. See
 `docs/design/stage-a-metal-toolchain-route.md`.

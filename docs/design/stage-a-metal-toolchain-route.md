@@ -102,6 +102,12 @@ shader compilation and library loading, but not integration into the MLX
 resource bundle or model inference. See
 `../experiments/mlx-swift-metal-library-v5-2026-10-23.md`.
 
+A separate v6 Swift executable used the pinned local `mlx-swift` source and
+`GPU.metallib` override. Its network-denied GPU array addition returned
+`[2, 4, 6]` and exited zero. This proves a small MLX GPU operation with the
+manually linked library. Default bundle packaging and VLM model inference
+remain open. The durable evidence is in the same experiment record.
+
 The owner-approved offline `MLXVLM` build v2 reached Metal build planning
 and failed because the host cannot spawn `metal`. The selected developer
 directory is `/Library/Developer/CommandLineTools`; `xcrun --find metal`
