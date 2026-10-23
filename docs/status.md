@@ -188,13 +188,11 @@ misplaced local pixel-bearing verification bundles were removed under owner
 code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
 external data root. The OS-backend proof now passes; the VLM adapter and
 invocation gate remain; no model ran.
-The pinned MLX Swift LM, Swift, syntax, numerics, MLX and MLX-C sources are
-on T7; see `docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`.
-An isolated T7 copy integrated them. Build v1 failed at nested Seatbelt;
-build v2 passed manifest evaluation but stopped because this Command Line
-Tools host lacks `metal`. See
-`docs/experiments/mlx-swift-offline-build-v2-2026-10-23.md`. The owner-approved
-Xcode 27.2 RC app is now on T7 with matching version/build and valid
-unsandboxed deep code signature. Its license has not been accepted; first
-launch, Metal Toolchain acquisition and MLX build retry remain pending. No
-model ran. See `docs/design/stage-a-metal-toolchain-route.md`.
+Pinned MLX Swift sources are on T7; see
+`docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`.
+The isolated build v1 failed at nested Seatbelt; v2 reached planning but
+stopped at missing `metal`. The owner-approved Xcode 27.2 RC app is on T7,
+with valid version/build and deep signature; its license is accepted. The
+scoped `metal` stub still needs Metal Toolchain, and component status needs
+first-launch system setup. No model ran. See
+`docs/design/stage-a-metal-toolchain-route.md`.

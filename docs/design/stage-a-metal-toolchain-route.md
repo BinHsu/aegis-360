@@ -1,6 +1,6 @@
 # Stage A Metal compiler route
 
-Status: Xcode 27.2 RC app installed on T7; license and optional Metal Toolchain pending.
+Status: Xcode 27.2 RC app installed on T7; optional Metal Toolchain pending.
 
 On 2026-10-23, the owner supplied the official
 `Xcode_27.2_Release_Candidate.xip` download and approved the exact T7
@@ -16,10 +16,25 @@ The expanded app reports Xcode 27.2 build `27B48`; operation-local
 sandbox returned `CSSMERR_TP_NOT_TRUSTED`, so only the unsandboxed result is
 used for this claim. `xip` itself said archive-signature validation was not
 attempted. T7 retained about 740 GiB free; the system volume about 34 GiB.
-Global `xcode-select` remains on Command Line Tools. `xcrun --find metal`
-with the new app is blocked by the unaccepted Xcode license; no license was
-accepted, first-launch component installation run, Metal Toolchain acquired,
-or MLX build retried.
+Global `xcode-select` remains on Command Line Tools. The owner accepted the
+Xcode license interactively on 2026-10-23. With operation-local
+`DEVELOPER_DIR`, `xcrun --find metal` finds the app's stub, but `xcrun metal -v`
+reports `cannot execute tool 'metal' due to missing Metal Toolchain` and
+directs `xcodebuild -downloadComponent MetalToolchain`. No first-launch
+component installation, Metal Toolchain acquisition, or MLX build retry
+occurred. Apple's documented `-downloadComponent metalToolchain -exportPath`
+can put the exported DMG on T7, but the location and size of MobileAsset's
+intermediate cache and the installed component remain unverified. Those
+placements must be resolved before changing external or system state.
+The read-only `xcodebuild -showComponent metalToolchain` check fails even
+outside the agent sandbox because the app expects
+`/Library/Developer/PrivateFrameworks/CoreSimulator.framework`, and Xcode
+directs `xcodebuild -runFirstLaunch`. The app bundles four Apple packages
+totalling about 458 MiB compressed (`CoreTypes`, `MobileDevice`,
+`MobileDeviceDevelopment`, `XcodeSystemResources`) whose payloads target
+system `/System` and `/Library/Developer` paths. First launch is therefore a
+separate system change, not just a link to T7. The exact installed footprint
+has not been measured.
 
 The owner-approved offline `MLXVLM` build v2 reached Metal build planning
 and failed because the host cannot spawn `metal`. The selected developer

@@ -148,11 +148,17 @@ rehash-checked before expansion. The one extracted 4.0 GiB app is at
 the approved T7 `aegis-360-items/toolchains/xcode-27.2-rc/Xcode.app` path.
 Its version/build and unsandboxed deep code signature check pass; see
 `docs/design/stage-a-metal-toolchain-route.md`. Global `xcode-select` is
-unchanged. `xcrun --find metal` with the app now stops at the unaccepted
-Xcode license; the owner must review and accept it. No first-launch setup,
-optional Metal Toolchain download, or MLX build retry occurred. After license
-acceptance, check tool availability and plan any remaining external writes
-before requesting a fresh code. Do not claim source compatibility.
+unchanged. The owner accepted the Xcode license interactively. The app's
+scoped `xcrun --find metal` finds a stub, but `xcrun metal -v` confirms the
+optional Metal Toolchain is missing. No first-launch setup, component
+download or MLX build retry occurred. Apple's component export can target
+T7, but MobileAsset cache/install placement is unverified. Resolve it before
+any further external/system write and fresh code. Read-only component status
+also fails because Xcode's bundled CoreSimulator framework is not installed
+at its system path; `xcodebuild -runFirstLaunch` is required. Its bundled
+packages total about 458 MiB compressed and install system files, so this
+needs a separate scoped owner decision. Do not claim source
+compatibility.
 
 ## External artifacts
 
