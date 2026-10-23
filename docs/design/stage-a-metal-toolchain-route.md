@@ -22,6 +22,16 @@ list Xcode 27.1 for macOS 26.6 or later, with Swift 6.4 and the macOS 27
 SDK. The current macOS 27.0.1 host satisfies that OS floor. These are
 official compatibility statements, not a verified local installation.
 
+Apple's [Xcode App Store listing](https://apps.apple.com/us/app/xcode/id497799835)
+shows version 27.1 and size 3.1 GB. This listing does not establish the
+installed footprint or the size of the optional Metal Toolchain. Apple's
+[Command Line Tools documentation](https://developer.apple.com/documentation/xcode/installing-the-command-line-tools)
+says `xcodebuild` ships only with Xcode. The documented component commands
+therefore offer no supported CLT-only route to add Metal Toolchain on this
+host. The smallest documented route appears to be the base Xcode app plus
+Metal Toolchain, without optional platform simulators. This is an inference
+from Apple's instructions, not a verified local setup.
+
 The repository's storage boundary puts Xcode acquisition, optional Metal
 Toolchain and build products on T7. A future candidate would use a pinned
 Xcode 27.1 app under `/Volumes/T7/aegis-360-items/toolchains/` and an
