@@ -26,8 +26,10 @@ The repository's storage boundary puts Xcode acquisition, optional Metal
 Toolchain and build products on T7. A future candidate would use a pinned
 Xcode 27.1 app under `/Volumes/T7/aegis-360-items/toolchains/` and an
 operation-local `DEVELOPER_DIR`, avoiding a global `xcode-select` change.
-Before an installation code can be issued, resolve the official artifact
-URL, exact destination and disk footprint, download/account route,
+The official release listing's download link redirects to Apple ID sign-in
+from this environment, so the artifact URL and account route are not yet
+available for inspection. Before an installation code can be issued, resolve
+the official artifact URL, exact destination and disk footprint, account route,
 component artifact and integrity proof, and any writes outside T7. No
 download, import, developer-directory change or retry is authorized by the
 completed source/build codes.

@@ -139,8 +139,9 @@ no product was found, and `送 836` is used. No retry occurred.
 Next action: owner decision on pursuing the official Xcode 27.1 (27A9275)
 plus optional Metal Toolchain route on T7. Apple documents the component and
 macOS 27 compatibility; see `docs/design/stage-a-metal-toolchain-route.md`.
-Before an installation code, resolve the official downloadable artifact,
-account route, size, exact T7 target and external write effects. Any new T7
+The official download listing redirected to Apple ID sign-in in this
+environment. Before an installation code, resolve the authenticated artifact,
+size, exact T7 target and external write effects. Any new T7
 build needs a fresh code. Do not claim source compatibility.
 
 ## External artifacts
