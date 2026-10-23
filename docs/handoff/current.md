@@ -150,14 +150,15 @@ Its version/build and unsandboxed deep code signature check pass; see
 `docs/design/stage-a-metal-toolchain-route.md`. Global `xcode-select` is
 unchanged. The owner accepted the Xcode license interactively. The app's
 scoped `xcrun --find metal` finds a stub, but `xcrun metal -v` confirms the
-optional Metal Toolchain is missing. No first-launch setup, component
-download or MLX build retry occurred. Apple's component export can target
-T7, but MobileAsset cache/install placement is unverified. Resolve it before
-any further external/system write and fresh code. Read-only component status
-also fails because Xcode's bundled CoreSimulator framework is not installed
-at its system path; `xcodebuild -runFirstLaunch` is required. Its bundled
-packages total about 458 MiB compressed and install system files, so this
-needs a separate scoped owner decision. Do not claim source
+optional Metal Toolchain is missing. No component download or MLX build
+retry has occurred. The owner supplied `送 226` for
+the exact first-launch plan; it reported
+`Install Succeeded`. Four package receipts and CoreSimulator.framework are
+present, first-launch status exits zero, and global `xcode-select` is
+unchanged. An unsandboxed component query reports Metal Toolchain build
+`27B47` as `uninstalled`; `xcrun metal -v` still fails. Apple-managed
+MobileAsset may consume internal storage despite a T7 export, so confirm
+that placement exception before a fresh component code. Do not claim source
 compatibility.
 
 ## External artifacts
