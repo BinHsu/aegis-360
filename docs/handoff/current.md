@@ -158,7 +158,15 @@ present, first-launch status exits zero, and global `xcode-select` is
 unchanged. An unsandboxed component query reports Metal Toolchain build
 `27B47` as `uninstalled`; `xcrun metal -v` still fails. Apple-managed
 MobileAsset may consume internal storage despite a T7 export, so confirm
-that placement exception before a fresh component code. Do not claim source
+that placement exception before a fresh component code. The owner supplied
+`送 151` for one Apple-managed download/export. Build `27B47` is exported on
+T7; its 907,713,236-byte DMG SHA-256 is
+`9a7f61869f1ec662b69634db473f81d7b18f947e9cd81601d4b2825f903b6265`
+and passed `hdiutil verify`. Apple also retained about 881 MiB in the system
+MobileAsset tree. `-showComponent` reports installed and a mounted cryptex;
+direct mounted `metal --version` works, but the Xcode stub still says missing.
+No import command or MLX build ran. The exact next candidate is an import of
+the verified T7 exported bundle, under a fresh scoped code. Do not claim source
 compatibility.
 
 ## External artifacts

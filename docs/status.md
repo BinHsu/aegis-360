@@ -193,6 +193,8 @@ Pinned MLX Swift sources are on T7; see
 The isolated build v1 failed at nested Seatbelt; v2 reached planning but
 stopped at missing `metal`. The owner-approved Xcode 27.2 RC app is on T7,
 with valid version/build and deep signature; its license is accepted. The
-first-launch setup succeeded under `送 226`, but the scoped `metal` stub still
-needs Metal Toolchain build `27B47`, which is uninstalled. No model ran. See
+first-launch setup succeeded under `送 226`. The `送 151` Metal Toolchain
+download/export put a verified bundle on T7 and about 881 MiB in Apple's
+system MobileAsset tree. It is mounted, but the scoped `metal` stub still
+reports it missing. No import or model run occurred. See
 `docs/design/stage-a-metal-toolchain-route.md`.

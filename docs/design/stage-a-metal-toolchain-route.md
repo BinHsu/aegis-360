@@ -44,6 +44,23 @@ the optional toolchain missing. An unsandboxed read-only component query
 reports build `27B47`, status `uninstalled`; its sandboxed counterpart could
 not access MobileAsset. The component's actual download and installed
 locations remain unverified on this host.
+The owner approved one Apple-managed download/export with `送 151`.
+`xcodebuild -downloadComponent metalToolchain -exportPath` downloaded build
+`27B47` (838,860,800 declared download bytes), wrote an about 881 MiB
+MobileAsset under the system `AssetsV2` tree, and exported an about 866 MiB
+bundle to T7 under `toolchains/xcode-27.2-rc/metal-export/`. Its DMG is
+907,713,236 bytes with SHA-256
+`9a7f61869f1ec662b69634db473f81d7b18f947e9cd81601d4b2825f903b6265`;
+the system asset DMG hash matches, and `hdiutil verify` passes. The system
+volume's rounded free space fell from 34 to 33 GiB; T7 stayed about 740 GiB
+free. No import command was run. Surprisingly, `-showComponent` now says
+`installed` and names a mounted cryptex toolchain, and direct execution of
+the mounted compiler reports Apple metal 32023.922. However, `xcrun metal -v`
+still reports `missing Metal Toolchain` even outside the agent sandbox and
+after bypassing the xcrun cache. The ordinary Xcode tool path is therefore
+not yet verified. Xcode's local `-help` specifies
+`-importComponent metalToolchain -importPath <bundlepath>` for the exported
+bundle; Apple documentation describes import as the next separate step.
 
 The owner-approved offline `MLXVLM` build v2 reached Metal build planning
 and failed because the host cannot spawn `metal`. The selected developer
