@@ -30,6 +30,18 @@ with 10 MiB scratch and 88 KiB cache at readback. No `.air`, `.metallib`,
 `.a`, or `.dylib` product was found by the bounded artifact search. No model
 was loaded or run. The one-shot code is spent; no retry occurred.
 
+After the owner challenged the limited path check, a broader read-only host
+inventory found no Xcode application or archive: Spotlight's Xcode bundle-ID
+query returned nothing; `/Applications` and `~/Applications` were listed;
+readable paths under T7 were searched for Xcode apps/XIP files and Metal
+toolchains; `/Library/Developer`, `/opt`, `/usr/local`, and the user home
+were searched for matching tools/apps. `xcrun --find metal` and
+`xcrun --find metallib` both fail, and `xcodebuild -version` says the active
+developer directory is a Command Line Tools instance. The T7 search pruned
+protected Spotlight/Trash/revision directories. This supports the missing
+installed-tool conclusion for the searched locations, without claiming a
+forensic search of every protected filesystem path.
+
 Next identify an official, version-pinned Metal compiler route compatible
 with this host. Installing it, changing the selected developer directory,
 or rerunning the T7 build requires a new exact plan and authorization.

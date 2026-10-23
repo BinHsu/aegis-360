@@ -131,8 +131,10 @@ The owner approved v2 with `送 836`. A fresh isolated T7 stage applied the
 same local dependency mapping. The one-shot outer-network-denied SwiftPM
 `--disable-sandbox` build passed manifest evaluation and reached planning,
 then exited 1 after 11.3 seconds because `metal` could not be spawned. The
-selected `/Library/Developer/CommandLineTools` lacks `metal`; no Xcode app
-was found. The 61 MiB v2 stage and log are preserved; see
+selected `/Library/Developer/CommandLineTools` lacks `metal`. A later
+read-only Spotlight and filesystem inventory of Applications, home, T7,
+Library/Developer, opt and usr/local found no Xcode app or archive;
+`xcodebuild -version` confirms CLT-only selection. The 61 MiB v2 stage and log are preserved; see
 `docs/experiments/mlx-swift-offline-build-v2-2026-10-23.md`. No model ran,
 no product was found, and `送 836` is used. No retry occurred.
 
