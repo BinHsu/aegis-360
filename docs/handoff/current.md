@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-22T09:11:37+08:00
+Updated: 2026-10-23T13:38:10+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 2819a76
+Baseline commit: 27926ed
 Remote status: local `origin/main` is `621c195`; the prior exact-SHA green CI
 claim applies to `4b78e1a`. CI for `621c195` was not rechecked in this turn.
 Working tree at checkpoint: verify with `git status --short --branch`.
@@ -115,7 +115,7 @@ closed.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-# Read the preserved build log before preparing a revised build plan.
+rg -n 'default.metallib|mlx-swift_Cmlx.bundle' "$AEGIS_DATA_DIR/build/mlx-swift-lm-stage-a-3.32.3-v4/packages/mlx-swift/Source/Cmlx/mlx/mlx/backend/metal/device.cpp"
 ```
 
 The owner approved the exact offline T7 build with `送 635`. An isolated
@@ -184,6 +184,17 @@ offline v4 stage used SwiftPM's native backend and completed `MLXVLM` in
 v4 scratch products, so GPU shader packaging and inference remain unverified.
 The native backend is deprecated. Next inspect the upstream shader packaging
 path and design a bounded runtime smoke before declaring the adapter usable.
+
+Upstream confirms command-line SwiftPM cannot package Metal shaders. An
+isolated T7 Xcode overlay stalled during license status; the original signed
+app remains untouched, and the overlay is not a usable build route. The v3
+Xcode manifest lists ten generated Metal sources. A pinned offline v5 build
+compiled all ten to AIR and linked `default.metallib`, SHA-256
+`8f042bff23726e999c5f1a37a9acf454b057d7f42a4a7dbefd22d5a2b133ba59`.
+The Metal API loaded 232 functions on Apple M4. See
+`docs/experiments/mlx-swift-metal-library-v5-2026-10-23.md`. Next determine
+the MLX resource-bundle integration and run a bounded offline non-model GPU
+smoke before opening semantic inference. No model ran.
 
 ## External artifacts
 

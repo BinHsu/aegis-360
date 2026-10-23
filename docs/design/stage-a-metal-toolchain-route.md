@@ -84,6 +84,24 @@ does not prove that GPU shader resources are packaged or that model
 inference works. The default Swift build backend still has the absolute
 Xcode stub problem.
 
+Upstream's pinned `mlx-swift` install notes explicitly say command-line
+SwiftPM cannot build Metal shaders and recommend Xcode. A copy-on-write
+Xcode overlay on T7 with only its `metal` stub redirected to the mounted
+compiler made direct stub execution work, but `xcrun` and `xcodebuild` under
+that overlay stalled in `xcodebuild -license status`; the exact probes were
+stopped. The original signed Xcode app was not changed. The overlay remains
+an isolated diagnostic artifact and must not be treated as a working Xcode.
+
+The v3 Xcode build manifest names exactly ten generated `.metal` sources.
+`scripts/build_mlx_metal_library_v5.py` pinned that set and verified the full
+3,457-file dependency snapshot hash before compiling all ten with Apple's
+mounted compiler and linking a 2 MiB `default.metallib`. Its SHA-256 is
+`8f042bff23726e999c5f1a37a9acf454b057d7f42a4a7dbefd22d5a2b133ba59`.
+A local Metal API probe loaded 232 functions from it on Apple M4. This proves
+shader compilation and library loading, but not integration into the MLX
+resource bundle or model inference. See
+`../experiments/mlx-swift-metal-library-v5-2026-10-23.md`.
+
 The owner-approved offline `MLXVLM` build v2 reached Metal build planning
 and failed because the host cannot spawn `metal`. The selected developer
 directory is `/Library/Developer/CommandLineTools`; `xcrun --find metal`
