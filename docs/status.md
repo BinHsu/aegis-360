@@ -188,13 +188,13 @@ misplaced local pixel-bearing verification bundles were removed under owner
 code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
 external data root. The OS-backend proof now passes; the VLM adapter and
 invocation gate remain; no model ran.
-Pinned MLX Swift sources are on T7. Xcode 27.2 RC and Metal Toolchain 27B47
-are installed; Xcode's `metal` stub still reports the component missing.
+Pinned MLX Swift sources and Xcode 27.2 RC/Metal Toolchain 27B47 are on T7;
+Xcode's `metal` stub still reports the component missing.
 Offline v4 native SwiftPM built `MLXVLM` in 87.3 seconds without a metallib.
 Offline v5 compiled ten shaders and linked `default.metallib`; a Metal API
 probe loaded 232 functions on Apple M4. A separate v6 MLX GPU array add
 returned `[2, 4, 6]` with an explicit metallib override. Default bundle
 discovery and model inference remain unverified. See
 `docs/design/stage-a-metal-toolchain-route.md`.
-The fourteen-file SmolVLM2 asset tree matches its cached revision inventory.
-Pinned offline `Tokenizers` builds and round-trips local text; model inference remains unverified.
+The local SmolVLM2 tree matches its cached inventory. The offline bridge builds,
+applies a chat template and rejects missing input; image processing and inference remain unverified.
