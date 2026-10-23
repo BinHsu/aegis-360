@@ -190,7 +190,8 @@ external data root. The OS-backend proof now passes; the VLM adapter and
 invocation gate remain; no model ran.
 The pinned MLX Swift LM, Swift, syntax, numerics, MLX and MLX-C sources are
 on T7; see `docs/experiments/mlx-swift-remaining-source-audit-2026-10-22.md`.
-An isolated T7 copy integrated them. The first offline `MLXVLM` attempt
-failed at SwiftPM inner `sandbox-exec`, before compilation; see
-`docs/experiments/mlx-swift-offline-build-attempt-2026-10-22.md`. No model
-ran; a revised isolation/build plan is next.
+An isolated T7 copy integrated them. Build v1 failed at nested Seatbelt;
+build v2 passed manifest evaluation but stopped because this Command Line
+Tools host lacks `metal`. See
+`docs/experiments/mlx-swift-offline-build-v2-2026-10-23.md`. No model ran;
+selecting a verified Metal compiler route is the next gate.

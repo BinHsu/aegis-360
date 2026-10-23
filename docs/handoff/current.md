@@ -127,14 +127,18 @@ checkout stayed clean. The stage (about 50 MiB) and log are preserved; see
 `docs/experiments/mlx-swift-offline-build-attempt-2026-10-22.md`. Code
 `送 635` is used. No retry occurred.
 
-Next action: present the prepared one-shot v2 offline build plan and fresh
-code `送 836` for owner decision. The ignored local plan is
-`outputs/approval/swift-stage-a-offline-build-v2-2026-10-22.json`, SHA-256
-`64336a2486209af06eb3bf8d525f5df0c43f5234c2af30c5ed42ecb6fc86e1df`.
-Read-only preflight passed: v2 stage absent, v1 preserved, six commits clean,
-three edits unique, T7 free 743.9 GiB. This plan adds SwiftPM
-`--disable-sandbox` under the outer network-denying sandbox; compiler/plugin
-local file access must be disclosed. Do not run it before the fresh code.
+The owner approved v2 with `送 836`. A fresh isolated T7 stage applied the
+same local dependency mapping. The one-shot outer-network-denied SwiftPM
+`--disable-sandbox` build passed manifest evaluation and reached planning,
+then exited 1 after 11.3 seconds because `metal` could not be spawned. The
+selected `/Library/Developer/CommandLineTools` lacks `metal`; no Xcode app
+was found. The 61 MiB v2 stage and log are preserved; see
+`docs/experiments/mlx-swift-offline-build-v2-2026-10-23.md`. No model ran,
+no product was found, and `送 836` is used. No retry occurred.
+
+Next action: verify an official, version-pinned Metal compiler path for this
+macOS 27 host. Any installation, developer-directory change or new T7 build
+needs a concrete plan and fresh code. Do not claim source compatibility.
 
 ## External artifacts
 

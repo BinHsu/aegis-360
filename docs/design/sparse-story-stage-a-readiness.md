@@ -151,3 +151,11 @@ and exact log hash are in
 `docs/experiments/mlx-swift-offline-build-attempt-2026-10-22.md`.
 No model ran; compilation compatibility is still unknown. The one-shot code
 is spent. A second attempt needs a separately reviewed isolation/build plan.
+
+The second owner-approved offline T7 `MLXVLM` attempt (`送 836`) passed
+manifest evaluation with SwiftPM `--disable-sandbox` under an outer network
+deny, then stopped at build planning because the host has no `metal` tool.
+Read-only `xcrun --find metal` fails; only Command Line Tools are selected
+and no Xcode app is installed. See
+`docs/experiments/mlx-swift-offline-build-v2-2026-10-23.md`. The code is
+spent and no model ran. Source/compiler compatibility is still unproven.
