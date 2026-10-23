@@ -178,6 +178,13 @@ Xcode compiler stub, bypassing the PATH wrapper. The preserved stage has
 before any retry; do not change the signed Xcode app without a replacement
 route. No model inference is planned.
 
+The exact failed Metal source compiled under the mounted compiler. A fresh
+offline v4 stage used SwiftPM's native backend and completed `MLXVLM` in
+87.3 seconds; its Swift module is present. No `.metallib` was found in the
+v4 scratch products, so GPU shader packaging and inference remain unverified.
+The native backend is deprecated. Next inspect the upstream shader packaging
+path and design a bounded runtime smoke before declaring the adapter usable.
+
 ## External artifacts
 
 Set `AEGIS_DATA_DIR` locally. Skiing material is under

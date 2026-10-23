@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run one isolated, offline MLXVLM build using the mounted Apple Metal compiler."""
+"""Run one isolated, offline MLXVLM build with SwiftPM's native backend."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ import time
 
 ROOT = Path("/Volumes/T7/aegis-360-items")
 SOURCE = ROOT / "build/mlx-swift-lm-stage-a-3.32.3-v2/packages"
-STAGE = ROOT / "build/mlx-swift-lm-stage-a-3.32.3-v3"
+STAGE = ROOT / "build/mlx-swift-lm-stage-a-3.32.3-v4"
 EXPECTED_TREE = "d0075df90a50b5116a008564790f145bc3e4806ea3f1d65eaff277c1a9070aab"
 XCODE = ROOT / "toolchains/xcode-27.2-rc/Xcode.app"
 METAL_TOOLCHAIN = Path(
@@ -85,7 +85,8 @@ def main() -> int:
         "/usr/bin/sandbox-exec", "-p", "(version 1)(allow default)(deny network*)",
         str(swift), "build", "--package-path", str(STAGE / "packages/mlx-swift-lm"),
         "--scratch-path", str(STAGE / "scratch"), "--cache-path", str(STAGE / "cache"),
-        "--disable-sandbox", "--skip-update", "--target", "MLXVLM", "--jobs", "2",
+        "--disable-sandbox", "--skip-update", "--build-system", "native",
+        "--target", "MLXVLM", "--jobs", "2",
     ]
     status = STAGE / "status.json"
     status.write_text(json.dumps({"state": "running", "command": command, "start": time.time()}, indent=2))

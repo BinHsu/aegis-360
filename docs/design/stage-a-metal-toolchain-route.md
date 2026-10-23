@@ -73,6 +73,17 @@ or model inference resulted. The v3 stage retains its `build.log` and
 `status.json` under the T7 project root. A public-facts-only Claude review
 suggested version or registration problems, but neither is confirmed.
 
+The exact `steel_attention.metal` compile command from that failure, with
+only the executable changed to the mounted compiler and its module cache
+made explicit, exited zero and produced an AIR file. A fresh offline v4
+stage used SwiftPM `--build-system native` and the mounted compiler on PATH.
+Its `MLXVLM` target build exited zero in 87.3 seconds, with the Swift module
+present under its T7 scratch products. The native backend is deprecated.
+No `.metallib` or `.air` was found in the v4 scratch tree, so this result
+does not prove that GPU shader resources are packaged or that model
+inference works. The default Swift build backend still has the absolute
+Xcode stub problem.
+
 The owner-approved offline `MLXVLM` build v2 reached Metal build planning
 and failed because the host cannot spawn `metal`. The selected developer
 directory is `/Library/Developer/CommandLineTools`; `xcrun --find metal`
