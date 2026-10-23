@@ -36,6 +36,14 @@ The repository's storage boundary puts Xcode acquisition, optional Metal
 Toolchain and build products on T7. A future candidate would use a pinned
 Xcode 27.1 app under `/Volumes/T7/aegis-360-items/toolchains/` and an
 operation-local `DEVELOPER_DIR`, avoiding a global `xcode-select` change.
+Apple's [Foundation directory documentation](https://developer.apple.com/documentation/foundation/filemanager/searchpathdirectory/developerapplicationdirectory)
+says the self-contained Xcode app can be put anywhere. Apple's
+[command-line configuration documentation](https://developer.apple.com/cn/documentation/xcode/configuring-command-line-tools-settings)
+describes `DEVELOPER_DIR` for per-command Xcode selection. The mounted T7
+volume is APFS with about 744 GiB free at the latest check, so it is a
+plausible app location. This does not prove first launch and optional
+component installation keep every cache off the internal volume; those
+writes need inspection before claiming full T7 placement.
 The official release listing's download link redirects to Apple ID sign-in
 from this environment, so the artifact URL and account route are not yet
 available for inspection. Before an installation code can be issued, resolve
