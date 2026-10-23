@@ -32,8 +32,9 @@ host. The smallest documented route appears to be the base Xcode app plus
 Metal Toolchain, without optional platform simulators. This is an inference
 from Apple's instructions, not a verified local setup.
 
-The repository's storage boundary puts Xcode acquisition, optional Metal
-Toolchain and build products on T7. A future candidate would use a pinned
+The owner clarified that large Xcode app, Metal component and build data
+belong on T7; small local links and configuration needed to use them may
+remain on the internal disk. A future candidate would use a pinned
 Xcode 27.1 app under `/Volumes/T7/aegis-360-items/toolchains/` and an
 operation-local `DEVELOPER_DIR`, avoiding a global `xcode-select` change.
 Apple's [Foundation directory documentation](https://developer.apple.com/documentation/foundation/filemanager/searchpathdirectory/developerapplicationdirectory)
@@ -42,12 +43,13 @@ says the self-contained Xcode app can be put anywhere. Apple's
 describes `DEVELOPER_DIR` for per-command Xcode selection. The mounted T7
 volume is APFS with about 744 GiB free at the latest check, so it is a
 plausible app location. This does not prove first launch and optional
-component installation keep every cache off the internal volume; those
-writes need inspection before claiming full T7 placement.
+component installation keep all large caches off the internal volume;
+those writes need inspection and placement review.
 The official release listing's download link redirects to Apple ID sign-in
 from this environment, so the artifact URL and account route are not yet
 available for inspection. Before an installation code can be issued, resolve
 the official artifact URL, exact destination and disk footprint, account route,
-component artifact and integrity proof, and any writes outside T7. No
+component artifact and integrity proof, and any substantial writes outside
+T7. No
 download, import, developer-directory change or retry is authorized by the
 completed source/build codes.

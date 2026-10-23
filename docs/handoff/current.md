@@ -138,6 +138,10 @@ Library/Developer, opt and usr/local found no Xcode app or archive;
 `docs/experiments/mlx-swift-offline-build-v2-2026-10-23.md`. No model ran,
 no product was found, and `送 836` is used. No retry occurred.
 
+The owner confirmed the placement boundary: large Xcode/Metal/build data on
+T7, with necessary small local links or configuration allowed. `AGENTS.md`
+and `docs/design/stage-a-metal-toolchain-route.md` reflect it.
+
 Next action: owner decision on pursuing the official Xcode 27.1 (27A9275)
 plus optional Metal Toolchain route on T7. Apple documents the component and
 macOS 27 compatibility; see `docs/design/stage-a-metal-toolchain-route.md`.

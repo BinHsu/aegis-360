@@ -154,10 +154,12 @@ obligations separate from the repository's code license.
 - For this project, `/Volumes/T7/aegis-360-items/` is the approved external
   working space; routine scoped writes there do not need a new location
   approval. Use its `sources/` area for acquired third-party source and a
-  dedicated T7 build/cache area for compilation. Before building, verify the
-  actual tool accepts explicit package, scratch and cache paths and keeps
-  generated state on T7. This placement rule does not itself authorize a new
-  network acquisition or third-party execution.
+  dedicated T7 build/cache area for compilation. Large toolchain apps and
+  components also belong on T7. Small links and configuration needed to use
+  them may remain on the internal disk. Before building, verify the actual
+  tool accepts explicit package, scratch and cache paths and directs large
+  generated state to T7; inspect any other writes. This placement rule does
+  not itself authorize a new network acquisition or third-party execution.
 - Tests may use bounded temporary synthetic fixtures. A real-media runner must
   reject a durable output path outside the configured external data root.
 - Before removing misplaced assets, verify an exact external replacement and
