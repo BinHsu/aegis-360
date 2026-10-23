@@ -203,6 +203,14 @@ build. Default bundle discovery and VLM inference remain unverified. Next
 inspect the accepted Stage A native-invocation boundary before preparing an
 offline model smoke; do not infer model readiness from the array result.
 
+The local SmolVLM2 2.2B asset checker found all fourteen top-level files
+matching the cached revision inventory by size and Git blob/LFS hashes. The
+weight also matches `model-manifests/manifest.toml`; tree digest is
+`8687695ba624849d316f6f76f42d6cac07fce5e082610b9e280cd0ea38f93a9c`.
+This is local consistency, not fresh remote authentication or runtime proof.
+See `docs/experiments/stage-a-model-asset-tree-2026-10-23.md`. The next
+bounded work is an audited offline native adapter and invocation proof.
+
 ## External artifacts
 
 Set `AEGIS_DATA_DIR` locally. Skiing material is under

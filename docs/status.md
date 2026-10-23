@@ -196,3 +196,5 @@ probe loaded 232 functions on Apple M4. A separate v6 MLX GPU array add
 returned `[2, 4, 6]` with an explicit metallib override. Default bundle
 discovery and model inference remain unverified. See
 `docs/design/stage-a-metal-toolchain-route.md`.
+The existing SmolVLM2 2.2B asset tree matches its local cached revision
+inventory across fourteen files; runtime compatibility remains unverified.
