@@ -194,4 +194,5 @@ An isolated T7 copy integrated them. Build v1 failed at nested Seatbelt;
 build v2 passed manifest evaluation but stopped because this Command Line
 Tools host lacks `metal`. See
 `docs/experiments/mlx-swift-offline-build-v2-2026-10-23.md`. No model ran;
-selecting a verified Metal compiler route is the next gate.
+the next gate is deciding whether to acquire official Xcode 27.1 and its
+Metal Toolchain on T7; see `docs/design/stage-a-metal-toolchain-route.md`.

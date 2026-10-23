@@ -136,9 +136,12 @@ was found. The 61 MiB v2 stage and log are preserved; see
 `docs/experiments/mlx-swift-offline-build-v2-2026-10-23.md`. No model ran,
 no product was found, and `送 836` is used. No retry occurred.
 
-Next action: verify an official, version-pinned Metal compiler path for this
-macOS 27 host. Any installation, developer-directory change or new T7 build
-needs a concrete plan and fresh code. Do not claim source compatibility.
+Next action: owner decision on pursuing the official Xcode 27.1 (27A9275)
+plus optional Metal Toolchain route on T7. Apple documents the component and
+macOS 27 compatibility; see `docs/design/stage-a-metal-toolchain-route.md`.
+Before an installation code, resolve the official downloadable artifact,
+account route, size, exact T7 target and external write effects. Any new T7
+build needs a fresh code. Do not claim source compatibility.
 
 ## External artifacts
 
