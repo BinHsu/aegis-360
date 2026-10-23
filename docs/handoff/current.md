@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-24T06:51:44+08:00
+Updated: 2026-10-24T06:58:42+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 629f412
-Remote status: local `origin/main` is `621c195`; local main is ahead by 35 commits. No aegis push is authorized in the current task.
-Working tree at checkpoint: this handoff is modified and `docs/experiments/stage-a-tokenizer-source-preflight-2026-10-23.md` is untracked; verify with Git before editing.
+Baseline commit: d8e2a48
+Remote status: local `origin/main` is `621c195`; local main is ahead by 36 commits. No aegis push is authorized in the current task.
+Working tree at checkpoint: tokenizer build scripts, smoke source, experiment records and this handoff are uncommitted; verify with Git before editing.
 
 ## Objective
 
@@ -17,24 +17,20 @@ RGB and color-independent structural chapter proposals were rejected.
 
 ## Last completed milestone
 
-Pinned `mlx-swift-lm` 3.32.3 builds its `MLXVLM` target offline with Xcode
-27.2 RC SwiftPM `--build-system native` in an isolated T7 stage (87.3 s).
-That backend does not package Metal shaders. A separate network-denied build
-compiled ten generated Metal sources into `default.metallib`, SHA-256
-`8f042bff23726e999c5f1a37a9acf454b057d7f42a4a7dbefd22d5a2b133ba59`.
-Metal loaded 232 functions on Apple M4. A separate pinned MLX executable
-used `GPU.metallib` to run GPU array addition and returned `[2, 4, 6]`.
-The local SmolVLM2 2.2B model directory's fourteen top-level files match
-its cached revision inventory; the weight also matches the repository
-manifest. See `docs/experiments/mlx-swift-metal-library-v5-2026-10-23.md`
-and `docs/experiments/stage-a-model-asset-tree-2026-10-23.md`.
+A seven-package tokenizer graph was pinned to local T7 paths with optional
+Xet transport excluded. A first offline build using `swift-collections`
+1.0.0 failed on Swift 6.4 Sendable checking in `swift-jinja`. Apple's
+audited 1.7.2 release replaced it in a fresh stage. All resolved packages
+are local, `Tokenizers` built under network denial in 18.7 seconds, and a
+separate local-directory smoke encoded and decoded `hello world` as two
+tokens in 24.7 seconds including its build. No weights or media were used.
+See `docs/experiments/stage-a-tokenizer-offline-build-2026-10-24.md`.
 
 ## Repository state
 
-- Latest committed local milestone: `629f412` (model asset tree); prior
-  build and GPU smoke commits are `27926ed`, `75a416f`, and `707cdb8`.
-- The source-only tokenizer audit record is uncommitted and must be reviewed
-  and committed with this handoff. Its T7 checkouts are not in Git.
+- Latest committed local milestone: `d8e2a48` (tokenizer source preflight).
+- The tokenizer build/smoke scripts and results are uncommitted; their T7
+  sources, scratch, logs and products are outside Git.
 - The last published exact-SHA green CI claim is for `4b78e1a`. CI for the
   current local commits has not run. No Stage A build has been published.
 
@@ -50,6 +46,10 @@ and `docs/experiments/stage-a-model-asset-tree-2026-10-23.md`.
   with 97 skips and no failures. Current toolchain work ran focused checks.
 - Real-media Stage A preflight produced six private packets and 36 sanitized
   960x540 PNGs with matching repeat hashes on T7; no model received them.
+- `MLXVLM` target build, manually linked Metal library and MLX GPU array add
+  passed offline; see `docs/experiments/mlx-swift-metal-library-v5-2026-10-23.md`.
+- The SmolVLM2 2.2B local asset tree matches its cached revision inventory;
+  see `docs/experiments/stage-a-model-asset-tree-2026-10-23.md`.
 
 ## Rejected
 
@@ -59,17 +59,18 @@ and `docs/experiments/stage-a-model-asset-tree-2026-10-23.md`.
   proof; treating the Xcode overlay as a supported toolchain.
 - `EventSource` 1.0.0 adoption: its two-commit history starts with a
   complete implementation, triggering the supply-chain-audit stop signal.
+- `swift-collections` 1.0.0 for this Swift 6.4 build: the bounded v2 attempt
+  failed on Sendable checking; the v3 build used pinned 1.7.2.
 
 ## Pending
 
-`swift-transformers` 1.3.0 and companion source candidates are pinned on T7
-for inspection only. Their manifests have ranges and optional Xet paths; no
-exact offline SwiftPM graph, tokenizer build or native adapter exists.
-Trivy scanned no Swift target, Syft did not inventory a resolved Swift graph,
-and Semgrep stopped before scanning on a local trust-store error. See
-`docs/experiments/stage-a-tokenizer-source-preflight-2026-10-23.md`.
-Stage A model invocation remains closed until the adapter, runtime/input
-asset proof, isolation transport and bounded smoke are ready. No model ran.
+The tokenizer is built and its local-directory round trip works, but no
+`MLXVLM` native adapter links the tokenizer, image processor and model yet.
+Trivy scanned no Swift target and Semgrep stopped before scanning; the
+bounded offline build and manifest review are evidence of behavior, not a
+complete vulnerability audit. Stage A invocation remains closed until the
+adapter, runtime/input proof, isolation transport and bounded model smoke
+are ready. No model ran.
 
 ## Next commands
 
@@ -77,12 +78,12 @@ asset proof, isolation transport and bounded smoke are ready. No model ran.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-sed -n '1,180p' docs/experiments/stage-a-tokenizer-source-preflight-2026-10-23.md
+sed -n '1,180p' docs/experiments/stage-a-tokenizer-offline-build-2026-10-24.md
 ```
 
-Then pin and audit the exact offline tokenizer graph, compile only under T7
-with network denied, and implement the native adapter and isolation proof.
-Preserve the rejected EventSource 1.0.0 source as evidence; do not execute it.
+Then design the local native `MLXVLM` adapter linking the already built
+tokenizer and GPU library. Preserve the rejected source and failed stages;
+do not run a model until its isolation and asset boundary are proven.
 
 ## External artifacts
 

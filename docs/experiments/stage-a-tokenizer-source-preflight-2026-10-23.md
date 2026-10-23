@@ -47,3 +47,10 @@ failed before scanning because the local trust store had no anchors. These
 are not clean security results. The exact resolved graph, transitive source
 audits, executable tokenizer adapter, native isolation proof and model
 invocation remain open.
+
+Follow-up on 2026-10-24: the exact 1.0.0 Collections source failed under
+Swift 6.4, so Apple's 1.7.2 tag was separately audited and used in an
+isolated offline graph. Optional Xet was excluded. The resolved graph,
+successful tokenizer target build and local round trip are recorded in
+`stage-a-tokenizer-offline-build-2026-10-24.md`. This does not revise the
+source-only status of the older checkouts or imply a model invocation.
