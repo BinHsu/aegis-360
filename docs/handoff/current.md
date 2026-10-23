@@ -142,13 +142,17 @@ The owner confirmed the placement boundary: large Xcode/Metal/build data on
 T7, with necessary small local links or configuration allowed. `AGENTS.md`
 and `docs/design/stage-a-metal-toolchain-route.md` reflect it.
 
-Next action: owner decision on pursuing the official Xcode 27.1 (27A9275)
-plus optional Metal Toolchain route on T7. Apple documents the component and
-macOS 27 compatibility; see `docs/design/stage-a-metal-toolchain-route.md`.
-The official download listing redirected to Apple ID sign-in in this
-environment. Before an installation code, resolve the authenticated artifact,
-size, exact T7 target and external write effects. Any new T7
-build needs a fresh code. Do not claim source compatibility.
+The owner supplied Xcode 27.2 RC (27B48) from Apple Developer and approved
+its exact T7 install plan with `送 487`. The 2,047,348,156-byte XIP was
+rehash-checked before expansion. The one extracted 4.0 GiB app is at
+the approved T7 `aegis-360-items/toolchains/xcode-27.2-rc/Xcode.app` path.
+Its version/build and unsandboxed deep code signature check pass; see
+`docs/design/stage-a-metal-toolchain-route.md`. Global `xcode-select` is
+unchanged. `xcrun --find metal` with the app now stops at the unaccepted
+Xcode license; the owner must review and accept it. No first-launch setup,
+optional Metal Toolchain download, or MLX build retry occurred. After license
+acceptance, check tool availability and plan any remaining external writes
+before requesting a fresh code. Do not claim source compatibility.
 
 ## External artifacts
 

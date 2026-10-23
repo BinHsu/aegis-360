@@ -1,6 +1,25 @@
 # Stage A Metal compiler route
 
-Status: candidate only; no tool acquired or installed.
+Status: Xcode 27.2 RC app installed on T7; license and optional Metal Toolchain pending.
+
+On 2026-10-23, the owner supplied the official
+`Xcode_27.2_Release_Candidate.xip` download and approved the exact T7
+installation plan with code `送 487`. The source was 2,047,348,156 bytes,
+SHA-256 `aab47159fa56c8521b0535d5231efc70d330dd4819513c8266a0cf3eceacc425`,
+with macOS download-origin metadata pointing to Apple's Developer Tools URL.
+`xip --expand` produced one app at
+`/Volumes/T7/aegis-360-items/toolchains/xcode-27.2-rc/Xcode.app` (4.0 GiB).
+The expanded app reports Xcode 27.2 build `27B48`; operation-local
+`DEVELOPER_DIR` makes `xcodebuild -version` report the same. An unsandboxed
+`codesign --verify --deep --strict` passed with `valid on disk` and
+`satisfies its Designated Requirement`. The same check inside the agent
+sandbox returned `CSSMERR_TP_NOT_TRUSTED`, so only the unsandboxed result is
+used for this claim. `xip` itself said archive-signature validation was not
+attempted. T7 retained about 740 GiB free; the system volume about 34 GiB.
+Global `xcode-select` remains on Command Line Tools. `xcrun --find metal`
+with the new app is blocked by the unaccepted Xcode license; no license was
+accepted, first-launch component installation run, Metal Toolchain acquired,
+or MLX build retried.
 
 The owner-approved offline `MLXVLM` build v2 reached Metal build planning
 and failed because the host cannot spawn `metal`. The selected developer
