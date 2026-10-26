@@ -22,7 +22,7 @@ from tests.test_sparse_story_raw_probe_transport import RawProbeTransportHostTes
 
 
 ROOT = Path("/Volumes/T7/aegis-360-items")
-STAGE = ROOT / "build/stage-a-retained-isolation-v1"
+STAGE = ROOT / "build/stage-a-retained-isolation-v2"
 LAUNCHERS = ROOT / "build/stage-a-native-launcher-assets-v1"
 ADAPTER = ROOT / "build/stage-a-native-adapter-v3/runtime"
 

@@ -38,3 +38,5 @@ venv/
 *.mlpackage/
 *.pt
 *.pth
+# task-ledger: local task state. Another machine gets a .db only by copying over this path.
+.task-ledger/

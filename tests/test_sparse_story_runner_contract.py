@@ -132,7 +132,11 @@ class SparseStoryRunnerContractTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertTrue(first.startswith(b"(version 1)\n(deny default)\n"))
         self.assertNotIn(b"(allow default)", first)
-        self.assertNotIn(b"sysctl", first)
+        self.assertIn(b'(allow sysctl-read (sysctl-name "hw.memsize"))', first)
+        self.assertNotIn(b'(allow sysctl-read)\n', first)
+        self.assertIn(b'(iokit-user-client-class "AGXDeviceUserClient")', first)
+        self.assertIn(b'(iokit-user-client-class "IOSurfaceRootUserClient")', first)
+        self.assertIn(b'(allow mach-lookup (global-name "com.apple.MTLCompilerService"))', first)
         lines = first.splitlines()
         exec_lines = [line for line in lines if b"process-exec" in line]
         self.assertEqual(exec_lines, [
@@ -149,6 +153,10 @@ class SparseStoryRunnerContractTests(unittest.TestCase):
 (allow process-exec (literal "/private/tmp/runtime/bin/adapter"))
 (deny process-fork)
 (allow process-info* (target self))
+(allow sysctl-read (sysctl-name "hw.memsize"))
+(allow iokit-open (iokit-user-client-class "AGXDeviceUserClient")
+  (iokit-user-client-class "IOSurfaceRootUserClient"))
+(allow mach-lookup (global-name "com.apple.MTLCompilerService"))
 (allow file-read* (literal "/private/tmp/runtime/bin/adapter")
   (literal "/private/tmp/forbidden/exec-sentinel")
   (subpath "/private/tmp/bundle")

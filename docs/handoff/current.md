@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-26T11:49:52+08:00
+Updated: 2026-10-27T05:13:30+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: d62f0bc
-Remote status: local `origin/main` is `621c195`; local main is ahead by 46 commits. No aegis push is authorized in the current task.
-Working tree at checkpoint: complete 37-case runner and this handoff are uncommitted; verify with Git before editing.
+Baseline commit: bb3b8d2
+Remote status: local `origin/main` is `621c195`; local main is ahead by 47 commits. No aegis push is authorized in the current task.
+Working tree at checkpoint: exact Metal policy, one-packet smoke scripts, experiment and this handoff are uncommitted; verify with Git before editing.
 
 ## Objective
 
@@ -18,14 +18,15 @@ RGB and color-independent structural chapter proposals were rejected.
 ## Last completed milestone
 
 The combined v3 Stage A executable passed the full 14-check raw isolation
-matrix and all 37 frozen native synthetic cases through the retained launcher.
-Valid-request model execution remains unverified. See
-`docs/experiments/stage-a-retained-isolation-and-schedule-2026-10-26.md`.
+matrix and all 37 frozen cases again after exact Metal policy additions.
+The first real one-packet smoke exited 255 before semantics under the older
+policy; a synthetic MLX GPU probe identified scoped access needed. See
+`docs/experiments/stage-a-metal-seatbelt-2026-10-27.md`.
 
 ## Repository state
 
-- Latest committed local milestone: `d62f0bc` (isolation and 33 cases).
-- Complete 37-case runner is uncommitted; T7 products and logs
+- Latest committed local milestone: `bb3b8d2` (37 cases).
+- Metal policy, smoke scripts and experiment are uncommitted; T7 products and logs
   remain outside Git.
 - The last published exact-SHA green CI claim is for `4b78e1a`. CI for the
   current local commits has not run. No Stage A build has been published.
@@ -61,8 +62,9 @@ Valid-request model execution remains unverified. See
 ## Pending
 
 The adapter and all five runtime/model/prompt roots pass local proofs; the
-retained launcher passed 14 isolation checks and 37 synthetic cases. Ordinary
-valid-request launch, weight loading and semantic output remain untested.
+retained launcher passed 14 isolation checks and 37 cases with the updated
+policy. One real request exited 255 at Metal initialization; semantics and
+weight loading remain unverified. The 120-second retry has not started.
 Trivy scanned no Swift target and Semgrep stopped before scanning; the
 bounded offline build and manifest review are evidence of behavior, not a
 complete vulnerability audit. Stage A invocation remains closed until the
@@ -75,11 +77,13 @@ are ready. No model ran.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-sed -n '1,180p' docs/experiments/stage-a-retained-isolation-and-schedule-2026-10-26.md
+sed -n '1,180p' docs/experiments/stage-a-metal-seatbelt-2026-10-27.md
 ```
 
-Then establish valid-request input authority and a bounded model smoke
-protocol. Do not run a model until these are proven.
+Then run one new 120-second first-packet smoke through the retained v3 adapter
+and exact Metal policy. Inspect private stdout without exposing it, classify
+the result and update this handoff. Do not count it toward the two six-packet
+complete runs.
 
 ## External artifacts
 

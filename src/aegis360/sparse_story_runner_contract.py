@@ -291,6 +291,10 @@ def render_seatbelt_policy_input_shape_bytes(*,
     lines = ["(version 1)", "(deny default)",
         f"(allow process-exec (literal {runtime}))", "(deny process-fork)",
         "(allow process-info* (target self))",
+        '(allow sysctl-read (sysctl-name "hw.memsize"))',
+        '(allow iokit-open (iokit-user-client-class "AGXDeviceUserClient")',
+        '  (iokit-user-client-class "IOSurfaceRootUserClient"))',
+        '(allow mach-lookup (global-name "com.apple.MTLCompilerService"))',
         f"(allow file-read* (literal {runtime})", f"  (literal {forbidden})"]
     read_roots = sorted(str(paths[name]) for name in
         ("runtime_root", "bundle_root", "model_root", "prompt_root"))

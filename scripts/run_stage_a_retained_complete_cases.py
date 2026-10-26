@@ -34,7 +34,7 @@ from tests.test_sparse_story_synthetic_plan import SyntheticCasePlanTests  # noq
 
 
 ROOT = Path("/Volumes/T7/aegis-360-items")
-STAGE = ROOT / "build/stage-a-retained-complete-v1"
+STAGE = ROOT / "build/stage-a-retained-complete-v2"
 LAUNCHERS = ROOT / "build/stage-a-native-launcher-assets-v1"
 ADAPTER = ROOT / "build/stage-a-native-adapter-v3/runtime"
 COORDINATOR = {"bundle_mutation", "replacement_race", "single_invocation", "receipt_rebuild"}
