@@ -225,7 +225,10 @@ static int grandchild_case(const char *marker) {
     return 65;
 }
 
-int main(int argc, char **argv) {
+#ifndef AEGIS_PROBE_ENTRY
+#define AEGIS_PROBE_ENTRY main
+#endif
+int AEGIS_PROBE_ENTRY(int argc, char **argv) {
     if (argc == 1) return ordinary_request();
     if (argc == 20 && strcmp(argv[1], "--aegis-isolation-probe") == 0) {
         char *translated[21];

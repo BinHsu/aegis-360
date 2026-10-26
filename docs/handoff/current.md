@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-26T11:29:43+08:00
+Updated: 2026-10-26T11:37:04+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 920b915
-Remote status: local `origin/main` is `621c195`; local main is ahead by 43 commits. No aegis push is authorized in the current task.
-Working tree at checkpoint: explicit C compiler route, launcher manifests, build runner and this handoff are uncommitted; verify with Git before editing.
+Baseline commit: 5816cf9
+Remote status: local `origin/main` is `621c195`; local main is ahead by 44 commits. No aegis push is authorized in the current task.
+Working tree at checkpoint: combined adapter probe source/build, no-model restricted smoke and this handoff are uncommitted; verify with Git before editing.
 
 ## Objective
 
@@ -17,17 +17,17 @@ RGB and color-independent structural chapter proposals were rejected.
 
 ## Last completed milestone
 
-The retained C launcher and forbidden-exec sentinel built offline with the
-explicit T7 compiler/SDK and passed strict asset-tree proofs. The existing
-backend facade bound them to the Stage A adapter runtime in a live local proof.
-No restricted launch or model execution followed. See
-`docs/experiments/stage-a-native-launcher-assets-2026-10-26.md`.
+The combined v3 Stage A executable embeds the synthetic C probe and passed
+offline build, signing, strict asset-tree readback and a restricted no-model
+environment probe through the retained native launcher. Empty stdout was
+rejected by the transport as designed. No model execution followed. See
+`docs/experiments/stage-a-retained-adapter-probe-2026-10-26.md`.
 
 ## Repository state
 
-- Latest committed local milestone: `920b915` (native adapter and frozen assets).
-- Launcher build scripts, manifests and result are uncommitted; T7 products
-  and logs remain outside Git.
+- Latest committed local milestone: `5816cf9` (retained launcher assets).
+- Combined adapter probe source/build and restricted smoke are uncommitted; T7 products and logs
+  remain outside Git.
 - The last published exact-SHA green CI claim is for `4b78e1a`. CI for the
   current local commits has not run. No Stage A build has been published.
 
@@ -61,8 +61,9 @@ No restricted launch or model execution followed. See
 
 ## Pending
 
-The adapter and all five runtime/model/prompt roots pass local proofs, but the
-retained launcher policy, weight loading and semantic output remain untested.
+The adapter and all five runtime/model/prompt roots pass local proofs; the
+retained launcher passed one no-model environment case, but the full 14-row
+isolation matrix, 37-case coordinator, weight loading and semantic output remain untested.
 Trivy scanned no Swift target and Semgrep stopped before scanning; the
 bounded offline build and manifest review are evidence of behavior, not a
 complete vulnerability audit. Stage A invocation remains closed until the
@@ -75,12 +76,12 @@ are ready. No model ran.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-sed -n '1,180p' docs/experiments/stage-a-native-launcher-assets-2026-10-26.md
+sed -n '1,180p' docs/experiments/stage-a-retained-adapter-probe-2026-10-26.md
 ```
 
-Then integrate the existing C probe/fixture operations into the same native
-adapter binary, bind its new manifest, and exercise the retained policy. Do not
-run a model until isolation and input authority are proven.
+Then run the full synthetic isolation matrix with the retained v3 adapter,
+followed by the 37-case coordinator and input-authority proof. Do not run a
+model until isolation and input authority are proven.
 
 ## External artifacts
 

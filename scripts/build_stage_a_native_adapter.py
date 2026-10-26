@@ -16,7 +16,7 @@ import time
 
 
 ROOT = Path("/Volumes/T7/aegis-360-items")
-STAGE = ROOT / "build/stage-a-native-adapter-v2"
+STAGE = ROOT / "build/stage-a-native-adapter-v3"
 VLM = ROOT / "build/mlx-swift-lm-stage-a-3.32.3-v4"
 TOKENIZER = ROOT / "build/stage-a-tokenizer-1.3.0-v3"
 MODEL = ROOT / "models/smolvlm2-2.2b-instruct-mlx-bf16"
@@ -54,6 +54,7 @@ def main() -> int:
         raise SystemExit("Metal library changed")
     sources = REPO / "tools/stage_a_vlm"
     (STAGE / "Sources/stage-a-adapter").mkdir(parents=True)
+    (STAGE / "Sources/StageAProbe/include").mkdir(parents=True)
     (STAGE / "tmp").mkdir()
     (STAGE / "cache").mkdir()
     copied = {}
@@ -66,6 +67,15 @@ def main() -> int:
         path = sources / name
         shutil.copy2(path, STAGE / "Sources/stage-a-adapter" / target)
         copied[name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    for name, target in (("sparse_story_synthetic_adapter_fixture.c",
+                          "sparse_story_synthetic_adapter_fixture.c"),
+                         ("seatbelt_feasibility_probe.c", "seatbelt_feasibility_probe.c")):
+        path = REPO / "tools" / name
+        shutil.copy2(path, STAGE / "Sources/StageAProbe" / target)
+        copied[name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    header = sources / "StageAProbe.h"
+    shutil.copy2(header, STAGE / "Sources/StageAProbe/include/StageAProbe.h")
+    copied["StageAProbe.h"] = hashlib.sha256(header.read_bytes()).hexdigest()
     manifest = '''// swift-tools-version: 6.2
 import PackageDescription
 let package = Package(
@@ -76,7 +86,12 @@ let package = Package(
         .package(path: "../mlx-swift-lm-stage-a-3.32.3-v4/packages/mlx-swift"),
         .package(path: "../stage-a-tokenizer-1.3.0-v3/packages/swift-transformers"),
     ],
-    targets: [.executableTarget(name: "stage-a-adapter", dependencies: [
+    targets: [
+      .target(name: "StageAProbe", exclude: ["seatbelt_feasibility_probe.c"],
+              publicHeadersPath: "include",
+              cSettings: [.define("AEGIS_PROBE_ENTRY", to: "aegis_probe_dispatch")]),
+      .executableTarget(name: "stage-a-adapter", dependencies: [
+        "StageAProbe",
         .product(name: "MLXVLM", package: "mlx-swift-lm"),
         .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
         .product(name: "Tokenizers", package: "swift-transformers"),
@@ -144,6 +159,12 @@ let package = Package(
             dry = subprocess.run(command, input=b"{}", cwd=STAGE, env=env,
                                  stdout=output, stderr=subprocess.STDOUT, timeout=10)
         code = 0 if dry.returncode == 3 and (STAGE / "run.log").read_bytes() == b"" else 5
+        with (STAGE / "probe.log").open("w") as output:
+            probe = subprocess.run([*command, "--aegis-synthetic-case", "stdout_empty", "--"],
+                                   cwd=STAGE, env=env, stdout=output,
+                                   stderr=subprocess.STDOUT, timeout=10)
+        if probe.returncode != 0 or (STAGE / "probe.log").read_bytes() != b"":
+            code = 6
         state = "success" if code == 0 else "dry_run_failed"
     status.update(state=state, exit_code=code,
                   elapsed_seconds=round(time.monotonic() - started, 3))

@@ -9,9 +9,8 @@ verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs and
 storage, then read back against the exact approved plan. Two local closed
 sanitized-media runs match across all 36 images; the canonical bundle was
 published to the configured T7 data root and independently read back.
-The current-OS backend proof and a native adapter remain; no semantic model
-has run. The frozen Skiing chapter
-proposal remains rejected.
+The current-OS backend and native adapter have bounded local proofs; no
+semantic model has run. The Skiing chapter proposal remains rejected.
 
 ## Accepted evidence
 
@@ -167,7 +166,7 @@ the planned output differs materially, preserves image quality, and answers a
 specific directing question. No new video is currently awaiting owner review.
 
 ## Verification
-- Latest local portable discovery on macOS 27.0.1: 947 tests, 97 skipped,
+- Local portable discovery on macOS 27.0.1: 947 tests, 97 skipped,
   no errors. The installed SDK names the additional ARM64E_X1 slice; the
   parser validates both slices, and the retained host proof passes. Native
   invocation authority remains closed. See
@@ -190,11 +189,12 @@ external data root. The OS-backend proof now passes; the VLM adapter and
 invocation gate remain; no model ran.
 Pinned MLX Swift sources and Xcode 27.2 RC/Metal Toolchain 27B47 are on T7;
 Xcode's `metal` stub still reports the component missing.
-Offline v4 native SwiftPM built `MLXVLM` in 87.3 seconds without a metallib.
-Offline v5 compiled ten shaders and linked `default.metallib`; a Metal API
+Offline v4 built `MLXVLM`; v5 compiled ten shaders and linked `default.metallib`; a Metal API
 probe loaded 232 functions on Apple M4. A separate v6 MLX GPU array add
 returned `[2, 4, 6]` with an explicit metallib override. Default bundle
 discovery and model inference remain unverified. See
 `docs/design/stage-a-metal-toolchain-route.md`.
-The offline adapter and five asset roots pass local proofs and backend binding;
-restricted launch, weight loading and inference remain unverified.
+The offline adapter and five asset roots pass local proofs and backend binding.
+The combined v3 executable passed a restricted no-model environment probe;
+an empty-output negative was rejected as designed. The full isolation matrix,
+weight loading and inference remain unverified.

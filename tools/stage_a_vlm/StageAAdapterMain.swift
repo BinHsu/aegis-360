@@ -3,10 +3,14 @@ import Foundation
 import MLX
 import MLXLMCommon
 import MLXVLM
+import StageAProbe
 
 @main
 struct StageAAdapterMain {
     static func main() async {
+        if CommandLine.arguments.count > 1 {
+            exit(aegis_probe_dispatch(CommandLine.argc, CommandLine.unsafeArgv))
+        }
         do {
             try await run()
         } catch {
