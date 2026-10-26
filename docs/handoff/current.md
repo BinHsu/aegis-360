@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-26T11:26:23+08:00
+Updated: 2026-10-26T11:29:43+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 5b8e438
-Remote status: local `origin/main` is `621c195`; local main is ahead by 42 commits. No aegis push is authorized in the current task.
-Working tree at checkpoint: native adapter, frozen-asset scripts, manifests, experiment and this handoff are uncommitted; verify with Git before editing.
+Baseline commit: 920b915
+Remote status: local `origin/main` is `621c195`; local main is ahead by 43 commits. No aegis push is authorized in the current task.
+Working tree at checkpoint: explicit C compiler route, launcher manifests, build runner and this handoff are uncommitted; verify with Git before editing.
 
 ## Objective
 
@@ -17,18 +17,17 @@ RGB and color-independent structural chapter proposals were rejected.
 
 ## Last completed milestone
 
-The native adapter v2 compiled offline and exited cleanly on invalid input;
-decoded images now pass in memory to the processor. Its signed thin ARM64
-runtime and Metal library passed the retained asset-tree proof. A separate
-read-only T7 model root with 13 loader-facing files and a two-file prompt root
-also passed exact manifest readback. No model weights or private media were
-loaded. See `docs/experiments/stage-a-native-adapter-and-assets-2026-10-26.md`.
+The retained C launcher and forbidden-exec sentinel built offline with the
+explicit T7 compiler/SDK and passed strict asset-tree proofs. The existing
+backend facade bound them to the Stage A adapter runtime in a live local proof.
+No restricted launch or model execution followed. See
+`docs/experiments/stage-a-native-launcher-assets-2026-10-26.md`.
 
 ## Repository state
 
-- Latest committed local milestone: `5b8e438` (synthetic media cwd).
-- Adapter, frozen-asset scripts, manifests and result are uncommitted; T7
-  scratch, logs and compiled products remain outside Git.
+- Latest committed local milestone: `920b915` (native adapter and frozen assets).
+- Launcher build scripts, manifests and result are uncommitted; T7 products
+  and logs remain outside Git.
 - The last published exact-SHA green CI claim is for `4b78e1a`. CI for the
   current local commits has not run. No Stage A build has been published.
 
@@ -62,8 +61,8 @@ loaded. See `docs/experiments/stage-a-native-adapter-and-assets-2026-10-26.md`.
 
 ## Pending
 
-The native adapter builds and its three asset roots pass local proofs, but
-the retained launcher/policy, weight loading and semantic output remain untested.
+The adapter and all five runtime/model/prompt roots pass local proofs, but the
+retained launcher policy, weight loading and semantic output remain untested.
 Trivy scanned no Swift target and Semgrep stopped before scanning; the
 bounded offline build and manifest review are evidence of behavior, not a
 complete vulnerability audit. Stage A invocation remains closed until the
@@ -76,12 +75,12 @@ are ready. No model ran.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-sed -n '1,180p' docs/experiments/stage-a-native-adapter-and-assets-2026-10-26.md
+sed -n '1,180p' docs/experiments/stage-a-native-launcher-assets-2026-10-26.md
 ```
 
-Then bind these exact runtime, model and prompt manifests to the retained
-launcher/policy and prove dyld/runtime reads under that policy. Preserve failed
-stages; do not run a model until isolation and input authority are proven.
+Then integrate the existing C probe/fixture operations into the same native
+adapter binary, bind its new manifest, and exercise the retained policy. Do not
+run a model until isolation and input authority are proven.
 
 ## External artifacts
 

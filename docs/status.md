@@ -196,5 +196,5 @@ probe loaded 232 functions on Apple M4. A separate v6 MLX GPU array add
 returned `[2, 4, 6]` with an explicit metallib override. Default bundle
 discovery and model inference remain unverified. See
 `docs/design/stage-a-metal-toolchain-route.md`.
-The offline native Stage A adapter builds and its runtime/model/prompt roots pass
-exact asset proofs; restricted launch, weight load and inference remain unverified.
+The offline adapter and five asset roots pass local proofs and backend binding;
+restricted launch, weight loading and inference remain unverified.

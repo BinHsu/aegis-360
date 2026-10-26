@@ -1,0 +1,7 @@
+# Stage A retained launcher assets
+
+Date: 2026-10-26. Host: Apple M4 MacBook Air, macOS 27.0.1, Xcode 27.2 RC (27B48). The repository's launcher and forbidden-exec sentinel C sources were compiled and ad-hoc signed offline using the explicit Xcode compiler and SDK on T7. `scripts/build_sparse_story_native_launcher.sh` and `scripts/build_sparse_story_forbidden_exec_sentinel.sh` now accept paired `AEGIS_CLANG`/`AEGIS_SDK` overrides; their default `xcrun` path remains available. All products and logs were placed under `/Volumes/T7/aegis-360-items/build/stage-a-native-launcher-assets-v1/`.
+
+Both output roots and their `bin` directories were sealed to 0555, with thin ARM64 executables at 0555. Their exact canonical runtime manifests were generated and revalidated by the retained asset-tree verifier. Launcher tree digest: `66dd2af531d6804ad9408796d66af8dae0e42dcd58583719edaf578e75de1ac0`; forbidden-exec sentinel tree digest: `1448351dd168b5a74f913ca09fd400c3e930ed57bd113a65d66974e2582c5105`. Build and proof took 3.325 seconds. The manifest JSON files adjacent to this record are precommitted shapes for later exact proof.
+
+`open_seatbelt_backend_binding` accepted these two manifests and the previously built Stage A adapter runtime manifest using live retained proofs, and produced a 979-byte canonical backend manifest before closing. This is local OS/backend/runtime binding evidence. It does not execute the restricted launcher, prove dyld access under the rendered policy, complete the ordered isolation matrix, or authorize inference. No model ran.

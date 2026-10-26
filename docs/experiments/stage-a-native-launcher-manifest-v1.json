@@ -1,0 +1,1 @@
+{"asset_kind":"runtime","entries":[{"mode":365,"relative_path":"bin/aegis-sparse-story-launcher","sha256":"5d2b471c5da1af534312580fe21d4a6a8f5044eed153e8fdf026525f798adb80","size":34992}],"entrypoint":"bin/aegis-sparse-story-launcher","root_tree_sha256":"66dd2af531d6804ad9408796d66af8dae0e42dcd58583719edaf578e75de1ac0","schema_version":"aegis360.sparse-story-asset-manifest.v1"}

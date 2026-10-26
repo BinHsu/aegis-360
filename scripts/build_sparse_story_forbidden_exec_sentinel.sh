@@ -98,9 +98,20 @@ root_identity=$(identity "$candidate_root")
 bin_identity=$(identity "${candidate_root}/bin")
 [ -n "$bin_identity" ] || { echo "could not retain output bin identity" >&2; exit 70; }
 output="${candidate_root}/bin/aegis-forbidden-exec-sentinel"
-/usr/bin/xcrun --sdk macosx clang -std=c11 -Os -Wall -Wextra -Werror -Wpedantic \
-    -fstack-protector-strong -arch arm64 -mmacosx-version-min=15.0 \
-    "$source_path" -o "$output"
+if [ -n "${AEGIS_CLANG:-}" ] || [ -n "${AEGIS_SDK:-}" ]; then
+    [ -n "${AEGIS_CLANG:-}" ] && [ -n "${AEGIS_SDK:-}" ] &&
+        [ -x "$AEGIS_CLANG" ] && [ -d "$AEGIS_SDK" ] || {
+        echo "explicit compiler and SDK must both exist" >&2
+        exit 64
+    }
+    "$AEGIS_CLANG" -isysroot "$AEGIS_SDK" -std=c11 -Os -Wall -Wextra -Werror -Wpedantic \
+        -fstack-protector-strong -arch arm64 -mmacosx-version-min=15.0 \
+        "$source_path" -o "$output"
+else
+    /usr/bin/xcrun --sdk macosx clang -std=c11 -Os -Wall -Wextra -Werror -Wpedantic \
+        -fstack-protector-strong -arch arm64 -mmacosx-version-min=15.0 \
+        "$source_path" -o "$output"
+fi
 output_identity=$(identity "$output")
 [ -n "$output_identity" ] || { echo "could not retain sentinel identity" >&2; exit 70; }
 /usr/bin/codesign --force --sign - --timestamp=none "$output"

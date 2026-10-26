@@ -39,10 +39,20 @@ esac
 }
 /bin/mkdir -m 0700 "$resolved_root/bin"
 output=$resolved_root/bin/aegis-sparse-story-launcher
-/usr/bin/xcrun --sdk macosx clang -std=c11 -Os -Wall -Wextra -Werror -Wpedantic \
-    -fstack-protector-strong -arch arm64 \
-    -mmacosx-version-min=15.0 "$source_path" \
-    -o "$output"
+if [ -n "${AEGIS_CLANG:-}" ] || [ -n "${AEGIS_SDK:-}" ]; then
+    [ -n "${AEGIS_CLANG:-}" ] && [ -n "${AEGIS_SDK:-}" ] &&
+        [ -x "$AEGIS_CLANG" ] && [ -d "$AEGIS_SDK" ] || {
+        echo "explicit compiler and SDK must both exist" >&2
+        exit 64
+    }
+    "$AEGIS_CLANG" -isysroot "$AEGIS_SDK" -std=c11 -Os -Wall -Wextra -Werror -Wpedantic \
+        -fstack-protector-strong -arch arm64 \
+        -mmacosx-version-min=15.0 "$source_path" -o "$output"
+else
+    /usr/bin/xcrun --sdk macosx clang -std=c11 -Os -Wall -Wextra -Werror -Wpedantic \
+        -fstack-protector-strong -arch arm64 \
+        -mmacosx-version-min=15.0 "$source_path" -o "$output"
+fi
 /usr/bin/codesign --force --sign - --timestamp=none "$output"
 /usr/bin/codesign --verify --strict "$output"
 [ "$(/usr/bin/lipo -archs "$output")" = arm64 ] || {
