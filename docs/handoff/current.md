@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-27T05:13:30+08:00
+Updated: 2026-10-27T05:17:49+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: bb3b8d2
-Remote status: local `origin/main` is `621c195`; local main is ahead by 47 commits. No aegis push is authorized in the current task.
-Working tree at checkpoint: exact Metal policy, one-packet smoke scripts, experiment and this handoff are uncommitted; verify with Git before editing.
+Baseline commit: c1cdb25
+Remote status: local `origin/main` is `621c195`; local main is ahead by 49 commits. No aegis push is authorized in the current task.
+Working tree at checkpoint: clean after the local real-packet smoke commit; verify with Git before editing.
 
 ## Objective
 
@@ -19,14 +19,14 @@ RGB and color-independent structural chapter proposals were rejected.
 
 The combined v3 Stage A executable passed the full 14-check raw isolation
 matrix and all 37 frozen cases again after exact Metal policy additions.
-The first real one-packet smoke exited 255 before semantics under the older
-policy; a synthetic MLX GPU probe identified scoped access needed. See
-`docs/experiments/stage-a-metal-seatbelt-2026-10-27.md`.
+One new real-packet smoke exited 0 but produced malformed prose; the transport
+rejected it and swap rose by 4.23 GB. See
+`docs/experiments/stage-a-first-real-smoke-2026-10-27.md`.
 
 ## Repository state
 
-- Latest committed local milestone: `bb3b8d2` (37 cases).
-- Metal policy, smoke scripts and experiment are uncommitted; T7 products and logs
+- Latest committed local milestone: real-packet smoke result (`git log -1`).
+- T7 products and logs
   remain outside Git.
 - The last published exact-SHA green CI claim is for `4b78e1a`. CI for the
   current local commits has not run. No Stage A build has been published.
@@ -42,7 +42,8 @@ policy; a synthetic MLX GPU probe identified scoped access needed. See
 - Full portable repository discovery before toolchain work ran 947 tests
   with 97 skips and no failures. Current toolchain work ran focused checks.
 - Real-media Stage A preflight produced six private packets and 36 sanitized
-  960x540 PNGs with matching repeat hashes on T7; no model received them.
+  960x540 PNGs with matching repeat hashes on T7; six selected PNGs entered
+  the failed model smoke.
 - `MLXVLM` target build, manually linked Metal library and MLX GPU array add
   passed offline; see `docs/experiments/mlx-swift-metal-library-v5-2026-10-23.md`.
 - The SmolVLM2 2.2B local asset tree matches its cached revision inventory;
@@ -63,13 +64,13 @@ policy; a synthetic MLX GPU probe identified scoped access needed. See
 
 The adapter and all five runtime/model/prompt roots pass local proofs; the
 retained launcher passed 14 isolation checks and 37 cases with the updated
-policy. One real request exited 255 at Metal initialization; semantics and
-weight loading remain unverified. The 120-second retry has not started.
+policy. The real one-packet smoke returned prose instead of the closed JSON;
+transport completion and semantic evidence failed. Swap rose by 4.23 GB.
+No complete six-packet run started. Thermal/MLX peak memory were not measured.
 Trivy scanned no Swift target and Semgrep stopped before scanning; the
 bounded offline build and manifest review are evidence of behavior, not a
-complete vulnerability audit. Stage A invocation remains closed until the
-adapter, runtime/input proof, isolation transport and bounded model smoke
-are ready. No model ran.
+complete vulnerability audit. Further Stage A invocation is held for an owner
+decision under the frozen no-retry/no-prompt-repair protocol.
 
 ## Next commands
 
@@ -77,13 +78,13 @@ are ready. No model ran.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-sed -n '1,180p' docs/experiments/stage-a-metal-seatbelt-2026-10-27.md
+sed -n '1,180p' docs/experiments/stage-a-first-real-smoke-2026-10-27.md
 ```
 
-Then run one new 120-second first-packet smoke through the retained v3 adapter
-and exact Metal policy. Inspect private stdout without exposing it, classify
-the result and update this handoff. Do not count it toward the two six-packet
-complete runs.
+Owner decision: keep the frozen protocol and reject this SmolVLM2 adapter
+candidate, or approve a new bounded diagnostic protocol/model route. Do not
+rerun this packet, repair its prompt, or start the twelve complete invocations
+under the frozen protocol without resolving the invalid-output and swap risk.
 
 ## External artifacts
 
@@ -98,8 +99,8 @@ No delegated work or background job is running.
 
 ## Safety and claims
 
-- No model ran, no Stage A semantic observation exists, and no adapter is
-  approved for real private packets.
+- One selected real packet reached the model; its raw prose failed the closed
+  schema and transport. No Stage A semantic observation or approved adapter exists.
 - Build, Metal API load, GPU array add and asset hashes prove only their
   bounded checks; none proves VLM correctness or performance.
 - The dotfiles policy push was completed separately under code `520`; this

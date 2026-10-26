@@ -28,7 +28,7 @@ from build_stage_a_preflight_bundle import _salt  # noqa: E402
 
 
 ROOT = Path("/Volumes/T7/aegis-360-items")
-STAGE = ROOT / "build/stage-a-model-smoke-v1"
+STAGE = ROOT / "build/stage-a-model-smoke-v2"
 INPUT = ROOT / "build/stage-a-smoke-input-v3"
 PREFLIGHT = ROOT / "outputs/stage-a-preflight-oldghost-skiing-v1"
 FULL = ROOT / "outputs/stage-a-media-oldghost-skiing-v1"

@@ -9,8 +9,8 @@ verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs and
 storage, then read back against the exact approved plan. Two local closed
 sanitized-media runs match across all 36 images; the canonical bundle was
 published to the configured T7 data root and independently read back.
-The current-OS backend and native adapter have bounded local proofs; no
-semantic model has run. The Skiing chapter proposal remains rejected.
+The current-OS backend and native adapter have bounded local proofs; the
+first real-packet model smoke failed. The Skiing chapter proposal remains rejected.
 
 ## Accepted evidence
 
@@ -134,11 +134,11 @@ monotonic story-change ranker and grants no boundary, camera or render authority
 
 The sparse story schema, binder, role-neutral projection and closed media-tree
 gate have executable coverage. The Stage A real-media inputs are published on
-T7, but neither Stage A nor Stage B semantic inference has run; media-input
-authority is not semantic evidence.
+T7, and a one-packet model smoke failed; no Stage A or B semantic evidence exists.
 
-The audited runner now has non-authoritative codecs, bounded capture and retained
-asset proof, but no backend/coordinator or process-isolation/model-invocation claim.
+The audited runner has bounded capture and retained asset proof. Host isolation
+and the 37 synthetic cases pass, but no public invocation authority or valid
+semantic result exists.
 The native launcher uses a bounded length-prefixed pipe and locally hashes
 the exact policy bytes before `sandbox-exec -p`; the unchanged synthetic matrix
 passed this transport on the host. The OS backend proof is explicitly limited to
@@ -178,23 +178,18 @@ specific directing question. No new video is currently awaiting owner review.
   stdout repeats pass host gates.
 
 ## Next action
-The Stage A real-media input gate has two byte-identical local runs: six
-packets, 36 sanitized 960x540 PNGs, bundle tree
-`fd65c7a5436829fadfd78a89b64d361f59a8934a98c8d3f3022dce3cebe6c5b1`
-and result `c48862d316cbb5e3f05bc704d4eda5bcf7dd7d5269f0b9ca4db3be9962f6d80c`.
-The external T7 publication has the same hashes and exact readback. Two
-misplaced local pixel-bearing verification bundles were removed under owner
-code `送 473` after exact comparison with T7; the repo harness requires real-media CLI outputs under an explicit
-external data root. The OS-backend proof now passes; the VLM adapter and
-invocation gate remain; no model ran.
+Decide whether to reject the current SmolVLM2 Stage A candidate under the
+frozen protocol or authorize a new diagnostic protocol/model route. The
+published six-packet input and 36-image media gate remain intact on T7.
 Pinned MLX Swift sources and Xcode 27.2 RC/Metal Toolchain 27B47 are on T7;
 Xcode's `metal` stub still reports the component missing.
 Offline v4 built `MLXVLM`; v5 compiled ten shaders and linked `default.metallib`; a Metal API
 probe loaded 232 functions on Apple M4. A separate v6 MLX GPU array add
 returned `[2, 4, 6]` with an explicit metallib override. Default bundle
-discovery and model inference remain unverified. See
+discovery and valid semantic inference remain unverified. See
 `docs/design/stage-a-metal-toolchain-route.md`.
 The offline adapter and five asset roots pass local proofs and backend binding.
 The combined v3 executable passed all 14 raw isolation checks and 37 frozen
-native synthetic cases under a narrowly Metal-capable policy. The first real
-packet exited before semantics under the old policy; a second smoke is pending.
+native synthetic cases under a narrowly Metal-capable policy. Its first real
+one-packet smoke under that policy exited 0 but produced malformed prose, so
+the transport rejected it; swap rose by 4.23 GB. No semantic outcome exists.
