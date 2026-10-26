@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-26T11:00:10+08:00
+Updated: 2026-10-26T11:08:18+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: f918b25
-Remote status: local `origin/main` is `621c195`; local main is ahead by 38 commits. No aegis push is authorized in the current task.
-Working tree at checkpoint: six-frame input code, runner, experiment and this handoff are uncommitted; verify with Git before editing.
+Baseline commit: 80d0abc
+Remote status: local `origin/main` is `621c195`; local main is ahead by 39 commits. No aegis push is authorized in the current task.
+Working tree at checkpoint: Smol processor registry, smoke, experiment and this handoff are uncommitted; verify with Git before editing.
 
 ## Objective
 
@@ -17,17 +17,18 @@ RGB and color-independent structural chapter proposals were rejected.
 
 ## Last completed milestone
 
-The pinned SmolVLM2 video-frame path was checked with synthetic pixels under
-network denial. `StageAFrameSequence` requires exactly six images, assigns
-ordinal timestamps `0…5`, and requests six frames. The v2 smoke preserved
-six timestamps and ordered distinct pixels; reversed pixels and five-image
-controls failed as expected. No model weights or private media were loaded.
-See `docs/experiments/stage-a-six-frame-processor-2026-10-26.md`.
+The local Smol processor metadata split was resolved in memory: the preferred
+preprocessor file lacks `image_seq_len`, while the processor file declares 81.
+An isolated registry requires both files and injects 81 without changing the
+model tree. The v2 synthetic processor smoke prepared six frames with 486 image
+tokens and the frozen Stage A system prompt, without the default video message.
+No weights or private media were loaded. See
+`docs/experiments/stage-a-smol-processor-metadata-2026-10-26.md`.
 
 ## Repository state
 
-- Latest committed local milestone: `f918b25` (offline VLM tokenizer bridge).
-- Six-frame source, runner and result are uncommitted; T7 scratch, logs and
+- Latest committed local milestone: `80d0abc` (six-frame processor input).
+- Smol registry, smoke and result are uncommitted; T7 scratch, logs and
   products remain outside Git.
 - The last published exact-SHA green CI claim is for `4b78e1a`. CI for the
   current local commits has not run. No Stage A build has been published.
@@ -62,8 +63,8 @@ See `docs/experiments/stage-a-six-frame-processor-2026-10-26.md`.
 
 ## Pending
 
-The tokenizer bridge and six-frame processor input path build and run, but no
-native adapter loads model weights or emits a semantic observation yet.
+The tokenizer bridge, six-frame path and local Smol processor preparation run,
+but no native adapter loads weights or emits a semantic observation yet.
 Trivy scanned no Swift target and Semgrep stopped before scanning; the
 bounded offline build and manifest review are evidence of behavior, not a
 complete vulnerability audit. Stage A invocation remains closed until the
@@ -76,11 +77,11 @@ are ready. No model ran.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-sed -n '1,180p' docs/experiments/stage-a-six-frame-processor-2026-10-26.md
+sed -n '1,180p' docs/experiments/stage-a-smol-processor-metadata-2026-10-26.md
 ```
 
-Then link the frame sequence, tokenizer, image processor, model and GPU library
-behind the frozen adapter request. Preserve failed stages;
+Then validate the frozen adapter request in the native runtime and link its
+verified images, tokenizer, processor, model and GPU library. Preserve failed stages;
 do not run a model until its isolation and asset boundary are proven.
 
 ## External artifacts
