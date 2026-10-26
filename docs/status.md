@@ -196,5 +196,5 @@ probe loaded 232 functions on Apple M4. A separate v6 MLX GPU array add
 returned `[2, 4, 6]` with an explicit metallib override. Default bundle
 discovery and model inference remain unverified. See
 `docs/design/stage-a-metal-toolchain-route.md`.
-The offline local tokenizer and six-frame Smol processor pass with 486 image
-tokens and the frozen prompt; weight loading and inference remain unverified.
+The offline tokenizer, six-frame Smol processor and native request shape pass;
+weight loading, retained asset isolation and inference remain unverified.
