@@ -1,9 +1,9 @@
 # Current handoff
 
-Updated: 2026-10-27T05:17:49+08:00
+Updated: 2026-10-27T05:58:03+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: c1cdb25
+Baseline commit: 750902c
 Remote status: local `origin/main` is `621c195`; local main is ahead by 49 commits. No aegis push is authorized in the current task.
 Working tree at checkpoint: clean after the local real-packet smoke commit; verify with Git before editing.
 
@@ -18,10 +18,12 @@ RGB and color-independent structural chapter proposals were rejected.
 ## Last completed milestone
 
 The combined v3 Stage A executable passed the full 14-check raw isolation
-matrix and all 37 frozen cases again after exact Metal policy additions.
-One new real-packet smoke exited 0 but produced malformed prose; the transport
-rejected it and swap rose by 4.23 GB. See
-`docs/experiments/stage-a-first-real-smoke-2026-10-27.md`.
+matrix and all 37 frozen cases after exact Metal policy additions. One
+real-packet smoke exited 0 but produced malformed prose; the transport
+rejected it and swap rose by 4.23 GB. A model-free guided-generation
+feasibility review then stopped at the pinned source tree's single-commit
+history. See `docs/experiments/stage-a-first-real-smoke-2026-10-27.md` and
+`docs/design/stage-a-guided-successor.md`.
 
 ## Repository state
 
@@ -48,6 +50,9 @@ rejected it and swap rose by 4.23 GB. See
   passed offline; see `docs/experiments/mlx-swift-metal-library-v5-2026-10-23.md`.
 - The SmolVLM2 2.2B local asset tree matches its cached revision inventory;
   see `docs/experiments/stage-a-model-asset-tree-2026-10-23.md`.
+- The pinned guided target and vendored xgrammar build graph were inspected
+  without executing new code. Trivy and Syft did not cover the Swift/C++
+  target; see `docs/design/stage-a-guided-successor.md`.
 
 ## Rejected
 
@@ -59,6 +64,9 @@ rejected it and swap rose by 4.23 GB. See
   complete implementation, triggering the supply-chain-audit stop signal.
 - `swift-collections` 1.0.0 for this Swift 6.4 build: the bounded v2 attempt
   failed on Sendable checking; the v3 build used pinned 1.7.2.
+- Guided-generation adoption from the pinned MLX Swift LM snapshot: its Git
+  history has one commit, a supply-chain-audit stop signal. No new guided
+  library build or grammar probe ran.
 
 ## Pending
 
@@ -70,7 +78,8 @@ No complete six-packet run started. Thermal/MLX peak memory were not measured.
 Trivy scanned no Swift target and Semgrep stopped before scanning; the
 bounded offline build and manifest review are evidence of behavior, not a
 complete vulnerability audit. Further Stage A invocation is held for an owner
-decision under the frozen no-retry/no-prompt-repair protocol.
+decision under the frozen no-retry/no-prompt-repair protocol. The reviewed
+guided route additionally needs source provenance and target-covering audit.
 
 ## Next commands
 
@@ -78,13 +87,15 @@ decision under the frozen no-retry/no-prompt-repair protocol.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-sed -n '1,180p' docs/experiments/stage-a-first-real-smoke-2026-10-27.md
+sed -n '1,180p' docs/design/stage-a-guided-successor.md
 ```
 
 Owner decision: keep the frozen protocol and reject this SmolVLM2 adapter
-candidate, or approve a new bounded diagnostic protocol/model route. Do not
-rerun this packet, repair its prompt, or start the twelve complete invocations
-under the frozen protocol without resolving the invalid-output and swap risk.
+candidate, or approve a new bounded diagnostic protocol/model route. The
+guided-source route also needs a provenance-bearing source acquisition before
+new execution. Do not rerun this packet, repair its prompt, or start the
+twelve complete invocations under the frozen protocol without resolving the
+invalid-output and swap risk.
 
 ## External artifacts
 

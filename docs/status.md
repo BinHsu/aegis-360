@@ -10,7 +10,10 @@ storage, then read back against the exact approved plan. Two local closed
 sanitized-media runs match across all 36 images; the canonical bundle was
 published to the configured T7 data root and independently read back.
 The current-OS backend and native adapter have bounded local proofs; the
-first real-packet model smoke failed. The Skiing chapter proposal remains rejected.
+first real-packet model smoke failed. The pinned guided-generation successor
+was held at a source-provenance stop signal; see
+`docs/design/stage-a-guided-successor.md`. The Skiing chapter proposal remains
+rejected.
 
 ## Accepted evidence
 
@@ -180,6 +183,8 @@ specific directing question. No new video is currently awaiting owner review.
 ## Next action
 Decide whether to reject the current SmolVLM2 Stage A candidate under the
 frozen protocol or authorize a new diagnostic protocol/model route. The
+guided-generation source route first needs inspectable provenance and a
+target-covering audit; no grammar probe ran. The
 published six-packet input and 36-image media gate remain intact on T7.
 Pinned MLX Swift sources and Xcode 27.2 RC/Metal Toolchain 27B47 are on T7;
 Xcode's `metal` stub still reports the component missing.
