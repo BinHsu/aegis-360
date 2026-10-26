@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-26T11:14:24+08:00
+Updated: 2026-10-26T11:26:23+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: d1f90ca
-Remote status: local `origin/main` is `621c195`; local main is ahead by 41 commits. No aegis push is authorized in the current task.
-Working tree at checkpoint: media resolver, smoke, experiment and this handoff are uncommitted; verify with Git before editing.
+Baseline commit: 5b8e438
+Remote status: local `origin/main` is `621c195`; local main is ahead by 42 commits. No aegis push is authorized in the current task.
+Working tree at checkpoint: native adapter, frozen-asset scripts, manifests, experiment and this handoff are uncommitted; verify with Git before editing.
 
 ## Objective
 
@@ -17,17 +17,18 @@ RGB and color-independent structural chapter proposals were rejected.
 
 ## Last completed milestone
 
-The native media helper read six synthetic 960×540 PNGs from the child's cwd
-using exact request-relative paths. Missing, wrong-size, corrupt and symlinked
-rows failed with controlled errors. It is a stand-in for the retained bundle
-cwd, not proof of the actual launcher or isolation. See
-`docs/experiments/stage-a-adapter-media-cwd-2026-10-26.md`.
+The native adapter v2 compiled offline and exited cleanly on invalid input;
+decoded images now pass in memory to the processor. Its signed thin ARM64
+runtime and Metal library passed the retained asset-tree proof. A separate
+read-only T7 model root with 13 loader-facing files and a two-file prompt root
+also passed exact manifest readback. No model weights or private media were
+loaded. See `docs/experiments/stage-a-native-adapter-and-assets-2026-10-26.md`.
 
 ## Repository state
 
-- Latest committed local milestone: `d1f90ca` (native request shape).
-- Media helper, smoke and result are uncommitted; T7 scratch, logs and
-  products remain outside Git.
+- Latest committed local milestone: `5b8e438` (synthetic media cwd).
+- Adapter, frozen-asset scripts, manifests and result are uncommitted; T7
+  scratch, logs and compiled products remain outside Git.
 - The last published exact-SHA green CI claim is for `4b78e1a`. CI for the
   current local commits has not run. No Stage A build has been published.
 
@@ -61,8 +62,8 @@ cwd, not proof of the actual launcher or isolation. See
 
 ## Pending
 
-The tokenizer bridge, six-frame processor, native request and media path run,
-but no native adapter loads weights or emits a semantic observation yet.
+The native adapter builds and its three asset roots pass local proofs, but
+the retained launcher/policy, weight loading and semantic output remain untested.
 Trivy scanned no Swift target and Semgrep stopped before scanning; the
 bounded offline build and manifest review are evidence of behavior, not a
 complete vulnerability audit. Stage A invocation remains closed until the
@@ -75,12 +76,12 @@ are ready. No model ran.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-sed -n '1,180p' docs/experiments/stage-a-adapter-media-cwd-2026-10-26.md
+sed -n '1,180p' docs/experiments/stage-a-native-adapter-and-assets-2026-10-26.md
 ```
 
-Then link the request and media path to the tokenizer, processor, model and GPU
-library behind the retained launcher proof. Preserve failed stages;
-do not run a model until its isolation and asset boundary are proven.
+Then bind these exact runtime, model and prompt manifests to the retained
+launcher/policy and prove dyld/runtime reads under that policy. Preserve failed
+stages; do not run a model until isolation and input authority are proven.
 
 ## External artifacts
 

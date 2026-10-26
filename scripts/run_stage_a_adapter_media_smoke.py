@@ -20,7 +20,7 @@ from aegis360.sparse_story_runner_contract import canonical_adapter_request_shap
 
 REPO = Path(__file__).resolve().parents[1]
 ROOT = Path("/Volumes/T7/aegis-360-items")
-STAGE = ROOT / "build/stage-a-adapter-media-v1"
+STAGE = ROOT / "build/stage-a-adapter-media-v2"
 XCODE = ROOT / "toolchains/xcode-27.2-rc/Xcode.app/Contents/Developer"
 SOURCES = REPO / "tools/stage_a_vlm"
 

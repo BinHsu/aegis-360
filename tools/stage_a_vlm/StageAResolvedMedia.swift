@@ -1,4 +1,5 @@
 import Darwin
+import CoreGraphics
 import Foundation
 import ImageIO
 
@@ -9,11 +10,11 @@ enum StageAResolvedMediaError: Error {
 /// Resolve the request's fixed relative paths from the launcher's retained cwd.
 /// The coordinator owns bundle identity and content hashes before and after execution.
 struct StageAResolvedMedia {
-    static func resolve(_ request: StageAAdapterRequest, cwd: URL) throws -> [URL] {
+    static func resolve(_ request: StageAAdapterRequest, cwd: URL) throws -> [CGImage] {
         guard cwd.isFileURL, request.mediaPaths.count == 6 else {
             throw StageAResolvedMediaError.invalid
         }
-        var result: [URL] = []
+        var result: [CGImage] = []
         for path in request.mediaPaths {
             let url = cwd.appending(path: path)
             var status = stat()
@@ -27,7 +28,7 @@ struct StageAResolvedMedia {
                   image.width == 960, image.height == 540 else {
                 throw StageAResolvedMediaError.invalid
             }
-            result.append(url)
+            result.append(image)
         }
         return result
     }
