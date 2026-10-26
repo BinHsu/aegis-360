@@ -14,6 +14,14 @@ from .sparse_story_media_tree import _derive_gate_result
 from .sparse_story_probe_sentinels import _ReadDenialSentinel
 
 _DECOY_BYTES = b"one-packet-neighbor-sentinel-v1"
+_STAGE_A_PROBE_RUNTIME_TREE = "db2108c6878d7f69ff4c0d0beb5599b3fcf058ef0508a8d2bbc34f7057f14eaa"
+
+
+def _fixed_synthetic_runtime_allowed(runtime) -> bool:
+    if runtime._entrypoint == "bin/aegis-synthetic-adapter":
+        return True
+    return (runtime._entrypoint == "stage-a-adapter"
+        and runtime.manifest()["root_tree_sha256"] == _STAGE_A_PROBE_RUNTIME_TREE)
 
 
 class _OwnedOnePacketNeighbor:
@@ -674,7 +682,7 @@ class _ClaimedProbedBatch:
         self.revalidate()
         candidate = self._session._candidate
         live = batch_policy._require_live(candidate._facade)
-        if live._adapter_binding._runtime._entrypoint != "bin/aegis-synthetic-adapter":
+        if not _fixed_synthetic_runtime_allowed(live._adapter_binding._runtime):
             raise ValueError("fixed synthetic case requires the fixture runtime")
         scratch_owner = self._session._batch_scratch
         scratch_path = scratch_owner.root / "synthetic-write"

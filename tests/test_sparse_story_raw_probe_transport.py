@@ -9,6 +9,7 @@ import unittest
 from dataclasses import replace
 from contextlib import ExitStack, contextmanager
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,7 +41,10 @@ from aegis360.sparse_story_raw_probe_transport import (  # noqa: E402
     _RawProbeCapture, _run_raw_probe, _run_owned_raw_probe,
     _run_native_process,
 )
-from aegis360.sparse_story_runner_contract import MATRIX_KEYS  # noqa: E402
+from aegis360.sparse_story_runner_contract import MATRIX_KEYS, build_runner_policy  # noqa: E402
+from aegis360.sparse_story_backend_facade import _require_live  # noqa: E402
+from aegis360 import sparse_story_batch_policy as batch_policy  # noqa: E402
+from aegis360.sparse_story_probe_denials import _fixed_synthetic_runtime_allowed  # noqa: E402
 from aegis360.sparse_story_runner_contract import CASE_SPECS  # noqa: E402
 from aegis360.sparse_story_synthetic_plan import (  # noqa: E402
     _freeze_private_synthetic_case_manifest,
@@ -55,17 +59,37 @@ from tests import test_sparse_story_projection as projection_tests  # noqa: E402
 from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
 
 
+class SyntheticRuntimeAdmissionTests(unittest.TestCase):
+    def test_combined_adapter_requires_exact_runtime_tree(self):
+        stage = SimpleNamespace(_entrypoint="stage-a-adapter",
+            manifest=lambda: {"root_tree_sha256":
+                "db2108c6878d7f69ff4c0d0beb5599b3fcf058ef0508a8d2bbc34f7057f14eaa"})
+        self.assertTrue(_fixed_synthetic_runtime_allowed(stage))
+        stage.manifest = lambda: {"root_tree_sha256": "0" * 64}
+        self.assertFalse(_fixed_synthetic_runtime_allowed(stage))
+        stage._entrypoint = "other-adapter"
+        self.assertFalse(_fixed_synthetic_runtime_allowed(stage))
+
+
 @unittest.skipUnless(os.uname().sysname == "Darwin" and os.uname().machine == "arm64"
     and os.environ.get("AEGIS_RUN_HOST_SEATBELT_TESTS") == "1",
     "requires explicit Darwin host Seatbelt gate outside nested sandbox")
 class RawProbeTransportHostTests(unittest.TestCase):
     @contextmanager
     def context(self, *, one_packet=False, presentation_ordinal=6,
-                own_batch_scratch=False, coordinated=False, expose_live=False):
+                own_batch_scratch=False, coordinated=False, expose_live=False,
+                retained_facade=None):
         fixture = batch_policy_tests.BatchPolicyTests(
             "test_exact_policy_is_frozen_and_path_free_digest_only")
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
+        if retained_facade is not None:
+            live = _require_live(retained_facade)
+            batch_policy._require_live.return_value = live
+            fixture.args["facade"] = retained_facade
+            fixture.args["runner_policy"] = build_runner_policy(
+                backend_manifest_sha256=hashlib.sha256(
+                    retained_facade.canonical_manifest_bytes()).hexdigest())
         base = fixture.base
         batch_scratch_owner = None
         if own_batch_scratch:
@@ -97,33 +121,34 @@ class RawProbeTransportHostTests(unittest.TestCase):
                         bundle_destination=selected_bundle,
                         result_destination=selected_result))
         with ExitStack() as stack:
-            launcher_root = base / "real-launcher"
-            subprocess.run([str(ROOT / "scripts/build_sparse_story_native_launcher.sh"),
-                            str(launcher_root)], check=True, capture_output=True)
-            launcher_manifest = _observe_asset_manifest_shape(root=launcher_root,
-                asset_kind="runtime", entrypoint="bin/aegis-sparse-story-launcher")
-            launcher = stack.enter_context(validate_asset_tree(
-                manifest=launcher_manifest, root=launcher_root))
-            runtime_root = base / "real-runtime"
-            (runtime_root / "bin").mkdir(parents=True)
-            executable = runtime_root / "bin/aegis-synthetic-adapter"
-            subprocess.run(["/usr/bin/xcrun", "--sdk", "macosx", "clang", "-std=c11",
-                "-Os", "-Wall", "-Wextra", "-Werror", "-Wpedantic",
-                "-fstack-protector-strong", "-arch", "arm64",
-                "-mmacosx-version-min=15.0",
-                str(ROOT / "tools/sparse_story_synthetic_adapter_fixture.c"),
-                "-o", str(executable)], check=True, capture_output=True)
-            subprocess.run(["/usr/bin/codesign", "--force", "--sign", "-",
-                "--timestamp=none", str(executable)], check=True, capture_output=True)
-            executable.chmod(0o555)
-            (runtime_root / "bin").chmod(0o555)
-            runtime_root.chmod(0o555)
-            runtime_manifest = _observe_asset_manifest_shape(root=runtime_root,
-                asset_kind="runtime", entrypoint="bin/aegis-synthetic-adapter")
-            runtime = stack.enter_context(validate_asset_tree(
-                manifest=runtime_manifest, root=runtime_root))
-            fixture.live._backend_binding._runtime = launcher
-            fixture.live._adapter_binding._runtime = runtime
+            if retained_facade is None:
+                launcher_root = base / "real-launcher"
+                subprocess.run([str(ROOT / "scripts/build_sparse_story_native_launcher.sh"),
+                                str(launcher_root)], check=True, capture_output=True)
+                launcher_manifest = _observe_asset_manifest_shape(root=launcher_root,
+                    asset_kind="runtime", entrypoint="bin/aegis-sparse-story-launcher")
+                launcher = stack.enter_context(validate_asset_tree(
+                    manifest=launcher_manifest, root=launcher_root))
+                runtime_root = base / "real-runtime"
+                (runtime_root / "bin").mkdir(parents=True)
+                executable = runtime_root / "bin/aegis-synthetic-adapter"
+                subprocess.run(["/usr/bin/xcrun", "--sdk", "macosx", "clang", "-std=c11",
+                    "-Os", "-Wall", "-Wextra", "-Werror", "-Wpedantic",
+                    "-fstack-protector-strong", "-arch", "arm64",
+                    "-mmacosx-version-min=15.0",
+                    str(ROOT / "tools/sparse_story_synthetic_adapter_fixture.c"),
+                    "-o", str(executable)], check=True, capture_output=True)
+                subprocess.run(["/usr/bin/codesign", "--force", "--sign", "-",
+                    "--timestamp=none", str(executable)], check=True, capture_output=True)
+                executable.chmod(0o555)
+                (runtime_root / "bin").chmod(0o555)
+                runtime_root.chmod(0o555)
+                runtime_manifest = _observe_asset_manifest_shape(root=runtime_root,
+                    asset_kind="runtime", entrypoint="bin/aegis-synthetic-adapter")
+                runtime = stack.enter_context(validate_asset_tree(
+                    manifest=runtime_manifest, root=runtime_root))
+                fixture.live._backend_binding._runtime = launcher
+                fixture.live._adapter_binding._runtime = runtime
             if one_packet:
                 candidate = fixture.candidate()
             else:
