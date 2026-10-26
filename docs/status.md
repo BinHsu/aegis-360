@@ -196,5 +196,5 @@ probe loaded 232 functions on Apple M4. A separate v6 MLX GPU array add
 returned `[2, 4, 6]` with an explicit metallib override. Default bundle
 discovery and model inference remain unverified. See
 `docs/design/stage-a-metal-toolchain-route.md`.
-The local SmolVLM2 tree matches its cached inventory. The offline bridge builds,
-applies a chat template and rejects missing input; image processing and inference remain unverified.
+The local SmolVLM2 tree matches its cached inventory. The offline tokenizer
+bridge and six-frame synthetic processor path pass; inference remains unverified.
