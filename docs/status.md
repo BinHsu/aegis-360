@@ -195,6 +195,6 @@ returned `[2, 4, 6]` with an explicit metallib override. Default bundle
 discovery and model inference remain unverified. See
 `docs/design/stage-a-metal-toolchain-route.md`.
 The offline adapter and five asset roots pass local proofs and backend binding.
-The combined v3 executable passed all 14 raw isolation checks and 33 frozen
-native adapter cases. Four coordinator cases, ordinary valid-request launch,
-weight loading and inference remain unverified.
+The combined v3 executable passed all 14 raw isolation checks and 37 frozen
+native synthetic cases. Ordinary valid-request launch, weight loading and
+inference remain unverified; the synthetic proof grants no invocation authority.
