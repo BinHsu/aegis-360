@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-30T05:42:51+08:00
+Updated: 2026-10-30T05:48:27+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 7234a04
+Baseline commit: c6ca06c
 Remote status: local `origin/main` is `621c195`; local main is ahead. No aegis push is authorized by the current task.
-Working tree at checkpoint: guided v3 correction and measured-result milestone pending local commit; verify Git status before editing.
+Working tree at checkpoint: model-free image-path probe pending local commit; verify Git status before editing.
 
 ## Objective
 
@@ -15,22 +15,21 @@ real-media packets. Global planning alone owns camera viewpoints (ADR 0010).
 
 ## Last completed milestone
 
-The v3 guided adapter fixed a private-TMPDIR sidecar violation and pinned an
-exact T7 runtime tree. Its retained host suite passed 37/37 synthetic cases,
-`authority=false`, and its synthetic model smoke passed format validation. A
-real diagnostic isolated a macOS sandbox-extension warning on stderr; the
-revised guided candidate accepts only its exact 137-byte form. The final
-one-packet real smoke completed. Two serial six-packet runs completed 12/12,
-0 unexecuted, with byte-identical repeats, but only 3/6 known labels correct
-in each run. The predeclared semantic gate **rejects** the candidate. See
-`docs/experiments/stage-a-guided-v3-known-label-2026-10-30.md` and
-`docs/design/stage-a-guided-successor.md`.
+Guided v3 completed a real one-packet operational smoke and two serial
+six-packet known-label runs. All 12 invocations completed, six output pairs
+were byte-identical, but only 3/6 labels matched in each run. The semantic
+candidate is **rejected**. Afterward a fresh, model-free SmolVLM2 processor
+probe passed: six ordered distinct prepared frames, 486 image tokens and
+video prompt placement within the user turn. See
+`docs/experiments/stage-a-guided-v3-known-label-2026-10-30.md`,
+`docs/experiments/stage-a-complete-validation-2026-10-27.md` and
+`docs/experiments/stage-a-smol-processor-path-2026-10-30.md`.
 
 ## Repository state
 
-- Latest prior local milestone: `aegis-360@7234a04` (guided v2b source, exact
-  runtime evidence, frozen real-evaluation scripts). The v3 result is a new
-  local milestone; resolve its commit with `git log -1` after committing.
+- Local commits `aegis-360@6bfe74d` record the guided v3 rejection and
+  `aegis-360@c6ca06c` assess its benefit. The processor-path probe is pending
+  a local milestone commit.
 - T7 products, model weights, frames and raw model outputs remain outside Git.
 - The last published exact-SHA green CI claim is `4b78e1a`. Current local
   commits have no CI result; no Stage A build has been published.
@@ -51,7 +50,9 @@ in each run. The predeclared semantic gate **rejects** the candidate. See
   401 valid bytes, class `no_semantic_change`, nominal thermal and exact known
   macOS warning only on stderr.
 - Two serial six-packet runs completed 12/12, repeated output bytes for each
-  packet, and matched 3/6 known labels each. Maximum per-invocation sampled
+  packet, and matched 3/6 known labels each.
+- A fresh model-free, network-denied SmolVLM2 processor probe passed ordered
+  distinct prepared pixels, 486 image tokens and user-turn prompt placement. Maximum per-invocation sampled
   swap rise was 353,433,027 bytes; maximum sampled RSS 1,164,148,736 bytes;
   maximum MLX peak active 5,139,256,118 bytes. Thermal nominal or fair.
 
@@ -73,10 +74,10 @@ in each run. The predeclared semantic gate **rejects** the candidate. See
 
 ## Next commands
 
-Inspect the actual SmolVLM2 image-token and preprocessing path with bounded
-model-free probes. Preserve the six packets as diagnostic examples; a changed
-treatment requires a fresh independent labelled holdout. Do not rerun the
-frozen schedule for tuning. First verify the milestone and current Git state:
+The model-free SmolVLM2 prepared-input path passed. The next step is to
+define a fresh independent labelled holdout before any changed treatment.
+Preserve the six packets as diagnostic examples; do not rerun the frozen
+schedule for tuning. First verify the milestone and current Git state:
 
 ```sh
 cd ~/Documents/aegis-360

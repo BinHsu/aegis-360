@@ -55,11 +55,31 @@ struct SmolProcessorSmoke {
             exit(4)
         }
         let decoded = tokenizer.decode(tokenIds: tokens.map(Int.init), skipSpecialTokens: false)
+        guard let pixels = prepared.image?.pixels,
+              pixels.shape == [6, 384, 384, 3] else {
+            fputs("Smol prepared pixel shape mismatch\n", stderr)
+            exit(7)
+        }
+        let red = (0..<6).map { pixels[$0, 192, 192, 0].item(Float.self) }
+        guard zip(red, red.dropFirst()).allSatisfy({ $0.0 + 0.01 < $0.1 }) else {
+            fputs("Smol prepared pixel order mismatch\n", stderr)
+            exit(8)
+        }
+        guard let user = decoded.range(of: "User: "),
+              let frames = decoded.range(of: "Frame from"),
+              let instruction = decoded.range(of: "Inspect the six ordered rows."),
+              let assistant = decoded.range(of: "Assistant:", options: .backwards),
+              user.lowerBound < frames.lowerBound,
+              frames.lowerBound < instruction.lowerBound,
+              instruction.lowerBound < assistant.lowerBound else {
+            fputs("Smol prepared prompt placement mismatch\n", stderr)
+            exit(9)
+        }
         guard decoded.contains("bounded visual observer"),
               !decoded.contains("You are a helpful assistant that can understand videos") else {
             fputs("Smol system prompt mismatch\n", stderr)
             exit(6)
         }
-        print("Smol processor: 6 frames, 486 image tokens, frozen system prompt")
+        print("Smol processor: 6 frames, 486 image tokens, ordered pixels, prompt placement")
     }
 }

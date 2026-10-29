@@ -177,8 +177,9 @@ specific directing question. No new video is currently awaiting owner review.
   stdout repeats pass host gates.
 
 ## Next action
-Inspect the actual SmolVLM2 image-token and preprocessing path with bounded
-model-free probes, then define a fresh independent labelled holdout before
-changing the Stage A treatment. The guided v3 result is a semantic rejection,
+The model-free SmolVLM2 processor path probe passed six ordered distinct
+prepared frames, 486 image tokens and user-turn prompt placement. See
+`docs/experiments/stage-a-smol-processor-path-2026-10-30.md`. Define a fresh
+independent labelled holdout before changing the Stage A treatment. The guided v3 result is a semantic rejection,
 not a format failure or planner input. The current local commits have no CI
 result and no aegis remote push is authorized.
