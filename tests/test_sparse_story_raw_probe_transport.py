@@ -61,14 +61,23 @@ from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
 
 class SyntheticRuntimeAdmissionTests(unittest.TestCase):
     def test_combined_adapter_requires_exact_runtime_tree(self):
-        stage = SimpleNamespace(_entrypoint="stage-a-adapter",
-            manifest=lambda: {"root_tree_sha256":
-                "db2108c6878d7f69ff4c0d0beb5599b3fcf058ef0508a8d2bbc34f7057f14eaa"})
-        self.assertTrue(_fixed_synthetic_runtime_allowed(stage))
-        stage.manifest = lambda: {"root_tree_sha256": "0" * 64}
-        self.assertFalse(_fixed_synthetic_runtime_allowed(stage))
-        stage._entrypoint = "other-adapter"
-        self.assertFalse(_fixed_synthetic_runtime_allowed(stage))
+        runtimes = (
+            ("stage-a-adapter", "db2108c6878d7f69ff4c0d0beb5599b3fcf058ef0508a8d2bbc34f7057f14eaa"),
+            ("stage-a-guided-adapter", "86af6abd42b4f79f40e0730568df15f210ba1a9833673016e9be317581722f1a"),
+            ("stage-a-guided-adapter", "c5aab63be1a005c2a554b7438cb172a127c3eafb7940a6b93ef8d7753a96db0e"),
+        )
+        for entrypoint, tree in runtimes:
+            stage = SimpleNamespace(_entrypoint=entrypoint,
+                manifest=lambda tree=tree: {"root_tree_sha256": tree})
+            self.assertTrue(_fixed_synthetic_runtime_allowed(stage))
+            stage.manifest = lambda: {"root_tree_sha256": "0" * 64}
+            self.assertFalse(_fixed_synthetic_runtime_allowed(stage))
+            other_tree = next(value for other_entrypoint, value in runtimes
+                if other_entrypoint != entrypoint)
+            stage.manifest = lambda other_tree=other_tree: {"root_tree_sha256": other_tree}
+            self.assertFalse(_fixed_synthetic_runtime_allowed(stage))
+            stage._entrypoint = "other-adapter"
+            self.assertFalse(_fixed_synthetic_runtime_allowed(stage))
 
 
 @unittest.skipUnless(os.uname().sysname == "Darwin" and os.uname().machine == "arm64"

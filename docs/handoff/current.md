@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-27T05:58:03+08:00
+Updated: 2026-10-30T05:17:27+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 750902c
-Remote status: local `origin/main` is `621c195`; local main is ahead by 49 commits. No aegis push is authorized in the current task.
-Working tree at checkpoint: clean after the local real-packet smoke commit; verify with Git before editing.
+Baseline commit: 2e2b8e1
+Remote status: local `origin/main` is `621c195`; local main is ahead and no aegis push is authorized in the current task.
+Working tree at checkpoint: expected clean after this local milestone commit; verify with Git before editing.
 
 ## Objective
 
@@ -17,17 +17,19 @@ RGB and color-independent structural chapter proposals were rejected.
 
 ## Last completed milestone
 
-The combined v3 Stage A executable passed the full 14-check raw isolation
-matrix and all 37 frozen cases after exact Metal policy additions. One
-real-packet smoke exited 0 but produced malformed prose; the transport
-rejected it and swap rose by 4.23 GB. A model-free guided-generation
-feasibility review then stopped at the pinned source tree's single-commit
-history. See `docs/experiments/stage-a-first-real-smoke-2026-10-27.md` and
+The guided v2b adapter built offline on T7, passed 37/37 exact-runtime
+synthetic cases, and produced a closed eleven-field result in one synthetic
+model smoke. It recorded MLX peak active memory and swap; the latter rose
+4.41 GB. The same synthetic output bytes match v1. A toy-vocabulary probe
+found xgrammar does not enforce the schema's conditional abstention, so the
+repo's strict validator remains mandatory. See
 `docs/design/stage-a-guided-successor.md`.
 
 ## Repository state
 
-- Latest committed local milestone: real-packet smoke result (`git log -1`).
+- Latest local milestone: guided v2b source, exact runtime evidence and
+  frozen real-evaluation scripts (resolve the commit with `git log -1`). The
+  shallow-checkout blocker at `2e2b8e1` is superseded.
 - T7 products and logs
   remain outside Git.
 - The last published exact-SHA green CI claim is for `4b78e1a`. CI for the
@@ -50,9 +52,16 @@ history. See `docs/experiments/stage-a-first-real-smoke-2026-10-27.md` and
   passed offline; see `docs/experiments/mlx-swift-metal-library-v5-2026-10-23.md`.
 - The SmolVLM2 2.2B local asset tree matches its cached revision inventory;
   see `docs/experiments/stage-a-model-asset-tree-2026-10-23.md`.
-- The pinned guided target and vendored xgrammar build graph were inspected
-  without executing new code. Trivy and Syft did not cover the Swift/C++
-  target; see `docs/design/stage-a-guided-successor.md`.
+- The MLX Swift LM shallow checkout was deepened to 51 commits. Vendored
+  xgrammar's 59 files and pinned DLPack header match upstream byte for byte.
+  Trivy/Syft still do not cover the Swift/C++ target; Semgrep could not run.
+- The guided target built offline on T7. Toy and installed SmolVLM2 tokenizer
+  probes admit valid JSON and exclude prose. The toy probe shows xgrammar
+  accepts a bad conditional abstention, so the repo validator remains required.
+- Guided v1 and v2b binaries each passed 37/37 retained synthetic cases;
+  their separate synthetic model smokes emitted byte-identical valid output.
+  v2b measured MLX peak active 5,139,256,118 bytes, swap delta
+  4,412,795,781 bytes, and nominal thermal state over 18.315 seconds.
 
 ## Rejected
 
@@ -64,22 +73,18 @@ history. See `docs/experiments/stage-a-first-real-smoke-2026-10-27.md` and
   complete implementation, triggering the supply-chain-audit stop signal.
 - `swift-collections` 1.0.0 for this Swift 6.4 build: the bounded v2 attempt
   failed on Sendable checking; the v3 build used pinned 1.7.2.
-- Guided-generation adoption from the pinned MLX Swift LM snapshot: its Git
-  history has one commit, a supply-chain-audit stop signal. No new guided
-  library build or grammar probe ran.
+- The earlier single-commit source rejection is superseded: it was a shallow
+  checkout. Do not repeat that claim.
 
 ## Pending
 
-The adapter and all five runtime/model/prompt roots pass local proofs; the
-retained launcher passed 14 isolation checks and 37 cases with the updated
-policy. The real one-packet smoke returned prose instead of the closed JSON;
-transport completion and semantic evidence failed. Swap rose by 4.23 GB.
-No complete six-packet run started. Thermal/MLX peak memory were not measured.
-Trivy scanned no Swift target and Semgrep stopped before scanning; the
-bounded offline build and manifest review are evidence of behavior, not a
-complete vulnerability audit. Further Stage A invocation is held for an owner
-decision under the frozen no-retry/no-prompt-repair protocol. The reviewed
-guided route additionally needs source provenance and target-covering audit.
+The original real one-packet unconstrained smoke remains invalid prose and
+4.23 GB swap increase. The new guided candidate has only synthetic model
+output so far; no real-media semantic or repeatability result exists. The
+next frozen gate is one guided real-packet operational smoke with exact
+process monitoring, followed only if valid by two serial six-packet runs.
+Trivy/Syft did not cover the Swift/C++ target and Semgrep could not scan;
+source provenance and bounded runtime behavior do not prove absence of CVEs.
 
 ## Next commands
 
@@ -87,15 +92,13 @@ guided route additionally needs source provenance and target-covering audit.
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-sed -n '1,180p' docs/design/stage-a-guided-successor.md
+python3 scripts/run_stage_a_guided_real_smoke.py
 ```
 
-Owner decision: keep the frozen protocol and reject this SmolVLM2 adapter
-candidate, or approve a new bounded diagnostic protocol/model route. The
-guided-source route also needs a provenance-bearing source acquisition before
-new execution. Do not rerun this packet, repair its prompt, or start the
-twelve complete invocations under the frozen protocol without resolving the
-invalid-output and swap risk.
+The script creates a new T7 output root and runs once after checking the
+fixed runtime/model/media inputs. If it fails, inspect its durable result
+before any new invocation. It is a new guided-candidate smoke, not a pass of
+the old frozen protocol.
 
 ## External artifacts
 
@@ -110,10 +113,11 @@ No delegated work or background job is running.
 
 ## Safety and claims
 
-- One selected real packet reached the model; its raw prose failed the closed
-  schema and transport. No Stage A semantic observation or approved adapter exists.
-- Build, Metal API load, GPU array add and asset hashes prove only their
-  bounded checks; none proves VLM correctness or performance.
+- One selected real packet reached the old adapter and failed the closed
+  schema. Two synthetic packets reached guided adapter versions and passed
+  format validation; no real-media guided semantic outcome exists.
+- Build, format, Metal API load and asset hashes prove their bounded checks;
+  they do not establish VLM semantic accuracy or sustained performance.
 - The dotfiles policy push was completed separately under code `520`; this
   does not authorize an aegis remote push.
 - Git history is the archive; this file describes the current work state.

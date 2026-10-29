@@ -14,14 +14,23 @@ from .sparse_story_media_tree import _derive_gate_result
 from .sparse_story_probe_sentinels import _ReadDenialSentinel
 
 _DECOY_BYTES = b"one-packet-neighbor-sentinel-v1"
-_STAGE_A_PROBE_RUNTIME_TREE = "db2108c6878d7f69ff4c0d0beb5599b3fcf058ef0508a8d2bbc34f7057f14eaa"
+_STAGE_A_PROBE_RUNTIMES = {
+    "stage-a-adapter": "db2108c6878d7f69ff4c0d0beb5599b3fcf058ef0508a8d2bbc34f7057f14eaa",
+    "stage-a-guided-adapter": {
+        "86af6abd42b4f79f40e0730568df15f210ba1a9833673016e9be317581722f1a",
+        "c5aab63be1a005c2a554b7438cb172a127c3eafb7940a6b93ef8d7753a96db0e",
+    },
+}
 
 
 def _fixed_synthetic_runtime_allowed(runtime) -> bool:
     if runtime._entrypoint == "bin/aegis-synthetic-adapter":
         return True
-    return (runtime._entrypoint == "stage-a-adapter"
-        and runtime.manifest()["root_tree_sha256"] == _STAGE_A_PROBE_RUNTIME_TREE)
+    expected = _STAGE_A_PROBE_RUNTIMES.get(runtime._entrypoint)
+    if expected is None:
+        return False
+    tree = runtime.manifest()["root_tree_sha256"]
+    return tree in expected if isinstance(expected, set) else tree == expected
 
 
 class _OwnedOnePacketNeighbor:
