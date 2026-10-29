@@ -19,6 +19,7 @@ _STAGE_A_PROBE_RUNTIMES = {
     "stage-a-guided-adapter": {
         "86af6abd42b4f79f40e0730568df15f210ba1a9833673016e9be317581722f1a",
         "c5aab63be1a005c2a554b7438cb172a127c3eafb7940a6b93ef8d7753a96db0e",
+        "5e8f4a9e92432a552d65b6dfc0eebc77848b24e316fdc221c67e4ca93dc51184",
     },
 }
 

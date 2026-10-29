@@ -39,7 +39,7 @@ from aegis360.sparse_story_probe_transcript import (  # noqa: E402
 )
 from aegis360.sparse_story_raw_probe_transport import (  # noqa: E402
     _RawProbeCapture, _run_raw_probe, _run_owned_raw_probe,
-    _run_native_process,
+    _run_native_process, _stderr_accepted,
 )
 from aegis360.sparse_story_runner_contract import MATRIX_KEYS, build_runner_policy  # noqa: E402
 from aegis360.sparse_story_backend_facade import _require_live  # noqa: E402
@@ -60,11 +60,20 @@ from tests import test_sparse_story_media_tree as media_tests  # noqa: E402
 
 
 class SyntheticRuntimeAdmissionTests(unittest.TestCase):
+    def test_exact_known_stderr_only(self):
+        known = b"sandbox-extension-warning\n"
+        self.assertTrue(_stderr_accepted(b"", None))
+        self.assertFalse(_stderr_accepted(known, None))
+        self.assertTrue(_stderr_accepted(known, known))
+        for other in (known + b"extra", b"other\n", known[:-1]):
+            self.assertFalse(_stderr_accepted(other, known))
+
     def test_combined_adapter_requires_exact_runtime_tree(self):
         runtimes = (
             ("stage-a-adapter", "db2108c6878d7f69ff4c0d0beb5599b3fcf058ef0508a8d2bbc34f7057f14eaa"),
             ("stage-a-guided-adapter", "86af6abd42b4f79f40e0730568df15f210ba1a9833673016e9be317581722f1a"),
             ("stage-a-guided-adapter", "c5aab63be1a005c2a554b7438cb172a127c3eafb7940a6b93ef8d7753a96db0e"),
+            ("stage-a-guided-adapter", "5e8f4a9e92432a552d65b6dfc0eebc77848b24e316fdc221c67e4ca93dc51184"),
         )
         for entrypoint, tree in runtimes:
             stage = SimpleNamespace(_entrypoint=entrypoint,

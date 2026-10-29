@@ -270,3 +270,48 @@ measurement or lineage is `invalid`/`inconclusive` as appropriate. A resource
 stop or operational failure ends the run without automatic retry and records
 the unexecuted cases explicitly. This is a known-label feasibility test; it
 does not measure generalization or blind viewer preference.
+
+### v2b operational abstention and frozen v3 correction (2026-10-30)
+
+The first v2b guided real-packet smoke ran once. Its process exited zero in
+36.942 seconds and emitted 401 closed JSON bytes, SHA-256
+`9aeac2b04bd8a120c2ad55d8fa5bb5bb1b755b989f1420d98e37af033fcc9b9e`.
+The strict parser derived `no_semantic_change`, but retained completion was
+**false**: the private TMPDIR contained the MLX metrics sidecar, violating
+`_PrivateDirectory.revalidate()`. The semantic class is therefore not a
+valid result. The durable record is on T7 under
+`/Volumes/T7/aegis-360-items/build/stage-a-guided-real-smoke-v1/`.
+
+The v3 correction changes only where the metrics sidecar is written: the
+parent scratch root, which the retained policy permits, instead of private
+TMPDIR, which must stay empty. The prompt, schema, model, media, guided
+decoder, token budget and resource stops stay fixed. Before any v3 real
+inference, build and hash the new exact runtime, pass the 37 retained
+synthetic cases and one fresh synthetic format/metrics smoke, including an
+explicit empty private TMPDIR check. Then run one fresh retained v3 Skiing
+packet smoke. If valid, run the previously frozen two serial six-packet
+schedule with the same v3 runtime. The v2b smoke remains an operational
+abstention and is never overwritten or counted.
+
+The first v3 real smoke fixed the private-TMPDIR postcheck but returned
+`native_process_invalid` despite exit zero, 401 stdout bytes and a closed
+observation. It is an operational abstention, not a semantic result. The
+retained transport previously collapsed several failure predicates into one
+reason and did not retain their individual flags. A diagnostic-only successor
+adds bounded boolean failure flags to the capture; it does not change the
+runtime, model, prompt, media, resource limits or acceptance predicate. One
+new v3 diagnostic run under a separate T7 output root will identify the
+failed predicate. No six-packet schedule runs before that predicate is
+understood and corrected or explicitly resolved.
+
+The bounded stderr diagnostic captured exactly 137 bytes:
+`sandbox_extension_issue_file failed for /Volumes/T7/aegis-360-items/build/stage-a-guided-adapter-v3/runtime: 1 (Operation not permitted)`.
+It names only the pinned runtime directory and came with a zero exit,
+complete output, passing postcheck and nominal thermal state. For this
+revised guided-candidate protocol only, the retained transport accepts
+**exactly** that warning byte string; any extra, missing or different stderr
+still fails. The exception is passed by the v3 real and six-packet runners,
+not by old adapter or generic probes. Run one fresh real packet smoke under
+`stage-a-guided-real-smoke-v5`, then, only if it completes, the two-run
+six-packet schedule under `sga4`. This revision is exploratory and does not
+retroactively validate prior abstentions.

@@ -29,6 +29,10 @@ _DRAIN_NS = 2_000_000_000
 _LIMIT = 65_536
 
 
+def _stderr_accepted(stderr: bytes, allowed_stderr: bytes | None) -> bool:
+    return not stderr or (allowed_stderr is not None and stderr == allowed_stderr)
+
+
 @dataclass(frozen=True)
 class _RawProbeCapture:
     stdout: bytes
@@ -38,6 +42,8 @@ class _RawProbeCapture:
     postcheck_passed: bool
     reason: str
     launch_event: object = field(default=None, compare=False, repr=False)
+    transport_failure_flags: tuple[str, ...] = ()
+    stderr: bytes = field(default=b"", compare=False, repr=False)
 
 
 class _NativeLaunchEvent:
@@ -193,7 +199,7 @@ def _retained_launch_spec(candidate, suffix: tuple[str, ...], policy_fd: int):
 
 
 def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
-        request_bytes=None, launch_ledger=None) -> _RawProbeCapture:
+        request_bytes=None, launch_ledger=None, allowed_stderr: bytes | None = None) -> _RawProbeCapture:
     """Bounded native launch retaining the leader through group teardown."""
     if (suffix == () and (launch_ledger is None
             or request_bytes != candidate._request_bytes)):
@@ -201,6 +207,9 @@ def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
     if (request_bytes is not None
             and (type(request_bytes) is not bytes or len(request_bytes) > 1_048_576)):
         raise ValueError("native request bytes are invalid")
+    if allowed_stderr is not None and (type(allowed_stderr) is not bytes
+            or not allowed_stderr or len(allowed_stderr) > _LIMIT):
+        raise ValueError("allowed stderr is invalid")
     binding_before = candidate._binding_bytes()
     if launch_ledger is None:
         launch_ledger = _NativeLaunchLedger(candidate)
@@ -227,6 +236,7 @@ def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
     reserved = False
     selector = selectors.DefaultSelector()
     stdout = bytearray()
+    stderr = bytearray()
     stderr_present = stdout_overflow = stderr_overflow = timed_out = False
     stderr_count = 0
     writer_failed = cleanup_failed = group_verified = False
@@ -345,6 +355,8 @@ def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
                     continue
                 if key.data == "stderr":
                     stderr_present = True
+                    remaining_stderr = _LIMIT + 1 - len(stderr)
+                    if remaining_stderr > 0: stderr.extend(chunk[:remaining_stderr])
                     stderr_count = min(_LIMIT + 1, stderr_count + len(chunk))
                     stderr_overflow |= stderr_count > _LIMIT
                 else:
@@ -412,7 +424,8 @@ def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
         transport_complete = bool(returncode == 0 and transferred == len(transfer)
             and input_transferred == len(input_view)
             and group_verified and group_gone and not timed_out and not writer_failed
-            and not stdout_overflow and not stderr_overflow and not stderr_present
+            and not stdout_overflow and not stderr_overflow
+            and _stderr_accepted(bytes(stderr), allowed_stderr)
             and not cleanup_failed and postcheck_passed and stdout)
         primitive_passed = False
         if transport_complete and allowed is not None:
@@ -432,8 +445,24 @@ def _run_native_process(candidate, suffix, *, postvalidate, allowed=None,
         reason = ("raw_probe_complete" if completed else "raw_probe_invalid") if (
             allowed is not None) else (
             "native_process_complete" if completed else "native_process_invalid")
+        flags = tuple(name for name, failed in (
+            ("returncode", returncode != 0),
+            ("policy_transfer", transferred != len(transfer)),
+            ("input_transfer", input_transferred != len(input_view)),
+            ("group_verification", not group_verified),
+            ("group_teardown", not group_gone),
+            ("timeout", timed_out),
+            ("writer", writer_failed),
+            ("stdout_overflow", stdout_overflow),
+            ("stderr_overflow", stderr_overflow),
+            ("stderr_unexpected", not _stderr_accepted(bytes(stderr), allowed_stderr)),
+            ("cleanup", cleanup_failed),
+            ("postcheck", not postcheck_passed),
+            ("empty_stdout", not stdout),
+            ("probe_primitive", allowed is not None and not primitive_passed),
+        ) if failed)
         capture = _RawProbeCapture(bytes(stdout), returncode, group_gone,
-            completed, postcheck_passed, reason, launch_event)
+            completed, postcheck_passed, reason, launch_event, flags, bytes(stderr))
         launch_event.bind_capture(capture)
         return capture
     finally:

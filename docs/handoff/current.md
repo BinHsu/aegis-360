@@ -1,111 +1,96 @@
 # Current handoff
 
-Updated: 2026-10-30T05:17:27+08:00
+Updated: 2026-10-30T05:42:51+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: 2e2b8e1
-Remote status: local `origin/main` is `621c195`; local main is ahead and no aegis push is authorized in the current task.
-Working tree at checkpoint: expected clean after this local milestone commit; verify with Git before editing.
+Baseline commit: 7234a04
+Remote status: local `origin/main` is `621c195`; local main is ahead. No aegis push is authorized by the current task.
+Working tree at checkpoint: guided v3 correction and measured-result milestone pending local commit; verify Git status before editing.
 
 ## Objective
 
-Build the offline 360-video auto-director for ordinary viewers on the fanless
-M4 MacBook Air. The current bounded gate is a sparse Stage A semantic adapter
-for six private packets. The model emits closed event observations but cannot
-command the camera; global planning owns viewpoints (ADR 0010). The Skiing
-RGB and color-independent structural chapter proposals were rejected.
+Build the offline 360-video auto-director. The current bounded Stage A gate asks
+whether SmolVLM2 can emit correct, closed event observations for six private
+real-media packets. Global planning alone owns camera viewpoints (ADR 0010).
 
 ## Last completed milestone
 
-The guided v2b adapter built offline on T7, passed 37/37 exact-runtime
-synthetic cases, and produced a closed eleven-field result in one synthetic
-model smoke. It recorded MLX peak active memory and swap; the latter rose
-4.41 GB. The same synthetic output bytes match v1. A toy-vocabulary probe
-found xgrammar does not enforce the schema's conditional abstention, so the
-repo's strict validator remains mandatory. See
+The v3 guided adapter fixed a private-TMPDIR sidecar violation and pinned an
+exact T7 runtime tree. Its retained host suite passed 37/37 synthetic cases,
+`authority=false`, and its synthetic model smoke passed format validation. A
+real diagnostic isolated a macOS sandbox-extension warning on stderr; the
+revised guided candidate accepts only its exact 137-byte form. The final
+one-packet real smoke completed. Two serial six-packet runs completed 12/12,
+0 unexecuted, with byte-identical repeats, but only 3/6 known labels correct
+in each run. The predeclared semantic gate **rejects** the candidate. See
+`docs/experiments/stage-a-guided-v3-known-label-2026-10-30.md` and
 `docs/design/stage-a-guided-successor.md`.
 
 ## Repository state
 
-- Latest local milestone: guided v2b source, exact runtime evidence and
-  frozen real-evaluation scripts (resolve the commit with `git log -1`). The
-  shallow-checkout blocker at `2e2b8e1` is superseded.
-- T7 products and logs
-  remain outside Git.
-- The last published exact-SHA green CI claim is for `4b78e1a`. CI for the
-  current local commits has not run. No Stage A build has been published.
+- Latest prior local milestone: `aegis-360@7234a04` (guided v2b source, exact
+  runtime evidence, frozen real-evaluation scripts). The v3 result is a new
+  local milestone; resolve its commit with `git log -1` after committing.
+- T7 products, model weights, frames and raw model outputs remain outside Git.
+- The last published exact-SHA green CI claim is `4b78e1a`. Current local
+  commits have no CI result; no Stage A build has been published.
 
 ## Verified
 
-- Xcode 27.2 RC (27B48) and Metal Toolchain 27B47 are installed on T7;
-  Xcode first launch and license acceptance completed. The original signed
-  app is intact. The system retained about 881 MiB of Apple MobileAsset data.
-- The direct mounted Metal compiler works. Xcode's compiler stub still says
-  the component is missing; an isolated T7 Xcode overlay stalled during
-  license status and is not a working build route.
-- Full portable repository discovery before toolchain work ran 947 tests
-  with 97 skips and no failures. Current toolchain work ran focused checks.
-- Real-media Stage A preflight produced six private packets and 36 sanitized
-  960x540 PNGs with matching repeat hashes on T7; six selected PNGs entered
-  the failed model smoke.
-- `MLXVLM` target build, manually linked Metal library and MLX GPU array add
-  passed offline; see `docs/experiments/mlx-swift-metal-library-v5-2026-10-23.md`.
-- The SmolVLM2 2.2B local asset tree matches its cached revision inventory;
-  see `docs/experiments/stage-a-model-asset-tree-2026-10-23.md`.
-- The MLX Swift LM shallow checkout was deepened to 51 commits. Vendored
-  xgrammar's 59 files and pinned DLPack header match upstream byte for byte.
-  Trivy/Syft still do not cover the Swift/C++ target; Semgrep could not run.
-- The guided target built offline on T7. Toy and installed SmolVLM2 tokenizer
-  probes admit valid JSON and exclude prose. The toy probe shows xgrammar
-  accepts a bad conditional abstention, so the repo validator remains required.
-- Guided v1 and v2b binaries each passed 37/37 retained synthetic cases;
-  their separate synthetic model smokes emitted byte-identical valid output.
-  v2b measured MLX peak active 5,139,256,118 bytes, swap delta
-  4,412,795,781 bytes, and nominal thermal state over 18.315 seconds.
+- Xcode 27.2 RC and Metal Toolchain 27B47 are installed on T7. An isolated
+  SwiftPM target builds offline on T7 with network denied by macOS Seatbelt.
+- Pinned MLX Swift LM and vendored xgrammar source provenance, toy grammar
+  probe and installed tokenizer gate were checked. xgrammar does not enforce
+  conditional abstention; the strict repo validator remains mandatory.
+- Guided v3 exact runtime tree SHA-256 is
+  `5e8f4a9e92432a552d65b6dfc0eebc77848b24e316fdc221c67e4ca93dc51184`.
+- v3 retained synthetic gate passed 37/37 in 210.21 seconds. Synthetic model
+  smoke emitted 405 valid JSON bytes, with empty private TMPDIR, numeric MLX
+  metrics, nominal thermal and swap rise about 1.90 GB.
+- Final v3 real one-packet smoke had retained completion, passing postcheck,
+  401 valid bytes, class `no_semantic_change`, nominal thermal and exact known
+  macOS warning only on stderr.
+- Two serial six-packet runs completed 12/12, repeated output bytes for each
+  packet, and matched 3/6 known labels each. Maximum per-invocation sampled
+  swap rise was 353,433,027 bytes; maximum sampled RSS 1,164,148,736 bytes;
+  maximum MLX peak active 5,139,256,118 bytes. Thermal nominal or fair.
 
-## Rejected
+## Rejected and limitations
 
-- Skiing RGB-persistence and the color-independent structural successor as
-  chapter detectors. Do not retune the frozen comparisons.
-- Treating a successful SwiftPM target build as Metal packaging or inference
-  proof; treating the Xcode overlay as a supported toolchain.
-- `EventSource` 1.0.0 adoption: its two-commit history starts with a
-  complete implementation, triggering the supply-chain-audit stop signal.
-- `swift-collections` 1.0.0 for this Swift 6.4 build: the bounded v2 attempt
-  failed on Sendable checking; the v3 build used pinned 1.7.2.
-- The earlier single-commit source rejection is superseded: it was a shallow
-  checkout. Do not repeat that claim.
+- The original unconstrained one-packet output was prose. Guided decoding
+  repaired format; it did not pass semantic accuracy.
+- v2b and early v3 real smokes with postcheck or stderr failure remain
+  operational abstentions. Their classes were not counted.
+- The guided v3 Stage A candidate is rejected for 3/6 accuracy, despite
+  byte-level repeatability. Do not feed its classes to the planner.
+- Trivy/Syft did not cover Swift/C++; Semgrep failed at startup. Provenance
+  and bounded execution do not prove absence of vulnerabilities.
+- A six-packet known-label test does not establish generalization, viewer
+  preference, or whether the error is preprocessing, prompt, model or class
+  derivation. Sampled RSS is not unified-memory total.
 
 ## Pending
 
-The original real one-packet unconstrained smoke remains invalid prose and
-4.23 GB swap increase. The new guided candidate has only synthetic model
-output so far; no real-media semantic or repeatability result exists. The
-next frozen gate is one guided real-packet operational smoke with exact
-process monitoring, followed only if valid by two serial six-packet runs.
-Trivy/Syft did not cover the Swift/C++ target and Semgrep could not scan;
-source provenance and bounded runtime behavior do not prove absence of CVEs.
-
 ## Next commands
+
+Inspect the actual SmolVLM2 image-token and preprocessing path with bounded
+model-free probes. Preserve the six packets as diagnostic examples; a changed
+treatment requires a fresh independent labelled holdout. Do not rerun the
+frozen schedule for tuning. First verify the milestone and current Git state:
 
 ```sh
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-python3 scripts/run_stage_a_guided_real_smoke.py
 ```
-
-The script creates a new T7 output root and runs once after checking the
-fixed runtime/model/media inputs. If it fails, inspect its durable result
-before any new invocation. It is a new guided-candidate smoke, not a pass of
-the old frozen protocol.
 
 ## External artifacts
 
-Set `AEGIS_DATA_DIR` to the approved T7 project root locally. Pinned
-third-party sources are under its `sources/` area; MLX v4, shader v5 and
-GPU-smoke v6 artifacts are under `build/`. Media, frames, model weights,
-scratch and compiled products stay there and are never committed.
+The approved external working space is the configured T7 project data root.
+Runtime/model/media, private frames and output, metrics, build scratch and
+compiled products stay there. The decisive private run status is under
+the T7 `build/sga4/` directory. No delegated work or background
+job is running.
 
 ## Active agents
 
@@ -113,11 +98,7 @@ No delegated work or background job is running.
 
 ## Safety and claims
 
-- One selected real packet reached the old adapter and failed the closed
-  schema. Two synthetic packets reached guided adapter versions and passed
-  format validation; no real-media guided semantic outcome exists.
-- Build, format, Metal API load and asset hashes prove their bounded checks;
-  they do not establish VLM semantic accuracy or sustained performance.
-- The dotfiles policy push was completed separately under code `520`; this
-  does not authorize an aegis remote push.
-- Git history is the archive; this file describes the current work state.
+A local build proves a build, 37 synthetic cases prove their retained host
+contract, and the 12 real invocations prove only the bounded known-label
+result. The candidate has no semantic authority. Git history is the archive;
+this handoff describes the latest state.

@@ -99,6 +99,7 @@ struct StageAGuidedMetricsAdapterMain {
             throw StageAAdapterRequestError.invalid
         }
         let path = URL(fileURLWithPath: temporary, isDirectory: true)
+            .deletingLastPathComponent()
             .appending(component: "stage-a-guided-metrics.json")
         let data = try JSONSerialization.data(withJSONObject: [
             "schema_version": "aegis360.stage-a-guided-mlx-memory.v1",

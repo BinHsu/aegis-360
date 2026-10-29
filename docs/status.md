@@ -9,11 +9,7 @@ verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs and
 storage, then read back against the exact approved plan. Two local closed
 sanitized-media runs match across all 36 images; the canonical bundle was
 published to the configured T7 data root and independently read back.
-The first real-packet unconstrained smoke failed. After source provenance
-verification, guided v2b passed schema/tokenizer probes, 37/37 retained
-synthetic cases and one valid synthetic model format/metrics smoke. Real
-semantic inference remains untested. See
-`docs/design/stage-a-guided-successor.md`. The Skiing proposal remains rejected.
+The first real-packet unconstrained smoke failed. Guided v3 passed its exact-runtime 37/37 retained synthetic gate, a synthetic format smoke and a one-packet real operational smoke. Its two serial six-packet known-label runs completed 12/12 with byte-identical repeats but only 3/6 correct labels in each run, so the Stage A semantic candidate is rejected. See `docs/experiments/stage-a-guided-v3-known-label-2026-10-30.md`. The Skiing proposal remains rejected.
 
 ## Accepted evidence
 
@@ -181,19 +177,8 @@ specific directing question. No new video is currently awaiting owner review.
   stdout repeats pass host gates.
 
 ## Next action
-Run the frozen one-shot guided real-packet operational smoke, then, only if
-valid, two serial six-packet known-label runs. The original failed smoke
-remains a separate frozen result. The
-published six-packet input and 36-image media gate remain intact on T7.
-Pinned MLX Swift sources and Xcode 27.2 RC/Metal Toolchain 27B47 are on T7;
-Xcode's `metal` stub still reports the component missing.
-Offline v4 built `MLXVLM`; v5 compiled ten shaders and linked `default.metallib`; a Metal API
-probe loaded 232 functions on Apple M4. A separate v6 MLX GPU array add
-returned `[2, 4, 6]` with an explicit metallib override. Default bundle
-discovery and valid semantic inference remain unverified. See
-`docs/design/stage-a-metal-toolchain-route.md`.
-The offline adapter and five asset roots pass local proofs and backend binding.
-The combined v3 executable passed all 14 raw isolation checks and 37 frozen
-native synthetic cases under a narrowly Metal-capable policy. Its first real
-one-packet smoke under that policy exited 0 but produced malformed prose, so
-the transport rejected it; swap rose by 4.23 GB. No semantic outcome exists.
+Inspect the actual SmolVLM2 image-token and preprocessing path with bounded
+model-free probes, then define a fresh independent labelled holdout before
+changing the Stage A treatment. The guided v3 result is a semantic rejection,
+not a format failure or planner input. The current local commits have no CI
+result and no aegis remote push is authorized.
