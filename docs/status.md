@@ -182,4 +182,4 @@ prepared frames, 486 image tokens and user-turn prompt placement. See
 `docs/experiments/stage-a-smol-processor-path-2026-10-30.md`. Define a fresh
 independent labelled holdout before changing the Stage A treatment. The guided v3 result is a semantic rejection,
 not a format failure or planner input. The current local commits have no CI
-result and no aegis remote push is authorized.
+result; the owner requested a push and its publication code gate is pending.

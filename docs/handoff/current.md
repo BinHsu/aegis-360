@@ -1,11 +1,11 @@
 # Current handoff
 
-Updated: 2026-10-30T05:48:27+08:00
+Updated: 2026-10-30T06:01:30+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: c6ca06c
-Remote status: local `origin/main` is `621c195`; local main is ahead. No aegis push is authorized by the current task.
-Working tree at checkpoint: model-free image-path probe pending local commit; verify Git status before editing.
+Baseline commit: a04b4f4
+Remote status: fetched `origin/main` at `621c195`; local main is 54 commits ahead before this handoff correction. The owner requested a push; the separate publication code gate remains pending.
+Working tree at checkpoint: expected clean after this handoff correction commit; verify Git status before editing.
 
 ## Objective
 
@@ -27,9 +27,9 @@ video prompt placement within the user turn. See
 
 ## Repository state
 
-- Local commits `aegis-360@6bfe74d` record the guided v3 rejection and
-  `aegis-360@c6ca06c` assess its benefit. The processor-path probe is pending
-  a local milestone commit.
+- Local commits `aegis-360@6bfe74d` record the guided v3 rejection,
+  `aegis-360@c6ca06c` assess its benefit, and `aegis-360@a04b4f4` verify
+  the model-free processor path. This handoff correction is the next commit.
 - T7 products, model weights, frames and raw model outputs remain outside Git.
 - The last published exact-SHA green CI claim is `4b78e1a`. Current local
   commits have no CI result; no Stage A build has been published.
@@ -50,11 +50,11 @@ video prompt placement within the user turn. See
   401 valid bytes, class `no_semantic_change`, nominal thermal and exact known
   macOS warning only on stderr.
 - Two serial six-packet runs completed 12/12, repeated output bytes for each
-  packet, and matched 3/6 known labels each.
-- A fresh model-free, network-denied SmolVLM2 processor probe passed ordered
-  distinct prepared pixels, 486 image tokens and user-turn prompt placement. Maximum per-invocation sampled
+  packet, and matched 3/6 known labels each. Maximum per-invocation sampled
   swap rise was 353,433,027 bytes; maximum sampled RSS 1,164,148,736 bytes;
   maximum MLX peak active 5,139,256,118 bytes. Thermal nominal or fair.
+- A fresh model-free, network-denied SmolVLM2 processor probe passed ordered
+  distinct prepared pixels, 486 image tokens and user-turn prompt placement.
 
 ## Rejected and limitations
 
@@ -72,17 +72,22 @@ video prompt placement within the user turn. See
 
 ## Pending
 
+The requested remote push and exact-SHA CI verification await the publication
+code gate. No remote state has been changed by this task.
+
 ## Next commands
 
 The model-free SmolVLM2 prepared-input path passed. The next step is to
 define a fresh independent labelled holdout before any changed treatment.
 Preserve the six packets as diagnostic examples; do not rerun the frozen
-schedule for tuning. First verify the milestone and current Git state:
+schedule for tuning. For the requested publication, first verify the
+reviewed local commit and fetched remote base:
 
 ```sh
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
+git rev-parse HEAD origin/main
 ```
 
 ## External artifacts
