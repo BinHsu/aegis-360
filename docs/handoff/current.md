@@ -1,110 +1,105 @@
 # Current handoff
 
-Updated: 2026-10-30T06:01:30+08:00
+Updated: 2026-10-31T21:34:00+08:00
 Repository: aegis-360
 Branch: main
-Baseline commit: a04b4f4
-Remote status: fetched `origin/main` at `621c195`; local main is 54 commits ahead before this handoff correction. The owner requested a push; the separate publication code gate remains pending.
-Working tree at checkpoint: expected clean after this handoff correction commit; verify Git status before editing.
+Baseline commit: 9736867a98c24a845a6974adc29bf78505c8bcff
+Remote status: `origin/main` matched baseline at last local verification; exact-SHA GitHub `validate` CI passed for baseline. This milestone is local and unpublished.
+Working tree at checkpoint: milestone source, scripts and docs are expected edits; verify status before further work.
 
 ## Objective
 
-Build the offline 360-video auto-director. The current bounded Stage A gate asks
-whether SmolVLM2 can emit correct, closed event observations for six private
-real-media packets. Global planning alone owns camera viewpoints (ADR 0010).
+Build an offline 360-video auto-director. Current bounded work diagnoses why the
+first guided SmolVLM2 Stage A semantic candidate failed 3/6 known labels, then
+prepares an independent successor gate. Global planning owns view choice (ADR
+0010). Stage B cannot consume the rejected Stage A classes.
 
 ## Last completed milestone
 
-Guided v3 completed a real one-packet operational smoke and two serial
-six-packet known-label runs. All 12 invocations completed, six output pairs
-were byte-identical, but only 3/6 labels matched in each run. The semantic
-candidate is **rejected**. Afterward a fresh, model-free SmolVLM2 processor
-probe passed: six ordered distinct prepared frames, 486 image tokens and
-video prompt placement within the user turn. See
-`docs/experiments/stage-a-guided-v3-known-label-2026-10-30.md`,
-`docs/experiments/stage-a-complete-validation-2026-10-27.md` and
-`docs/experiments/stage-a-smol-processor-path-2026-10-30.md`.
+The guided v3 result is published at `BinHsu/aegis-360@9736867` with exact-SHA
+green `validate` CI. Two serial six-packet runs completed 12/12, were
+byte-identical per packet, and got 3/6 labels right. A 2026-10-31 visual audit
+localized the Old Ghost 205.6-second center error to observation, the Old Ghost
+132.4-second error to a likely false artifact claim, and the Skiing 200-second
+comparison to unresolved label/time scale. See
+`docs/experiments/stage-a-guided-error-localization-2026-10-31.md`.
 
 ## Repository state
 
-- Local commits `aegis-360@6bfe74d` record the guided v3 rejection,
-  `aegis-360@c6ca06c` assess its benefit, and `aegis-360@a04b4f4` verify
-  the model-free processor path. This handoff correction is the next commit.
-- T7 products, model weights, frames and raw model outputs remain outside Git.
-- The last published exact-SHA green CI claim is `4b78e1a`. Current local
-  commits have no CI result; no Stage A build has been published.
+- The current source/docs milestone is local only. Confirm final changed files
+  with `git status`; do not infer remote publication from a local commit.
+- T7 holds all media, model weights, raw outputs, compiled binaries and build
+  scratch. Only source, scripts and path-free aggregate evidence enter Git.
+- The active SQLite task ledger is local and gitignored; no delegate is active.
 
 ## Verified
 
-- Xcode 27.2 RC and Metal Toolchain 27B47 are installed on T7. An isolated
-  SwiftPM target builds offline on T7 with network denied by macOS Seatbelt.
-- Pinned MLX Swift LM and vendored xgrammar source provenance, toy grammar
-  probe and installed tokenizer gate were checked. xgrammar does not enforce
-  conditional abstention; the strict repo validator remains mandatory.
-- Guided v3 exact runtime tree SHA-256 is
-  `5e8f4a9e92432a552d65b6dfc0eebc77848b24e316fdc221c67e4ca93dc51184`.
-- v3 retained synthetic gate passed 37/37 in 210.21 seconds. Synthetic model
-  smoke emitted 405 valid JSON bytes, with empty private TMPDIR, numeric MLX
-  metrics, nominal thermal and swap rise about 1.90 GB.
-- Final v3 real one-packet smoke had retained completion, passing postcheck,
-  401 valid bytes, class `no_semantic_change`, nominal thermal and exact known
-  macOS warning only on stderr.
-- Two serial six-packet runs completed 12/12, repeated output bytes for each
-  packet, and matched 3/6 known labels each. Maximum per-invocation sampled
-  swap rise was 353,433,027 bytes; maximum sampled RSS 1,164,148,736 bytes;
-  maximum MLX peak active 5,139,256,118 bytes. Thermal nominal or fair.
-- A fresh model-free, network-denied SmolVLM2 processor probe passed ordered
-  distinct prepared pixels, 486 image tokens and user-turn prompt placement.
+- Six diagnostic packets produced only two distinct parsed eleven-field
+  objects. Altering artifact priority alone cannot recover the wrong classes.
+- The visual center pair at Old Ghost 205.6 seconds changes from confined trail
+  to bridge/river; the model called activity and setting unchanged.
+- Frozen synthetic guided `static` and `palette_step` arms both passed
+  operational gates but emitted identical 405-byte false-artifact JSON, even
+  though `static` had six byte-identical images.
+- Frozen unguided controls on the same inputs emitted different prose, and the
+  static prose recognized no movement. They are not Stage A JSON candidates.
+- First-token multimodal readouts had identical 1,023-token text prompt hashes
+  but different 49,280-logit hashes. The image change affects model computation
+  before guided decoding; top token ID was the same.
+- The exact tokenizer/schema probe accepted complete `same`, `changed` and
+  `artifact=present` objects through EOS. Alternate values are reachable;
+  guided field-choice rankings remain unmeasured.
 
 ## Rejected and limitations
 
-- The original unconstrained one-packet output was prose. Guided decoding
-  repaired format; it did not pass semantic accuracy.
-- v2b and early v3 real smokes with postcheck or stderr failure remain
-  operational abstentions. Their classes were not counted.
-- The guided v3 Stage A candidate is rejected for 3/6 accuracy, despite
-  byte-level repeatability. Do not feed its classes to the planner.
-- Trivy/Syft did not cover Swift/C++; Semgrep failed at startup. Provenance
-  and bounded execution do not prove absence of vulnerabilities.
-- A six-packet known-label test does not establish generalization, viewer
-  preference, or whether the error is preprocessing, prompt, model or class
-  derivation. Sampled RSS is not unified-memory total.
+- Guided v3 is semantically rejected despite valid JSON and byte-level repeats.
+  Do not feed its classes to the planner or tune accuracy on the exposed six.
+- The Skiing 200-second human evidence described a coarse progression, not an
+  exact center boundary. Its center class needs independent time-scale review.
+- Synthetic static/palette failure does not prove the weights ignore images.
+  Differing first logits do not prove changed enum values win under masking.
+- No new independent real-media holdout, viewer preference or Stage B gate has
+  passed. Sampled RSS is not unified-memory total.
 
 ## Pending
 
-The requested remote push and exact-SHA CI verification await the publication
-code gate. No remote state has been changed by this task.
+Inspect guided candidate rankings at field-choice tokens, then freeze an
+independent, source-diverse center-event review pack excluding the six exposed
+centers and their ±30-second neighborhoods. Human review must establish labels
+before another model gate.
+Cursor CLI is not logged in; the app account is visible, but an isolated
+workspace and Grok 4.7 High route have not been verified. No payload was sent.
+Remote publication of this local milestone requires separate authorization.
 
 ## Next commands
 
-The model-free SmolVLM2 prepared-input path passed. The next step is to
-define a fresh independent labelled holdout before any changed treatment.
-Preserve the six packets as diagnostic examples; do not rerun the frozen
-schedule for tuning. For the requested publication, first verify the
-reviewed local commit and fetched remote base:
+Validate the handoff, review the local diff, then use the design protocol to
+prepare the independent review pack without running model inference on it:
 
 ```sh
 cd ~/Documents/aegis-360
 python3 scripts/check_handoff.py
 git status --short --branch
-git rev-parse HEAD origin/main
+python3 -m unittest discover -s tests -v
 ```
 
 ## External artifacts
 
-The approved external working space is the configured T7 project data root.
-Runtime/model/media, private frames and output, metrics, build scratch and
-compiled products stay there. The decisive private run status is under
-the T7 `build/sga4/` directory. No delegated work or background
-job is running.
+The approved project data root is T7 `aegis-360-items`. Guided diagnostic
+status and private media remain in its `build/sga4/` tree. Synthetic sensitivity,
+unguided control, first-logit readouts and grammar build products remain in
+separate T7 `build/` trees named by their scripts and experiment record.
+The public-only Cursor review brief is under a private temporary directory;
+no nonpublic input has been disclosed.
 
 ## Active agents
 
-No delegated work or background job is running.
+No delegated work or background job should remain when this checkpoint is
+committed. Verify any live local build process before stopping or resuming it.
 
 ## Safety and claims
 
-A local build proves a build, 37 synthetic cases prove their retained host
-contract, and the 12 real invocations prove only the bounded known-label
-result. The candidate has no semantic authority. Git history is the archive;
-this handoff describes the latest state.
+This is error localization, not a passing semantic candidate. A successful
+local build or grammar acceptance proves only its bounded contract. The six
+known-label packets are diagnostics and cannot serve as a new holdout. Git
+history is the archive; this file describes only the latest state.

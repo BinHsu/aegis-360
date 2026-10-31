@@ -2,14 +2,22 @@
 
 ## Current conclusion
 
-The synthetic adapter gate has exact-SHA green CI at
-`BinHsu/aegis-360@4b78e1a`; the Stage A preflight bundle evidence is in
-`BinHsu/aegis-360@621c195` (CI for that SHA was not rechecked this turn). Stage A has a closed prompt/schema, a
-verified 2.2B weight leaf, source hashes, upstream Old Ghost timeline proofs and a six-packet real-input bundle: fourteen JSON files published to external
-storage, then read back against the exact approved plan. Two local closed
-sanitized-media runs match across all 36 images; the canonical bundle was
-published to the configured T7 data root and independently read back.
-The first real-packet unconstrained smoke failed. Guided v3 passed its exact-runtime 37/37 retained synthetic gate, a synthetic format smoke and a one-packet real operational smoke. Its two serial six-packet known-label runs completed 12/12 with byte-identical repeats but only 3/6 correct labels in each run, so the Stage A semantic candidate is rejected. See `docs/experiments/stage-a-guided-v3-known-label-2026-10-30.md`. The Skiing proposal remains rejected.
+The first guided SmolVLM2 Stage A candidate remains **rejected**: two serial
+six-packet known-label runs completed 12/12 and were byte-identical per packet,
+but only 3/6 labels matched. `BinHsu/aegis-360@9736867` is published and its
+exact-SHA `validate` CI check passed. The six packets are now diagnostics, not
+an independent holdout.
+
+A 2026-10-31 error audit found a clear model observation miss at the Old Ghost
+205.6-second bridge boundary, a likely false artifact claim at its 132.4-second
+no-change center, and a label/time-scale mismatch at Skiing 200 seconds. On
+two frozen synthetic inputs, guided outputs collapsed to identical false
+artifact observations, including six byte-identical frames. Unguided outputs
+differed and raw first-token logits differed under the same prompt tokens.
+Thus pixels affect the model computation; the guided value selection and
+prompt semantics remain unresolved. See
+`docs/experiments/stage-a-guided-error-localization-2026-10-31.md` and
+`docs/design/stage-a-error-successor-2026-10-31.md`. Stage B remains gated.
 
 ## Accepted evidence
 

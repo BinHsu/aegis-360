@@ -21,6 +21,16 @@ struct GrammarTokenizerProbe {
             return (word & (UInt32(1) << (id % 32))) != 0
         }
 
+        func accepts(_ value: String) throws -> Bool {
+            let constraint = try GrammarConstraint(tokenizer: grammarTokenizer,
+                                                   jsonSchema: schema)
+            for id in host.encode(text: value, addSpecialTokens: false) {
+                if !allowed(try constraint.computeMask(), id) { return false }
+                _ = try constraint.commitToken(Int32(id))
+            }
+            guard allowed(try constraint.computeMask(), eos) else { return false }
+            return try constraint.commitToken(Int32(eos)).isTerminated
+        }
         let constraint = try GrammarConstraint(tokenizer: grammarTokenizer,
                                                jsonSchema: schema)
         let first = try constraint.computeMask()
@@ -35,29 +45,31 @@ struct GrammarTokenizerProbe {
         let observed = """
         {"status":"observed","early_state_coherence":"observed","late_state_coherence":"observed","activity_relation":"same","setting_relation":"same","anonymous_participant_configuration":"same","transition_support":"contradicts","viewpoint_change":"absent","foreground_rearrangement":"absent","exposure_or_palette_change":"absent","capture_or_projection_artifact":"absent"}
         """
-        var complete = true
-        for id in host.encode(text: observed, addSpecialTokens: false) {
-            if !allowed(try constraint.computeMask(), id) {
-                complete = false
-                break
-            }
-            _ = try constraint.commitToken(Int32(id))
-        }
-        if complete {
-            complete = allowed(try constraint.computeMask(), eos)
-            if complete { complete = try constraint.commitToken(Int32(eos)).isTerminated }
-        }
+        let complete = try accepts(observed)
+        let changed = observed
+            .replacingOccurrences(of: "\"activity_relation\":\"same\"",
+                                  with: "\"activity_relation\":\"changed\"")
+            .replacingOccurrences(of: "\"setting_relation\":\"same\"",
+                                  with: "\"setting_relation\":\"changed\"")
+            .replacingOccurrences(of: "\"transition_support\":\"contradicts\"",
+                                  with: "\"transition_support\":\"supports\"")
+        let artifact = observed.replacingOccurrences(
+            of: "\"capture_or_projection_artifact\":\"absent\"",
+            with: "\"capture_or_projection_artifact\":\"present\"")
         let result: [String: Any] = [
             "vocab_size": grammarTokenizer.vocabSize,
             "eos_token_id": eos,
             "brace_allowed": braceAllowed,
             "prose_excluded": proseExcluded,
             "observed_accepted": complete,
+            "changed_accepted": try accepts(changed),
+            "artifact_accepted": try accepts(artifact),
         ]
         let data = try JSONSerialization.data(withJSONObject: result, options: [.sortedKeys])
         FileHandle.standardOutput.write(data)
         FileHandle.standardOutput.write(Data([10]))
-        guard braceAllowed, proseExcluded, complete else { throw ProbeError.failed }
+        guard braceAllowed, proseExcluded, complete,
+              try accepts(changed), try accepts(artifact) else { throw ProbeError.failed }
     }
 }
 
